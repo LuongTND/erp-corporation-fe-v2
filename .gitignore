@@ -1,0 +1,89 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+.pnpm-debug.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build & Distribution
+dist/
+build/
+out/
+.turbo/
+.next/
+
+# IDE & Editor
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# IDE specific files
+.vscode-test
+*.code-workspace
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+cypress/videos/
+cypress/screenshots/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Temporary files
+*.tmp
+tmp/
+temp/
+
+# Cache
+.eslintcache
+.stylelintcache
+.cache/
+.vite/
+
+# Development
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+*.tsbuildinfo
+
+# Node modules (alternative format)
+/node_modules
+
+# pnpm specific
+.pnpm/
+
+# Vitest
+.vitest/
+
+# Generated files
+tsconfig.tsbuildinfo
+tsconfig.node.tsbuildinfo
