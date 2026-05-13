@@ -1,20 +1,16 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
+import LandingPage from '@/features/landing/pages/LandingPage'
+import LoginPage from '@/features/auth/pages/LoginPage'
 
 // Layouts
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'))
 const AuthLayout = lazy(() => import('@/components/layout/AuthLayout'))
 
 // Pages — lazy load theo từng module để tối ưu bundle
-const LandingPage = lazy(() => import('@/features/landing/pages/LandingPage'))
-const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'))
-const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'))
-const InventoryPage = lazy(() => import('@/features/inventory/pages/InventoryPage'))
-const CrmPage = lazy(() => import('@/features/crm/pages/CrmPage'))
-const ManufacturingPage = lazy(() => import('@/features/manufacturing/pages/ManufacturingPage'))
-const AccountingPage = lazy(() => import('@/features/accounting/pages/AccountingPage'))
-const HrPage = lazy(() => import('@/features/hr/pages/HrPage'))
+const ChatPage = lazy(() => import('@/features/chat/pages/ChatPage'))
+const TaskPage = lazy(() => import('@/features/task/pages/TaskPage'))
 
 // Guard: chỉ cho vào nếu đã đăng nhập
 function ProtectedRoute() {
@@ -59,12 +55,8 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: '/', element: <Navigate to="/dashboard" replace /> },
-          { path: '/dashboard', element: <DashboardPage /> },
-          { path: '/inventory/*', element: <InventoryPage /> },
-          { path: '/crm/*', element: <CrmPage /> },
-          { path: '/manufacturing/*', element: <ManufacturingPage /> },
-          { path: '/accounting/*', element: <AccountingPage /> },
-          { path: '/hr/*', element: <HrPage /> },
+          { path: '/chat', element: <ChatPage /> },
+          { path: '/task', element: <TaskPage /> },
         ],
       },
     ],
