@@ -4,7 +4,7 @@
  * Pattern: RESTful API calls qua axios
  */
 
-import axios from '@/lib/axios'
+import { api as axios } from '@/lib/axios'
 import type {
   Conversation,
   Message,

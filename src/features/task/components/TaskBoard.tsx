@@ -29,7 +29,6 @@ const statusLabels: Record<TaskStatus, string> = {
 export function TaskBoard({
   tasks,
   onTaskClick,
-  onStatusChange,
 }: TaskBoardProps) {
   // Group tasks by status
   const groupedTasks = useMemo(() => {
