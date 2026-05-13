@@ -25,7 +25,7 @@ export function useMessages(conversationId: string | null) {
   const sendMutation = useMutation({
     mutationFn: (payload: SendMessagePayload) =>
       chatService.sendMessage(payload),
-    onSuccess: (data) => {
+    onSuccess: () => {
       // Invalidate & refetch messages
       queryClient.invalidateQueries({
         queryKey: ['messages', conversationId],

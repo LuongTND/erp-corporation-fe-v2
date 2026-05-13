@@ -9,7 +9,7 @@
 
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
-import { viLocale } from 'date-fns/locale'
+import { vi } from 'date-fns/locale'
 import type { Task, TaskPriority, TaskStatus } from '../types/task.types'
 
 interface TaskCardProps {
@@ -78,7 +78,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
 
         {task.dueDate && (
           <span className="text-xs text-muted-foreground">
-            {format(new Date(task.dueDate), 'MMM d', { locale: viLocale })}
+            {format(new Date(task.dueDate), 'MMM d', { locale: vi })}
           </span>
         )}
       </div>
