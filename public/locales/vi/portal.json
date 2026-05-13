@@ -1,0 +1,49 @@
+{
+  "title": "Cổng Thông Tin DigiERP",
+  "subtitle": "Hệ thống quản trị doanh nghiệp hợp nhất. Vui lòng chọn vai trò để tiếp tục.",
+  "footer": "© 2025 DigiERP Corporation. Secured System.",
+  "accessButton": "Truy cập ngay",
+  "permissionsTitle": "Chi tiết quyền hạn",
+  "roles": {
+    "bod": {
+      "label": "Ban Giám Đốc",
+      "subLabel": "Board of Directors",
+      "description": "Truy cập toàn bộ báo cáo chiến lược và dashboard tổng hợp.",
+      "permissions": [
+        "Xem báo cáo tài chính",
+        "Phê duyệt ngân sách",
+        "Quản lý chiến lược"
+      ]
+    },
+    "manager": {
+      "label": "Quản lý",
+      "subLabel": "Manager",
+      "description": "Quản lý vận hành, nhân sự và phê duyệt quy trình.",
+      "permissions": [
+        "Quản lý KPI team",
+        "Phê duyệt nghỉ phép",
+        "Báo cáo hiệu suất"
+      ]
+    },
+    "employee": {
+      "label": "Nhân viên",
+      "subLabel": "Employee",
+      "description": "Thực hiện công việc, chấm công và đề xuất.",
+      "permissions": [
+        "Chấm công",
+        "Tạo yêu cầu",
+        "Xem phiếu lương"
+      ]
+    },
+    "admin": {
+      "label": "Điều hành viên",
+      "subLabel": "System Admin",
+      "description": "Cấu hình hệ thống, phân quyền và bảo mật.",
+      "permissions": [
+        "Cấu hình hệ thống",
+        "Quản lý người dùng",
+        "Nhật ký hoạt động"
+      ]
+    }
+  }
+}

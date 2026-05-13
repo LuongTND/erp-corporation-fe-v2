@@ -1,0 +1,125 @@
+{
+  "header": {
+    "welcome": "Chào mừng",
+    "dashboard": "Bảng Điều Khiển",
+    "logout": "Đăng Xuất",
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Hệ Thống",
+    "language": "Ngôn Ngữ",
+    "theme": "Giao Diện"
+  },
+  "brand": {
+      "name_prefix": "Digi",
+      "name_suffix": "ERP",
+      "full_name": "DigiERP Corporation",
+      "slogan": "Hệ thống Quản trị Doanh nghiệp",
+      "email": "support@digierp.com",
+      "copyright": "© 2025 DigiFnb. Bảo lưu mọi quyền."
+    },
+  "loading": "Đang tải...",
+  "system_loading": "Đang tải dữ liệu hệ thống...",
+  "error": "Lỗi",
+  "success": "Thành công",
+  "cancel": "Hủy",
+  "backToHome": "Trang chủ",
+  "landing-page": {
+    "nav": {
+      "features": "Tính năng",
+      "solutions": "Giải pháp",
+      "pricing": "Bảng giá",
+      "about": "Về chúng tôi"
+    },
+    "auth": {
+      "login": "Đăng nhập",
+      "tryFree": "Dùng thử miễn phí"
+    },
+    "appdesc": "Nền tảng ERP All-in-one giúp bạn tự động hoá quy trình, tối ưu nhân sự và kiểm soát tài chính. Dành riêng cho SME Việt Nam.",
+    "hero": {
+      "versionBadge": "Phiên bản 2.0 đã ra mắt",
+      "title": "Quản trị",
+      "titleHighlight": "Doanh nghiệp",
+      "titleEnd": "Tinh gọn.",
+      "ctaStart": "Bắt đầu ngay",
+      "ctaDemo": "Xem Demo",
+      "users": "2,000+ CEO tin dùng"
+    },
+    "partners": {
+      "title": "Đối tác chiến lược"
+    },
+    "features": {
+      "title": "Mọi công cụ bạn cần. Ở đúng một nơi.",
+      "subtitle": "DigiERP thay thế hàng tá phần mềm rời rạc bằng một nền tảng thống nhất, mạnh mẽ và bảo mật.",
+      "hr": {
+        "title": "Quản lý Nhân sự",
+        "desc": "Tự động hoá chấm công, tính lương và quản lý hồ sơ nhân viên 360 độ."
+      },
+      "analytics": {
+        "title": "Tài chính & Kế toán",
+        "desc": "Dòng tiền Real-time. Tự động hạch toán và xuất hoá đơn điện tử."
+      },
+      "automation": {
+        "title": "Quản lý Dự án",
+        "desc": "Giao việc, theo dõi tiến độ Kanban/Gantt. Cộng tác không giới hạn."
+      },
+      "integration": {
+        "title": "CRM Đa kênh",
+        "desc": "Nuôi dưỡng Lead. Tích hợp Call Center, Email và SMS Marketing."
+      },
+      "security": {
+        "title": "Bảo mật ISO 27001",
+        "desc": "Mã hoá dữ liệu chuẩn ngân hàng. Phân quyền chi tiết từng field."
+      },
+      "scalable": {
+        "title": "Kho thông minh",
+        "desc": "Cảnh báo tồn kho min/max. Quản lý lô, hạn sử dụng, barcode/QR."
+      },
+      "learnMore": "Tìm hiểu thêm"
+    },
+    "bigFeature": {
+      "badge": "New Feature",
+      "title": "Báo cáo thông minh. Ra quyết định chính xác.",
+      "desc": "Đừng để dữ liệu chết trên giấy tờ. Dashboard của DigiERP biến số liệu thô thành biểu đồ trực quan, giúp bạn nắm bắt sức khoẻ doanh nghiệp chỉ trong 3 giây.",
+      "item1": "Cập nhật Real-time (Thời gian thực)",
+      "item2": "Tuỳ chỉnh Widget kéo thả",
+      "item3": "Xuất báo cáo PDF/Excel 1 chạm",
+      "cta": "Khám phá tính năng báo cáo",
+      "growth": "Tăng trưởng"
+    },
+    "cta": {
+      "title": "Sẵn sàng chuyển đổi số?",
+      "desc": "Tham gia cùng 2,000+ doanh nghiệp đang tăng trưởng thần tốc với DigiERP. Đăng ký dùng thử 14 ngày, không cần thẻ tín dụng.",
+      "count": "2,000+",
+      "buttonStart": "Bắt đầu miễn phí",
+      "buttonContact": "Liên hệ tư vấn",
+      "disclaimer": "Không yêu cầu thẻ tín dụng • Hủy bất kỳ lúc nào"
+    },
+    "footer": {
+      "description": "Giải pháp quản trị tổng thể dành cho doanh nghiệp SME Việt Nam.",
+      "products": {
+        "title": "Sản phẩm",
+        "features": "Tính năng",
+        "solutions": "Giải pháp",
+        "pricing": "Bảng giá",
+        "download": "Tải ứng dụng"
+      },
+      "company": {
+        "title": "Công ty",
+        "about": "Về chúng tôi",
+        "careers": "Tuyển dụng",
+        "blog": "Blog",
+        "contact": "Liên hệ"
+      },
+      "newsletter": {
+        "title": "Đăng ký nhận tin",
+        "desc": "Cập nhật các tính năng mới và mẹo.",
+        "placeholder": "Email doanh nghiệp"
+      },
+      "copyright": "© 2025 DigiERP. Made with ❤️ in Vietnam",
+      "links": {
+        "privacy": "Bảo mật",
+        "terms": "Điều khoản"
+      }
+    }
+  }
+}
