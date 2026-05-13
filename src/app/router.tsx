@@ -1,8 +1,8 @@
+import LoginPage from '@/features/auth/pages/LoginPage'
+import LandingPage from '@/features/landing/pages/LandingPage'
+import { useAuthStore } from '@/stores/auth.store'
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
-import { useAuthStore } from '@/stores/auth.store'
-import LandingPage from '@/features/landing/pages/LandingPage'
-import LoginPage from '@/features/auth/pages/LoginPage'
 
 // Layouts
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'))

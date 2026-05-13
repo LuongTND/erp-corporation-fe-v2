@@ -1,6 +1,6 @@
+import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -26,7 +26,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_BASE_URL || 'http://localhost:7070',
+        target: process.env.VITE_API_BASE_URL,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
