@@ -3,7 +3,7 @@
  * Xử lý tất cả API calls liên quan đến task
  */
 
-import axios from '@/lib/axios'
+import { api as axios } from '@/lib/axios'
 import type {
   CreateTaskPayload,
   Task,

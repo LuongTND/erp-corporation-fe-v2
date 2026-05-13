@@ -9,7 +9,7 @@
 import { useEffect, useRef } from 'react'
 import type { Message } from '../types/chat.types'
 import { formatDistanceToNow } from 'date-fns'
-import { viLocale } from 'date-fns/locale'
+import { vi } from 'date-fns/locale'
 
 interface MessageListProps {
   messages: Message[]
@@ -66,7 +66,7 @@ export function MessageList({
                 <p className="mt-1 text-xs opacity-70">
                   {formatDistanceToNow(new Date(message.timestamp), {
                     addSuffix: true,
-                    locale: viLocale,
+                    locale: vi,
                   })}
                 </p>
               </div>
