@@ -1,0 +1,49 @@
+{
+  "title": "DigiERP Portal",
+  "subtitle": "Unified enterprise management system. Please select a role to continue.",
+  "footer": "© 2025 DigiERP Corporation. Secured System.",
+  "accessButton": "Access Now",
+  "permissionsTitle": "Permission Details",
+  "roles": {
+    "bod": {
+      "label": "Board of Directors",
+      "subLabel": "Ban Giám Đốc",
+      "description": "Access strategic reports and comprehensive dashboards.",
+      "permissions": [
+        "View Financial Reports",
+        "Approve Budget",
+        "Strategy Management"
+      ]
+    },
+    "manager": {
+      "label": "Manager",
+      "subLabel": "Quản lý",
+      "description": "Manage operations, HR, and process approvals.",
+      "permissions": [
+        "Manage Team KPI",
+        "Approve Leaves",
+        "Performance Reports"
+      ]
+    },
+    "employee": {
+      "label": "Employee",
+      "subLabel": "Nhân viên",
+      "description": "Perform tasks, timekeeping, and requests.",
+      "permissions": [
+        "Timekeeping",
+        "Create Requests",
+        "View Payslips"
+      ]
+    },
+    "admin": {
+      "label": "System Admin",
+      "subLabel": "Điều hành viên",
+      "description": "System configuration, permissions, and security.",
+      "permissions": [
+        "System Configuration",
+        "User Management",
+        "Audit Logs"
+      ]
+    }
+  }
+}
