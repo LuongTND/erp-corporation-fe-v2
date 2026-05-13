@@ -1,0 +1,27 @@
+{
+  "titles": {
+    "system_crash": "System Error",
+    "forbidden": "Access Denied",
+    "not_found": "Page Not Found",
+    "maintenance": "System Maintenance",
+    "unauthorized": "Authentication Required"
+  },
+  "messages": {
+    "default": "An unexpected error has occurred.",
+    "forbidden_detail": "You do not have permission to access this resource. Please contact your administrator if you believe this is an error.",
+    "not_found_detail": "The page you are looking for does not exist or has been moved.",
+    "unauthorized_detail": "Your session has expired or you have not logged in. Please log in to continue.",
+    "try_again": "Please try again in a moment.",
+    "network_error": "Network connection lost. Please check your connection."
+  },
+  "actions": {
+    "back": "Go Back",
+    "home": "Back to Home",
+    "retry": "Try Again",
+    "contact_admin": "Contact Admin",
+    "login": "Log In"
+  },
+  "api_errors": {
+    "ERR_USER_LOCKED": "Your account has been locked."
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "titles": {
+    "system_crash": "Hệ thống gặp sự cố",
+    "forbidden": "Truy cập bị từ chối",
+    "not_found": "Không tìm thấy trang",
+    "maintenance": "Hệ thống đang bảo trì",
+    "unauthorized": "Yêu cầu đăng nhập"
+  },
+  "messages": {
+    "default": "Đã có lỗi không mong muốn xảy ra.",
+    "forbidden_detail": "Bạn không có quyền truy cập vào tài nguyên này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là lỗi.",
+    "not_found_detail": "Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.",
+    "unauthorized_detail": "Phiên làm việc đã hết hạn hoặc bạn chưa đăng nhập. Vui lòng đăng nhập lại để tiếp tục.",
+    "try_again": "Vui lòng thử lại sau giây lát.",
+    "network_error": "Mất kết nối mạng. Vui lòng kiểm tra lại đường truyền."
+  },
+  "actions": {
+    "back": "Quay lại",
+    "home": "Về trang chủ",
+    "retry": "Thử lại",
+    "contact_admin": "Liên hệ Admin",
+    "login": "Đăng nhập"
+  },
+  "api_errors": {
+    "ERR_USER_LOCKED": "Tài khoản của bạn đã bị khóa."
+  }
+}
