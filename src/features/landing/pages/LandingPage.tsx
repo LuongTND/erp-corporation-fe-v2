@@ -1,9 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, BarChart3, Users, Zap } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const { t, i18n } = useTranslation('landing')
+
+  const toggleLanguage = () => {
+    const nextLang = i18n.language === 'vi' ? 'en' : 'vi';
+    i18n.changeLanguage(nextLang);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-background to-muted">
@@ -11,9 +18,14 @@ export default function LandingPage() {
       <nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-primary">DigiFnb ERP</h1>
-          <Button onClick={() => navigate('/login')} variant="default">
-            Đăng Nhập
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" onClick={toggleLanguage}>
+              {i18n.language === 'vi' ? '🇻🇳 VN' : '🇬🇧 EN'}
+            </Button>
+            <Button onClick={() => navigate('/login')} variant="default">
+              Đăng Nhập
+            </Button>
+          </div>
         </div>
       </nav>
 
@@ -22,12 +34,10 @@ export default function LandingPage() {
         <div className="text-center space-y-8">
           <div className="space-y-4">
             <h2 className="text-5xl md:text-6xl font-bold tracking-tight">
-              Quản Lý Doanh Nghiệp{' '}
-              <span className="text-primary">Hiệu Quả</span>
+              {t('title', 'Quản Lý Doanh Nghiệp Hiệu Quả')}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Nền tảng ERP toàn diện giúp bạn quản lý bán hàng, tồn kho, nhân sự và 
-              tài chính tại một nơi
+              {t('subtitle', 'Nền tảng ERP toàn diện giúp bạn quản lý bán hàng, tồn kho, nhân sự và tài chính tại một nơi')}
             </p>
           </div>
 
