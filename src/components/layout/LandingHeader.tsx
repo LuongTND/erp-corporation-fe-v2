@@ -1,6 +1,4 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/button'; // Assuming button exists, fallback to standard HTML button if needed
 
 export const LandingHeader = () => {
   const { i18n } = useTranslation();

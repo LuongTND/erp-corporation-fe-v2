@@ -41,8 +41,9 @@ export function TaskBoard({
     }
 
     tasks.forEach((task) => {
-      if (groups[task.status]) {
-        groups[task.status].push(task)
+      const status = task.status
+      if (status && groups[status]) {
+        groups[status].push(task)
       }
     })
 

@@ -1,5 +1,4 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
-import type { ApiResponse } from '@/types/api'
 
 type PendingRequest = {
   resolve: (token: string) => void
