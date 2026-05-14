@@ -14,8 +14,9 @@ const TaskPage = lazy(() => import('@/features/task/pages/TaskPage'))
 
 // Guard: chỉ cho vào nếu đã đăng nhập
 function ProtectedRoute() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+  // const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  // return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+  return <Outlet /> // DEV ONLY: bypass auth
 }
 
 const PageFallback = () => (

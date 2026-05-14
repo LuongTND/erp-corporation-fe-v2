@@ -108,7 +108,7 @@ export function TaskForm({
           <SelectContent>
             {STATUS_OPTIONS.map((status) => (
               <SelectItem key={status} value={status}>
-                {status.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')}
+                {status.split('-').map((s: string) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')}
               </SelectItem>
             ))}
           </SelectContent>
