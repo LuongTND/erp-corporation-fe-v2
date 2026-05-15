@@ -1,25 +1,33 @@
-import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
 import type { Task } from '../../types/task.types'
+import { TaskRichTextEditor } from '../editor/TaskRichTextEditor'
 
 interface TaskSheetDescriptionProps {
   description: string
   setDescription: (value: string) => void
   task?: Task | null
+  tasks?: Task[]
 }
 
-export function TaskSheetDescription({ description, setDescription, task }: TaskSheetDescriptionProps) {
+export function TaskSheetDescription({
+  description,
+  setDescription,
+  task,
+  tasks = [],
+}: TaskSheetDescriptionProps) {
   return (
-    <div className="min-h-[200px]">
-      <Textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder={task ? 'Thêm mô tả chi tiết...' : 'Nhập mô tả cho task mới...'}
-        className={cn(
-          'min-h-[200px] w-full resize-none border-none shadow-none focus-visible:ring-0',
-          'bg-transparent p-0',
-          'text-sm text-foreground placeholder:text-muted-foreground/50',
-        )}
+    <div className="flex flex-col gap-2">
+      <p
+        className="text-[11px] font-medium uppercase tracking-[0.06em]"
+        style={{ color: '#8e8b82' }}
+      >
+        Mô tả
+      </p>
+
+      <TaskRichTextEditor
+        content={description}
+        onChange={setDescription}
+        placeholder={task ? 'Thêm mô tả cho task này…' : 'Nhập mô tả…'}
+        tasks={tasks}
       />
     </div>
   )

@@ -4,8 +4,7 @@ import { Fragment, useMemo } from 'react'
 import type { ColumnPositionSnapshot, DropHint } from '../../../hooks/use-kanban-dnd'
 import type { Id, Task, TaskItemDto } from '../../../types/task.types'
 import { BoardCard } from '../card/KanbanCard'
-import { useColumnMeasurements } from '../../../hooks/use-column-measurements'
-import { useDropIndicator } from '../../../hooks/use-drop-indicator'
+import { useColumnMeasurements, useDropIndicator } from '../../../hooks/use-kanban-column'
 import { TaskCreateDialog } from '../dialogs/TaskCreateDialog'
 
 interface ColumnTaskListProps {
@@ -79,10 +78,10 @@ export function ColumnTaskList({
         trigger={
           <Button
             variant="ghost"
-            className="group/btn w-full h-10 gap-0 border border-dashed border-border/30 hover:border-primary/20 bg-transparent hover:bg-muted/20 text-muted-foreground hover:text-foreground transition-all duration-300 justify-start px-3"
+            className="w-full h-8 justify-start px-3 gap-1.5 rounded-md bg-transparent hover:bg-[#ede8e0] text-[#8e8b82] hover:text-[#6c6a64] border border-dashed border-[#e6dfd8] hover:border-[#cc785c]/40 transition-colors duration-150"
           >
-            <Plus className="h-4 w-4 transition-transform group-hover/btn:scale-110" />
-            <span className="ml-2 text-sm font-medium">Tạo Task</span>
+            <Plus className="h-3.5 w-3.5 shrink-0" />
+            <span className="text-[12px] font-medium">Tạo Task</span>
           </Button>
         }
       />

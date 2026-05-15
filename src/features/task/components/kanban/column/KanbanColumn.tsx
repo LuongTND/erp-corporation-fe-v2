@@ -53,13 +53,13 @@ function BoardColumnBase({
       ref={setNodeRef}
       style={{
         ...style,
-        backgroundColor: column.color ? `${column.color}26` : undefined,
+        backgroundColor: '#f5f0e8',
+        borderRadius: 8,
+        width: 260,
+        minWidth: 260,
+        opacity: isColumnDragging ? 0.5 : 1,
       }}
-      className={cn(
-        'group shrink-0 w-[280px] max-w-[300px] flex flex-col self-stretch rounded-xl border border-border/60 shadow-sm',
-        !column.color && 'bg-muted/60',
-        isColumnDragging && 'opacity-50 z-50 ring-2 ring-primary',
-      )}
+      className="group shrink-0 flex flex-col self-stretch"
     >
       <div
         className={cn(

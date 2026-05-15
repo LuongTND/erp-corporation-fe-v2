@@ -24,9 +24,11 @@ import {
   MoreHorizontal,
   Smile,
   Star,
-  Trash,
+  Trash2,
   ArrowRight,
 } from 'lucide-react'
+import { useTaskActions } from '../../../context/TaskActionsContext'
+import type { Task } from '../../../types/task.types'
 
 interface MenuItemProps {
   icon: LucideIcon
@@ -57,7 +59,9 @@ function MenuItem({ icon: Icon, label, shortcut, destructive, onClick }: MenuIte
   )
 }
 
-export function TaskMenuActions() {
+export function TaskMenuActions({ task }: { task?: Task }) {
+  const { onOpen, onDuplicate, onArchive } = useTaskActions()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -81,6 +85,7 @@ export function TaskMenuActions() {
         onClick={(e) => e.stopPropagation()}
       >
         <DropdownMenuGroup>
+          <MenuItem icon={ExternalLink} label="Mở chi tiết" onClick={() => task && onOpen(task)} />
           <MenuItem icon={Star} label="Add to Favorites" />
           <MenuItem icon={Smile} label="Edit icon" />
           <MenuItem icon={List} label="Edit property" />
@@ -104,11 +109,22 @@ export function TaskMenuActions() {
           </DropdownMenuSub>
           <MenuItem icon={MessageSquare} label="Comment" shortcut="?+M" />
           <MenuItem icon={LinkIcon} label="Copy link" />
-          <MenuItem icon={Copy} label="Duplicate" shortcut="?+D" />
+          <MenuItem
+            icon={Copy}
+            label="Nhân bản"
+            shortcut="⌘D"
+            onClick={() => task && onDuplicate(task)}
+          />
           <MenuItem icon={ArrowRight} label="Move to" shortcut="?+P" />
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <MenuItem icon={Trash} label="Delete" shortcut="Del" destructive />
+        <MenuItem
+          icon={Trash2}
+          label="Xóa task"
+          shortcut="Del"
+          destructive
+          onClick={() => task && onArchive(String(task.id))}
+        />
       </DropdownMenuContent>
     </DropdownMenu>
   )

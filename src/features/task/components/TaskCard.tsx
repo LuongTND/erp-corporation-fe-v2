@@ -55,7 +55,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       {task.progress !== undefined && (
         <div className="mb-3">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-muted-foreground">Progress</span>
+            <span className="text-xs text-muted-foreground">Tiến độ</span>
             <span className="text-xs font-medium">{task.progress}%</span>
           </div>
           <div className="h-2 w-full rounded-full bg-muted">

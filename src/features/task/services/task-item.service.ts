@@ -12,7 +12,7 @@ import type {
   BulkCreateTaskRequest,
   PagedResponse,
 } from '../types/task.types'
-import type { SortOption } from '../types/toolbar.types'
+import type { SortOption } from '../types/task.types'
 
 const mapSortOptionToBackend = (sortOption?: SortOption): string => {
   switch (sortOption) {

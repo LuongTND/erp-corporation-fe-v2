@@ -34,7 +34,7 @@ export function NewColumnBtn({ onAddColumn, isLoading = false }: NewColumnBtnPro
           className="h-10 shrink-0 justify-start text-muted-foreground hover:bg-accent hover:text-accent-foreground px-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         >
           <Plus className="h-4 w-4" />
-          New group
+          Nhóm mới
         </Button>
       </PopoverTrigger>
 
@@ -44,7 +44,7 @@ export function NewColumnBtn({ onAddColumn, isLoading = false }: NewColumnBtnPro
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="New group"
+            placeholder="Nhóm mới"
             className="h-8 focus-visible:ring-1"
             autoFocus
           />

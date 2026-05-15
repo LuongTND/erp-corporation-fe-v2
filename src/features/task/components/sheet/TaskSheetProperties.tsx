@@ -1,4 +1,3 @@
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -6,11 +5,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
 import {
   Calendar,
   CheckCircle2,
-  ChevronDown,
   Clock,
   Flag,
   Tag as TagIcon,
@@ -25,7 +22,7 @@ import { TaskDatePicker } from './TaskSheetDatePicker'
 import { AssigneeSelector, type UserOption } from './TaskSheetAssigneeSelector'
 
 const MOCK_USERS: UserOption[] = [
-  { value: 'hieudd', label: 'Hiếu Đức', initials: 'HD' },
+  { value: 'hieudd',   label: 'Hiếu Đức',  initials: 'HD' },
   { value: 'quanghuy', label: 'Quang Huy', initials: 'QH' },
 ]
 
@@ -58,6 +55,53 @@ interface TaskSheetPropertiesProps {
   createdAt: Date
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function hexAlpha(hex: string, alpha: number): string {
+  if (!hex?.startsWith('#')) return 'transparent'
+  const a = Math.round(alpha * 255).toString(16).padStart(2, '0')
+  return `${hex}${a}`
+}
+
+// ── Property row ──────────────────────────────────────────────────────────────
+
+function PropertyRow({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <div
+      className="flex items-center min-h-[34px] -mx-4 px-4 rounded-md transition-colors duration-[120ms]"
+      style={{ backgroundColor: hovered ? '#f5f0e8' : 'transparent' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div
+        className="w-[120px] flex-none flex items-center gap-2 text-[12px]"
+        style={{ color: '#8e8b82' }}
+      >
+        {icon}
+        <span>{label}</span>
+      </div>
+      <div className="flex-1 flex items-center min-w-0">{children}</div>
+    </div>
+  )
+}
+
+// ── Status pill ───────────────────────────────────────────────────────────────
+
+function StatusPill({ color, label }: { color?: string; label: string }) {
+  const bg  = color ? hexAlpha(color, 0.12) : '#f5f0e8'
+  const txt = color || '#6c6a64'
+  return (
+    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[12px] font-medium" style={{ backgroundColor: bg, color: txt }}>
+      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: txt }} />
+      {label}
+    </div>
+  )
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
 export function TaskSheetProperties({
   columns,
   status,
@@ -76,103 +120,74 @@ export function TaskSheetProperties({
 }: TaskSheetPropertiesProps) {
   const [priorities, setPriorities] = useState<TaskPriorityDto[]>(cachedPriorities || [])
   const [isLoadingPriorities, setIsLoadingPriorities] = useState(false)
-  const hasLoadedPrioritiesRef = React.useRef(false)
-
-  const statusInfo = columns?.find((col) => String(col.id) === status)
+  const hasLoadedRef = React.useRef(false)
 
   useEffect(() => {
-    if (hasLoadedPrioritiesRef.current) return
-    hasLoadedPrioritiesRef.current = true
-
+    if (hasLoadedRef.current) return
+    hasLoadedRef.current = true
     if (cachedPriorities) return
 
     if (prioritiesLoadingPromise) {
       setIsLoadingPriorities(true)
       prioritiesLoadingPromise
-        .then((data) => {
-          setPriorities(data)
-          setIsLoadingPriorities(false)
-        })
+        .then((d) => { setPriorities(d); setIsLoadingPriorities(false) })
         .catch(() => setIsLoadingPriorities(false))
       return
     }
 
     setIsLoadingPriorities(true)
-    const fetchPriorities = async (): Promise<TaskPriorityDto[]> => {
+    const fetch = async (): Promise<TaskPriorityDto[]> => {
       try {
-        const data = await taskPriorityService.getAllForDropdown()
-        cachedPriorities = data
+        const d = await taskPriorityService.getAllForDropdown()
+        cachedPriorities = d
         prioritiesLoadingPromise = null
-        setPriorities(data)
+        setPriorities(d)
         setIsLoadingPriorities(false)
-        return data
-      } catch (error) {
-        console.error('Failed to fetch priorities:', error)
+        return d
+      } catch {
         prioritiesLoadingPromise = null
         setIsLoadingPriorities(false)
-        throw error
+        throw new Error('Failed to load priorities')
       }
     }
-    prioritiesLoadingPromise = fetchPriorities()
+    prioritiesLoadingPromise = fetch()
   }, [])
 
-  const getPriorityInfo = (val: string) => {
-    if (!val) return null
-    return (
-      priorities.find((p) => p.id === val) ||
-      priorities.find((p) => p.name === val) ||
-      priorities.find((p) => p.code === val)
-    )
-  }
-  const selectedPriority = getPriorityInfo(priority)
-
-  const formatCreatedDate = (date: Date) => createdAtFormatter.format(date)
-
-  const getGlassStyle = (color?: string) => {
-    if (!color) return undefined
-    if (color.startsWith('#')) {
-      return {
-        backgroundColor: `${color}26`,
-        color: color,
-        borderColor: `${color}33`,
-      }
-    }
-    return { backgroundColor: color, color: '#fff' }
-  }
+  const statusInfo    = columns?.find((c) => String(c.id) === status)
+  const selectedPri   = priorities.find((p) => p.id === priority || p.name === priority || p.code === priority)
 
   return (
-    <div className="flex flex-col gap-4 mb-8">
+    <div className="flex flex-col gap-0.5">
       {/* STATUS */}
-      <PropertyRow icon={<CheckCircle2 className="h-4 w-4" />} label="Status">
+      <PropertyRow icon={<CheckCircle2 className="h-3.5 w-3.5 shrink-0" />} label="Trạng thái">
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger
-            className={cn(
-              'group w-fit min-w-[130px] border-none ring-0 focus:ring-0',
-              'h-8 rounded-full px-3 text-xs font-medium transition-colors',
-              'flex items-center justify-between gap-2',
-              !statusInfo?.color && 'bg-secondary/40 text-secondary-foreground',
-              '[&>svg:last-child]:hidden',
-            )}
-            style={getGlassStyle(statusInfo?.color)}
+            className="h-auto w-fit border-none shadow-none ring-0 focus:ring-0 focus-visible:ring-0 p-0 gap-0 [&>svg]:hidden cursor-pointer"
           >
-            <div className="flex items-center gap-2">
-              <div
-                className="w-1.5 h-1.5 rounded-full bg-current opacity-80 shadow-[0_0_8px_currentColor]"
-                style={{ backgroundColor: statusInfo?.color }}
-              />
-              <SelectValue />
-            </div>
-            <ChevronDown className="h-3.5 w-3.5 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+            <SelectValue>
+              {statusInfo
+                ? <StatusPill color={statusInfo.color} label={statusInfo.title} />
+                : <span className="text-[12px]" style={{ color: '#8e8b82' }}>Chọn trạng thái</span>
+              }
+            </SelectValue>
           </SelectTrigger>
-
           <SelectContent
             position="popper"
+            align="start"
             sideOffset={4}
-            className="bg-popover/95 backdrop-blur-xl border-white/10"
+            className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-[#f5f0e8] [&_[data-highlighted]]:text-[#141413]"
+            style={{ backgroundColor: '#FFFFFF', border: '0.5px solid #e6dfd8', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}
           >
             {columns?.map((col) => (
-              <SelectItem key={col.id} value={String(col.id)}>
-                {col.title}
+              <SelectItem
+                key={col.id}
+                value={String(col.id)}
+                className="text-[13px] rounded-md cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: col.color || '#8e8b82' }} />
+                  {col.title}
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
@@ -180,37 +195,38 @@ export function TaskSheetProperties({
       </PropertyRow>
 
       {/* PRIORITY */}
-      <PropertyRow icon={<Flag className="h-4 w-4" />} label="Priority">
+      <PropertyRow icon={<Flag className="h-3.5 w-3.5 shrink-0" />} label="Độ ưu tiên">
         <Select
           value={priority || 'none'}
-          onValueChange={(val) => setPriority(val === 'none' ? '' : val)}
+          onValueChange={(v) => setPriority(v === 'none' ? '' : v)}
           disabled={isLoadingPriorities}
         >
           <SelectTrigger
-            className={cn(
-              'group w-fit min-w-[130px] h-8 rounded-full border-none px-3 text-xs font-medium transition-colors',
-              'flex items-center justify-between gap-2',
-              !selectedPriority?.color && 'bg-secondary/20 text-muted-foreground hover:bg-secondary/30',
-              '[&>svg:last-child]:hidden',
-            )}
-            style={getGlassStyle(selectedPriority?.color)}
+            className="h-auto w-fit border-none shadow-none ring-0 focus:ring-0 focus-visible:ring-0 p-0 gap-0 [&>svg]:hidden cursor-pointer"
           >
-            <div className="flex items-center gap-1">
-              <SelectValue placeholder={isLoadingPriorities ? 'Loading...' : 'Set Priority'} />
-            </div>
-            <ChevronDown className="h-3.5 w-3.5 opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+            <SelectValue>
+              {selectedPri
+                ? <StatusPill color={selectedPri.color} label={selectedPri.name} />
+                : <span className="text-[12px]" style={{ color: '#8e8b82' }}>
+                    {isLoadingPriorities ? 'Đang tải...' : 'Chọn độ ưu tiên'}
+                  </span>
+              }
+            </SelectValue>
           </SelectTrigger>
-
           <SelectContent
             position="popper"
+            align="start"
             sideOffset={4}
-            className="bg-popover/95 backdrop-blur-xl border-white/10"
+            className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-[#f5f0e8] [&_[data-highlighted]]:text-[#141413]"
+            style={{ backgroundColor: '#FFFFFF', border: '0.5px solid #e6dfd8', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}
           >
-            <SelectItem value="none">No priority</SelectItem>
+            <SelectItem value="none" className="text-[13px] rounded-md cursor-pointer">
+              <span style={{ color: '#8e8b82' }}>Không có ưu tiên</span>
+            </SelectItem>
             {priorities.map((p) => (
-              <SelectItem key={p.id} value={p.id}>
+              <SelectItem key={p.id} value={p.id} className="text-[13px] rounded-md cursor-pointer">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: p.color }} />
                   {p.name}
                 </div>
               </SelectItem>
@@ -220,72 +236,37 @@ export function TaskSheetProperties({
       </PropertyRow>
 
       {/* ASSIGNEE */}
-      <PropertyRow icon={<User className="h-4 w-4" />} label="Assignee">
-        <div className="flex">
-          <AssigneeSelector users={MOCK_USERS} value={assignee} onChange={setAssignee} />
-        </div>
+      <PropertyRow icon={<User className="h-3.5 w-3.5 shrink-0" />} label="Người thực hiện">
+        <AssigneeSelector users={MOCK_USERS} value={assignee} onChange={setAssignee} />
       </PropertyRow>
 
       {/* TAG */}
-      <PropertyRow icon={<TagIcon className="h-4 w-4" />} label="Tag">
-        <Input
+      <PropertyRow icon={<TagIcon className="h-3.5 w-3.5 shrink-0" />} label="Nhãn">
+        <input
           value={tag}
           onChange={(e) => setTag(e.target.value)}
-          placeholder="Add tag"
-          className={cn(
-            'h-8 w-full max-w-[200px] border-none bg-transparent px-0 hover:bg-transparent focus:bg-transparent',
-            'placeholder:text-muted-foreground/40 text-sm pl-1',
-          )}
+          placeholder="Thêm nhãn..."
+          className="w-full bg-transparent border-none outline-none text-[12px]"
+          style={{ color: '#141413' }}
         />
       </PropertyRow>
 
       {/* DATES */}
-      <PropertyRow icon={<Calendar className="h-4 w-4" />} label="Dates">
-        <div
-          className={cn(
-            'rounded-full transition-colors w-fit',
-            '[&_button]:bg-transparent [&_button]:border-none [&_button]:h-8 [&_button]:text-xs [&_button]:font-medium [&_button]:text-foreground [&_button]:hover:bg-white/10',
-          )}
-        >
-          <TaskDatePicker
-            startDate={startDate}
-            dueDate={dueDate}
-            onStartDateChange={setStartDate}
-            onDueDateChange={setDueDate}
-          />
-        </div>
+      <PropertyRow icon={<Calendar className="h-3.5 w-3.5 shrink-0" />} label="Ngày đến hạn">
+        <TaskDatePicker
+          startDate={startDate}
+          dueDate={dueDate}
+          onStartDateChange={setStartDate}
+          onDueDateChange={setDueDate}
+        />
       </PropertyRow>
 
-      {/* CREATED AT */}
-      <PropertyRow icon={<Clock className="h-4 w-4" />} label="Date Created">
-        <span className="text-xs text-muted-foreground/60 font-medium pl-1">
-          {formatCreatedDate(createdAt)}
+      {/* CREATED */}
+      <PropertyRow icon={<Clock className="h-3.5 w-3.5 shrink-0" />} label="Created">
+        <span className="text-[12px]" style={{ color: '#8e8b82' }}>
+          {createdAtFormatter.format(createdAt)}
         </span>
       </PropertyRow>
-    </div>
-  )
-}
-
-function PropertyRow({
-  icon,
-  label,
-  children,
-}: {
-  icon: ReactNode
-  label: string
-  children: ReactNode
-}) {
-  return (
-    <div className="flex items-center min-h-[40px] group">
-      <div className="w-[140px] flex-none flex items-center gap-2.5 text-sm text-muted-foreground px-1">
-        <span className="opacity-40 group-hover:opacity-100 transition-opacity duration-300">
-          {icon}
-        </span>
-        <span className="whitespace-normal font-medium opacity-60 group-hover:opacity-100 transition-opacity duration-300 text-[13px] leading-4">
-          {label}
-        </span>
-      </div>
-      <div className="flex-1 flex items-center overflow-hidden">{children}</div>
     </div>
   )
 }

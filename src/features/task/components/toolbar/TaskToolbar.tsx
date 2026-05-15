@@ -3,7 +3,7 @@ import { Plus, Settings } from 'lucide-react'
 import * as React from 'react'
 
 import type { TaskItemDto } from '@/features/task/types/task.types'
-import type { SortOption, SortOrder, TaskFilterParams } from '@/features/task/types/toolbar.types'
+import type { SortOption, SortOrder, TaskFilterParams } from '@/features/task/types/task.types'
 
 import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
