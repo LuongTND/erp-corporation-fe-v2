@@ -1,5 +1,5 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
-import type { ApiResponse } from '@/types/api'
+import { useAuthStore } from '@/stores/auth.store'
 
 type PendingRequest = {
   resolve: (token: string) => void
@@ -33,13 +33,8 @@ const setTokens = (accessToken: string, refreshToken?: string): void => {
   if (refreshToken) localStorage.setItem('refresh_token', refreshToken)
 }
 
-const clearTokens = (): void => {
-  localStorage.removeItem('access_token')
-  localStorage.removeItem('refresh_token')
-}
-
 const redirectToLogin = (): void => {
-  clearTokens()
+  useAuthStore.getState().logout()
   window.location.href = '/login'
 }
 

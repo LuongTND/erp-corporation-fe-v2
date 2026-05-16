@@ -9,14 +9,14 @@ export interface LoginRequest {
   password: string
 }
 
-export interface AuthResponse {
-  access_token: string
-  refresh_token: string
-  user: {
-    id: string
-    email: string
-    name: string
-  }
+/**
+ * Response trả về từ Backend .NET
+ * Dựa trên pattern POS-BAHUNG: server trả về accessToken (JWT)
+ * và refreshToken. Thông tin user được decode từ JWT.
+ */
+export interface LoginResponse {
+  accessToken: string
+  refreshToken?: string
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -25,15 +25,15 @@ export interface AuthResponse {
 
 export const authService = {
   login: async (credentials: LoginRequest) => {
-    return apiCall.post<AuthResponse>('/auth/login', credentials)
+    return apiCall.post<LoginResponse>('/auth/login', credentials)
   },
 
-  register: async (data: any) => {
-    return apiCall.post<AuthResponse>('/auth/register', data)
+  refreshToken: async (token: string) => {
+    return apiCall.post<LoginResponse>('/auth/refresh-token', { token })
   },
 
-  logout: async () => {
-    return apiCall.post('/auth/logout')
+  logout: async (token?: string) => {
+    return apiCall.post('/auth/logout', { token })
   },
 
   getProfile: async () => {
