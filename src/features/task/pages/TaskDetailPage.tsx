@@ -4,8 +4,8 @@ import { ArrowLeft, Calendar, CheckCircle2, Clock, ExternalLink, Flag, User } fr
 import { format, parseISO } from 'date-fns'
 import { taskItemService } from '../mocks/task.mock'
 import type { TaskItemDto } from '../types/task.types'
-import { TaskSheetComments } from '../components/sheet/TaskSheetComments'
-import { TaskSheetSubTasks } from '../components/sheet/TaskSheetSubTasks'
+import { TaskSheetComments } from '../components/detail/TaskSheetComments'
+import { TaskSheetSubTasks } from '../components/detail/TaskSheetSubTasks'
 
 const C = {
   text: '#141413',
@@ -290,4 +290,3 @@ export default function TaskDetailPage() {
     </div>
   )
 }
-

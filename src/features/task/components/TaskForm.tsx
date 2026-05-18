@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { useTaskForm } from '../hooks/use-task-form'
+import { useTaskForm } from '../hooks/useTaskForm'
 import type { Task, TaskPriority, TaskStatus } from '../types/task.types'
 
 const PRIORITY_OPTIONS: TaskPriority[] = ['low', 'medium', 'high', 'urgent']

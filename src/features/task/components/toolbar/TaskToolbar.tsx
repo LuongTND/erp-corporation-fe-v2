@@ -7,8 +7,8 @@ import type { SortOption, SortOrder, TaskFilterParams } from '@/features/task/ty
 
 import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { TaskCreateDialog } from '../kanban/dialogs/TaskCreateDialog'
-import { PriorityManagerDialog } from '../kanban/priority-manager/PriorityManagerDialog'
+import { TaskCreateDialog } from '../views/board/dialogs/TaskCreateDialog'
+import { PriorityManagerDialog } from '../views/board/priority-manager/PriorityManagerDialog'
 import { TaskToolbarFilter } from './TaskToolbarFilter'
 import { TaskToolbarSearch } from './TaskToolbarSearch'
 import { TaskToolbarSort } from './TaskToolbarSort'

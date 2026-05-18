@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/context-menu'
 import { Copy, ExternalLink, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { useTaskActions } from '../../context/TaskActionsContext'
-import type { Task } from '../../types/task.types'
+import { useTaskActions } from '@/features/task/context/TaskActionsContext'
+import type { Task } from '@/features/task/types/task.types'
 
 export function TaskContextMenu({ task, children }: { task: Task; children: ReactNode }) {
   const { onOpen, onDuplicate, onArchive } = useTaskActions()
