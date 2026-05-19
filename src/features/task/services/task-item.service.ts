@@ -1,18 +1,18 @@
-import { api } from '@/lib/axios'
 import { API_ROUTES } from '@/config/api-routes'
+import { api } from '@/lib/axios'
 import type {
-  TaskItemDto,
-  TaskItemDetailDto,
+  BulkCreateTaskRequest,
   CreateTaskRequest,
-  UpdateTaskRequest,
   GetTasksQuery,
+  PagedResponse,
+  SortOption,
+  TaskItemDetailDto,
+  TaskItemDto,
   UpdateTaskItemStatusRequest,
   UpdateTaskPriorityRequest,
   UpdateTaskProgressRequest,
-  BulkCreateTaskRequest,
-  PagedResponse,
+  UpdateTaskRequest,
 } from '../types/task.types'
-import type { SortOption } from '../types/toolbar.types'
 
 const mapSortOptionToBackend = (sortOption?: SortOption): string => {
   switch (sortOption) {

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
@@ -7,6 +8,42 @@
 
 @layer base {
   :root {
+    /* ── Task Design Tokens ─────────────────────────── */
+    --t-sidebar-bg:          #191919;
+    --t-sidebar-text:        #999999;
+    --t-sidebar-text-hover:  #E0E0E0;
+    --t-sidebar-active-bg:   rgba(232, 120, 74, 0.15);
+    --t-sidebar-active-txt:  #E8784A;
+    --t-sidebar-border:      rgba(255, 255, 255, 0.08);
+
+    --t-bg-primary:   #FAFAF8;
+    --t-bg-surface:   #FFFFFF;
+    --t-bg-hover:     #F0EDE8;
+    --t-bg-selected:  #EDE9E4;
+
+    --t-text-primary:   #1A1A1A;
+    --t-text-secondary: #6B6B6B;
+    --t-text-muted:     #9A9A9A;
+
+    --t-accent:        #E8784A;
+    --t-accent-hover:  #D96B3C;
+    --t-accent-subtle: rgba(232, 120, 74, 0.12);
+
+    --t-border:        #E8E8E6;
+    --t-border-strong: #D0CCC8;
+
+    /* Priority */
+    --t-priority-high-bg:   #FDECEA; --t-priority-high-text:   #C0392B;
+    --t-priority-med-bg:    #FEF6E4; --t-priority-med-text:    #B7770D;
+    --t-priority-low-bg:    #E8F4FD; --t-priority-low-text:    #1A6EA8;
+
+    /* Status */
+    --t-status-todo-bg:       #F0F0EE; --t-status-todo-text:       #6B6B6B;
+    --t-status-progress-bg:   #FEF6E4; --t-status-progress-text:   #B7770D;
+    --t-status-done-bg:       #EAF3DE; --t-status-done-text:       #3B6D11;
+    --t-status-overdue-bg:    #FDECEA; --t-status-overdue-text:    #C0392B;
+    /* ─────────────────────────────────────────────── */
+
     --background: 1 0 0;
     --foreground: 0.145 0 0;
     --card: 1 0 0;

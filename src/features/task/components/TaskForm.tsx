@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { useTaskForm } from '../hooks/use-task-form'
+import { useTaskForm } from '../hooks/useTaskForm'
 import type { Task, TaskPriority, TaskStatus } from '../types/task.types'
 
 const PRIORITY_OPTIONS: TaskPriority[] = ['low', 'medium', 'high', 'urgent']
@@ -46,12 +46,12 @@ export function TaskForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Title */}
       <div>
-        <Label htmlFor="title">Title *</Label>
+        <Label htmlFor="title">Tiêu đề *</Label>
         <Input
           id="title"
           value={formData.title || ''}
           onChange={(e) => handleChange('title', e.target.value)}
-          placeholder="Enter task title"
+          placeholder="Nhập tiêu đề task"
           disabled={isSubmitting}
           className={errors.title ? 'border-red-500' : ''}
         />
@@ -62,12 +62,12 @@ export function TaskForm({
 
       {/* Description */}
       <div>
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description">Mô tả</Label>
         <Textarea
           id="description"
           value={formData.description || ''}
           onChange={(e) => handleChange('description', e.target.value)}
-          placeholder="Enter task description"
+          placeholder="Nhập mô tả task"
           disabled={isSubmitting}
           rows={4}
         />
@@ -75,7 +75,7 @@ export function TaskForm({
 
       {/* Priority */}
       <div>
-        <Label htmlFor="priority">Priority *</Label>
+        <Label htmlFor="priority">Độ ưu tiên *</Label>
         <Select
           value={formData.priority}
           onValueChange={(value) => handleChange('priority', value)}
@@ -96,7 +96,7 @@ export function TaskForm({
 
       {/* Status */}
       <div>
-        <Label htmlFor="status">Status *</Label>
+        <Label htmlFor="status">Trạng thái *</Label>
         <Select
           value={formData.status}
           onValueChange={(value) => handleChange('status', value)}
@@ -117,7 +117,7 @@ export function TaskForm({
 
       {/* Due Date */}
       <div>
-        <Label htmlFor="dueDate">Due Date</Label>
+        <Label htmlFor="dueDate">Ngày đến hạn</Label>
         <Input
           id="dueDate"
           type="date"
@@ -135,7 +135,7 @@ export function TaskForm({
 
       {/* Estimated Hours */}
       <div>
-        <Label htmlFor="estimatedHours">Estimated Hours</Label>
+        <Label htmlFor="estimatedHours">Giờ ước tính</Label>
         <Input
           id="estimatedHours"
           type="number"
@@ -152,10 +152,10 @@ export function TaskForm({
       {/* Actions */}
       <div className="flex gap-2">
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Saving...' : 'Save Task'}
+          {isSubmitting ? 'Đang lưu...' : 'Lưu Task'}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
+          Hủy
         </Button>
       </div>
     </form>
