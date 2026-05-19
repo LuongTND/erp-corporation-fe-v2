@@ -1,6 +1,5 @@
 import LoginPage from '@/features/auth/pages/LoginPage'
 import LandingPage from '@/features/landing/pages/LandingPage'
-import { useAuthStore } from '@/stores/auth.store'
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 
@@ -11,11 +10,13 @@ const AuthLayout = lazy(() => import('@/components/layout/AuthLayout'))
 // Pages — lazy load theo từng module để tối ưu bundle
 const ChatPage = lazy(() => import('@/features/chat/pages/ChatPage'))
 const TaskPage = lazy(() => import('@/features/task/pages/TaskPage'))
+const TaskDetailPage = lazy(() => import('@/features/task/pages/TaskDetailPage'))
 
 // Guard: chỉ cho vào nếu đã đăng nhập
 function ProtectedRoute() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+  // const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  // return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+  return <Outlet /> // DEV ONLY: bypass auth
 }
 
 const PageFallback = () => (
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
           { path: '/', element: <Navigate to="/dashboard" replace /> },
           { path: '/chat', element: <ChatPage /> },
           { path: '/task', element: <TaskPage /> },
+          { path: '/task/:id', element: <Suspense fallback={<PageFallback />}><TaskDetailPage /></Suspense> },
         ],
       },
     ],

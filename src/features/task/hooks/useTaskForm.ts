@@ -28,7 +28,7 @@ export function useTaskForm({ initialData, onSuccess }: UseTaskFormProps = {}) {
   const mutation = useMutation({
     mutationFn: async () => {
       if (initialData) {
-        return taskService.updateTask(initialData.id, formData as UpdateTaskPayload)
+        return taskService.updateTask(String(initialData.id), formData as UpdateTaskPayload)
       } else {
         return taskService.createTask(formData as CreateTaskPayload)
       }

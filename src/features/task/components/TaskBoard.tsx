@@ -19,11 +19,11 @@ interface TaskBoardProps {
 const statuses: TaskStatus[] = ['todo', 'in-progress', 'in-review', 'done']
 
 const statusLabels: Record<TaskStatus, string> = {
-  todo: 'To Do',
-  'in-progress': 'In Progress',
-  'in-review': 'In Review',
-  done: 'Done',
-  cancelled: 'Cancelled',
+  todo: 'Cần làm',
+  'in-progress': 'Đang thực hiện',
+  'in-review': 'Đang xem xét',
+  done: 'Hoàn thành',
+  cancelled: 'Đã hủy',
 }
 
 export function TaskBoard({
@@ -41,8 +41,9 @@ export function TaskBoard({
     }
 
     tasks.forEach((task) => {
-      if (groups[task.status]) {
-        groups[task.status].push(task)
+      const status = task.status
+      if (status && groups[status]) {
+        groups[status].push(task)
       }
     })
 
@@ -68,7 +69,7 @@ export function TaskBoard({
             <div className="space-y-3 pr-4">
               {groupedTasks[status].length === 0 ? (
                 <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed bg-background">
-                  <p className="text-xs text-muted-foreground">No tasks</p>
+                  <p className="text-xs text-muted-foreground">Không có task</p>
                 </div>
               ) : (
                 groupedTasks[status].map((task) => (
