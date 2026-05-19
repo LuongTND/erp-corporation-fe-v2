@@ -1,4 +1,4 @@
-import { set, startOfDay, isBefore } from 'date-fns'
+import { isBefore, set, startOfDay } from 'date-fns'
 import type { TimeFormatType } from '../types/task.types'
 
 export const DATE_FORMAT = 'MMM d, yyyy'

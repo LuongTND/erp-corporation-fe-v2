@@ -1,7 +1,7 @@
 // TODO: Remove when BE API is ready — revert imports in:
 //   TaskView.tsx, KanbanBoard.tsx, TaskCreateDialog.tsx, PriorityManagerDialog.tsx
-import type { TaskStatusDto, TaskItemDto, CreateTaskRequest, UpdateTaskRequest, CreateTaskStatusRequest, UpdateTaskStatusRequest, TaskAttachment, DependencyType, TaskDependenciesView, CustomPropDef, CustomPropValue, ActivityEntry, ActivityAction } from '../types/task.types'
-import type { TaskPriorityDto, CreatePriorityRequest, UpdatePriorityRequest } from '../types/priority.types'
+import type { CreatePriorityRequest, TaskPriorityDto, UpdatePriorityRequest } from '../types/priority.types'
+import type { ActivityAction, ActivityEntry, CreateTaskRequest, CreateTaskStatusRequest, CustomPropDef, CustomPropValue, DependencyType, TaskAttachment, TaskDependenciesView, TaskItemDto, TaskStatusDto, UpdateTaskRequest, UpdateTaskStatusRequest } from '../types/task.types'
 
 // ─── Seed data ──────────────────────────────────────────────────────────────
 
