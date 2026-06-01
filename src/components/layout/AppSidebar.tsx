@@ -1,8 +1,10 @@
 import { cn } from '@/lib/utils'
 import {
+  Banknote,
   BarChart3,
   BookOpen,
   Calendar,
+  CalendarDays,
   CheckSquare,
   ChevronDown,
   Compass,
@@ -12,9 +14,11 @@ import {
   Inbox,
   LayoutDashboard,
   MessageSquare,
+  Network,
   Package,
   Search,
   Settings,
+  Target,
   TrendingUp,
   Users,
   Users2,
@@ -43,7 +47,20 @@ const MODULE_ITEMS: ModuleItem[] = [
   { icon: MessageSquare, label: 'Chat',        href: '/chat' },
   { icon: Users2,        label: 'CRM',         href: '/crm' },
   { icon: DollarSign,    label: 'Finance',     href: '/finance' },
-  { icon: Users,         label: 'HR & Payroll',href: '/hr' },
+  {
+    icon: Users,
+    label: 'HR & Payroll',
+    href: '/hr',
+    subItems: [
+      { icon: LayoutDashboard, label: 'Overview',    href: '/hr' },
+      { icon: Users2,          label: 'Employees',  href: '/hr/employees' },
+      { icon: Calendar,        label: 'Attendance', href: '/hr/attendance' },
+      { icon: Banknote,        label: 'Payroll',    href: '/hr/payroll' },
+      { icon: Target,          label: 'KPI',        href: '/hr/kpi' },
+      { icon: CalendarDays,    label: 'Leave',      href: '/hr/leave' },
+      { icon: Network,         label: 'Org Chart',  href: '/hr/org-chart' },
+    ],
+  },
   { icon: Package,       label: 'Inventory',   href: '/inventory' },
   { icon: FolderOpen,    label: 'Projects',    href: '/projects' },
   { icon: BarChart3,     label: 'Reports',     href: '/reports' },
@@ -122,7 +139,6 @@ export function AppSidebar() {
   const navigate = useNavigate()
   const [modulesOpen, setModulesOpen] = useState(true)
 
-  const isLmsActive = location.pathname.startsWith('/lms')
 
   return (
     <aside
@@ -199,10 +215,10 @@ export function AppSidebar() {
           {modulesOpen && (
             <div className="flex flex-col gap-0.5 mt-0.5">
               {MODULE_ITEMS.map((item) => {
-                const isActive = item.subItems
-                  ? isLmsActive
+                const isModuleActive = item.subItems
+                  ? location.pathname.startsWith(item.href)
                   : location.pathname === item.href
-                const isExpanded = item.subItems && isLmsActive
+                const isExpanded = item.subItems && location.pathname.startsWith(item.href)
 
                 return (
                   <div key={item.href}>
@@ -210,7 +226,7 @@ export function AppSidebar() {
                       icon={item.icon}
                       label={item.label}
                       href={item.href}
-                      active={isActive}
+                      active={isModuleActive}
                       onClick={() => navigate(item.href)}
                     />
                     {isExpanded && item.subItems && (

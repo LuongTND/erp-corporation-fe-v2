@@ -8,6 +8,9 @@ const AppLayout = lazy(() => import('@/components/layout/AppLayout'))
 const AuthLayout = lazy(() => import('@/components/layout/AuthLayout'))
 
 // Pages — lazy load theo từng module để tối ưu bundle
+const HRMDashboardPage = lazy(() => import('@/features/hr/pages/HRMDashboardPage'))
+const EmployeeListPage = lazy(() => import('@/features/hr/pages/EmployeeListPage'))
+const EmployeeDetailPage = lazy(() => import('@/features/hr/pages/EmployeeDetailPage'))
 const ChatPage = lazy(() => import('@/features/chat/pages/ChatPage'))
 const TaskPage = lazy(() => import('@/features/task/pages/TaskPage'))
 const TaskDetailPage = lazy(() => import('@/features/task/pages/TaskDetailPage'))
@@ -17,6 +20,11 @@ const CourseDetailPage = lazy(() => import('@/features/lms/pages/CourseDetailPag
 const LessonPlayerPage = lazy(() => import('@/features/lms/pages/LessonPlayerPage'))
 const QuizPage = lazy(() => import('@/features/lms/pages/QuizPage'))
 const LearnerProgressPage = lazy(() => import('@/features/lms/pages/LearnerProgressPage'))
+const AttendancePage = lazy(() => import('@/features/hr/pages/AttendancePage'))
+const PayrollPage = lazy(() => import('@/features/hr/pages/PayrollPage'))
+const KpiPage   = lazy(() => import('@/features/hr/pages/KpiPage'))
+const LeavePage    = lazy(() => import('@/features/hr/pages/LeavePage'))
+const OrgChartPage = lazy(() => import('@/features/hr/pages/OrgChartPage'))
 
 // Guard: chỉ cho vào nếu đã đăng nhập
 function ProtectedRoute() {
@@ -79,6 +87,14 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: '/', element: <Navigate to="/dashboard" replace /> },
+          { path: '/hr', element: <Suspense fallback={<PageFallback />}><HRMDashboardPage /></Suspense> },
+          { path: '/hr/employees', element: <Suspense fallback={<PageFallback />}><EmployeeListPage /></Suspense> },
+          { path: '/hr/employees/:id', element: <Suspense fallback={<PageFallback />}><EmployeeDetailPage /></Suspense> },
+          { path: '/hr/attendance', element: <Suspense fallback={<PageFallback />}><AttendancePage /></Suspense> },
+          { path: '/hr/payroll',    element: <Suspense fallback={<PageFallback />}><PayrollPage /></Suspense> },
+          { path: '/hr/kpi',       element: <Suspense fallback={<PageFallback />}><KpiPage /></Suspense> },
+          { path: '/hr/leave',      element: <Suspense fallback={<PageFallback />}><LeavePage /></Suspense> },
+          { path: '/hr/org-chart', element: <Suspense fallback={<PageFallback />}><OrgChartPage /></Suspense> },
           { path: '/chat', element: <ChatPage /> },
           { path: '/task', element: <TaskPage /> },
           { path: '/task/:id', element: <Suspense fallback={<PageFallback />}><TaskDetailPage /></Suspense> },
