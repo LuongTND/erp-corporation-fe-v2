@@ -13,7 +13,7 @@ import {
 } from '@dnd-kit/core'
 import type { Task, Id } from '../types/task.types'
 import { moveTaskToColumnAtIndex } from '../utils/kanban-reorder'
-import { taskItemService } from '../services/task-item.service'
+import { taskItemService } from '../mocks/task.mock'
 
 export type DropHint =
   | null

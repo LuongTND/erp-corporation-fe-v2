@@ -36,6 +36,14 @@ const PIE_DATA = [
 
 const PIE_COLORS = Object.values(SEGMENT_COLORS)
 
+function formatCurrencyMillions(
+  value: number | string | readonly (number | string)[] | undefined,
+) {
+  if (value == null) return ''
+  const rawValue = Array.isArray(value) ? value[0] : value
+  return `₫${Number(rawValue).toFixed(1)}M`
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function PayrollBreakdownChart() {
@@ -67,7 +75,7 @@ export function PayrollBreakdownChart() {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(val: number) => [`₫${val.toFixed(1)}M`]}
+              formatter={formatCurrencyMillions}
             />
             <Bar dataKey="baseSalary" stackId="a" fill={SEGMENT_COLORS.baseSalary} name="Base Salary" radius={[0, 0, 4, 4]} />
             <Bar dataKey="allowances" stackId="a" fill={SEGMENT_COLORS.allowances} name="Allowances" />
@@ -103,7 +111,7 @@ export function PayrollBreakdownChart() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(val: number) => [`₫${val.toFixed(1)}M`]}
+                  formatter={formatCurrencyMillions}
                 />
               </PieChart>
             </ResponsiveContainer>

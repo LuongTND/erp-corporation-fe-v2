@@ -1,9 +1,8 @@
-import { useEffect, useState, type ElementType, type ReactNode } from 'react'
+import { type ElementType, type ReactNode } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Calendar, CheckCircle2, Clock, ExternalLink, Flag, User } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
-import { taskItemService } from '../mocks/task.mock'
-import type { TaskItemDto } from '../types/task.types'
+import { useMockTaskDetail } from '../hooks/useMockTaskData'
 import { TaskSheetComments } from '../components/detail/TaskSheetComments'
 import { TaskSheetSubTasks } from '../components/detail/TaskSheetSubTasks'
 
@@ -71,19 +70,7 @@ function PropertyRow({
 export default function TaskDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [task, setTask] = useState<TaskItemDto | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
-
-  useEffect(() => {
-    if (!id) { setNotFound(true); setIsLoading(false); return }
-    setIsLoading(true)
-    taskItemService
-      .getById(id)
-      .then((t) => { setTask(t ?? null); if (!t) setNotFound(true) })
-      .catch(() => setNotFound(true))
-      .finally(() => setIsLoading(false))
-  }, [id])
+  const { isLoading, notFound, task } = useMockTaskDetail(id)
 
   if (isLoading) {
     return (

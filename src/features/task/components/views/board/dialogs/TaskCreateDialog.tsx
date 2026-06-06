@@ -11,7 +11,7 @@ import {
   Plus,
   User,
 } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import * as z from 'zod'
@@ -34,11 +34,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-import { taskItemService, taskPriorityService, taskStatusService } from '@/features/task/mocks/task.mock'
-import type { TaskPriorityDto } from '@/features/task/types/priority.types'
-import type { CreateTaskRequest, TaskItemDto, TaskStatusDto } from '@/features/task/types/task.types'
-import { useAuthStore } from '@/stores/auth.store'
 import { AssigneeSelector, type UserOption } from '@/features/task/components/detail/TaskSheetAssigneeSelector'
+import { useMockTaskMeta } from '@/features/task/hooks/useMockTaskData'
+import { taskItemService } from '@/features/task/mocks/task.mock'
+import type { CreateTaskRequest, TaskItemDto } from '@/features/task/types/task.types'
+import { useAuthStore } from '@/stores/auth.store'
 
 // ── Design tokens (matches task page palette) ─────────────────────────────────
 const C = {
@@ -66,9 +66,6 @@ const taskFormSchema = z.object({
 })
 
 type TaskFormData = z.infer<typeof taskFormSchema>
-
-let cachedStatuses: TaskStatusDto[] | null = null
-let cachedPriorities: TaskPriorityDto[] | null = null
 
 const TASK_TEMPLATES = [
   { name: 'Báo lỗi',                  title: '[BUG] ',   description: '## Mô tả lỗi\n\n## Bước tái hiện\n1. \n2. \n\n## Kết quả mong đợi\n\n## Kết quả thực tế\n' },
@@ -204,11 +201,9 @@ export function TaskCreateDialog({
   const user = useAuthStore((s) => s.user)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [statuses, setStatuses] = useState<TaskStatusDto[]>(cachedStatuses ?? [])
-  const [priorities, setPriorities] = useState<TaskPriorityDto[]>(cachedPriorities ?? [])
-  const [loadingData, setLoadingData] = useState(false)
   const [assignee, setAssignee] = useState('')
   const [templatePopoverOpen, setTemplatePopoverOpen] = useState(false)
+  const { isLoading: loadingData, priorities, statuses } = useMockTaskMeta()
 
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskFormSchema),
@@ -221,40 +216,19 @@ export function TaskCreateDialog({
     },
   })
 
-  const loadData = useCallback(async () => {
-    if (cachedStatuses && cachedPriorities) {
-      setStatuses(cachedStatuses)
-      setPriorities(cachedPriorities)
-      return
-    }
-    try {
-      setLoadingData(true)
-      const [statusData, priorityData] = await Promise.all([
-        taskStatusService.getAllForDropdown(),
-        taskPriorityService.getAllForDropdown(),
-      ])
-      cachedStatuses = statusData
-      cachedPriorities = priorityData
-      setStatuses(statusData)
-      setPriorities(priorityData)
-      if (!defaultStatusId && statusData.length > 0) {
-        const active = statusData.find((s) => s.isActive) || statusData[0]
-        form.setValue('statusId', active.id)
-      }
-      if (priorityData.length > 0) {
-        const active = priorityData.find((p) => p.isActive) || priorityData[0]
-        form.setValue('priorityId', active.id)
-      }
-    } catch {
-      toast.error('Không thể tải dữ liệu trạng thái và ưu tiên')
-    } finally {
-      setLoadingData(false)
-    }
-  }, [defaultStatusId, form])
-
   useEffect(() => {
-    if (open) loadData()
-  }, [open, loadData])
+    if (!open) return
+    if (!defaultStatusId && statuses.length > 0) {
+      const activeStatus = statuses.find((status) => status.isActive) || statuses[0]
+      if (!form.getValues('statusId')) {
+        form.setValue('statusId', activeStatus.id)
+      }
+    }
+    if (priorities.length > 0 && !form.getValues('priorityId')) {
+      const activePriority = priorities.find((priority) => priority.isActive) || priorities[0]
+      form.setValue('priorityId', activePriority.id)
+    }
+  }, [defaultStatusId, form, open, priorities, statuses])
 
   useEffect(() => {
     if (defaultStatusId) form.setValue('statusId', defaultStatusId)

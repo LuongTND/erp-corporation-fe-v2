@@ -5,29 +5,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { TaskPriorityDto } from '@/features/task/types/priority.types'
+import { TaskActionsProvider } from '@/features/task/context/TaskActionsContext'
+import { useMockTaskWorkspaceData, mapTaskItemToTask } from '@/features/task/hooks/useMockTaskData'
+import { useTaskFavorites } from '@/features/task/hooks/useTaskFavorites'
+import { useTaskRecents } from '@/features/task/hooks/useTaskRecents'
 import type {
-  Column,
   Id,
   SortOption,
   SortOrder,
   Task,
   TaskItemDto,
-  TaskStatusDto,
   UpdateTaskRequest,
 } from '@/features/task/types/task.types'
 import { ArrowUpDown, Check, Download, Filter, Layers, MoreHorizontal, Plus, Search, Share2, Upload } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { TaskActionsProvider } from '@/features/task/context/TaskActionsContext'
-import { useTaskFavorites } from '@/features/task/hooks/useTaskFavorites'
-import { useTaskRecents } from '@/features/task/hooks/useTaskRecents'
 import {
   exportTasksToCSV,
   importTasksFromCSV,
   taskItemService,
-  taskPriorityService,
-  taskStatusService,
 } from '@/features/task/mocks/task.mock'
 import { TaskSheet } from '../../detail/TaskSheet'
 import { TaskFavoritesBar } from '../../shared/TaskFavoritesBar'
@@ -41,8 +37,6 @@ import { TaskList } from '../list/TaskList'
 import { TaskTable } from '../table/TaskTable'
 import { TaskTimeline } from '../timeline/TaskTimeline'
 
-const FETCH_CONCURRENCY_LIMIT = 3
-
 type ViewMode = 'list' | 'board' | 'table' | 'calendar' | 'timeline'
 
 const VIEW_TABS: { key: ViewMode; label: string }[] = [
@@ -53,34 +47,17 @@ const VIEW_TABS: { key: ViewMode; label: string }[] = [
   { key: 'timeline', label: 'Dòng thời gian' },
 ]
 
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  limit: number,
-  mapper: (item: T) => Promise<R>,
-) {
-  const results: R[] = new Array(items.length)
-  let nextIndex = 0
-  const workerCount = Math.min(limit, items.length)
-
-  const workers = Array.from({ length: workerCount }, async () => {
-    while (nextIndex < items.length) {
-      const currentIndex = nextIndex
-      nextIndex += 1
-      results[currentIndex] = await mapper(items[currentIndex])
-    }
-  })
-
-  await Promise.all(workers)
-  return results
-}
-
 export function TaskView() {
   const [view, setView] = useState<ViewMode>('list')
-  const [columns, setColumns] = useState<Column[]>([])
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [statuses, setStatuses] = useState<TaskStatusDto[]>([])
-  const [priorities, setPriorities] = useState<TaskPriorityDto[]>([])
+  const {
+    columns,
+    isLoading,
+    priorities,
+    setColumns,
+    setTasks,
+    statuses,
+    tasks,
+  } = useMockTaskWorkspaceData()
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -98,7 +75,6 @@ export function TaskView() {
   const { favorites, toggleFavorite, isFavorite } = useTaskFavorites()
   const { recents, pushRecent } = useTaskRecents()
 
-  const hasLoadedDataRef = useRef(false)
   const csvInputRef = useRef<HTMLInputElement>(null)
 
   const handleExportCSV = useCallback(async () => {
@@ -119,20 +95,7 @@ export function TaskView() {
     if (!file) return
     const text = await file.text()
     const imported = await importTasksFromCSV(text)
-    const newTasks: Task[] = imported.map((t) => ({
-      id: t.id,
-      columnId: t.statusId,
-      title: t.title,
-      description: t.description,
-      code: t.code,
-      status: t.statusName as Task['status'],
-      priorityId: t.priorityId,
-      priority: t.priorityName as Task['priority'],
-      assignee: t.creatorName || 'Unassigned',
-      date: t.dueDate,
-      dueDate: t.dueDate,
-      estimatedHours: t.estimatedHours,
-    }))
+    const newTasks: Task[] = imported.map(mapTaskItemToTask)
     setTasks((prev) => [...newTasks, ...prev])
     toast.success(`Đã nhập ${imported.length} task từ CSV`)
     if (csvInputRef.current) csvInputRef.current.value = ''
@@ -148,72 +111,6 @@ export function TaskView() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [])
-
-  useEffect(() => {
-    if (hasLoadedDataRef.current) return
-    hasLoadedDataRef.current = true
-
-    const loadInitialData = async () => {
-      try {
-        setIsLoading(true)
-        const [statusData, priorityData] = await Promise.all([
-          taskStatusService.getAllForDropdown(),
-          taskPriorityService.getAllForDropdown(),
-        ])
-        setStatuses(statusData)
-        setPriorities(priorityData)
-
-        const statusColumns: Column[] = statusData.map((status) => ({
-          id: status.id,
-          title: status.name,
-          color: status.color,
-        }))
-        setColumns(statusColumns)
-
-        const tasksArrays = await mapWithConcurrency(
-          statusData,
-          FETCH_CONCURRENCY_LIMIT,
-          async (status) => {
-            try {
-              const tasksResponse = await taskItemService.getTasksByStatusId(status.id)
-              return tasksResponse.items.map(
-                (taskItem) =>
-                  ({
-                    id: taskItem.id,
-                    columnId: taskItem.statusId,
-                    title: taskItem.title,
-                    description: taskItem.description,
-                    parentId: (taskItem as typeof taskItem & { parentId?: string }).parentId,
-                    parentTitle: (taskItem as typeof taskItem & { parentTitle?: string }).parentTitle,
-                    parentCode: (taskItem as typeof taskItem & { parentCode?: string }).parentCode,
-                    code: taskItem.code,
-                    status: taskItem.statusName as Task['status'],
-                    priorityId: taskItem.priorityId,
-                    priority: taskItem.priorityName as Task['priority'],
-                    assignee: taskItem.creatorName,
-                    date: taskItem.dueDate,
-                    dueDate: taskItem.dueDate,
-                    estimatedHours: taskItem.estimatedHours,
-                  }) as Task,
-              )
-            } catch (error) {
-              console.error(`Lỗi khi tải tasks cho status ${status.id}:`, error)
-              return []
-            }
-          },
-        )
-
-        setTasks(tasksArrays.flat())
-      } catch (error) {
-        console.error('Lỗi khi tải dữ liệu ban đầu:', error)
-        toast.error('Không thể tải danh sách công việc')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadInitialData()
   }, [])
 
   // Apply filters, search, sort
@@ -261,20 +158,7 @@ export function TaskView() {
 
   const handleCreateTask = useCallback((createdTask?: TaskItemDto) => {
     if (createdTask) {
-      const newTask: Task = {
-        id: createdTask.id,
-        columnId: createdTask.statusId,
-        title: createdTask.title,
-        description: createdTask.description,
-        code: createdTask.code,
-        status: createdTask.statusName as Task['status'],
-        priorityId: createdTask.priorityId,
-        priority: createdTask.priorityName as Task['priority'],
-        assignee: createdTask.creatorName || 'Unassigned',
-        date: createdTask.dueDate,
-        dueDate: createdTask.dueDate,
-        estimatedHours: createdTask.estimatedHours,
-      }
+      const newTask = mapTaskItemToTask(createdTask)
       setTasks((prev) => [newTask, ...prev])
       setSelectedTask(newTask)
       setIsSheetOpen(true)
@@ -284,20 +168,13 @@ export function TaskView() {
   const handleTaskUpdate = useCallback(
     async (taskId: string, updateData: UpdateTaskRequest): Promise<TaskItemDto> => {
       const updatedTask = await taskItemService.update(taskId, updateData)
+      const mappedTask = mapTaskItemToTask(updatedTask)
       setTasks((prev) =>
         prev.map((task) => {
           if (String(task.id) !== taskId && task.id !== taskId) return task
           return {
             ...task,
-            title: updatedTask.title ?? task.title,
-            description: updatedTask.description ?? task.description,
-            columnId: updatedTask.statusId ?? task.columnId,
-            status: (updatedTask.statusName ?? task.status) as Task['status'],
-            priorityId: updatedTask.priorityId ?? task.priorityId,
-            priority: (updatedTask.priorityName ?? task.priority) as Task['priority'],
-            startDate: updatedTask.startDate ?? task.startDate,
-            dueDate: updatedTask.dueDate ?? task.dueDate,
-            date: updatedTask.dueDate ?? task.date,
+            ...mappedTask,
           }
         }),
       )
@@ -305,15 +182,7 @@ export function TaskView() {
         if (!prev || (String(prev.id) !== taskId && prev.id !== taskId)) return prev
         return {
           ...prev,
-          title: updatedTask.title ?? prev.title,
-          description: updatedTask.description ?? prev.description,
-          columnId: updatedTask.statusId ?? prev.columnId,
-          status: (updatedTask.statusName ?? prev.status) as Task['status'],
-          priorityId: updatedTask.priorityId ?? prev.priorityId,
-          priority: (updatedTask.priorityName ?? prev.priority) as Task['priority'],
-          startDate: updatedTask.startDate ?? prev.startDate,
-          dueDate: updatedTask.dueDate ?? prev.dueDate,
-          date: updatedTask.dueDate ?? prev.date,
+          ...mappedTask,
         }
       })
       toast.success('Đã cập nhật task thành công')
@@ -340,20 +209,7 @@ export function TaskView() {
   const handleDuplicate = useCallback(async (task: Task) => {
     try {
       const dup = await taskItemService.duplicate(String(task.id))
-      const newTask: Task = {
-        id: dup.id,
-        columnId: dup.statusId,
-        title: dup.title,
-        description: dup.description,
-        code: dup.code,
-        status: dup.statusName as Task['status'],
-        priorityId: dup.priorityId,
-        priority: dup.priorityName as Task['priority'],
-        assignee: dup.creatorName || 'Unassigned',
-        date: dup.dueDate,
-        dueDate: dup.dueDate,
-        estimatedHours: dup.estimatedHours,
-      }
+      const newTask = mapTaskItemToTask(dup)
       setTasks((prev) => [newTask, ...prev])
       toast.success('Đã nhân bản task')
     } catch {
@@ -666,7 +522,6 @@ export function TaskView() {
               setColumns={setColumns}
               onTaskClick={handleTaskClick}
               onTaskCreated={handleCreateTask}
-              disableAutoLoad={true}
             />
           </div>
         )}

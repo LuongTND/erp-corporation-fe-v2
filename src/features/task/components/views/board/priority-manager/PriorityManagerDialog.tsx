@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
+import { setMockTaskMeta, useMockTaskMeta } from '@/features/task/hooks/useMockTaskData'
 import { taskPriorityService } from '@/features/task/mocks/task.mock'
 import type { TaskPriorityDto } from '@/features/task/types/priority.types'
 import type { PriorityLevel } from '@/features/task/types/priority.types'
@@ -30,12 +31,11 @@ interface PriorityManagerDialogProps {
 
 export function PriorityManagerDialog({ children }: PriorityManagerDialogProps) {
   const [open, setOpen] = useState(false)
+  const { isLoading: isFetching, priorities: metaPriorities } = useMockTaskMeta()
   const [priorities, setPriorities] = useState<TaskPriorityDto[]>([])
-  const [isFetching, setIsFetching] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [editingPriority, setEditingPriority] = useState<TaskPriorityDto | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [hasLoaded, setHasLoaded] = useState(false)
 
   const isFormOpen = showCreateForm || !!editingPriority
 
@@ -50,21 +50,8 @@ export function PriorityManagerDialog({ children }: PriorityManagerDialogProps) 
   })
 
   useEffect(() => {
-    if (open && !hasLoaded) loadPriorities()
-  }, [open, hasLoaded])
-
-  const loadPriorities = async () => {
-    try {
-      setIsFetching(true)
-      const data = await taskPriorityService.getAllForDropdown()
-      setPriorities(data)
-      setHasLoaded(true)
-    } catch {
-      toast.error('Lỗi tải dữ liệu')
-    } finally {
-      setIsFetching(false)
-    }
-  }
+    setPriorities(metaPriorities)
+  }, [metaPriorities])
 
   const closeForm = useCallback(() => {
     setEditingPriority(null)
@@ -82,8 +69,11 @@ export function PriorityManagerDialog({ children }: PriorityManagerDialogProps) 
           isSystem: true,
           isActive: true,
         })
-        setPriorities((prev) => [...prev, newPriority])
-        setHasLoaded(true)
+        setPriorities((prev) => {
+          const nextPriorities = [...prev, newPriority]
+          setMockTaskMeta({ priorities: nextPriorities })
+          return nextPriorities
+        })
         closeForm()
         toast.success('Đã tạo thành công')
       } catch {
@@ -105,10 +95,13 @@ export function PriorityManagerDialog({ children }: PriorityManagerDialogProps) 
           ...data,
           level: data.level as PriorityLevel,
         })
-        setPriorities((prev) =>
-          prev.map((p) => (p.id === editingPriority.id ? updatedPriority : p)),
-        )
-        setHasLoaded(true)
+        setPriorities((prev) => {
+          const nextPriorities = prev.map((p) =>
+            p.id === editingPriority.id ? updatedPriority : p,
+          )
+          setMockTaskMeta({ priorities: nextPriorities })
+          return nextPriorities
+        })
         closeForm()
         toast.success('Đã cập nhật')
       } catch {
@@ -124,9 +117,13 @@ export function PriorityManagerDialog({ children }: PriorityManagerDialogProps) 
     try {
       setIsSubmitting(true)
       await taskPriorityService.toggleActive(priorityId)
-      setPriorities((prev) =>
-        prev.map((p) => (p.id === priorityId ? { ...p, isActive: !p.isActive } : p)),
-      )
+      setPriorities((prev) => {
+        const nextPriorities = prev.map((p) =>
+          p.id === priorityId ? { ...p, isActive: !p.isActive } : p,
+        )
+        setMockTaskMeta({ priorities: nextPriorities })
+        return nextPriorities
+      })
       toast.success('Đã thay đổi trạng thái')
     } catch {
       toast.error('Lỗi thao tác')

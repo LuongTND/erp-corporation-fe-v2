@@ -8,13 +8,11 @@ import type { CalendarDayData } from '../../types/attendance.types'
 // ─── Mock data — May 2025 ─────────────────────────────────────────────────────
 
 const TODAY = 26 // May 26 2025
+const WEEKENDS = new Set([3, 4, 10, 11, 17, 18, 24, 25, 31])
 
 const MAY_2025: CalendarDayData[] = Array.from({ length: 31 }, (_, i) => {
   const date = i + 1
-  const dayOfWeek = (3 + i) % 7 // May 1 = Thursday (index 4 in Sun-start) → (3+0)%7=3 → Wed, off by one. Let's hardcode weekends:
-  // May 2025: 1=Thu, so weekends are 3,4, 10,11, 17,18, 24,25, 31
-  const weekends = new Set([3, 4, 10, 11, 17, 18, 24, 25, 31])
-  const isWeekend = weekends.has(date)
+  const isWeekend = WEEKENDS.has(date)
   const isToday = date === TODAY
 
   let attendanceRate = 0

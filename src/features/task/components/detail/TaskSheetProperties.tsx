@@ -14,10 +14,9 @@ import {
   User,
 } from 'lucide-react'
 import type { ReactNode } from 'react'
-import React, { useEffect, useState } from 'react'
-import { taskPriorityService } from '@/features/task/services/task-priority.service'
+import { useState } from 'react'
+import { useMockTaskPriorities } from '@/features/task/hooks/useMockTaskData'
 import type { Column } from '@/features/task/types/task.types'
-import type { TaskPriorityDto } from '@/features/task/types/priority.types'
 import { TaskDatePicker } from './TaskSheetDatePicker'
 import { AssigneeSelector, type UserOption } from './TaskSheetAssigneeSelector'
 
@@ -34,9 +33,6 @@ const createdAtFormatter = new Intl.DateTimeFormat('en-US', {
   minute: '2-digit',
   hour12: true,
 })
-
-let cachedPriorities: TaskPriorityDto[] | null = null
-let prioritiesLoadingPromise: Promise<TaskPriorityDto[]> | null = null
 
 interface TaskSheetPropertiesProps {
   columns?: Column[]
@@ -118,40 +114,7 @@ export function TaskSheetProperties({
   setDueDate,
   createdAt,
 }: TaskSheetPropertiesProps) {
-  const [priorities, setPriorities] = useState<TaskPriorityDto[]>(cachedPriorities || [])
-  const [isLoadingPriorities, setIsLoadingPriorities] = useState(false)
-  const hasLoadedRef = React.useRef(false)
-
-  useEffect(() => {
-    if (hasLoadedRef.current) return
-    hasLoadedRef.current = true
-    if (cachedPriorities) return
-
-    if (prioritiesLoadingPromise) {
-      setIsLoadingPriorities(true)
-      prioritiesLoadingPromise
-        .then((d) => { setPriorities(d); setIsLoadingPriorities(false) })
-        .catch(() => setIsLoadingPriorities(false))
-      return
-    }
-
-    setIsLoadingPriorities(true)
-    const fetch = async (): Promise<TaskPriorityDto[]> => {
-      try {
-        const d = await taskPriorityService.getAllForDropdown()
-        cachedPriorities = d
-        prioritiesLoadingPromise = null
-        setPriorities(d)
-        setIsLoadingPriorities(false)
-        return d
-      } catch {
-        prioritiesLoadingPromise = null
-        setIsLoadingPriorities(false)
-        throw new Error('Failed to load priorities')
-      }
-    }
-    prioritiesLoadingPromise = fetch()
-  }, [])
+  const { isLoading: isLoadingPriorities, priorities } = useMockTaskPriorities()
 
   const statusInfo    = columns?.find((c) => String(c.id) === status)
   const selectedPri   = priorities.find((p) => p.id === priority || p.name === priority || p.code === priority)

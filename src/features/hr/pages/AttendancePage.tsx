@@ -44,7 +44,6 @@ export default function AttendancePage() {
                 mode="single"
                 selected={selectedDate}
                 onSelect={(d) => { if (d) { setSelectedDate(d); setCalOpen(false) } }}
-                initialFocus
               />
             </PopoverContent>
           </Popover>
