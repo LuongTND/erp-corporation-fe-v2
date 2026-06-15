@@ -2,12 +2,9 @@ import { Button } from '@/components/ui/button'
 import {
   Activity,
   CreditCard,
-  LayoutDashboard,
-  Settings,
   Users,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Header } from '@/components/layout/Header'
 
 export default function LandingPage() {
 
@@ -21,46 +18,8 @@ export default function LandingPage() {
 
   return (
     <div className="flex h-screen flex-col bg-background text-foreground transition-colors duration-200">
-      <Header />
+      {/* <Header /> */}
       <div className="flex flex-1 overflow-hidden bg-muted/20">
-        {/* Sidebar (Desktop) */}
-        <aside className="hidden w-64 flex-col border-r border-border bg-card md:flex">
-          <div className="flex h-14 items-center border-b border-border px-4">
-            <div className="flex items-center gap-2 font-semibold">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <LayoutDashboard size={18} />
-              </div>
-              <span>Acme Inc</span>
-            </div>
-          </div>
-          <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-            <a
-              href="#"
-              className="flex items-center gap-3 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground transition-all"
-            >
-              <LayoutDashboard size={18} /> Dashboard
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
-            >
-              <CreditCard size={18} /> Đơn hàng
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
-            >
-              <Users size={18} /> Khách hàng
-            </a>
-            <a
-              href="#"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground"
-            >
-              <Settings size={18} /> Cài đặt
-            </a>
-          </nav>
-        </aside>
-
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Main Content */}
           <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">

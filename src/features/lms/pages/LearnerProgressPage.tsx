@@ -19,12 +19,12 @@ const TOTAL_WEEKLY_MINUTES = MOCK_WEEKLY_ACTIVITY.reduce((sum, d) => sum + d.min
 
 export default function LearnerProgressPage() {
   return (
-    <div className="min-h-screen bg-[#f5f0e8]">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-6xl p-8">
         {/* Page header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#141413]">My Learning Progress</h1>
-          <p className="mt-1 text-sm text-[#6c6a64]">Track your journey and achievements</p>
+          <h1 className="text-2xl font-bold text-foreground">My Learning Progress</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Track your journey and achievements</p>
         </div>
 
         {/* Section 1 — Stats */}

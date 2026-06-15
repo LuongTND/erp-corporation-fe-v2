@@ -249,23 +249,18 @@ export function TaskView() {
 
   return (
     <TaskActionsProvider onOpen={handleTaskClick} onDuplicate={handleDuplicate} onArchive={handleArchive}>
-    <div className="flex flex-col h-full min-h-0" style={{ backgroundColor: '#faf9f5' }}>
+    <div className="flex flex-col h-full min-h-0 bg-background text-foreground">
 
       {/* ── Topbar ─────────────────────────────────────────────── */}
       <header
-        className="flex items-center gap-6 h-[52px] px-5 shrink-0"
-        style={{
-          backgroundColor: '#FFFFFF',
-          borderBottom: '0.5px solid #e6dfd8',
-        }}
+        className="flex items-center gap-6 h-[52px] px-5 shrink-0 bg-card border-b border-border"
       >
         {/* Title + tabs */}
         <div className="flex items-center gap-6 flex-1 min-w-0">
           <h1
-            className="text-[22px] font-semibold leading-none shrink-0"
+            className="text-[22px] font-semibold leading-none shrink-0 text-foreground"
             style={{
               fontFamily: '"Cormorant Garamond", Tiempos Headline, Garamond, serif',
-              color: '#141413',
             }}
           >
             Task của tôi
@@ -277,11 +272,9 @@ export function TaskView() {
                 key={key}
                 type="button"
                 onClick={() => setView(key)}
-                className="relative h-[52px] px-3 text-[13px] font-normal capitalize cursor-pointer transition-colors duration-[120ms]"
-                style={{
-                  color: view === key ? '#cc785c' : '#6c6a64',
-                  borderBottom: view === key ? '2px solid #cc785c' : '2px solid transparent',
-                }}
+                className={`relative h-[52px] px-3 text-[13px] font-normal capitalize cursor-pointer transition-colors duration-[120ms] border-b-2 ${
+                  view === key ? 'text-primary border-primary' : 'text-muted-foreground border-transparent'
+                }`}
               >
                 {label}
               </button>
@@ -297,12 +290,11 @@ export function TaskView() {
             aria-label="Tìm nhanh"
             title="Tìm nhanh (Ctrl+K)"
             onClick={() => setQuickFindOpen(true)}
-            className="flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[12px] cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-            style={{ color: '#6c6a64', border: '0.5px solid #e6dfd8' }}
+            className="flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[12px] cursor-pointer transition-colors duration-[120ms] hover:bg-muted border border-border text-muted-foreground"
           >
             <Search className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Tìm</span>
-            <kbd className="text-[10px] px-1 py-0.5 rounded" style={{ backgroundColor: '#f5f0e8' }}>⌘K</kbd>
+            <kbd className="text-[10px] px-1 py-0.5 rounded bg-muted">⌘K</kbd>
           </button>
 
           {/* Filter button — toggles filter bar */}
@@ -310,14 +302,14 @@ export function TaskView() {
             type="button"
             aria-label="Bộ lọc"
             onClick={() => setFilterBarOpen((v) => !v)}
-            className="relative flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-            style={{ color: filterBarOpen || hasActiveFilters ? '#cc785c' : '#6c6a64' }}
+            className={`relative flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-muted ${
+              filterBarOpen || hasActiveFilters ? 'text-primary' : 'text-muted-foreground'
+            }`}
           >
             <Filter className="h-4 w-4" />
             {hasActiveFilters && (
               <span
-                className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full"
-                style={{ backgroundColor: '#cc785c' }}
+                className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-primary"
               />
             )}
           </button>
@@ -329,12 +321,13 @@ export function TaskView() {
                 type="button"
                 aria-label="Sắp xếp"
                 title="Sắp xếp"
-                className="relative flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-                style={{ color: sortBy !== 'CreatedAtUtc' ? '#cc785c' : '#6c6a64' }}
+                className={`relative flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-muted ${
+                  sortBy !== 'CreatedAtUtc' ? 'text-primary' : 'text-muted-foreground'
+                }`}
               >
                 <ArrowUpDown className="h-4 w-4" />
                 {sortBy !== 'CreatedAtUtc' && (
-                  <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#cc785c' }} />
+                  <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-primary" />
                 )}
               </button>
             </DropdownMenuTrigger>
@@ -359,7 +352,7 @@ export function TaskView() {
                   >
                     {item.label}
                     {sortBy === item.field && sortOrder === item.order && (
-                      <Check className="h-3.5 w-3.5 ml-2 shrink-0" style={{ color: '#cc785c' }} />
+                      <Check className="h-3.5 w-3.5 ml-2 shrink-0 text-primary" />
                     )}
                   </DropdownMenuItem>
                 )
@@ -375,12 +368,13 @@ export function TaskView() {
                   type="button"
                   aria-label="Nhóm theo"
                   title="Nhóm theo"
-                  className="relative flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-                  style={{ color: groupBy !== 'status' ? '#cc785c' : '#6c6a64' }}
+                  className={`relative flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-muted ${
+                    groupBy !== 'status' ? 'text-primary' : 'text-muted-foreground'
+                  }`}
                 >
                   <Layers className="h-4 w-4" />
                   {groupBy !== 'status' && (
-                    <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#cc785c' }} />
+                    <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-primary" />
                   )}
                 </button>
               </DropdownMenuTrigger>
@@ -390,14 +384,14 @@ export function TaskView() {
                   onClick={() => setGroupBy('status')}
                 >
                   Nhóm theo trạng thái
-                  {groupBy === 'status' && <Check className="h-3.5 w-3.5 ml-2 shrink-0" style={{ color: '#cc785c' }} />}
+                  {groupBy === 'status' && <Check className="h-3.5 w-3.5 ml-2 shrink-0 text-primary" />}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer justify-between"
                   onClick={() => setGroupBy('priority')}
                 >
                   Nhóm theo ưu tiên
-                  {groupBy === 'priority' && <Check className="h-3.5 w-3.5 ml-2 shrink-0" style={{ color: '#cc785c' }} />}
+                  {groupBy === 'priority' && <Check className="h-3.5 w-3.5 ml-2 shrink-0 text-primary" />}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -408,8 +402,7 @@ export function TaskView() {
             aria-label="Xuất CSV"
             title="Xuất CSV"
             onClick={handleExportCSV}
-            className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-            style={{ color: '#6c6a64' }}
+            className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-muted text-muted-foreground"
           >
             <Download className="h-4 w-4" />
           </button>
@@ -419,8 +412,7 @@ export function TaskView() {
             aria-label="Nhập CSV"
             title="Nhập CSV"
             onClick={() => csvInputRef.current?.click()}
-            className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-            style={{ color: '#6c6a64' }}
+            className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-muted text-muted-foreground"
           >
             <Upload className="h-4 w-4" />
           </button>
@@ -429,22 +421,16 @@ export function TaskView() {
           <button
             type="button"
             aria-label="Thêm tùy chọn"
-            className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-            style={{ color: '#6c6a64' }}
+            className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-muted text-muted-foreground"
           >
             <MoreHorizontal className="h-4 w-4" />
           </button>
 
-          <div className="h-5 w-px mx-1" style={{ backgroundColor: '#e6dfd8' }} />
+          <div className="h-5 w-px mx-1 bg-border" />
 
           <button
             type="button"
-            className="flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] font-normal cursor-pointer transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
-            style={{
-              border: '0.5px solid #e6dfd8',
-              color: '#6c6a64',
-              backgroundColor: 'transparent',
-            }}
+            className="flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] font-normal cursor-pointer transition-colors duration-[120ms] hover:bg-muted border border-border text-muted-foreground bg-transparent"
           >
             <Share2 className="h-3.5 w-3.5" />
             Chia sẻ
@@ -453,14 +439,7 @@ export function TaskView() {
           <TaskCreateDialog onTaskCreated={handleCreateTask}>
             <button
               type="button"
-              className="flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] font-medium text-white cursor-pointer transition-colors duration-[120ms]"
-              style={{ backgroundColor: '#cc785c' }}
-              onMouseEnter={(e) => {
-                ;(e.currentTarget as HTMLElement).style.backgroundColor = '#a9583e'
-              }}
-              onMouseLeave={(e) => {
-                ;(e.currentTarget as HTMLElement).style.backgroundColor = '#cc785c'
-              }}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] font-medium text-primary-foreground bg-primary cursor-pointer transition-colors duration-[120ms] hover:opacity-90"
             >
               <Plus className="h-3.5 w-3.5" />
               Task mới
@@ -468,8 +447,7 @@ export function TaskView() {
           </TaskCreateDialog>
 
           <span
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-semibold text-white shrink-0 ml-1"
-            style={{ backgroundColor: '#cc785c' }}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-semibold text-primary-foreground bg-primary shrink-0 ml-1"
           >
             MT
           </span>

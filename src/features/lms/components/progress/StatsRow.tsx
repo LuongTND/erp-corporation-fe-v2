@@ -10,17 +10,17 @@ function DonutChart({ percent }: { percent: number }) {
   return (
     <div className="relative flex h-28 w-28 items-center justify-center">
       <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90">
-        <circle cx="50" cy="50" r={r} fill="none" stroke="#e6dfd8" strokeWidth="9" />
+        <circle cx="50" cy="50" r={r} fill="none" stroke="oklch(var(--border))" strokeWidth="9" />
         <circle
           cx="50" cy="50" r={r} fill="none"
-          stroke="#cc785c" strokeWidth="9"
+          stroke="oklch(var(--primary))" strokeWidth="9"
           strokeLinecap="round"
           strokeDasharray={circ}
           strokeDashoffset={offset}
           style={{ transition: 'stroke-dashoffset 0.6s ease' }}
         />
       </svg>
-      <span className="text-2xl font-bold text-[#141413]">{percent}%</span>
+      <span className="text-2xl font-bold text-foreground">{percent}%</span>
     </div>
   );
 }
@@ -37,7 +37,7 @@ function Sparkline({ values }: { values: number[] }) {
       <polyline
         points={points}
         fill="none"
-        stroke="#cc785c"
+        stroke="oklch(var(--primary))"
         strokeWidth="1.8"
         strokeLinejoin="round"
         strokeLinecap="round"
@@ -54,9 +54,9 @@ function StreakDots({ days }: { days: readonly StreakDay[] }) {
         <div key={d.date} className="flex flex-col items-center gap-0.5">
           <div
             className="h-2.5 w-2.5 rounded-full"
-            style={{ backgroundColor: d.active ? '#5db872' : '#e6dfd8' }}
+            style={{ backgroundColor: d.active ? '#5db872' : 'oklch(var(--border))' }}
           />
-          <span className="text-[9px] text-[#8e8b82]">{d.date[0]}</span>
+          <span className="text-[9px] text-muted-foreground">{d.date[0]}</span>
         </div>
       ))}
     </div>
@@ -66,7 +66,7 @@ function StreakDots({ days }: { days: readonly StreakDay[] }) {
 /* ── Stat card wrapper ── */
 function StatCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-1 flex-col gap-3 rounded-2xl border border-[#e6dfd8] bg-[#faf9f5] p-5 shadow-sm">
+    <div className="flex flex-1 flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm">
       {children}
     </div>
   );
@@ -93,12 +93,12 @@ export function StatsRow({
     <div className="flex gap-4">
       {/* Overall Completion */}
       <StatCard>
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Overall Completion</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Overall Completion</p>
         <div className="flex items-center justify-between">
           <DonutChart percent={overallCompletion} />
           <div className="text-right">
-            <p className="text-xs text-[#8e8b82]">Across all</p>
-            <p className="text-xs text-[#8e8b82]">enrolled courses</p>
+            <p className="text-xs text-muted-foreground">Across all</p>
+            <p className="text-xs text-muted-foreground">enrolled courses</p>
           </div>
         </div>
       </StatCard>
@@ -106,14 +106,14 @@ export function StatsRow({
       {/* Total Hours */}
       <StatCard>
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Total Hours</p>
-          <Clock className="h-4 w-4 text-[#cc785c]" />
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Total Hours</p>
+          <Clock className="h-4 w-4 text-primary" />
         </div>
         <div>
-          <p className="text-3xl font-bold text-[#141413]">
-            {totalHours}<span className="ml-1 text-base font-medium text-[#6c6a64]">hrs</span>
+          <p className="text-3xl font-bold text-foreground">
+            {totalHours}<span className="ml-1 text-base font-medium text-muted-foreground">hrs</span>
           </p>
-          <p className="mt-1 text-xs text-[#8e8b82]">Last 7 days</p>
+          <p className="mt-1 text-xs text-muted-foreground">Last 7 days</p>
           <div className="mt-2">
             <Sparkline values={hoursSparkline} />
           </div>
@@ -123,12 +123,12 @@ export function StatsRow({
       {/* Current Streak */}
       <StatCard>
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Current Streak</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Current Streak</p>
           <Flame className="h-4 w-4 text-[#e8a55a]" />
         </div>
         <div>
-          <p className="text-3xl font-bold text-[#141413]">
-            {currentStreak}<span className="ml-1 text-base font-medium text-[#6c6a64]">day streak</span>
+          <p className="text-3xl font-bold text-foreground">
+            {currentStreak}<span className="ml-1 text-base font-medium text-muted-foreground">day streak</span>
           </p>
           <div className="mt-3">
             <StreakDots days={streakDays} />
@@ -139,14 +139,14 @@ export function StatsRow({
       {/* Certificates Earned */}
       <StatCard>
         <div className="flex items-center justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Certificates Earned</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Certificates Earned</p>
           <Award className="h-4 w-4 text-[#5db872]" />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-3xl font-bold text-[#141413]">{certificatesEarned}</p>
+          <p className="text-3xl font-bold text-foreground">{certificatesEarned}</p>
           <a
             href="#certificates"
-            className="flex cursor-pointer items-center gap-1 text-xs font-medium text-[#cc785c] hover:text-[#a9583e] transition-colors"
+            className="flex cursor-pointer items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
           >
             View all certificates
             <ExternalLink className="h-3 w-3" />

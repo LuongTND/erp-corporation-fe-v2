@@ -12,13 +12,13 @@ import type { Task } from '@/features/task/types/task.types'
 import { useTaskActions } from '@/features/task/context/TaskActionsContext'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
-  bg: '#FFFFFF',
-  bgPage: '#faf9f5',
+  text: 'oklch(var(--foreground))',
+  muted: 'oklch(var(--muted-foreground))',
+  border: 'oklch(var(--border))',
+  accent: 'oklch(var(--primary))',
+  bgHover: 'oklch(var(--muted))',
+  bg: 'oklch(var(--card))',
+  bgPage: 'oklch(var(--background))',
 }
 
 const DAY_W = 34   // px per day column
@@ -140,7 +140,7 @@ export function TaskTimeline({ tasks }: Props) {
                       color: isToday(d) ? C.accent : C.muted,
                       fontWeight: isToday(d) ? 700 : 400,
                       borderRight: `0.5px solid ${C.border}`,
-                      backgroundColor: isToday(d) ? '#fff8f5' : 'transparent',
+                      backgroundColor: isToday(d) ? 'oklch(var(--primary) / 0.15)' : 'transparent',
                     }}
                   >
                     {format(d, 'd')}
@@ -173,7 +173,7 @@ export function TaskTimeline({ tasks }: Props) {
                 <button
                   type="button"
                   onClick={() => onOpen(task)}
-                  className="shrink-0 flex items-center gap-1.5 px-3 cursor-pointer text-left transition-colors duration-[120ms] hover:bg-[#f5f0e8]"
+                  className="shrink-0 flex items-center gap-1.5 px-3 cursor-pointer text-left transition-colors duration-[120ms] hover:bg-muted"
                   style={{ width: LEFT_W, borderRight: `0.5px solid ${C.border}` }}
                 >
                   {task.code && (
@@ -210,7 +210,7 @@ export function TaskTimeline({ tasks }: Props) {
                       style={{
                         left: todayOff * DAY_W,
                         width: DAY_W,
-                        backgroundColor: '#fff8f5',
+                        backgroundColor: 'oklch(var(--primary) / 0.15)',
                         pointerEvents: 'none',
                       }}
                     />

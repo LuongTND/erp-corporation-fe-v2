@@ -10,6 +10,7 @@ import LandingPage from '@/features/landing/pages/LandingPage'
 import LoginPage from '@/features/auth/pages/LoginPage'
 import PortalPage from '@/features/auth/pages/PortalPage'
 import ForbiddenPage from '@/features/auth/pages/ForbiddenPage'
+import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 
 // ── Lazy imports (nặng, load khi cần) ──
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'))
@@ -30,8 +31,8 @@ const QuizPage = lazy(() => import('@/features/lms/pages/QuizPage'))
 const LearnerProgressPage = lazy(() => import('@/features/lms/pages/LearnerProgressPage'))
 const AttendancePage = lazy(() => import('@/features/hr/pages/AttendancePage'))
 const PayrollPage = lazy(() => import('@/features/hr/pages/PayrollPage'))
-const KpiPage   = lazy(() => import('@/features/hr/pages/KpiPage'))
-const LeavePage    = lazy(() => import('@/features/hr/pages/LeavePage'))
+const KpiPage = lazy(() => import('@/features/hr/pages/KpiPage'))
+const LeavePage = lazy(() => import('@/features/hr/pages/LeavePage'))
 const OrgChartPage = lazy(() => import('@/features/hr/pages/OrgChartPage'))
 
 // ──────────────────────────────────────────────────────────────
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
     children: [
       // Full-screen routes (no sidebar)
       {
-        path: '/lms/course/:courseId/quiz/:quizId',
+        path: ROUTES.LMS.QUIZ,
         element: (
           <Suspense fallback={<PageFallback />}>
             <QuizPage />
@@ -69,7 +70,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: '/lms/course/:courseId/lesson/:lessonId',
+        path: ROUTES.LMS.LESSON,
         element: (
           <Suspense fallback={<PageFallback />}>
             <LessonPlayerPage />
@@ -103,6 +104,7 @@ export const router = createBrowserRouter([
       {
         element: <RoleGuard />,
         children: [
+          { path: '/', element: <Navigate to={ROUTES.DASHBOARD} replace /> },
           {
             element: (
               <Suspense fallback={<PageFallback />}>
@@ -110,28 +112,127 @@ export const router = createBrowserRouter([
               </Suspense>
             ),
             children: [
-              { path: ROUTES.DASHBOARD, element: <LandingPage /> },
+              { path: ROUTES.DASHBOARD, element: <DashboardPage /> },
               { path: ROUTES.CHAT, element: <ChatPage /> },
               { path: ROUTES.TASK, element: <TaskPage /> },
+              {
+                path: ROUTES.TASK_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <TaskDetailPage />
+                  </Suspense>
+                ),
+              },
+
+              // ── HR & Payroll Module ──
+              {
+                path: ROUTES.HR.DASHBOARD,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <HRMDashboardPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.EMPLOYEES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <EmployeeListPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.EMPLOYEE_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <EmployeeDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.ATTENDANCE,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AttendancePage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.PAYROLL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <PayrollPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.KPI,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <KpiPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.LEAVE,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <LeavePage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.ORG_CHART,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <OrgChartPage />
+                  </Suspense>
+                ),
+              },
+
+              // ── LMS Module ──
+              {
+                path: ROUTES.LMS.DASHBOARD,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <LMSDashboardPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.EXPLORE,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <LMSCatalogPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.COURSE_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CourseDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.COURSE_LEARN,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <LessonPlayerPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.PROGRESS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <LearnerProgressPage />
+                  </Suspense>
+                ),
+              },
             ],
           },
-          { path: '/', element: <Navigate to="/dashboard" replace /> },
-          { path: '/hr', element: <Suspense fallback={<PageFallback />}><HRMDashboardPage /></Suspense> },
-          { path: '/hr/employees', element: <Suspense fallback={<PageFallback />}><EmployeeListPage /></Suspense> },
-          { path: '/hr/employees/:id', element: <Suspense fallback={<PageFallback />}><EmployeeDetailPage /></Suspense> },
-          { path: '/hr/attendance', element: <Suspense fallback={<PageFallback />}><AttendancePage /></Suspense> },
-          { path: '/hr/payroll',    element: <Suspense fallback={<PageFallback />}><PayrollPage /></Suspense> },
-          { path: '/hr/kpi',       element: <Suspense fallback={<PageFallback />}><KpiPage /></Suspense> },
-          { path: '/hr/leave',      element: <Suspense fallback={<PageFallback />}><LeavePage /></Suspense> },
-          { path: '/hr/org-chart', element: <Suspense fallback={<PageFallback />}><OrgChartPage /></Suspense> },
-          { path: '/chat', element: <ChatPage /> },
-          { path: '/task', element: <TaskPage /> },
-          { path: '/task/:id', element: <Suspense fallback={<PageFallback />}><TaskDetailPage /></Suspense> },
-          { path: '/lms', element: <Suspense fallback={<PageFallback />}><LMSDashboardPage /></Suspense> },
-          { path: '/lms/explore', element: <Suspense fallback={<PageFallback />}><LMSCatalogPage /></Suspense> },
-          { path: '/lms/course/:id', element: <Suspense fallback={<PageFallback />}><CourseDetailPage /></Suspense> },
-          { path: '/lms/course/:id/learn', element: <Suspense fallback={<PageFallback />}><LessonPlayerPage /></Suspense> },
-          { path: '/lms/progress', element: <Suspense fallback={<PageFallback />}><LearnerProgressPage /></Suspense> },
         ],
       },
     ],
