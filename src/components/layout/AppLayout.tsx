@@ -5,7 +5,7 @@ import { Header } from './Header'
 export default function AppLayout() {
   return (
     <div className="flex h-screen overflow-hidden">
-      <Header />
+      {/* <Header /> */}
       <AppSidebar />
       <main className="flex-1 overflow-auto" style={{ backgroundColor: '#FAFAF8' }}>
         <Outlet />
