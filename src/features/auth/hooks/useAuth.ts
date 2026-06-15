@@ -2,9 +2,10 @@ import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth.store'
-import { authService, type LoginRequest } from '@/services/auth.service'
+import { authService, type LoginRequest } from '@/features/auth/services/auth.service'
 import { decodeUserFromToken } from '@/features/auth/auth.utils'
 import { ROLE_REDIRECTS } from '@/config/auth.config'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Hook quản lý Authentication cho toàn bộ ứng dụng.
@@ -63,7 +64,7 @@ export const useAuth = () => {
         toast.success('Đăng nhập thành công')
 
         // B5: Redirect dựa trên role
-        const redirectPath = ROLE_REDIRECTS[decodedUser.role] || '/dashboard'
+        const redirectPath = ROLE_REDIRECTS[decodedUser.role] || ROUTES.DASHBOARD
         navigate(redirectPath)
 
         return response
@@ -89,7 +90,7 @@ export const useAuth = () => {
     } finally {
       authStore.logout()
       toast.info('Đã đăng xuất')
-      navigate('/portal')
+      navigate(ROUTES.PORTAL)
     }
   }, [authStore, navigate])
 

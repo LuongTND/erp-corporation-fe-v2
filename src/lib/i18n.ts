@@ -22,11 +22,13 @@ const resources = {
   en: { common: enCommon, error: enError, auth: enAuth, portal: enPortal, landing: enLand },
 }
 
+const savedLanguage = localStorage.getItem('i18nextLng') || 'vi'
+
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     resources,
     fallbackLng: 'vi',
-    lng: 'vi', // Mặc định vi để tránh mismatch
+    lng: savedLanguage,
     defaultNS: 'common',
     ns: ['common', 'error', 'auth', 'portal', 'landing'],
     interpolation: {

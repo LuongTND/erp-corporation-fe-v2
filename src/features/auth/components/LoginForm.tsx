@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/card'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 
 const formSchema = z.object({
   email: z.string().email('Email không hợp lệ.'),

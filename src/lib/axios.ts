@@ -1,5 +1,6 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '@/stores/auth.store'
+import { ROUTES } from '@/config/routes'
 
 type PendingRequest = {
   resolve: (token: string) => void
@@ -35,7 +36,7 @@ const setTokens = (accessToken: string, refreshToken?: string): void => {
 
 const redirectToLogin = (): void => {
   useAuthStore.getState().logout()
-  window.location.href = '/login'
+  window.location.href = ROUTES.PORTAL
 }
 
 const refreshAccessToken = async (): Promise<string> => {
@@ -112,7 +113,7 @@ api.interceptors.response.use(
 
     // 403 Forbidden → redirect
     if (error.response?.status === 403) {
-      window.location.href = '/forbidden'
+      window.location.href = ROUTES.FORBIDDEN
     }
 
     // Network error hoặc server error
