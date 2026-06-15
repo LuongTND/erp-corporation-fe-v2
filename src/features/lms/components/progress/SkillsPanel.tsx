@@ -12,8 +12,8 @@ interface SkillsPanelProps {
 
 export function SkillsPanel({ skills }: SkillsPanelProps) {
   return (
-    <div className="rounded-2xl border border-[#e6dfd8] bg-[#faf9f5] p-5 shadow-sm">
-      <h2 className="mb-4 text-base font-semibold text-[#141413]">Skills Covered</h2>
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+      <h2 className="mb-4 text-base font-semibold text-foreground">Skills Covered</h2>
 
       {/* Legend */}
       <div className="mb-4 flex items-center gap-4">
@@ -23,7 +23,7 @@ export function SkillsPanel({ skills }: SkillsPanelProps) {
               className="h-2 w-2 rounded-full"
               style={{ backgroundColor: PROFICIENCY_COLORS[lvl].dot }}
             />
-            <span className="text-[10px] text-[#8e8b82]">{PROFICIENCY_COLORS[lvl].label}</span>
+            <span className="text-[10px] text-muted-foreground">{PROFICIENCY_COLORS[lvl].label}</span>
           </div>
         ))}
       </div>
@@ -36,13 +36,13 @@ export function SkillsPanel({ skills }: SkillsPanelProps) {
               <div className="mb-1 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: dot }} />
-                  <span className="text-xs font-medium text-[#3d3d3a]">{skill.name}</span>
+                  <span className="text-xs font-medium text-foreground">{skill.name}</span>
                 </div>
                 <span className="text-xs font-semibold" style={{ color: bar }}>
                   {skill.percent}%
                 </span>
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-[#e6dfd8]">
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{ width: `${skill.percent}%`, backgroundColor: bar }}

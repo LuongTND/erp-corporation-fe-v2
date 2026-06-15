@@ -7,12 +7,13 @@ import { TaskSheetComments } from '../components/detail/TaskSheetComments'
 import { TaskSheetSubTasks } from '../components/detail/TaskSheetSubTasks'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bg: '#FFFFFF',
-  bgPage: '#faf9f5',
+  text: 'oklch(var(--foreground))',
+  muted: 'oklch(var(--muted-foreground))',
+  border: 'oklch(var(--border))',
+  accent: 'oklch(var(--primary))',
+  bg: 'oklch(var(--card))',
+  bgPage: 'oklch(var(--background))',
+  bgHover: 'oklch(var(--muted))',
 } as const
 
 function priorityColor(name?: string): string {
@@ -53,7 +54,7 @@ function PropertyRow({
   return (
     <div
       className="flex items-start gap-2 px-2 py-1.5 rounded-lg transition-colors duration-[120ms]"
-      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+      onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = C.bgHover }}
       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
     >
       <div className="flex items-center gap-1.5 w-[88px] shrink-0 pt-0.5" style={{ color: C.muted }}>
@@ -124,7 +125,7 @@ export default function TaskDetailPage() {
             <span style={{ color: C.border }}>·</span>
             <span
               className="text-[11px] font-medium px-1.5 py-0.5 rounded"
-              style={{ backgroundColor: '#f5f0e8', color: C.muted }}
+              style={{ backgroundColor: C.bgHover, color: C.muted }}
             >
               {task.code}
             </span>
@@ -204,7 +205,7 @@ export default function TaskDetailPage() {
             {/* Header */}
             <div
               className="px-4 py-3"
-              style={{ borderBottom: `0.5px solid ${C.border}`, backgroundColor: '#faf9f5' }}
+              style={{ borderBottom: `0.5px solid ${C.border}`, backgroundColor: C.bgPage }}
             >
               <p
                 className="text-[10px] font-semibold uppercase tracking-[0.08em]"
@@ -260,7 +261,7 @@ export default function TaskDetailPage() {
             {/* Timestamps footer */}
             <div
               className="px-4 py-2.5 flex flex-col gap-0.5"
-              style={{ borderTop: `0.5px solid ${C.border}`, backgroundColor: '#faf9f5' }}
+              style={{ borderTop: `0.5px solid ${C.border}`, backgroundColor: C.bgPage }}
             >
               <p className="text-[11px]" style={{ color: C.muted }}>
                 <span className="font-medium">Tạo:</span> {formatDate(task.createdAtUtc)}

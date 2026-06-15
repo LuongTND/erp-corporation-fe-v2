@@ -47,7 +47,7 @@ export function LeftSideBarContent({
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-1 p-2">
           {filteredConversations.length > 0 ? (
-            filteredConversations.map((conversation: SidebarItemResponse) => {
+            filteredConversations.map((conversation: any) => {
               //Chưa có lastMessage
               const lastMessage = conversation.lastMessage?.content || 'Không có tin nhắn'
               const displayTime = conversation.lastMessageAtUtc

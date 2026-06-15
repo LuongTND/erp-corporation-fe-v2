@@ -4,12 +4,14 @@ import { Header } from './Header'
 
 export default function AppLayout() {
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* <Header /> */}
-      <AppSidebar />
-      <main className="flex-1 overflow-auto" style={{ backgroundColor: '#FAFAF8' }}>
-        <Outlet />
-      </main>
+    <div className="flex h-screen flex-col overflow-hidden">
+      <Header />
+      <div className="flex flex-1 overflow-hidden">
+        <AppSidebar />
+        <main className="flex-1 overflow-auto bg-background text-foreground">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

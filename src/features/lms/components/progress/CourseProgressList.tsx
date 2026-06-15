@@ -10,7 +10,7 @@ const FILTER_OPTIONS: Array<{ label: string; value: CourseStatus | 'all' }> = [
 
 function CategoryBadge({ category }: { category: string }) {
   return (
-    <span className="rounded-full bg-[#efe9de] px-2 py-0.5 text-[10px] font-medium text-[#6c6a64]">
+    <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
       {category}
     </span>
   );
@@ -18,7 +18,7 @@ function CategoryBadge({ category }: { category: string }) {
 
 function CourseRow({ course }: { course: CourseProgress }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-[#e6dfd8] bg-[#faf9f5] p-4 shadow-sm transition-colors hover:bg-[#f5f0e8]">
+    <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-sm transition-colors hover:bg-muted">
       {/* Thumbnail */}
       <div
         className="h-[60px] w-20 shrink-0 rounded-lg"
@@ -29,32 +29,32 @@ function CourseRow({ course }: { course: CourseProgress }) {
       {/* Middle — info */}
       <div className="min-w-0 flex-1">
         <div className="mb-1.5 flex items-center gap-2">
-          <p className="truncate text-sm font-semibold text-[#141413]">{course.title}</p>
+          <p className="truncate text-sm font-semibold text-foreground">{course.title}</p>
           <CategoryBadge category={course.category} />
         </div>
-        <p className="mb-2 text-xs text-[#6c6a64]">
+        <p className="mb-2 text-xs text-muted-foreground">
           Module {course.currentModule} of {course.totalModules}
         </p>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#e6dfd8]">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
           <div
-            className="h-full rounded-full bg-[#cc785c] transition-all duration-500"
+            className="h-full rounded-full bg-primary transition-all duration-500"
             style={{ width: `${course.progressPercent}%` }}
           />
         </div>
-        <p className="mt-1 text-xs font-medium text-[#cc785c]">{course.progressPercent}%</p>
+        <p className="mt-1 text-xs font-medium text-primary">{course.progressPercent}%</p>
       </div>
 
       {/* Right — date + action */}
       <div className="flex shrink-0 flex-col items-end gap-2">
-        <p className="text-xs text-[#8e8b82]">Last accessed {course.lastAccessed}</p>
+        <p className="text-xs text-muted-foreground">Last accessed {course.lastAccessed}</p>
         {course.status === 'completed' ? (
-          <span className="rounded-full bg-[#5db872]/15 px-3 py-1 text-xs font-medium text-[#3d7a45]">
+          <span className="rounded-full bg-green-500/10 px-3 py-1 text-xs font-medium text-green-600 dark:text-green-400">
             Completed
           </span>
         ) : (
           <button
             type="button"
-            className="cursor-pointer rounded-lg bg-[#cc785c] px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#a9583e]"
+            className="cursor-pointer rounded-lg bg-primary px-4 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary/80"
           >
             Continue
           </button>
@@ -76,9 +76,9 @@ export function CourseProgressList({ courses }: CourseProgressListProps) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-[#141413]">Active Courses</h2>
+        <h2 className="text-base font-semibold text-foreground">Active Courses</h2>
 
-        <div className="flex items-center overflow-hidden rounded-lg border border-[#e6dfd8] bg-[#faf9f5]">
+        <div className="flex items-center overflow-hidden rounded-lg border border-border bg-card">
           {FILTER_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -87,8 +87,8 @@ export function CourseProgressList({ courses }: CourseProgressListProps) {
               className={cn(
                 'cursor-pointer px-3 py-1.5 text-xs font-medium transition-colors',
                 filter === opt.value
-                  ? 'bg-[#cc785c] text-white'
-                  : 'text-[#6c6a64] hover:bg-[#f5f0e8]',
+                  ? 'bg-primary text-white'
+                  : 'text-muted-foreground hover:bg-muted',
               )}
             >
               {opt.label}
@@ -102,7 +102,7 @@ export function CourseProgressList({ courses }: CourseProgressListProps) {
           <CourseRow key={course.id} course={course} />
         ))}
         {filtered.length === 0 && (
-          <p className="py-8 text-center text-sm text-[#8e8b82]">No courses in this category.</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">No courses in this category.</p>
         )}
       </div>
     </div>
