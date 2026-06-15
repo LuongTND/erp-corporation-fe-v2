@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import type { SortOption, SortOrder } from '@/features/task/types/toolbar.types'
+import type { SortOption, SortOrder } from '@/features/task/types/task.types'
 import { ArrowUpDown, Check } from 'lucide-react'
 
 interface TaskToolbarSortProps {

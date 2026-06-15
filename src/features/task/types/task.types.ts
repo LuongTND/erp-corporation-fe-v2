@@ -104,7 +104,7 @@ export interface CreateTaskRequest {
   departmentId?: Guid
   creatorId?: Guid
   statusId: Guid
-  priorityId: Guid
+  priorityId?: Guid
   startDate?: ISODateString
   dueDate?: ISODateString
   estimatedHours?: number
@@ -213,7 +213,116 @@ export interface Task extends KanbanTaskUI {
   startDate?: ISODateString
   description?: string
   progress?: number
+  estimatedHours?: number
+  parentId?: string
+  parentTitle?: string
+  parentCode?: string
 }
 
 export type TaskStatusQueryParams = BaseQueryParams
 export type TaskItem = TaskItemDto
+
+// ==========================================
+// 5. TOOLBAR TYPES
+// ==========================================
+
+export type SortOption = 'CreatedAtUtc' | 'Title' | 'DueDate'
+export type SortOrder = 'asc' | 'desc'
+
+export interface TaskFilterParams {
+  search?: string
+  statusIds?: string[]
+  priorityIds?: string[]
+  startDateFrom?: Date
+  startDateTo?: Date
+  dueDateFrom?: Date
+  dueDateTo?: Date
+  sortBy?: SortOption
+  sortOrder?: SortOrder
+}
+
+// ==========================================
+// 6. DATE PICKER TYPES
+// ==========================================
+
+export type TimeFormatType = 'hidden' | '12h' | '24h'
+export type ActiveFieldType = 'start' | 'end'
+
+export interface TaskDatePickerProps {
+  startDate?: Date | undefined
+  dueDate?: Date | undefined
+  onStartDateChange?: (date: Date | undefined) => void
+  onDueDateChange?: (date: Date | undefined) => void
+}
+
+// ==========================================
+// 7. ATTACHMENTS
+// ==========================================
+
+export interface TaskAttachment {
+  id: string
+  taskId: string
+  name: string
+  size: number
+  mimeType: string
+  dataUrl: string
+  uploadedAt: ISODateString
+}
+
+// ==========================================
+// 8. DEPENDENCIES
+// ==========================================
+
+export type DependencyType = 'blocks' | 'blocked_by'
+
+export interface TaskDependenciesView {
+  blocks: TaskItemDto[]
+  blockedBy: TaskItemDto[]
+}
+
+// ==========================================
+// 9. CUSTOM PROPERTIES
+// ==========================================
+
+export type CustomPropType = 'select' | 'multi-select' | 'number' | 'checkbox' | 'url'
+
+export interface CustomPropDef {
+  id: string
+  name: string
+  type: CustomPropType
+  options?: string[]
+}
+
+export interface CustomPropValue {
+  defId: string
+  value: string | number | boolean
+}
+
+// ==========================================
+// 10. ACTIVITY LOG
+// ==========================================
+
+export type ActivityAction =
+  | 'created'
+  | 'title_changed'
+  | 'status_changed'
+  | 'priority_changed'
+  | 'description_changed'
+  | 'assignee_changed'
+  | 'due_date_changed'
+  | 'comment_added'
+  | 'attachment_added'
+
+export interface ActivityEntry {
+  id: string
+  taskId: string
+  action: ActivityAction
+  userId: string
+  userName: string
+  createdAtUtc: ISODateString
+  meta?: {
+    from?: string
+    to?: string
+    comment?: string
+  }
+}

@@ -1,7 +1,7 @@
 // TODO: Remove when BE API is ready — revert imports in:
 //   TaskView.tsx, KanbanBoard.tsx, TaskCreateDialog.tsx, PriorityManagerDialog.tsx
-import type { TaskStatusDto, TaskItemDto, CreateTaskRequest, UpdateTaskRequest, CreateTaskStatusRequest, UpdateTaskStatusRequest } from '../types/task.types'
-import type { TaskPriorityDto, CreatePriorityRequest, UpdatePriorityRequest } from '../types/priority.types'
+import type { CreatePriorityRequest, TaskPriorityDto, UpdatePriorityRequest } from '../types/priority.types'
+import type { ActivityAction, ActivityEntry, CreateTaskRequest, CreateTaskStatusRequest, CustomPropDef, CustomPropValue, DependencyType, TaskAttachment, TaskDependenciesView, TaskItemDto, TaskStatusDto, UpdateTaskRequest, UpdateTaskStatusRequest } from '../types/task.types'
 
 // ─── Seed data ──────────────────────────────────────────────────────────────
 
@@ -24,8 +24,8 @@ const SEED_TASKS: TaskItemDto[] = [
   { id: 'task-2', code: 'TASK-002', title: 'Tích hợp API xác thực người dùng', description: 'Kết nối frontend với API đăng nhập/đăng xuất', statusId: 'status-1', statusName: 'To Do', priorityId: 'priority-2', priorityName: 'Medium', creatorId: 'user-2', creatorName: 'Trần Thị B', dueDate: '2026-05-25T00:00:00Z', isActive: true, createdAtUtc: '2026-05-02T00:00:00Z' },
   { id: 'task-3', code: 'TASK-003', title: 'Xây dựng module quản lý nhân sự', description: 'CRUD nhân viên, phòng ban, chức vụ', statusId: 'status-2', statusName: 'In Progress', priorityId: 'priority-3', priorityName: 'High', creatorId: 'user-1', creatorName: 'Nguyễn Văn A', dueDate: '2026-05-18T00:00:00Z', isActive: true, createdAtUtc: '2026-05-03T00:00:00Z' },
   { id: 'task-4', code: 'TASK-004', title: 'Fix bug layout responsive mobile', description: 'Sidebar bị vỡ trên màn hình nhỏ hơn 768px', statusId: 'status-2', statusName: 'In Progress', priorityId: 'priority-4', priorityName: 'Urgent', creatorId: 'user-3', creatorName: 'Lê Văn C', dueDate: '2026-05-14T00:00:00Z', isActive: true, createdAtUtc: '2026-05-04T00:00:00Z' },
-  { id: 'task-5', code: 'TASK-005', title: 'Code review module Task Management', description: 'Review PR #42 — Kanban board implementation', statusId: 'status-3', statusName: 'In Review', priorityId: 'priority-2', priorityName: 'Medium', creatorId: 'user-2', creatorName: 'Trần Thị B', dueDate: '2026-05-15T00:00:00Z', isActive: true, createdAtUtc: '2026-05-05T00:00:00Z' },
-  { id: 'task-6', code: 'TASK-006', title: 'Viết unit test cho auth service', description: 'Coverage tối thiểu 80% cho authentication module', statusId: 'status-3', statusName: 'In Review', priorityId: 'priority-1', priorityName: 'Low', creatorId: 'user-1', creatorName: 'Nguyễn Văn A', dueDate: '2026-05-16T00:00:00Z', isActive: true, createdAtUtc: '2026-05-06T00:00:00Z' },
+  { id: 'task-5', code: 'TASK-005', title: 'Code review module Task Management', description: 'Review PR #42 — Kanban board implementation', statusId: 'status-3', statusName: 'In Review', priorityId: 'priority-2', priorityName: 'Medium', creatorId: 'user-2', creatorName: 'Trần Thị B', dueDate: '2026-05-15T00:00:00Z', isActive: true, createdAtUtc: '2026-05-05T00:00:00Z', parentId: 'task-3', parentCode: 'TASK-003', parentTitle: 'Xây dựng module quản lý nhân sự' } as TaskItemDto & { parentId?: string; parentCode?: string; parentTitle?: string },
+  { id: 'task-6', code: 'TASK-006', title: 'Viết unit test cho auth service', description: 'Coverage tối thiểu 80% cho authentication module', statusId: 'status-3', statusName: 'In Review', priorityId: 'priority-1', priorityName: 'Low', creatorId: 'user-1', creatorName: 'Nguyễn Văn A', dueDate: '2026-05-16T00:00:00Z', isActive: true, createdAtUtc: '2026-05-06T00:00:00Z', parentId: 'task-3', parentCode: 'TASK-003', parentTitle: 'Xây dựng module quản lý nhân sự' } as TaskItemDto & { parentId?: string; parentCode?: string; parentTitle?: string },
   { id: 'task-7', code: 'TASK-007', title: 'Deploy staging environment', description: 'Setup CI/CD pipeline và deploy lên môi trường staging', statusId: 'status-4', statusName: 'Done', priorityId: 'priority-3', priorityName: 'High', creatorId: 'user-3', creatorName: 'Lê Văn C', dueDate: '2026-05-10T00:00:00Z', isActive: true, createdAtUtc: '2026-05-07T00:00:00Z' },
   { id: 'task-8', code: 'TASK-008', title: 'Cấu hình database migrations', description: 'Setup EF Core migrations cho production', statusId: 'status-4', statusName: 'Done', priorityId: 'priority-2', priorityName: 'Medium', creatorId: 'user-2', creatorName: 'Trần Thị B', dueDate: '2026-05-08T00:00:00Z', isActive: true, createdAtUtc: '2026-05-08T00:00:00Z' },
 ]
@@ -97,7 +97,7 @@ export const taskItemService = {
       description: data.description,
       statusId: data.statusId,
       statusName: status?.name,
-      priorityId: data.priorityId,
+      priorityId: data.priorityId ?? '',
       priorityName: priority?.name,
       creatorId: data.creatorId ?? 'user-mock',
       creatorName: 'Mock User',
@@ -179,4 +179,228 @@ export const taskPriorityService = {
   getAll: async () => { await delay(); return { items: _priorities, page: 1, pageSize: 50, totalCount: _priorities.length } },
   getById: async (id: string) => { await delay(); return _priorities.find((p) => p.id === id)! },
   getByCode: async (code: string) => { await delay(); return _priorities.find((p) => p.code === code)! },
+}
+
+// ─── Attachment store ────────────────────────────────────────────────────────
+
+let _attachments: TaskAttachment[] = []
+let _aid = 1
+
+export const taskAttachmentService = {
+  getByTaskId: async (taskId: string): Promise<TaskAttachment[]> => {
+    await delay()
+    return _attachments.filter((a) => a.taskId === taskId)
+  },
+
+  upload: async (taskId: string, file: File): Promise<TaskAttachment> => {
+    const dataUrl = await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = (e) => resolve(e.target!.result as string)
+      reader.readAsDataURL(file)
+    })
+    const att: TaskAttachment = {
+      id: `att-${_aid++}`,
+      taskId,
+      name: file.name,
+      size: file.size,
+      mimeType: file.type,
+      dataUrl,
+      uploadedAt: new Date().toISOString(),
+    }
+    _attachments.push(att)
+    return att
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await delay()
+    _attachments = _attachments.filter((a) => a.id !== id)
+  },
+}
+
+// ─── Dependency store ────────────────────────────────────────────────────────
+
+interface _Dep { id: string; fromTaskId: string; toTaskId: string; type: DependencyType }
+let _deps: _Dep[] = []
+let _did = 1
+
+export const taskDependencyService = {
+  getByTaskId: async (taskId: string): Promise<TaskDependenciesView> => {
+    await delay()
+    const blocksDeps = _deps.filter((d) => d.fromTaskId === taskId && d.type === 'blocks')
+    const blockedByDeps = _deps.filter((d) => d.fromTaskId === taskId && d.type === 'blocked_by')
+    const blocks = blocksDeps.map((d) => _tasks.find((t) => t.id === d.toTaskId)).filter(Boolean) as TaskItemDto[]
+    const blockedBy = blockedByDeps.map((d) => _tasks.find((t) => t.id === d.toTaskId)).filter(Boolean) as TaskItemDto[]
+    return { blocks, blockedBy }
+  },
+
+  add: async (fromTaskId: string, toTaskId: string, type: DependencyType): Promise<_Dep> => {
+    await delay()
+    const exists = _deps.find((d) => d.fromTaskId === fromTaskId && d.toTaskId === toTaskId && d.type === type)
+    if (exists) return exists
+    const dep: _Dep = { id: `dep-${_did++}`, fromTaskId, toTaskId, type }
+    _deps.push(dep)
+    return dep
+  },
+
+  removeByTaskIds: async (fromTaskId: string, toTaskId: string, type: DependencyType): Promise<void> => {
+    await delay()
+    _deps = _deps.filter((d) => !(d.fromTaskId === fromTaskId && d.toTaskId === toTaskId && d.type === type))
+  },
+}
+
+// ─── Custom property store ───────────────────────────────────────────────────
+
+let _propDefs: CustomPropDef[] = []
+let _propVals = new Map<string, CustomPropValue[]>()
+let _cdid = 1
+
+export const customPropertyService = {
+  getDefs: async (): Promise<CustomPropDef[]> => {
+    await delay()
+    return [..._propDefs]
+  },
+
+  createDef: async (def: Omit<CustomPropDef, 'id'>): Promise<CustomPropDef> => {
+    await delay()
+    const d: CustomPropDef = { ...def, id: `cpd-${_cdid++}` }
+    _propDefs.push(d)
+    return d
+  },
+
+  deleteDef: async (id: string): Promise<void> => {
+    await delay()
+    _propDefs = _propDefs.filter((d) => d.id !== id)
+    _propVals.forEach((vals, taskId) => {
+      _propVals.set(taskId, vals.filter((v) => v.defId !== id))
+    })
+  },
+
+  getValues: async (taskId: string): Promise<CustomPropValue[]> => {
+    await delay()
+    return [...(_propVals.get(taskId) ?? [])]
+  },
+
+  setValue: async (taskId: string, defId: string, value: string | number | boolean): Promise<void> => {
+    await delay()
+    const vals = [...(_propVals.get(taskId) ?? [])]
+    const idx = vals.findIndex((v) => v.defId === defId)
+    if (idx >= 0) vals[idx] = { defId, value }
+    else vals.push({ defId, value })
+    _propVals.set(taskId, vals)
+  },
+}
+
+// ─── Activity log store ───────────────────────────────────────────────────────
+
+const SEED_ACTIVITIES: ActivityEntry[] = [
+  { id: 'act-1', taskId: 'task-1', action: 'created', userId: 'user-1', userName: 'Nguyễn Văn A', createdAtUtc: '2026-05-01T08:00:00Z' },
+  { id: 'act-2', taskId: 'task-1', action: 'priority_changed', userId: 'user-1', userName: 'Nguyễn Văn A', createdAtUtc: '2026-05-01T09:30:00Z', meta: { from: 'Medium', to: 'High' } },
+  { id: 'act-3', taskId: 'task-2', action: 'created', userId: 'user-2', userName: 'Trần Thị B', createdAtUtc: '2026-05-02T08:00:00Z' },
+  { id: 'act-4', taskId: 'task-3', action: 'created', userId: 'user-1', userName: 'Nguyễn Văn A', createdAtUtc: '2026-05-03T08:00:00Z' },
+  { id: 'act-5', taskId: 'task-3', action: 'status_changed', userId: 'user-2', userName: 'Trần Thị B', createdAtUtc: '2026-05-04T10:00:00Z', meta: { from: 'To Do', to: 'In Progress' } },
+  { id: 'act-6', taskId: 'task-3', action: 'assignee_changed', userId: 'user-1', userName: 'Nguyễn Văn A', createdAtUtc: '2026-05-04T11:00:00Z', meta: { from: '', to: 'Nguyễn Văn A' } },
+  { id: 'act-7', taskId: 'task-4', action: 'created', userId: 'user-3', userName: 'Lê Văn C', createdAtUtc: '2026-05-04T08:00:00Z' },
+  { id: 'act-8', taskId: 'task-4', action: 'description_changed', userId: 'user-3', userName: 'Lê Văn C', createdAtUtc: '2026-05-04T14:00:00Z' },
+]
+
+let _activities: ActivityEntry[] = [...SEED_ACTIVITIES]
+let _actId = SEED_ACTIVITIES.length + 1
+
+export const taskActivityService = {
+  getByTaskId: async (taskId: string): Promise<ActivityEntry[]> => {
+    await delay()
+    return _activities.filter((a) => a.taskId === taskId).sort((a, b) =>
+      new Date(b.createdAtUtc).getTime() - new Date(a.createdAtUtc).getTime()
+    )
+  },
+
+  add: async (taskId: string, action: ActivityAction, userId: string, userName: string, meta?: ActivityEntry['meta']): Promise<ActivityEntry> => {
+    await delay()
+    const entry: ActivityEntry = {
+      id: `act-${_actId++}`,
+      taskId,
+      action,
+      userId,
+      userName,
+      createdAtUtc: new Date().toISOString(),
+      meta,
+    }
+    _activities.push(entry)
+    return entry
+  },
+}
+
+// ─── CSV import / export ─────────────────────────────────────────────────────
+
+const CSV_HEADERS = ['code', 'title', 'status', 'priority', 'creator', 'startDate', 'dueDate', 'estimatedHours', 'description']
+
+function csvEscape(val: string): string {
+  return `"${val.replace(/"/g, '""')}"`
+}
+
+function parseCSVLine(line: string): string[] {
+  const result: string[] = []
+  let i = 0
+  while (i < line.length) {
+    if (line[i] === '"') {
+      let val = ''
+      i++
+      while (i < line.length) {
+        if (line[i] === '"' && line[i + 1] === '"') { val += '"'; i += 2 }
+        else if (line[i] === '"') { i++; break }
+        else { val += line[i++] }
+      }
+      result.push(val)
+      if (line[i] === ',') i++
+    } else {
+      const end = line.indexOf(',', i)
+      if (end === -1) { result.push(line.slice(i)); break }
+      result.push(line.slice(i, end))
+      i = end + 1
+    }
+  }
+  return result
+}
+
+export function exportTasksToCSV(tasks: TaskItemDto[]): string {
+  const rows = tasks.map((t) =>
+    [
+      t.code,
+      t.title,
+      t.statusName ?? '',
+      t.priorityName ?? '',
+      t.creatorName ?? '',
+      t.startDate ?? '',
+      t.dueDate ?? '',
+      String(t.estimatedHours ?? ''),
+      t.description ?? '',
+    ].map(csvEscape).join(','),
+  )
+  return [CSV_HEADERS.join(','), ...rows].join('\n')
+}
+
+export async function importTasksFromCSV(csvText: string): Promise<TaskItemDto[]> {
+  const lines = csvText.trim().split('\n')
+  if (lines.length < 2) return []
+  const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''))
+  const results: TaskItemDto[] = []
+  for (let i = 1; i < lines.length; i++) {
+    const vals = parseCSVLine(lines[i])
+    const row: Record<string, string> = {}
+    headers.forEach((h, idx) => { row[h] = vals[idx] ?? '' })
+    const status = _statuses.find((s) => s.name.toLowerCase() === (row.status ?? '').toLowerCase()) ?? _statuses[0]
+    const priority = _priorities.find((p) => p.name.toLowerCase() === (row.priority ?? '').toLowerCase()) ?? _priorities[0]
+    const task = await taskItemService.create({
+      code: row.code || `TASK-${_tid}`,
+      title: row.title || '(Untitled)',
+      description: row.description || undefined,
+      statusId: status.id,
+      priorityId: priority.id,
+      startDate: row.startDate || undefined,
+      dueDate: row.dueDate || undefined,
+      estimatedHours: row.estimatedHours ? Number(row.estimatedHours) : undefined,
+    })
+    results.push(task)
+  }
+  return results
 }

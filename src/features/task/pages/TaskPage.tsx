@@ -1,4 +1,4 @@
-import { TaskView } from '../components/TaskView'
+import { TaskView } from '../components/views/task-workspace/TaskView'
 
 export default function TaskPage() {
   return <TaskView />

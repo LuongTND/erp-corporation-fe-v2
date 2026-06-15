@@ -9,7 +9,27 @@ export default {
       screens: { '2xl': '1400px' },
     },
     extend: {
+      fontFamily: {
+        sans:    ['"DM Sans"', 'sans-serif'],
+        display: ['Lora', 'Georgia', 'serif'],
+        mono:    ['"JetBrains Mono"', 'monospace'],
+      },
       colors: {
+        /* Task design tokens — use as bg-t-accent, text-t-sidebar-bg, etc. */
+        't-accent':          '#E8784A',
+        't-accent-hover':    '#D96B3C',
+        't-sidebar-bg':      '#191919',
+        't-sidebar-text':    '#999999',
+        't-sidebar-hover':   '#E0E0E0',
+        't-bg-primary':      '#FAFAF8',
+        't-bg-surface':      '#FFFFFF',
+        't-bg-hover':        '#F0EDE8',
+        't-bg-selected':     '#EDE9E4',
+        't-text-primary':    '#1A1A1A',
+        't-text-secondary':  '#6B6B6B',
+        't-text-muted':      '#9A9A9A',
+        't-border':          '#E8E8E6',
+        't-border-strong':   '#D0CCC8',
         border: 'oklch(var(--border) / <alpha-value>)',
         input: 'oklch(var(--input) / <alpha-value>)',
         ring: 'oklch(var(--ring) / <alpha-value>)',
