@@ -41,7 +41,7 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       {/* Header */}
       <div className="mb-3 flex items-start justify-between">
         <h3 className="flex-1 font-semibold text-card-foreground">{task.title}</h3>
-        <Badge className={priorityColors[task.priority]}>{task.priority}</Badge>
+        <Badge className={task.priority ? priorityColors[task.priority] : ''}>{task.priority}</Badge>
       </div>
 
       {/* Description */}
@@ -52,27 +52,29 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       )}
 
       {/* Progress Bar */}
-      <div className="mb-3">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-muted-foreground">Progress</span>
-          <span className="text-xs font-medium">{task.progress}%</span>
+      {task.progress !== undefined && (
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-muted-foreground">Progress</span>
+            <span className="text-xs font-medium">{task.progress}%</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-primary transition-all"
+              style={{ width: `${task.progress}%` }}
+            />
+          </div>
         </div>
-        <div className="h-2 w-full rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-primary transition-all"
-            style={{ width: `${task.progress}%` }}
-          />
-        </div>
-      </div>
+      )}
 
       {/* Footer */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span
-            className={`inline-block h-2 w-2 rounded-full ${statusColors[task.status]}`}
+            className={`inline-block h-2 w-2 rounded-full ${task.status ? statusColors[task.status] : ''}`}
           />
           <span className="text-xs text-muted-foreground capitalize">
-            {task.status.replace('-', ' ')}
+            {task.status?.replace('-', ' ')}
           </span>
         </div>
 
@@ -84,14 +86,14 @@ export function TaskCard({ task, onClick }: TaskCardProps) {
       </div>
 
       {/* Assigned To */}
-      {task.assignedTo && (
+      {task.assignee && (
         <div className="mt-3 flex items-center gap-2 border-t pt-3">
           <img
-            src={task.assignedTo.avatar || 'https://via.placeholder.com/24'}
-            alt={task.assignedTo.name}
+            src={task.assigneeAvatar || 'https://via.placeholder.com/24'}
+            alt={task.assignee}
             className="h-6 w-6 rounded-full"
           />
-          <span className="text-xs text-muted-foreground">{task.assignedTo.name}</span>
+          <span className="text-xs text-muted-foreground">{task.assignee}</span>
         </div>
       )}
     </div>
