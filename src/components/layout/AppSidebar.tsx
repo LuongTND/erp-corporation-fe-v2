@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/config/routes'
 
 type SubItem = { icon: LucideIcon; label: string; href: string }
 type ModuleItem = {
@@ -37,28 +38,28 @@ type ModuleItem = {
 }
 
 const CORE_ITEMS: ModuleItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard',  href: '/dashboard' },
-  { icon: CheckSquare,     label: 'My Tasks',   href: '/task',     badge: 9 },
+  { icon: LayoutDashboard, label: 'Dashboard',  href: ROUTES.DASHBOARD },
+  { icon: CheckSquare,     label: 'My Tasks',   href: ROUTES.TASK,     badge: 9 },
   { icon: Inbox,           label: 'Inbox',      href: '/inbox',    badge: 3 },
   { icon: Calendar,        label: 'Calendar',   href: '/calendar' },
 ]
 
 const MODULE_ITEMS: ModuleItem[] = [
-  { icon: MessageSquare, label: 'Chat',        href: '/chat' },
+  { icon: MessageSquare, label: 'Chat',        href: ROUTES.CHAT },
   { icon: Users2,        label: 'CRM',         href: '/crm' },
   { icon: DollarSign,    label: 'Finance',     href: '/finance' },
   {
     icon: Users,
     label: 'HR & Payroll',
-    href: '/hr',
+    href: ROUTES.HR.DASHBOARD,
     subItems: [
-      { icon: LayoutDashboard, label: 'Overview',    href: '/hr' },
-      { icon: Users2,          label: 'Employees',  href: '/hr/employees' },
-      { icon: Calendar,        label: 'Attendance', href: '/hr/attendance' },
-      { icon: Banknote,        label: 'Payroll',    href: '/hr/payroll' },
-      { icon: Target,          label: 'KPI',        href: '/hr/kpi' },
-      { icon: CalendarDays,    label: 'Leave',      href: '/hr/leave' },
-      { icon: Network,         label: 'Org Chart',  href: '/hr/org-chart' },
+      { icon: LayoutDashboard, label: 'Overview',    href: ROUTES.HR.DASHBOARD },
+      { icon: Users2,          label: 'Employees',  href: ROUTES.HR.EMPLOYEES },
+      { icon: Calendar,        label: 'Attendance', href: ROUTES.HR.ATTENDANCE },
+      { icon: Banknote,        label: 'Payroll',    href: ROUTES.HR.PAYROLL },
+      { icon: Target,          label: 'KPI',        href: ROUTES.HR.KPI },
+      { icon: CalendarDays,    label: 'Leave',      href: ROUTES.HR.LEAVE },
+      { icon: Network,         label: 'Org Chart',  href: ROUTES.HR.ORG_CHART },
     ],
   },
   { icon: Package,       label: 'Inventory',   href: '/inventory' },
@@ -67,11 +68,11 @@ const MODULE_ITEMS: ModuleItem[] = [
   {
     icon: GraduationCap,
     label: 'LMS',
-    href: '/lms',
+    href: ROUTES.LMS.DASHBOARD,
     subItems: [
-      { icon: BookOpen, label: 'My Courses', href: '/lms' },
-      { icon: Compass, label: 'Explore', href: '/lms/explore' },
-      { icon: TrendingUp, label: 'Progress', href: '/lms/progress' },
+      { icon: BookOpen, label: 'My Courses', href: ROUTES.LMS.DASHBOARD },
+      { icon: Compass, label: 'Explore', href: ROUTES.LMS.EXPLORE },
+      { icon: TrendingUp, label: 'Progress', href: ROUTES.LMS.PROGRESS },
     ],
   },
 ]
@@ -99,33 +100,16 @@ function NavButton({
       className={cn(
         'flex items-center gap-2 h-8 rounded-md w-full text-[13px] font-normal transition-colors duration-[120ms] cursor-pointer',
         depth === 0 ? 'px-2 border-l-2' : 'pl-7 pr-2',
-        active && depth === 0 ? 'border-l-2 pl-[6px]' : '',
-        !active && depth === 0 ? 'border-transparent' : '',
-      )}
-      style={
         active
-          ? { backgroundColor: 'rgba(232,120,74,0.15)', color: '#E8784A', borderColor: depth === 0 ? '#E8784A' : 'transparent' }
-          : { color: depth > 0 ? '#666' : '#999' }
-      }
-      onMouseEnter={(e) => {
-        if (!active) {
-          ;(e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.07)'
-          ;(e.currentTarget as HTMLElement).style.color = '#E0E0E0'
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          ;(e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
-          ;(e.currentTarget as HTMLElement).style.color = depth > 0 ? '#666' : '#999'
-        }
-      }}
+          ? (depth === 0 ? 'bg-primary/15 text-primary border-l-primary pl-[6px]' : 'bg-primary/15 text-primary')
+          : (depth > 0 ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent' : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent border-transparent')
+      )}
     >
       <Icon className="h-4 w-4 shrink-0" />
       <span className="flex-1 text-left truncate">{label}</span>
       {badge != null && (
         <span
-          className="text-[10px] font-medium rounded-full px-1.5 py-px leading-none"
-          style={{ backgroundColor: '#E8784A', color: '#fff' }}
+          className="text-[10px] font-medium rounded-full px-1.5 py-px leading-none bg-primary text-primary-foreground"
         >
           {badge}
         </span>
@@ -142,41 +126,34 @@ export function AppSidebar() {
 
   return (
     <aside
-      className="flex flex-col h-screen shrink-0 overflow-hidden"
-      style={{ width: 240, backgroundColor: '#191919' }}
+      className="flex flex-col h-full shrink-0 overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground"
+      style={{ width: 240 }}
     >
       {/* Workspace header */}
       <button
         type="button"
-        className="flex items-center gap-2 h-[52px] px-3 w-full transition-colors duration-[120ms] rounded-md mx-1 hover:bg-white/[0.06] cursor-pointer"
-        style={{ color: '#E0E0E0' }}
+        className="flex items-center gap-2 h-[52px] px-3 w-full transition-colors duration-[120ms] rounded-md mx-1 hover:bg-sidebar-accent/50 cursor-pointer"
       >
         <span
-          className="flex items-center justify-center w-8 h-8 rounded-md shrink-0 text-white font-bold text-sm"
-          style={{ backgroundColor: '#E8784A' }}
+          className="flex items-center justify-center w-8 h-8 rounded-md shrink-0 text-white font-bold text-sm bg-primary"
         >
           D
         </span>
         <div className="flex flex-col items-start flex-1 min-w-0">
-          <span className="text-[13px] font-semibold truncate w-full text-left" style={{ color: '#E0E0E0' }}>
+          <span className="text-[13px] font-semibold truncate w-full text-left text-sidebar-foreground">
             DigiFNB ERP
           </span>
-          <span className="text-[10px] truncate w-full text-left" style={{ color: '#555' }}>
+          <span className="text-[10px] truncate w-full text-left text-sidebar-foreground/50">
             Corporation v2
           </span>
         </div>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0" style={{ color: '#555' }} />
+        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-sidebar-foreground/45" />
       </button>
 
       {/* Search bar */}
       <div className="px-2 mb-1">
         <div
-          className="flex items-center gap-2 h-[30px] px-2.5 rounded-md border text-[12px]"
-          style={{
-            backgroundColor: 'rgba(255,255,255,0.05)',
-            borderColor: 'rgba(255,255,255,0.08)',
-            color: '#444',
-          }}
+          className="flex items-center gap-2 h-[30px] px-2.5 rounded-md border text-[12px] bg-sidebar-accent/40 border-sidebar-border/60 text-sidebar-foreground/60"
         >
           <Search className="h-3.5 w-3.5 shrink-0" />
           <span>Search...</span>
@@ -202,8 +179,7 @@ export function AppSidebar() {
           <button
             type="button"
             onClick={() => setModulesOpen((v) => !v)}
-            className="flex items-center gap-1 w-full px-2 py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] cursor-pointer transition-colors duration-[120ms]"
-            style={{ color: '#444' }}
+            className="flex items-center gap-1 w-full px-2 py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] cursor-pointer transition-colors duration-[120ms] text-sidebar-foreground/40 hover:text-sidebar-foreground/60"
           >
             <ChevronDown
               className="h-3 w-3 shrink-0 transition-transform duration-200"
@@ -255,36 +231,28 @@ export function AppSidebar() {
       {/* Settings */}
       <button
         type="button"
-        className="flex items-center gap-2 h-8 mx-1 px-2 rounded-md text-[13px] transition-colors duration-[120ms] cursor-pointer"
-        style={{ color: '#555' }}
-        onMouseEnter={(e) => {
-          ;(e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.06)'
-          ;(e.currentTarget as HTMLElement).style.color = '#999'
-        }}
-        onMouseLeave={(e) => {
-          ;(e.currentTarget as HTMLElement).style.backgroundColor = 'transparent'
-          ;(e.currentTarget as HTMLElement).style.color = '#555'
-        }}
+        className="flex items-center gap-2 h-8 mx-1 px-2 rounded-md text-[13px] transition-colors duration-[120ms] cursor-pointer text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
       >
         <Settings className="h-4 w-4 shrink-0" />
         <span>Settings</span>
       </button>
 
+      {/* Divider */}
+      <div className="h-px bg-sidebar-border mx-2 my-1" />
+
       {/* User row */}
       <div
-        className="flex items-center gap-2 h-10 px-3 mt-1 mx-1 mb-1 rounded-md cursor-pointer transition-colors duration-[120ms]"
-        style={{ borderTop: '0.5px solid rgba(255,255,255,0.07)' }}
+        className="flex items-center gap-2 h-10 px-3 mx-1 mb-1 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-sidebar-accent/50"
       >
         <span
-          className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0"
-          style={{ backgroundColor: '#E8784A' }}
+          className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0 bg-primary"
         >
           MT
         </span>
-        <span className="text-[12px] flex-1 truncate" style={{ color: '#AAA' }}>
+        <span className="text-[12px] flex-1 truncate text-sidebar-foreground/75">
           My Account
         </span>
-        <ChevronDown className="h-3 w-3 shrink-0" style={{ color: '#555' }} />
+        <ChevronDown className="h-3 w-3 shrink-0 text-sidebar-foreground/45" />
       </div>
     </aside>
   )

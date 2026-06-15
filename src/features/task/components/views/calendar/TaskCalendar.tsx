@@ -18,12 +18,13 @@ import type { Task } from '@/features/task/types/task.types'
 import { useTaskActions } from '@/features/task/context/TaskActionsContext'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bg: '#FFFFFF',
-  bgPage: '#faf9f5',
+  text: 'oklch(var(--foreground))',
+  muted: 'oklch(var(--muted-foreground))',
+  border: 'oklch(var(--border))',
+  accent: 'oklch(var(--primary))',
+  bg: 'oklch(var(--card))',
+  bgPage: 'oklch(var(--background))',
+  bgHover: 'oklch(var(--muted))',
 } as const
 
 const WEEK_DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
@@ -88,7 +89,7 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
           onClick={goToToday}
           className="px-2.5 py-1 rounded text-[12px] cursor-pointer transition-colors duration-[120ms]"
           style={{ border: `0.5px solid ${C.border}`, color: C.muted }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = C.bgHover }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
         >
           Hôm nay
@@ -105,7 +106,7 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
             onClick={action}
             className="w-7 h-7 flex items-center justify-center rounded cursor-pointer transition-colors duration-[120ms]"
             style={{ color: C.muted }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = C.bgHover }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
           >
             <Icon className="h-4 w-4" />
@@ -143,7 +144,7 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
                 key={key}
                 className="rounded-lg p-1.5 flex flex-col"
                 style={{
-                  backgroundColor: today ? 'rgba(204,120,92,0.04)' : C.bg,
+                  backgroundColor: today ? 'oklch(var(--primary) / 0.1)' : C.bg,
                   border: today
                     ? `1.5px solid ${C.accent}`
                     : `0.5px solid ${C.border}`,

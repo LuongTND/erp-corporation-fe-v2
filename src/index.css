@@ -8,61 +8,26 @@
 
 @layer base {
   :root {
-    /* ── Task Design Tokens ─────────────────────────── */
-    --t-sidebar-bg:          #191919;
-    --t-sidebar-text:        #999999;
-    --t-sidebar-text-hover:  #E0E0E0;
-    --t-sidebar-active-bg:   rgba(232, 120, 74, 0.15);
-    --t-sidebar-active-txt:  #E8784A;
-    --t-sidebar-border:      rgba(255, 255, 255, 0.08);
-
-    --t-bg-primary:   #FAFAF8;
-    --t-bg-surface:   #FFFFFF;
-    --t-bg-hover:     #F0EDE8;
-    --t-bg-selected:  #EDE9E4;
-
-    --t-text-primary:   #1A1A1A;
-    --t-text-secondary: #6B6B6B;
-    --t-text-muted:     #9A9A9A;
-
-    --t-accent:        #E8784A;
-    --t-accent-hover:  #D96B3C;
-    --t-accent-subtle: rgba(232, 120, 74, 0.12);
-
-    --t-border:        #E8E8E6;
-    --t-border-strong: #D0CCC8;
-
-    /* Priority */
-    --t-priority-high-bg:   #FDECEA; --t-priority-high-text:   #C0392B;
-    --t-priority-med-bg:    #FEF6E4; --t-priority-med-text:    #B7770D;
-    --t-priority-low-bg:    #E8F4FD; --t-priority-low-text:    #1A6EA8;
-
-    /* Status */
-    --t-status-todo-bg:       #F0F0EE; --t-status-todo-text:       #6B6B6B;
-    --t-status-progress-bg:   #FEF6E4; --t-status-progress-text:   #B7770D;
-    --t-status-done-bg:       #EAF3DE; --t-status-done-text:       #3B6D11;
-    --t-status-overdue-bg:    #FDECEA; --t-status-overdue-text:    #C0392B;
-    /* ─────────────────────────────────────────────── */
-
-    --background: 1 0 0;
-    --foreground: 0.145 0 0;
-    --card: 1 0 0;
-    --card-foreground: 0.145 0 0;
+    /* ── Main Theme Variables (Orange & Cream) ── */
+    --background: 0.985 0.003 75.0;      /* Cream background (#FAFAF8) */
+    --foreground: 0.18 0 0;              /* Dark charcoal text (#1A1A1A) */
+    --card: 1 0 0;                       /* White */
+    --card-foreground: 0.18 0 0;
     --popover: 1 0 0;
-    --popover-foreground: 0.145 0 0;
-    --primary: 0.205 0 0;
-    --primary-foreground: 0.985 0 0;
-    --secondary: 0.97 0 0;
-    --secondary-foreground: 0.205 0 0;
-    --muted: 0.97 0 0;
-    --muted-foreground: 0.556 0 0;
-    --accent: 0.97 0 0;
-    --accent-foreground: 0.205 0 0;
+    --popover-foreground: 0.18 0 0;
+    --primary: 0.638 0.187 40.2;         /* Orange (#E8784A) */
+    --primary-foreground: 1 0 0;         /* White text */
+    --secondary: 0.94 0.005 75.0;        /* Soft cream */
+    --secondary-foreground: 0.18 0 0;
+    --muted: 0.94 0.005 75.0;            /* Soft cream */
+    --muted-foreground: 0.45 0.005 75.0;
+    --accent: 0.975 0.025 75.0;          /* Subtle orange selection */
+    --accent-foreground: 0.5 0.1 40.2;
     --destructive: 0.577 0.245 27.325;
     --destructive-foreground: 0.985 0 0;
-    --border: 0.922 0 0;
-    --input: 0.922 0 0;
-    --ring: 0.708 0 0;
+    --border: 0.922 0.002 75.0;          /* Soft border */
+    --input: 0.922 0.002 75.0;
+    --ring: 0.638 0.187 40.2;            /* Orange ring */
     --radius: 0.625rem;
     --chart-1: 0.87 0 0;
     --chart-2: 0.556 0 0;
@@ -77,28 +42,64 @@
     --sidebar-accent-foreground: 0.205 0 0;
     --sidebar-border: 0.922 0 0;
     --sidebar-ring: 0.708 0 0;
+
+    /* ── Task Design Tokens (Mapped to standard theme variables) ── */
+    --t-sidebar-bg:          #191919;
+    --t-sidebar-text:        #999999;
+    --t-sidebar-text-hover:  #E0E0E0;
+    --t-sidebar-active-bg:   rgba(232, 120, 74, 0.15);
+    --t-sidebar-active-txt:  #E8784A;
+    --t-sidebar-border:      rgba(255, 255, 255, 0.08);
+
+    --t-bg-primary:   oklch(var(--background));
+    --t-bg-surface:   oklch(var(--card));
+    --t-bg-hover:     oklch(var(--muted));
+    --t-bg-selected:  oklch(var(--secondary));
+
+    --t-text-primary:   oklch(var(--foreground));
+    --t-text-secondary: oklch(var(--muted-foreground));
+    --t-text-muted:     oklch(var(--muted-foreground));
+
+    --t-accent:        oklch(var(--primary));
+    --t-accent-hover:  oklch(var(--primary));
+    --t-accent-subtle: rgba(232, 120, 74, 0.12);
+
+    --t-border:        oklch(var(--border));
+    --t-border-strong: oklch(var(--border));
+
+    /* Priority */
+    --t-priority-high-bg:   #FDECEA; --t-priority-high-text:   #C0392B;
+    --t-priority-med-bg:    #FEF6E4; --t-priority-med-text:    #B7770D;
+    --t-priority-low-bg:    #E8F4FD; --t-priority-low-text:    #1A6EA8;
+
+    /* Status */
+    --t-status-todo-bg:       #F0F0EE; --t-status-todo-text:       #6B6B6B;
+    --t-status-progress-bg:   #FEF6E4; --t-status-progress-text:   #B7770D;
+    --t-status-done-bg:       #EAF3DE; --t-status-done-text:       #3B6D11;
+    --t-status-overdue-bg:    #FDECEA; --t-status-overdue-text:    #C0392B;
   }
 
   .dark {
-    --background: 0.145 0 0;
-    --foreground: 0.985 0 0;
-    --card: 0.205 0 0;
-    --card-foreground: 0.985 0 0;
-    --popover: 0.205 0 0;
-    --popover-foreground: 0.985 0 0;
-    --primary: 0.922 0 0;
-    --primary-foreground: 0.205 0 0;
-    --secondary: 0.269 0 0;
-    --secondary-foreground: 0.985 0 0;
-    --muted: 0.269 0 0;
-    --muted-foreground: 0.708 0 0;
-    --accent: 0.269 0 0;
-    --accent-foreground: 0.985 0 0;
+    /* ── Main Theme Variables (Dark Mode Orange & Charcoal) ── */
+    --background: 0.14 0.005 75.0;       /* Dark charcoal-cream background */
+    --foreground: 0.985 0.003 75.0;      /* Light cream text */
+    --card: 0.18 0.005 75.0;             /* Darker brown-charcoal */
+    --card-foreground: 0.985 0.003 75.0;
+    --popover: 0.18 0.005 75.0;
+    --popover-foreground: 0.985 0.003 75.0;
+    --primary: 0.638 0.187 40.2;         /* Orange (#E8784A) */
+    --primary-foreground: 1 0 0;         /* White text */
+    --secondary: 0.22 0.005 75.0;
+    --secondary-foreground: 0.985 0.003 75.0;
+    --muted: 0.22 0.005 75.0;
+    --muted-foreground: 0.65 0.005 75.0;
+    --accent: 0.25 0.05 40.2;            /* Dark orange-brown accent */
+    --accent-foreground: 0.985 0.003 75.0;
     --destructive: 0.704 0.191 22.216;
     --destructive-foreground: 0.985 0 0;
-    --border: 1 0 0 / 10%;
-    --input: 1 0 0 / 15%;
-    --ring: 0.556 0 0;
+    --border: 0.25 0.005 75.0;
+    --input: 0.25 0.005 75.0;
+    --ring: 0.638 0.187 40.2;
     --chart-1: 0.87 0 0;
     --chart-2: 0.556 0 0;
     --chart-3: 0.439 0 0;
@@ -110,7 +111,7 @@
     --sidebar-primary-foreground: 0.985 0 0;
     --sidebar-accent: 0.269 0 0;
     --sidebar-accent-foreground: 0.985 0 0;
-    --sidebar-border: 1 0 0 / 10%;
+    --sidebar-border: 0.25 0.005 75.0;
     --sidebar-ring: 0.556 0 0;
   }
   .theme {

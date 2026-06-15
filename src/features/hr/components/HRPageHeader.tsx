@@ -14,14 +14,13 @@ interface HRPageHeaderProps {
 export function HRPageHeader({ breadcrumbs, trailingContent }: HRPageHeaderProps) {
   return (
     <header
-      className="sticky top-0 z-10 flex h-14 items-center justify-between border-b px-8"
-      style={{ backgroundColor: '#FAFAF8', borderColor: '#E8E8E6' }}
+      className="sticky top-0 z-10 flex h-14 items-center justify-between border-b px-8 bg-background border-border"
     >
-      <div className="flex items-center gap-2 text-sm" style={{ color: '#9A9A9A' }}>
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         {breadcrumbs.map((breadcrumb, index) => (
           <div key={breadcrumb.label} className="flex items-center gap-2">
             {index > 0 && <ChevronDown className="h-3 w-3 -rotate-90" />}
-            <span style={breadcrumb.isActive ? { color: '#1A1A1A', fontWeight: 500 } : undefined}>
+            <span className={breadcrumb.isActive ? "text-foreground font-medium" : ""}>
               {breadcrumb.label}
             </span>
           </div>
@@ -31,11 +30,10 @@ export function HRPageHeader({ breadcrumbs, trailingContent }: HRPageHeaderProps
       {trailingContent ?? (
         <button
           type="button"
-          className="relative flex h-8 w-8 items-center justify-center rounded-lg border transition-colors duration-150 hover:bg-white"
-          style={{ borderColor: '#E8E8E6' }}
+          className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-border transition-colors duration-150 hover:bg-accent hover:text-accent-foreground"
         >
-          <Bell className="h-4 w-4" style={{ color: '#6B6B6B' }} />
-          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full" style={{ backgroundColor: '#E8784A' }} />
+          <Bell className="h-4 w-4" />
+          <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
         </button>
       )}
     </header>

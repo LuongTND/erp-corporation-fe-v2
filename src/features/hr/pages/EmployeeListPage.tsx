@@ -60,7 +60,7 @@ export default function EmployeeListPage() {
   const allChecked = pageData.length > 0 && pageData.every((e) => checked.has(e.id))
 
   return (
-    <div className="min-h-full" style={{ backgroundColor: '#FAFAF8' }}>
+    <div className="min-h-full bg-background text-foreground">
       <HRPageHeader
         breadcrumbs={[
           { label: 'Modules' },
