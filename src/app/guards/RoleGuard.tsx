@@ -11,12 +11,7 @@ import ForbiddenPage from '@/features/auth/pages/ForbiddenPage'
 export function RoleGuard() {
   const user = useAuthStore((s) => s.user)
   const location = useLocation()
-
   const allowed = hasAccess(location.pathname, user?.role ?? null)
-
-  if (!allowed) {
-    return <ForbiddenPage />
-  }
-
+  if (!allowed) { return <ForbiddenPage /> }
   return <Outlet />
 }

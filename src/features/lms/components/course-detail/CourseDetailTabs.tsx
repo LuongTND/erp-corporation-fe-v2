@@ -71,7 +71,7 @@ function InstructorTab({ course }: { readonly course: CourseDetail }) {
     .slice(0, 2);
 
   return (
-    <div id="instructor-tab" className="rounded-xl border border-slate-100 bg-white p-6">
+    <div id="instructor-tab" className="rounded-xl border border-border bg-card p-6">
       <div className="mb-5 flex items-start gap-4">
         <Avatar className="h-16 w-16 shrink-0">
           <AvatarFallback className="bg-t-bg-selected text-lg font-medium text-t-text-secondary">
@@ -162,7 +162,7 @@ function ReviewsTab({ course }: { readonly course: CourseDetail }) {
         {course.reviews.map((review) => {
           const reviewInitials = review.reviewerName.slice(0, 2).toUpperCase();
           return (
-            <div key={review.id} className="rounded-xl border border-slate-100 bg-white p-4">
+            <div key={review.id} className="rounded-xl border border-border bg-card p-4">
               <div className="mb-3 flex items-center gap-3">
                 <Avatar className="h-9 w-9 shrink-0">
                   <AvatarFallback className="bg-t-bg-selected text-xs font-medium text-t-text-secondary">

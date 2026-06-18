@@ -14,14 +14,14 @@ export function LessonBottomBar({ lessonIndex, totalLessons, onPrev, onNext }: L
   const isLast = lessonIndex === totalLessons;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-t border-[#e6dfd8] bg-[#faf9f5] px-6 shadow-sm">
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-t border-border bg-card px-6 shadow-sm">
       {/* Previous */}
       <button
         type="button"
         onClick={onPrev}
         disabled={isFirst}
         className={cn(
-          'flex cursor-pointer items-center gap-2 rounded-lg border border-[#e6dfd8] px-4 py-2 text-xs font-medium text-[#6c6a64] transition-colors hover:bg-[#f5f0e8]',
+          'flex cursor-pointer items-center gap-2 rounded-lg border border-border px-4 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50',
           isFirst && 'cursor-not-allowed opacity-40',
         )}
       >
@@ -31,12 +31,12 @@ export function LessonBottomBar({ lessonIndex, totalLessons, onPrev, onNext }: L
 
       {/* Center: progress */}
       <div className="flex flex-col items-center gap-1.5">
-        <span className="text-xs text-[#6c6a64]">
+        <span className="text-xs text-muted-foreground">
           Lesson {lessonIndex} of {totalLessons}
         </span>
-        <div className="h-1.5 w-48 overflow-hidden rounded-full bg-[#e6dfd8]">
+        <div className="h-1.5 w-48 overflow-hidden rounded-full bg-border">
           <div
-            className="h-full rounded-full bg-[#cc785c] transition-all duration-300"
+            className="h-full rounded-full bg-primary transition-all duration-300"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -46,7 +46,7 @@ export function LessonBottomBar({ lessonIndex, totalLessons, onPrev, onNext }: L
       <button
         type="button"
         onClick={onNext}
-        className="flex cursor-pointer items-center gap-2 rounded-lg bg-[#cc785c] px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-[#a9583e]"
+        className="flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-primary/80"
       >
         {isLast ? (
           <>

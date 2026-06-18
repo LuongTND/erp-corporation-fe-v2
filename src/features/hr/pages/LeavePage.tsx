@@ -21,22 +21,21 @@ export default function LeavePage() {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false)
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#faf9f5' }}>
+    <div className="min-h-screen bg-card">
       <div className="max-w-7xl mx-auto p-8 space-y-6">
 
         {/* Page header */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-[#141413]">Leave Management</h1>
-            <p className="text-sm text-[#8e8b82] mt-0.5">Track, approve and manage team leave requests</p>
+            <h1 className="text-2xl font-bold text-foreground">Leave Management</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Track, approve and manage team leave requests</p>
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
             {/* Month/Year picker */}
             <Select value={month} onValueChange={setMonth}>
               <SelectTrigger
-                className="h-9 text-sm border rounded-lg cursor-pointer font-medium"
-                style={{ borderColor: '#e6dfd8', color: '#3d3d3a', backgroundColor: '#fff', width: 120 }}
+                className="h-9 w-[120px] text-sm border border-border rounded-lg cursor-pointer font-medium bg-card text-foreground"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -50,8 +49,7 @@ export default function LeavePage() {
             {/* Department filter */}
             <Select value={dept} onValueChange={setDept}>
               <SelectTrigger
-                className="h-9 text-sm border rounded-lg cursor-pointer"
-                style={{ borderColor: '#e6dfd8', color: '#3d3d3a', backgroundColor: '#fff', width: 160 }}
+                className="h-9 w-[160px] text-sm border border-border rounded-lg cursor-pointer bg-card text-foreground"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -66,8 +64,7 @@ export default function LeavePage() {
             <button
               type="button"
               onClick={() => setShowLeaveDialog(true)}
-              className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium text-white cursor-pointer transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#cc785c' }}
+              className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium text-white cursor-pointer transition-opacity hover:opacity-90 bg-primary"
             >
               <Plus className="w-4 h-4" />
               New Leave Request
@@ -76,8 +73,7 @@ export default function LeavePage() {
             {/* Leave Policy */}
             <button
               type="button"
-              className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium border cursor-pointer transition-colors hover:bg-[#f5f0e8]"
-              style={{ borderColor: '#e6dfd8', color: '#6c6a64', backgroundColor: '#fff' }}
+              className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium border border-border cursor-pointer transition-colors hover:bg-muted/50 bg-card text-muted-foreground"
             >
               <BookOpen className="w-4 h-4" />
               Leave Policy
@@ -104,8 +100,7 @@ export default function LeavePage() {
         type="button"
         onClick={() => setShowLeaveDialog(true)}
         aria-label="Add leave request"
-        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center cursor-pointer transition-opacity hover:opacity-90"
-        style={{ backgroundColor: '#cc785c' }}
+        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center cursor-pointer transition-opacity hover:opacity-90 bg-primary"
       >
         <Plus className="w-6 h-6 text-white" />
       </button>

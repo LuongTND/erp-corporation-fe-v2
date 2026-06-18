@@ -97,7 +97,7 @@ function TaskMentionPicker({ tasks, onSelect, onClose }: MentionPickerProps) {
     <div
       className="flex flex-col"
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'oklch(var(--card))',
         border: `0.5px solid ${C.border}`,
         borderRadius: 8,
         boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
@@ -167,7 +167,7 @@ function ImageUrlInput({ onInsert, onClose }: ImageInputProps) {
   return (
     <div
       className="flex items-center gap-1.5 px-2 py-1 rounded-md"
-      style={{ backgroundColor: '#FFFFFF', border: `0.5px solid ${C.border}` }}
+      style={{ backgroundColor: 'oklch(var(--card))', border: `0.5px solid ${C.border}` }}
     >
       <Image className="h-3.5 w-3.5 shrink-0" style={{ color: C.muted }} />
       <input
@@ -187,7 +187,7 @@ function ImageUrlInput({ onInsert, onClose }: ImageInputProps) {
         type="button"
         onMouseDown={(e) => { e.preventDefault(); commit() }}
         className="text-[11px] font-medium cursor-pointer px-1.5 py-0.5 rounded transition-colors duration-[100ms]"
-        style={{ backgroundColor: C.accent, color: '#FFFFFF' }}
+        style={{ backgroundColor: C.accent, color: 'oklch(var(--primary-foreground))' }}
       >
         OK
       </button>

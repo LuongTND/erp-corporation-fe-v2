@@ -10,8 +10,8 @@ import { PayrollHistory }         from '../components/payroll/PayrollHistory'
 import type { PayrollStatus }     from '../types/payroll.types'
 
 const STATUS_BADGE: Record<PayrollStatus, string> = {
-  Draft:      'bg-[#e8a55a]/15 text-[#9a6b2a]',
-  Finalized:  'bg-[#5db872]/15 text-[#2d7a40]',
+  Draft:      'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  Finalized:  'bg-green-500/12 dark:bg-green-500/20 text-green-700 dark:text-green-400',
   Processing: 'bg-blue-100 text-blue-700',
 }
 
@@ -20,19 +20,18 @@ export default function PayrollPage() {
   const [payrollStatus]                 = useState<PayrollStatus>('Draft')
 
   return (
-    <div className="min-h-full" style={{ backgroundColor: '#faf9f5' }}>
+    <div className="min-h-full bg-card">
 
       {/* Page header */}
       <header
-        className="sticky top-0 z-10 flex items-center justify-between px-8 h-14 border-b"
-        style={{ backgroundColor: '#faf9f5', borderColor: '#e6dfd8' }}
+        className="sticky top-0 z-10 flex items-center justify-between px-8 h-14 border-b bg-card border-border"
       >
-        <h1 className="text-lg font-semibold text-[#141413]">Payroll</h1>
+        <h1 className="text-lg font-semibold text-foreground">Payroll</h1>
 
         <div className="flex items-center gap-2.5">
           {/* Period selector */}
           <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[148px] h-9 text-sm border-[#e6dfd8] bg-white text-[#3d3d3a] cursor-pointer">
+            <SelectTrigger className="w-[148px] h-9 text-sm border-border bg-card text-foreground cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -53,7 +52,7 @@ export default function PayrollPage() {
           <button
             type="button"
             disabled={payrollStatus !== 'Draft'}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-[#cc785c] text-white hover:bg-[#a9583e] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/80 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <Play className="w-3.5 h-3.5" />
             Run Payroll
@@ -62,7 +61,7 @@ export default function PayrollPage() {
           {/* Export Payslips */}
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-[#e6dfd8] bg-white text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-border bg-card text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4" />
             Export Payslips

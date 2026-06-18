@@ -53,8 +53,7 @@ function StreakDots({ days }: { days: readonly StreakDay[] }) {
       {days.map((d) => (
         <div key={d.date} className="flex flex-col items-center gap-0.5">
           <div
-            className="h-2.5 w-2.5 rounded-full"
-            style={{ backgroundColor: d.active ? '#5db872' : 'oklch(var(--border))' }}
+            className={d.active ? 'h-2.5 w-2.5 rounded-full bg-green-700 dark:bg-green-400' : 'h-2.5 w-2.5 rounded-full bg-border'}
           />
           <span className="text-[9px] text-muted-foreground">{d.date[0]}</span>
         </div>
@@ -124,7 +123,7 @@ export function StatsRow({
       <StatCard>
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Current Streak</p>
-          <Flame className="h-4 w-4 text-[#e8a55a]" />
+          <Flame className="h-4 w-4 text-amber-700 dark:text-amber-400" />
         </div>
         <div>
           <p className="text-3xl font-bold text-foreground">
@@ -140,7 +139,7 @@ export function StatsRow({
       <StatCard>
         <div className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Certificates Earned</p>
-          <Award className="h-4 w-4 text-[#5db872]" />
+          <Award className="h-4 w-4 text-green-700 dark:text-green-400" />
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-3xl font-bold text-foreground">{certificatesEarned}</p>

@@ -63,20 +63,20 @@ const ATTENDANCE_RECORDS: AttendanceRecord[] = [
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
 const DAY_BG: Record<CalendarDayStatus, string> = {
-  Present: 'bg-[#cc785c] text-white',
-  Late:    'bg-[#e8a55a] text-white',
-  Absent:  'bg-[#c64545] text-white',
-  Leave:   'bg-[#5db8a6] text-white',
-  Weekend: 'bg-[#efe9de] text-[#8e8b82]',
+  Present: 'bg-primary text-white',
+  Late:    'bg-amber-400 text-white',
+  Absent:  'bg-destructive text-white',
+  Leave:   'bg-teal-500 text-white',
+  Weekend: 'bg-muted text-muted-foreground',
   empty:   'bg-transparent',
 }
 
 const STATUS_BADGE: Record<AttendanceStatus, string> = {
-  Present: 'bg-[#5db872]/10 text-[#2d7a40]',
-  Late:    'bg-[#d4a017]/10 text-[#8a6610]',
-  Absent:  'bg-[#c64545]/10 text-[#c64545]',
-  Leave:   'bg-[#5db8a6]/10 text-[#357a70]',
-  Weekend: 'bg-[#efe9de] text-[#6c6a64]',
+  Present: 'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+  Late:    'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  Absent:  'bg-destructive/12 text-destructive',
+  Leave:   'bg-teal-500/15 text-teal-700 dark:text-teal-400',
+  Weekend: 'bg-muted text-muted-foreground',
 }
 
 const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -89,12 +89,12 @@ export function AttendanceTab() {
   return (
     <div className="space-y-6">
       {/* Calendar card */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-card rounded-xl shadow-sm p-6">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-sm font-semibold text-[#141413]">Attendance Calendar</h3>
+          <h3 className="text-sm font-semibold text-foreground">Attendance Calendar</h3>
           <div className="flex items-center gap-3">
             <Select value={month} onValueChange={setMonth}>
-              <SelectTrigger className="h-8 w-36 text-xs border-[#e6dfd8]">
+              <SelectTrigger className="h-8 w-36 text-xs border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -105,7 +105,7 @@ export function AttendanceTab() {
             </Select>
             <a
               href="/hr/attendance"
-              className="inline-flex items-center gap-1 text-xs text-[#cc785c] hover:text-[#a9583e] transition-colors"
+              className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
             >
               Full report
               <ExternalLink className="w-3 h-3" />
@@ -116,7 +116,7 @@ export function AttendanceTab() {
         {/* Day-of-week headers */}
         <div className="grid grid-cols-7 gap-1.5 mb-1.5">
           {WEEK_DAYS.map((d) => (
-            <div key={d} className="text-center text-[10px] font-semibold uppercase tracking-wide text-[#8e8b82]">
+            <div key={d} className="text-center text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
               {d}
             </div>
           ))}
@@ -135,12 +135,12 @@ export function AttendanceTab() {
         </div>
 
         {/* Summary pills */}
-        <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-[#e6dfd8]">
+        <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-border">
           {[
-            { label: 'Present', count: 20, bg: 'bg-[#cc785c]/10 text-[#a9583e]' },
-            { label: 'Late',    count: 2,  bg: 'bg-[#e8a55a]/10 text-[#9a6b2a]' },
-            { label: 'Absent',  count: 1,  bg: 'bg-[#c64545]/10 text-[#c64545]' },
-            { label: 'Leave',   count: 3,  bg: 'bg-[#5db8a6]/10 text-[#357a70]' },
+            { label: 'Present', count: 20, bg: 'bg-primary/10 text-primary/80' },
+            { label: 'Late',    count: 2,  bg: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
+            { label: 'Absent',  count: 1,  bg: 'bg-destructive/12 text-destructive' },
+            { label: 'Leave',   count: 3,  bg: 'bg-teal-500/15 text-teal-700 dark:text-teal-400' },
           ].map((stat) => (
             <span
               key={stat.label}
@@ -153,34 +153,34 @@ export function AttendanceTab() {
       </div>
 
       {/* Recent records table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#e6dfd8]">
-          <h3 className="text-sm font-semibold text-[#141413]">Recent Records</h3>
+      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground">Recent Records</h3>
         </div>
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#faf9f5] hover:bg-[#faf9f5]">
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Date</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Check-in</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Check-out</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Hours</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Status</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">Note</TableHead>
+            <TableRow className="bg-card hover:bg-card">
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Date</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Check-in</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Check-out</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Hours</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Note</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {ATTENDANCE_RECORDS.map((record) => (
-              <TableRow key={record.date} className="hover:bg-[#faf9f5]">
-                <TableCell className="text-sm text-[#141413] font-medium">{record.date}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a] font-mono">{record.checkIn}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a] font-mono">{record.checkOut}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a] font-mono">{record.hours}</TableCell>
+              <TableRow key={record.date} className="hover:bg-card">
+                <TableCell className="text-sm text-foreground font-medium">{record.date}</TableCell>
+                <TableCell className="text-sm text-foreground font-mono">{record.checkIn}</TableCell>
+                <TableCell className="text-sm text-foreground font-mono">{record.checkOut}</TableCell>
+                <TableCell className="text-sm text-foreground font-mono">{record.hours}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[record.status]}`}>
                     {record.status}
                   </span>
                 </TableCell>
-                <TableCell className="text-sm text-[#6c6a64]">{record.note || '—'}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{record.note || '—'}</TableCell>
               </TableRow>
             ))}
           </TableBody>

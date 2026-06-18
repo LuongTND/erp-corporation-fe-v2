@@ -34,18 +34,17 @@ export function EmployeeListTable({
   onToggleRow,
 }: EmployeeListTableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border bg-[#faf9f5] shadow-sm" style={{ borderColor: '#e6dfd8', boxShadow: '0 1px 3px rgba(20,20,19,0.08)' }}>
+    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
       <Table>
         <TableHeader>
-          <TableRow className="border-b hover:bg-transparent" style={{ borderColor: '#e6dfd8' }}>
+          <TableRow className="border-b border-border hover:bg-transparent">
             <TableHead className="w-10 pl-4">
               <Checkbox checked={allChecked} onCheckedChange={onToggleAll} aria-label="Select all" />
             </TableHead>
             {tableHeaders.map((header) => (
               <TableHead
                 key={header}
-                className="text-xs font-semibold uppercase tracking-wide"
-                style={{ color: '#8e8b82' }}
+                className="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
               >
                 {header}
               </TableHead>
@@ -56,8 +55,7 @@ export function EmployeeListTable({
           {employees.map((employee) => (
             <TableRow
               key={employee.id}
-              className="cursor-pointer transition-colors hover:bg-[#f5f0e8]"
-              style={{ borderColor: '#ebe6df' }}
+              className="cursor-pointer border-border transition-colors hover:bg-muted/40"
             >
               <TableCell className="pl-4" onClick={(event) => event.stopPropagation()}>
                 <Checkbox
@@ -71,22 +69,22 @@ export function EmployeeListTable({
                 <div className="flex items-center gap-3">
                   <EmployeeAvatar initials={employee.initials} size={36} />
                   <div>
-                    <p className="text-sm font-medium" style={{ color: '#141413' }}>{employee.name}</p>
-                    <p className="text-xs" style={{ color: '#8e8b82' }}>{employee.email}</p>
+                    <p className="text-sm font-medium text-foreground">{employee.name}</p>
+                    <p className="text-xs text-muted-foreground">{employee.email}</p>
                   </div>
                 </div>
               </TableCell>
 
               <TableCell>
-                <span className="font-mono text-sm" style={{ color: '#6c6a64' }}>{employee.id}</span>
+                <span className="font-mono text-sm text-muted-foreground">{employee.id}</span>
               </TableCell>
               <TableCell><EmployeeDeptBadge dept={employee.dept} /></TableCell>
               <TableCell>
-                <span className="text-sm" style={{ color: '#3d3d3a' }}>{employee.position}</span>
+                <span className="text-sm text-foreground">{employee.position}</span>
               </TableCell>
               <TableCell><EmployeeStatusBadge status={employee.status} /></TableCell>
               <TableCell>
-                <span className="text-sm" style={{ color: '#6c6a64' }}>{employee.joinDate}</span>
+                <span className="text-sm text-muted-foreground">{employee.joinDate}</span>
               </TableCell>
               <TableCell><EmployeeAttendanceBar percent={employee.attendance} /></TableCell>
               <TableCell onClick={(event) => event.stopPropagation()}>

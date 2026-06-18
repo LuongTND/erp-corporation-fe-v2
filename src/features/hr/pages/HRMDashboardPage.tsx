@@ -38,12 +38,12 @@ export default function HRMDashboardPage() {
       <main className="max-w-7xl mx-auto p-8 space-y-6">
         <div>
           <h1
-            className="text-[22px] font-semibold tracking-tight"
-            style={{ fontFamily: 'Lora, Georgia, serif', color: '#1A1A1A', letterSpacing: '-0.3px' }}
+            className="text-[22px] font-semibold tracking-tight text-foreground"
+            style={{ fontFamily: 'Lora, Georgia, serif', letterSpacing: '-0.3px' }}
           >
             HR &amp; Payroll Dashboard
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: '#9A9A9A' }}>
+          <p className="text-sm mt-0.5 text-muted-foreground">
             Overview · Week of 26 May 2025
           </p>
         </div>

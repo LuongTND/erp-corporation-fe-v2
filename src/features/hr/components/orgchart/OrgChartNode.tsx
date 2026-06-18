@@ -3,6 +3,7 @@ import { useState } from 'react'
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 import { DEPT_CONFIG } from './orgchart.data'
 import type { OrgPerson } from './orgchart.types'
 
@@ -32,6 +33,8 @@ export function OrgChartNode({
   const dept = DEPT_CONFIG[node.department] ?? DEPT_CONFIG['Engineering']
   const [hovered, setHovered] = useState(false)
 
+  const isHighlighted = selected || dropTarget
+
   return (
     <TooltipProvider delayDuration={300}>
       <div className="relative flex flex-col items-center">
@@ -40,23 +43,16 @@ export function OrgChartNode({
           onClick={onSelect}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
-          className="rounded-xl cursor-pointer select-none transition-all duration-200"
-          style={{
-            width: isRoot ? 240 : 208,
-            padding: 16,
-            backgroundColor: isRoot ? dept.avatarBg : '#fff',
-            border: dropTarget
-              ? '2px solid #cc785c'
-              : selected
-              ? '2px solid #cc785c'
+          className={cn(
+            'rounded-xl cursor-pointer select-none transition-all duration-200 bg-card',
+            isHighlighted
+              ? 'border-2 border-primary shadow-lg shadow-black/10'
               : hovered
-              ? '1.5px solid rgba(204,120,92,0.4)'
-              : '1px solid #e2e8f0',
-            boxShadow: hovered || selected
-              ? '0 8px 24px rgba(0,0,0,0.12)'
-              : '0 2px 8px rgba(0,0,0,0.07)',
-            transform: hovered && !selected ? 'scale(1.03)' : 'scale(1)',
-          }}
+              ? 'border border-primary/40 shadow-md shadow-black/8'
+              : 'border border-border shadow-sm shadow-black/5',
+            hovered && !isHighlighted && 'scale-[1.03]',
+          )}
+          style={{ width: isRoot ? 240 : 208, padding: 16 }}
         >
           {/* Dept dot */}
           <div
@@ -80,12 +76,12 @@ export function OrgChartNode({
           </div>
 
           {/* Name */}
-          <p className="text-sm font-semibold text-slate-900 text-center truncate">
+          <p className="text-sm font-semibold text-foreground text-center truncate">
             {node.name}
           </p>
 
           {/* Title */}
-          <p className="text-[11px] text-slate-500 text-center mt-0.5 truncate">
+          <p className="text-[11px] text-muted-foreground text-center mt-0.5 truncate">
             {node.title}
           </p>
 
@@ -100,10 +96,10 @@ export function OrgChartNode({
           </div>
 
           {/* Bottom row */}
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
             <div className="flex items-center gap-1">
-              <Users className="w-3 h-3 text-slate-400" />
-              <span className="text-[10px] text-slate-400">
+              <Users className="w-3 h-3 text-muted-foreground" />
+              <span className="text-[10px] text-muted-foreground">
                 {node.children.length} {node.children.length === 1 ? 'report' : 'reports'}
               </span>
             </div>
@@ -112,7 +108,7 @@ export function OrgChartNode({
                 <button
                   type="button"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   aria-label={`Email ${node.name}`}
                 >
                   <Mail className="w-3 h-3" />
@@ -130,15 +126,15 @@ export function OrgChartNode({
           <button
             type="button"
             onClick={onToggle}
-            className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm transition-colors cursor-pointer z-10"
-            style={{
-              border: isExpanded ? '1.5px solid #cc785c' : '1.5px solid #cbd5e1',
-            }}
+            className={cn(
+              'absolute -bottom-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-card flex items-center justify-center shadow-sm transition-colors cursor-pointer z-10 border',
+              isExpanded ? 'border-primary text-primary' : 'border-border text-muted-foreground',
+            )}
             aria-label={isExpanded ? 'Collapse' : 'Expand'}
           >
             {isExpanded
-              ? <ChevronUp className="w-3 h-3" style={{ color: '#cc785c' }} />
-              : <ChevronDown className="w-3 h-3 text-slate-400" />
+              ? <ChevronUp className="w-3 h-3" />
+              : <ChevronDown className="w-3 h-3" />
             }
           </button>
         )}
@@ -148,12 +144,12 @@ export function OrgChartNode({
           <button
             type="button"
             onClick={(e) => e.stopPropagation()}
-            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full flex items-center justify-center shadow cursor-pointer transition-colors z-20"
-            style={{ backgroundColor: '#5db872', marginBottom: hasChildren ? -24 : 0 }}
+            className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-green-600 flex items-center justify-center shadow cursor-pointer transition-colors z-20 text-white"
+            style={{ marginBottom: hasChildren ? -24 : 0 }}
             aria-label="Add report"
             title="Add report"
           >
-            <Plus className="w-3 h-3 text-white" />
+            <Plus className="w-3 h-3" />
           </button>
         )}
 
@@ -162,21 +158,17 @@ export function OrgChartNode({
           <button
             type="button"
             onClick={(e) => e.stopPropagation()}
-            className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-white flex items-center justify-center cursor-pointer z-20"
-            style={{ border: '1.5px solid #fca5a5' }}
+            className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-card border border-destructive/40 flex items-center justify-center cursor-pointer z-20"
             aria-label="Delete node"
             title="Delete node"
           >
-            <XCircle className="w-3.5 h-3.5 text-red-400" />
+            <XCircle className="w-3.5 h-3.5 text-destructive" />
           </button>
         )}
 
         {/* Edit mode: drag tooltip */}
         {dropTarget && (
-          <div
-            className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] text-white px-2 py-1 rounded z-30"
-            style={{ backgroundColor: '#cc785c' }}
-          >
+          <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] text-primary-foreground bg-primary px-2 py-1 rounded z-30">
             Move under {node.name.split(' ').slice(-1)[0]}
           </div>
         )}
