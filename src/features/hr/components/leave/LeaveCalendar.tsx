@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 import type { LeaveType } from '../../types/leave.types'
 
 // ─── Calendar data (May 2025 — Mon-Sun layout) ───────────────────────────────
@@ -97,26 +98,26 @@ export function LeaveCalendar() {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
+    <div className="bg-card rounded-xl shadow-sm p-6">
 
       {/* Header row */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold text-[#141413]">
+          <h3 className="text-sm font-semibold text-foreground">
             Team Leave Calendar — May 2025
           </h3>
           <div className="flex items-center gap-1">
             <button
               type="button"
-              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-muted/50 transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-4 h-4 text-[#6c6a64]" />
+              <ChevronLeft className="w-4 h-4 text-muted-foreground" />
             </button>
             <button
               type="button"
-              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+              className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-muted/50 transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-4 h-4 text-[#6c6a64]" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
         </div>
@@ -128,12 +129,12 @@ export function LeaveCalendar() {
               key={dept}
               type="button"
               onClick={() => setDeptFilter(dept)}
-              className="px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer"
-              style={
+              className={cn(
+                'px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer',
                 deptFilter === dept
-                  ? { backgroundColor: '#cc785c', color: '#fff' }
-                  : { backgroundColor: '#f5f0e8', color: '#6c6a64' }
-              }
+                  ? 'bg-primary text-white'
+                  : 'bg-muted/50 text-muted-foreground',
+              )}
             >
               {dept}
             </button>
@@ -148,8 +149,10 @@ export function LeaveCalendar() {
           {DAYS_OF_WEEK.map((d) => (
             <div
               key={d}
-              className="text-center text-[11px] font-medium py-2"
-              style={{ color: d === 'Sat' || d === 'Sun' ? '#c64545' : '#8e8b82' }}
+              className={cn(
+                'text-center text-[11px] font-medium py-2',
+                d === 'Sat' || d === 'Sun' ? 'text-destructive' : 'text-muted-foreground',
+              )}
             >
               {d}
             </div>
@@ -157,7 +160,7 @@ export function LeaveCalendar() {
         </div>
 
         {/* Cells */}
-        <div className="grid grid-cols-7 border-l border-t border-[#f0ebe3]">
+        <div className="grid grid-cols-7 border-l border-t border-border">
           {CELLS.map((cell, idx) => {
             const events = visibleEvents(cell.day)
             const shown  = events.slice(0, 3)
@@ -166,30 +169,25 @@ export function LeaveCalendar() {
             return (
               <div
                 key={idx}
-                className="border-r border-b border-[#f0ebe3] min-h-[96px] p-1.5 flex flex-col"
-                style={{
-                  backgroundColor: cell.isToday
-                    ? 'rgba(204,120,92,0.05)'
-                    : cell.isWeekend
-                    ? '#faf9f5'
-                    : cell.inMonth ? '#fff' : '#faf9f5',
-                }}
+                className={cn(
+                  'border-r border-b border-border min-h-[96px] p-1.5 flex flex-col',
+                  cell.isToday
+                    ? 'bg-primary/5'
+                    : cell.isWeekend || !cell.inMonth
+                    ? 'bg-card'
+                    : 'bg-card',
+                )}
               >
                 {/* Day number */}
                 <span
-                  className={[
+                  className={cn(
                     'text-xs leading-none mb-1 self-start',
                     cell.isToday
-                      ? 'w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-[10px]'
-                      : '',
-                  ].join(' ')}
-                  style={{
-                    color: cell.isToday ? undefined
+                      ? 'w-5 h-5 rounded-full flex items-center justify-center text-white font-bold text-[10px] bg-primary'
                       : cell.inMonth
-                      ? cell.isWeekend ? '#c64545' : '#6c6a64'
-                      : '#c0bbb5',
-                    backgroundColor: cell.isToday ? '#cc785c' : undefined,
-                  }}
+                      ? cell.isWeekend ? 'text-destructive' : 'text-muted-foreground'
+                      : 'text-muted-foreground/40',
+                  )}
                 >
                   {cell.label}
                 </span>
@@ -216,7 +214,7 @@ export function LeaveCalendar() {
                     </Tooltip>
                   ))}
                   {extra > 0 && (
-                    <p className="text-[9px] text-[#8e8b82] pl-1">+{extra} more</p>
+                    <p className="text-[9px] text-muted-foreground pl-1">+{extra} more</p>
                   )}
                 </div>
               </div>
@@ -236,7 +234,7 @@ export function LeaveCalendar() {
         ].map((item) => (
           <div key={item.label} className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: item.color }} />
-            <span className="text-[10px] text-[#8e8b82]">{item.label}</span>
+            <span className="text-[10px] text-muted-foreground">{item.label}</span>
           </div>
         ))}
       </div>

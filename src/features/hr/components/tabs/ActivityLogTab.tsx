@@ -16,22 +16,22 @@ const ACTIVITY_LOG: ActivityEntry[] = [
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
 const DOT_COLOR: Record<ActivityType, string> = {
-  edit:     'bg-[#cc785c]',
-  approved: 'bg-[#5db872]',
-  leave:    'bg-[#e8a55a]',
-  warning:  'bg-[#c64545]',
+  edit:     'bg-primary',
+  approved: 'bg-green-500',
+  leave:    'bg-amber-400',
+  warning:  'bg-destructive',
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function ActivityLogTab() {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h3 className="text-sm font-semibold text-[#141413] mb-6">Activity Timeline</h3>
+    <div className="bg-card rounded-xl shadow-sm p-6">
+      <h3 className="text-sm font-semibold text-foreground mb-6">Activity Timeline</h3>
 
       <div className="relative">
         {/* Vertical connector line */}
-        <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[#e6dfd8]" aria-hidden="true" />
+        <div className="absolute left-[7px] top-2 bottom-2 w-px bg-border" aria-hidden="true" />
 
         <ol className="space-y-6">
           {ACTIVITY_LOG.map((entry, index) => (
@@ -44,12 +44,12 @@ export function ActivityLogTab() {
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#3d3d3a]">
+                <p className="text-sm text-foreground">
                   {entry.action}
                   {' — '}
-                  <span className="font-medium text-[#141413]">{entry.actor}</span>
+                  <span className="font-medium text-foreground">{entry.actor}</span>
                 </p>
-                <p className="text-xs text-[#8e8b82] mt-0.5">{entry.timestamp}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{entry.timestamp}</p>
               </div>
 
               {/* Separator (not last) */}

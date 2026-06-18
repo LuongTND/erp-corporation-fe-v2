@@ -34,37 +34,39 @@ export function LateOvertimeCharts() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Late arrivals */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
-        <h3 className="text-sm font-semibold text-[#141413] mb-4">Late Arrivals by Day</h3>
+      <div className="bg-card rounded-xl shadow-sm p-5 text-muted-foreground">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Late Arrivals by Day</h3>
         <ResponsiveContainer width="100%" height={180}>
           <BarChart data={LATE_DATA} barSize={28} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0ebe3" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.12} vertical={false} />
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 11, fill: '#8e8b82' }}
+              tick={{ fontSize: 11, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#8e8b82' }}
+              tick={{ fontSize: 11, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e6dfd8',
+                backgroundColor: 'oklch(var(--card))',
+                border: '1px solid oklch(var(--border))',
                 borderRadius: 8,
                 fontSize: 12,
+                color: 'oklch(var(--foreground))',
               }}
-              cursor={{ fill: '#f5f0e8' }}
+              cursor={{ fill: 'oklch(var(--muted) / 0.5)' }}
             />
             <ReferenceLine
               y={LATE_AVERAGE}
-              stroke="#8e8b82"
+              stroke="currentColor"
+              strokeOpacity={0.4}
               strokeDasharray="4 3"
-              label={{ value: `Avg ${LATE_AVERAGE.toFixed(1)}`, fontSize: 10, fill: '#8e8b82', position: 'right' }}
+              label={{ value: `Avg ${LATE_AVERAGE.toFixed(1)}`, fontSize: 10, fill: 'currentColor', position: 'right' }}
             />
             <Bar dataKey="count" fill="#e8a55a" radius={[4, 4, 0, 0]} name="Late arrivals" />
           </BarChart>
@@ -72,10 +74,10 @@ export function LateOvertimeCharts() {
       </div>
 
       {/* Overtime hours */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-card rounded-xl shadow-sm p-5 text-muted-foreground">
         <div className="flex items-start justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[#141413]">Overtime Hours</h3>
-          <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#5db872]/10 text-[#2d7a40]">
+          <h3 className="text-sm font-semibold text-foreground">Overtime Hours</h3>
+          <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-500/12 dark:bg-green-500/20 text-green-700 dark:text-green-400">
             Total OT: {TOTAL_OT.toFixed(0)}h this month
           </span>
         </div>
@@ -87,36 +89,37 @@ export function LateOvertimeCharts() {
                 <stop offset="95%" stopColor="#5db872" stopOpacity={0.02} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0ebe3" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.12} vertical={false} />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 10, fill: '#8e8b82' }}
+              tick={{ fontSize: 10, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#8e8b82' }}
+              tick={{ fontSize: 11, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e6dfd8',
+                backgroundColor: 'oklch(var(--card))',
+                border: '1px solid oklch(var(--border))',
                 borderRadius: 8,
                 fontSize: 12,
+                color: 'oklch(var(--foreground))',
               }}
             />
             <Area
               type="monotone"
               dataKey="hours"
-              stroke="#cc785c"
+              stroke="oklch(var(--primary))"
               strokeWidth={2}
               fill="url(#otFill)"
               name="OT hours"
-              dot={{ fill: '#cc785c', r: 3, strokeWidth: 0 }}
-              activeDot={{ r: 5, fill: '#cc785c' }}
+              dot={{ fill: 'oklch(var(--primary))', r: 3, strokeWidth: 0 }}
+              activeDot={{ r: 5, fill: 'oklch(var(--primary))' }}
             />
           </AreaChart>
         </ResponsiveContainer>

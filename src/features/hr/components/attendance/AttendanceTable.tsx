@@ -24,10 +24,10 @@ const RECORDS: DailyAttendanceRecord[] = [
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
 const STATUS_BADGE: Record<AttendanceStatus, string> = {
-  'On Time': 'bg-[#5db872]/10 text-[#2d7a40]',
-  'Late':    'bg-[#e8a55a]/10 text-[#9a6b2a]',
-  'Absent':  'bg-[#c64545]/10 text-[#c64545]',
-  'Leave':   'bg-[#5db8a6]/10 text-[#357a70]',
+  'On Time': 'bg-green-500/12 dark:bg-green-500/20 text-green-700 dark:text-green-400',
+  'Late':    'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  'Absent':  'bg-destructive/12 text-destructive',
+  'Leave':   'bg-teal-500/15 text-teal-700 dark:text-teal-400',
   'WFH':     'bg-blue-100 text-blue-700',
 }
 
@@ -45,13 +45,13 @@ function WorkingHoursCell({ hours }: { hours: number }) {
   const pct = Math.min((hours / 8) * 100, 100)
   return (
     <div>
-      <span className="text-sm font-mono text-[#3d3d3a]">
+      <span className="text-sm font-mono text-foreground">
         {hours > 0 ? `${hours.toFixed(1)}h` : '—'}
       </span>
       {hours > 0 && (
-        <div className="w-16 h-1 rounded-full bg-[#efe9de] mt-1">
+        <div className="w-16 h-1 rounded-full bg-muted mt-1">
           <div
-            className="h-full rounded-full bg-[#cc785c]"
+            className="h-full rounded-full bg-primary"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -75,9 +75,9 @@ export function AttendanceTable() {
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-card rounded-xl shadow-sm overflow-hidden">
       {/* Filter tabs */}
-      <div className="flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-[#f0ebe3] flex-wrap">
+      <div className="flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-border flex-wrap">
         {FILTER_TABS.map((tab) => (
           <button
             key={tab.value}
@@ -85,8 +85,8 @@ export function AttendanceTable() {
             onClick={() => { setActiveFilter(tab.value); setPage(1) }}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer ${
               activeFilter === tab.value
-                ? 'bg-[#cc785c] text-white'
-                : 'bg-white border border-[#e6dfd8] text-[#6c6a64] hover:bg-[#f5f0e8]'
+                ? 'bg-primary text-white'
+                : 'bg-card border border-border text-muted-foreground hover:bg-muted/50'
             }`}
           >
             {tab.label}
@@ -97,46 +97,46 @@ export function AttendanceTable() {
       {/* Table */}
       <Table>
         <TableHeader>
-          <TableRow className="border-[#f0ebe3]">
-            <TableHead className="text-xs font-medium text-[#8e8b82] pl-5">Employee</TableHead>
-            <TableHead className="text-xs font-medium text-[#8e8b82]">Department</TableHead>
-            <TableHead className="text-xs font-medium text-[#8e8b82]">Check-in</TableHead>
-            <TableHead className="text-xs font-medium text-[#8e8b82]">Check-out</TableHead>
-            <TableHead className="text-xs font-medium text-[#8e8b82]">Hours</TableHead>
-            <TableHead className="text-xs font-medium text-[#8e8b82]">Status</TableHead>
-            <TableHead className="text-xs font-medium text-[#8e8b82]">Note</TableHead>
+          <TableRow className="border-border">
+            <TableHead className="text-xs font-medium text-muted-foreground pl-5">Employee</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Department</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Check-in</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Check-out</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Hours</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Status</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Note</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {paged.map((record) => (
             <TableRow
               key={record.id}
-              className={`border-[#f0ebe3] ${record.status === 'Absent' ? 'bg-red-50/60' : ''}`}
+              className={`border-border ${record.status === 'Absent' ? 'bg-destructive/5' : ''}`}
             >
               {/* Employee */}
               <TableCell className="pl-5 py-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-[#cc785c]/15 text-[#a9583e] shrink-0">
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold bg-primary/15 text-primary shrink-0">
                     {record.employee.initials}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[#141413] leading-tight">{record.employee.name}</p>
-                    <p className="text-xs font-mono text-[#8e8b82]">{record.employee.id}</p>
+                    <p className="text-sm font-medium text-foreground leading-tight">{record.employee.name}</p>
+                    <p className="text-xs font-mono text-muted-foreground">{record.employee.id}</p>
                   </div>
                 </div>
               </TableCell>
 
               {/* Department */}
-              <TableCell className="text-sm text-[#6c6a64]">{record.department}</TableCell>
+              <TableCell className="text-sm text-muted-foreground">{record.department}</TableCell>
 
               {/* Check-in */}
-              <TableCell className="font-mono text-sm text-[#3d3d3a]">
-                {record.checkIn ?? <span className="text-[#8e8b82]">—</span>}
+              <TableCell className="font-mono text-sm text-foreground">
+                {record.checkIn ?? <span className="text-muted-foreground">—</span>}
               </TableCell>
 
               {/* Check-out */}
-              <TableCell className="font-mono text-sm text-[#3d3d3a]">
-                {record.checkOut ?? <span className="text-[#8e8b82]">—</span>}
+              <TableCell className="font-mono text-sm text-foreground">
+                {record.checkOut ?? <span className="text-muted-foreground">—</span>}
               </TableCell>
 
               {/* Working hours */}
@@ -155,7 +155,7 @@ export function AttendanceTable() {
               </TableCell>
 
               {/* Note */}
-              <TableCell className="text-xs text-[#8e8b82] italic max-w-[120px] truncate">
+              <TableCell className="text-xs text-muted-foreground italic max-w-[120px] truncate">
                 {record.note || '—'}
               </TableCell>
             </TableRow>
@@ -165,7 +165,7 @@ export function AttendanceTable() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-5 py-3 border-t border-[#f0ebe3]">
+        <div className="px-5 py-3 border-t border-border">
           <Pagination>
             <PaginationContent>
               <PaginationItem>

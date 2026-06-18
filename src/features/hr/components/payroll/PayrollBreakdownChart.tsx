@@ -48,32 +48,33 @@ function formatCurrencyMillions(
 
 export function PayrollBreakdownChart() {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h3 className="text-sm font-semibold text-[#141413] mb-5">Pay Components Breakdown</h3>
+    <div className="bg-card rounded-xl shadow-sm p-6 text-muted-foreground">
+      <h3 className="text-sm font-semibold text-foreground mb-5">Pay Components Breakdown</h3>
 
       <div className="grid grid-cols-[1fr_220px] gap-6 items-center">
         {/* Stacked bar chart */}
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={DEPT_DATA} barSize={36} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0ebe3" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.12} vertical={false} />
             <XAxis
               dataKey="dept"
-              tick={{ fontSize: 11, fill: '#8e8b82' }}
+              tick={{ fontSize: 11, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 10, fill: '#8e8b82' }}
+              tick={{ fontSize: 10, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
               unit="M"
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: '#fff',
-                border: '1px solid #e6dfd8',
+                backgroundColor: 'oklch(var(--card))',
+                border: '1px solid oklch(var(--border))',
                 borderRadius: 8,
                 fontSize: 12,
+                color: 'oklch(var(--foreground))',
               }}
               formatter={formatCurrencyMillions}
             />
@@ -106,30 +107,31 @@ export function PayrollBreakdownChart() {
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#fff',
-                    border: '1px solid #e6dfd8',
+                    backgroundColor: 'oklch(var(--card))',
+                    border: '1px solid oklch(var(--border))',
                     borderRadius: 8,
                     fontSize: 12,
+                    color: 'oklch(var(--foreground))',
                   }}
                   formatter={formatCurrencyMillions}
                 />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <p className="text-[10px] text-[#8e8b82]">Total</p>
-              <p className="text-sm font-bold text-[#141413]">₫321M</p>
+              <p className="text-[10px] text-muted-foreground">Total</p>
+              <p className="text-sm font-bold text-foreground">₫321M</p>
             </div>
           </div>
-          <p className="text-[10px] text-[#8e8b82] text-center">All departments</p>
+          <p className="text-[10px] text-muted-foreground text-center">All departments</p>
         </div>
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-[#f0ebe3]">
+      <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-border">
         {(Object.entries(SEGMENT_COLORS) as [keyof typeof SEGMENT_COLORS, string][]).map(([key, color]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-sm shrink-0" style={{ backgroundColor: color }} />
-            <span className="text-xs text-[#6c6a64]">{SEGMENT_LABELS[key]}</span>
+            <span className="text-xs text-muted-foreground">{SEGMENT_LABELS[key]}</span>
           </div>
         ))}
       </div>

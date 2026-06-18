@@ -36,20 +36,20 @@ function OptionCard({
       disabled={state === 'correct' || state === 'wrong'}
       className={cn(
         'flex w-full cursor-pointer items-center gap-3 rounded-xl border-2 p-4 text-left transition-all duration-150',
-        state === 'unselected' && 'border-[#e6dfd8] bg-[#faf9f5] hover:bg-[#f5f0e8]',
-        state === 'selected' && 'border-[#cc785c] bg-[#f5f0e8]',
-        state === 'correct' && 'border-[#5db872] bg-[#f0faf2] cursor-default',
-        state === 'wrong' && 'border-[#c64545] bg-[#fdf2f2] cursor-default',
+        state === 'unselected' && 'border-border bg-card hover:bg-muted/50',
+        state === 'selected' && 'border-primary bg-muted/50',
+        state === 'correct' && 'border-green-500 bg-green-500/12 dark:bg-green-500/20 cursor-default',
+        state === 'wrong' && 'border-destructive bg-destructive/12 cursor-default',
       )}
     >
       {/* Letter circle */}
       <span
         className={cn(
           'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold',
-          state === 'unselected' && 'bg-[#efe9de] text-[#3d3d3a]',
-          state === 'selected' && 'bg-[#cc785c] text-white',
-          state === 'correct' && 'bg-[#5db872] text-white',
-          state === 'wrong' && 'bg-[#c64545] text-white',
+          state === 'unselected' && 'bg-muted text-foreground',
+          state === 'selected' && 'bg-primary text-white',
+          state === 'correct' && 'bg-green-500 text-white',
+          state === 'wrong' && 'bg-destructive text-white',
         )}
       >
         {option.letter}
@@ -59,18 +59,18 @@ function OptionCard({
       <span
         className={cn(
           'flex-1 text-sm leading-relaxed',
-          state === 'unselected' && 'text-[#3d3d3a]',
-          state === 'selected' && 'font-medium text-[#cc785c]',
-          state === 'correct' && 'font-medium text-[#3d7a45]',
-          state === 'wrong' && 'font-medium text-[#c64545]',
+          state === 'unselected' && 'text-foreground',
+          state === 'selected' && 'font-medium text-primary',
+          state === 'correct' && 'font-medium text-green-700 dark:text-green-400',
+          state === 'wrong' && 'font-medium text-destructive',
         )}
       >
         {option.text}
       </span>
 
       {/* Post-submit icon */}
-      {state === 'correct' && <CheckCircle className="h-5 w-5 shrink-0 text-[#5db872]" />}
-      {state === 'wrong' && <XCircle className="h-5 w-5 shrink-0 text-[#c64545]" />}
+      {state === 'correct' && <CheckCircle className="h-5 w-5 shrink-0 text-green-700 dark:text-green-400" />}
+      {state === 'wrong' && <XCircle className="h-5 w-5 shrink-0 text-destructive" />}
     </button>
   );
 }
@@ -137,14 +137,14 @@ function TextInputAnswer({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-xs font-medium text-[#6c6a64]">Your answer</label>
+      <label className="mb-1.5 block text-xs font-medium text-muted-foreground">Your answer</label>
       <Textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={submitted}
         rows={4}
         placeholder="Type your answer here..."
-        className="resize-none rounded-xl border-[#e6dfd8] bg-[#faf9f5] text-sm text-[#3d3d3a] placeholder:text-[#8e8b82] focus:border-[#cc785c] focus-visible:ring-[#cc785c]/20"
+        className="resize-none rounded-xl border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus-visible:ring-primary/20"
       />
     </div>
   );
@@ -177,29 +177,29 @@ export function QuizQuestionCard({
   }[question.type];
 
   return (
-    <div className="rounded-2xl border border-[#e6dfd8] bg-[#faf9f5] p-8 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
       {/* Header row */}
       <div className="mb-6 flex items-center gap-3">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#cc785c] text-sm font-bold text-white">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
           Q{questionNumber}
         </span>
-        <span className="rounded-full bg-[#efe9de] px-2.5 py-0.5 text-xs font-medium text-[#6c6a64]">
+        <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
           {question.points} pt{question.points !== 1 ? 's' : ''}
         </span>
-        <span className="text-xs text-[#8e8b82]">{typeLabel}</span>
+        <span className="text-xs text-muted-foreground">{typeLabel}</span>
       </div>
 
       {/* Question text */}
-      <p className="mb-6 text-xl font-medium leading-relaxed text-[#141413]">
+      <p className="mb-6 text-xl font-medium leading-relaxed text-foreground">
         {question.text}
       </p>
 
       {/* Optional image placeholder */}
       {question.hasImage && (
-        <div className="mb-6 flex h-40 items-center justify-center rounded-xl bg-[#efe9de]">
+        <div className="mb-6 flex h-40 items-center justify-center rounded-xl bg-muted">
           <div className="flex flex-col items-center gap-2">
-            <ImageIcon className="h-8 w-8 text-[#8e8b82]" />
-            <span className="text-xs text-[#8e8b82]">Email Header Exhibit</span>
+            <ImageIcon className="h-8 w-8 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">Email Header Exhibit</span>
           </div>
         </div>
       )}

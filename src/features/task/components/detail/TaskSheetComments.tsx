@@ -88,7 +88,7 @@ function ReplyInput({ onSubmit, onCancel, placeholder = 'Trả lời...' }: Repl
   return (
     <div
       className="flex items-end gap-2 mt-1.5 rounded-lg p-2"
-      style={{ border: `0.5px solid ${C.border}`, backgroundColor: '#FFFFFF' }}
+      style={{ border: `0.5px solid ${C.border}`, backgroundColor: 'oklch(var(--card))' }}
     >
       <textarea
         ref={ref}
@@ -292,7 +292,7 @@ export function TaskSheetComments({ taskId }: TaskSheetCommentsProps) {
       {/* New comment input */}
       <div
         className="flex items-end gap-2 rounded-lg p-2 mt-1"
-        style={{ border: `0.5px solid ${C.border}`, backgroundColor: '#FFFFFF' }}
+        style={{ border: `0.5px solid ${C.border}`, backgroundColor: 'oklch(var(--card))' }}
       >
         <Avatar name="Bạn" size={20} />
         <textarea

@@ -16,14 +16,13 @@ export function EmployeeListGrid({ employees }: EmployeeListGridProps) {
       {employees.map((employee) => (
         <div
           key={employee.id}
-          className="cursor-pointer rounded-xl border bg-[#faf9f5] p-5 text-center shadow-sm transition-colors hover:bg-[#f5f0e8]"
-          style={{ borderColor: '#e6dfd8', boxShadow: '0 1px 3px rgba(20,20,19,0.08)' }}
+          className="cursor-pointer rounded-xl border border-border bg-card p-5 text-center shadow-sm transition-colors hover:bg-muted/40"
         >
           <div className="flex justify-center">
             <EmployeeAvatar initials={employee.initials} size={64} />
           </div>
-          <p className="mt-3 text-sm font-semibold" style={{ color: '#141413' }}>{employee.name}</p>
-          <p className="mt-0.5 text-xs" style={{ color: '#8e8b82' }}>{employee.position}</p>
+          <p className="mt-3 text-sm font-semibold text-foreground">{employee.name}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{employee.position}</p>
           <div className="mt-2 flex justify-center">
             <EmployeeDeptBadge dept={employee.dept} />
           </div>
@@ -31,7 +30,7 @@ export function EmployeeListGrid({ employees }: EmployeeListGridProps) {
             <EmployeeStatusBadge status={employee.status} />
           </div>
 
-          <div className="mt-4 border-t pt-3" style={{ borderColor: '#e6dfd8' }}>
+          <div className="mt-4 border-t border-border pt-3">
             <EmployeeContactActions employee={employee} />
           </div>
         </div>

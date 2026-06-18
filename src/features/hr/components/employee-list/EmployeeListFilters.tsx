@@ -1,4 +1,5 @@
 import { LayoutGrid, List } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -38,12 +39,12 @@ export function EmployeeListFilters({
             key={department}
             type="button"
             onClick={() => onDeptChange(department)}
-            className="h-7 cursor-pointer rounded-full border px-3 text-xs font-medium transition-colors"
-            style={
+            className={cn(
+              'h-7 cursor-pointer rounded-full border px-3 text-xs font-medium transition-colors',
               activeDept === department
-                ? { backgroundColor: '#efe9de', color: '#141413', borderColor: '#e6dfd8' }
-                : { backgroundColor: 'transparent', color: '#6c6a64', borderColor: 'transparent' }
-            }
+                ? 'border-border bg-muted text-foreground'
+                : 'border-transparent bg-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+            )}
           >
             {department}
           </button>
@@ -52,10 +53,10 @@ export function EmployeeListFilters({
 
       <div className="flex shrink-0 items-center gap-2">
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-          <SelectTrigger className="h-8 w-36 cursor-pointer border-[#e6dfd8] bg-[#faf9f5] text-xs text-[#141413]">
+          <SelectTrigger className="h-8 w-36 cursor-pointer border-border bg-card text-xs text-foreground">
             <SelectValue placeholder="All Status" />
           </SelectTrigger>
-          <SelectContent className="border-[#e6dfd8] bg-[#faf9f5] text-[#141413]">
+          <SelectContent className="border-border bg-card text-foreground">
             <SelectItem value="all">All Status</SelectItem>
             <SelectItem value="active">Active</SelectItem>
             <SelectItem value="on-leave">On Leave</SelectItem>
@@ -64,13 +65,15 @@ export function EmployeeListFilters({
           </SelectContent>
         </Select>
 
-        <div className="flex items-center overflow-hidden rounded-md border" style={{ borderColor: '#e6dfd8', backgroundColor: '#faf9f5' }}>
+        <div className="flex items-center overflow-hidden rounded-md border border-border bg-card">
           <button
             type="button"
             onClick={() => onViewChange('table')}
             aria-label="Table view"
-            className="flex h-8 w-8 cursor-pointer items-center justify-center transition-colors"
-            style={{ backgroundColor: view === 'table' ? '#efe9de' : '#faf9f5', color: view === 'table' ? '#141413' : '#8e8b82' }}
+            className={cn(
+              'flex h-8 w-8 cursor-pointer items-center justify-center transition-colors',
+              view === 'table' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50',
+            )}
           >
             <List className="h-4 w-4" />
           </button>
@@ -78,12 +81,10 @@ export function EmployeeListFilters({
             type="button"
             onClick={() => onViewChange('grid')}
             aria-label="Grid view"
-            className="flex h-8 w-8 cursor-pointer items-center justify-center border-l transition-colors"
-            style={{
-              borderColor: '#e6dfd8',
-              backgroundColor: view === 'grid' ? '#efe9de' : '#faf9f5',
-              color: view === 'grid' ? '#141413' : '#8e8b82',
-            }}
+            className={cn(
+              'flex h-8 w-8 cursor-pointer items-center justify-center border-l border-border transition-colors',
+              view === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50',
+            )}
           >
             <LayoutGrid className="h-4 w-4" />
           </button>

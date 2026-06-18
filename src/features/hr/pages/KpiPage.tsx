@@ -18,26 +18,20 @@ export default function KpiPage() {
   const [cycle, setCycle] = useState('Q2 2025')
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#faf9f5' }}>
+    <div className="min-h-screen bg-card">
       <div className="max-w-7xl mx-auto p-8 space-y-6">
 
         {/* Page header */}
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-[#141413]">KPI & Performance</h1>
-            <p className="text-sm text-[#8e8b82] mt-0.5">Track and evaluate employee performance metrics</p>
+            <h1 className="text-2xl font-bold text-foreground">KPI & Performance</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Track and evaluate employee performance metrics</p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
             <Select value={cycle} onValueChange={setCycle}>
               <SelectTrigger
-                className="h-9 text-sm border font-medium rounded-lg px-3 cursor-pointer"
-                style={{
-                  backgroundColor: '#fff',
-                  borderColor: '#e6dfd8',
-                  color: '#3d3d3a',
-                  width: 130,
-                }}
+                className="h-9 w-[130px] text-sm border border-border font-medium rounded-lg px-3 cursor-pointer bg-card text-foreground"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -52,8 +46,7 @@ export default function KpiPage() {
 
             <button
               type="button"
-              className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium text-white cursor-pointer transition-colors duration-150 hover:opacity-90"
-              style={{ backgroundColor: '#cc785c' }}
+              className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium text-white cursor-pointer transition-colors duration-150 bg-primary hover:bg-primary/80"
             >
               <Plus className="w-4 h-4" />
               Create Review Cycle
@@ -61,8 +54,7 @@ export default function KpiPage() {
 
             <button
               type="button"
-              className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium border cursor-pointer transition-colors duration-150 hover:bg-[#f5f0e8]"
-              style={{ borderColor: '#e6dfd8', color: '#3d3d3a', backgroundColor: '#fff' }}
+              className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium border border-border cursor-pointer transition-colors duration-150 hover:bg-muted/50 bg-card text-foreground"
             >
               <Download className="w-4 h-4" />
               Export Report

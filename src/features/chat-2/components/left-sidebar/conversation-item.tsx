@@ -49,7 +49,7 @@ export function ConversationItem({
           <span
             className={cn(
               'absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background',
-              isOnline ? 'bg-green-500' : 'bg-gray-400',
+              isOnline ? 'bg-green-500' : 'bg-muted-foreground/50',
             )}
             title={isOnline ? 'Online' : 'Offline'}
           />

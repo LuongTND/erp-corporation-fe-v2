@@ -6,9 +6,9 @@ interface WorkInfoTabProps {
 }
 
 const LOCATION_STYLE: Record<WorkLocation, string> = {
-  HQ:     'bg-[#cc785c]/10 text-[#a9583e]',
-  Remote: 'bg-[#5db8a6]/10 text-[#357a70]',
-  Hybrid: 'bg-[#e8a55a]/10 text-[#9a6b2a]',
+  HQ:     'bg-primary/10 text-primary/80',
+  Remote: 'bg-teal-500/15 text-teal-700 dark:text-teal-400',
+  Hybrid: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
 }
 
 function FieldRow({ label, children }: {
@@ -16,8 +16,8 @@ function FieldRow({ label, children }: {
   readonly children: React.ReactNode
 }) {
   return (
-    <div className="border-b border-[#e6dfd8] pb-3 mb-3 last:border-0 last:mb-0 last:pb-0">
-      <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">{label}</p>
+    <div className="border-b border-border pb-3 mb-3 last:border-0 last:mb-0 last:pb-0">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">{label}</p>
       {children}
     </div>
   )
@@ -31,23 +31,23 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left — position & contract */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-[#141413] mb-4">Position &amp; Contract</h3>
+      <div className="bg-card rounded-xl shadow-sm p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Position &amp; Contract</h3>
         <FieldRow label="Department">
-          <p className="text-sm text-[#141413]">{employee.department}</p>
+          <p className="text-sm text-foreground">{employee.department}</p>
         </FieldRow>
         <FieldRow label="Position / Title">
-          <p className="text-sm text-[#141413]">{employee.position}</p>
+          <p className="text-sm text-foreground">{employee.position}</p>
         </FieldRow>
         <FieldRow label="Direct Manager">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-[#efe9de] flex items-center justify-center text-[10px] font-semibold text-[#141413] flex-shrink-0">
+            <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-[10px] font-semibold text-foreground flex-shrink-0">
               {employee.manager.initials}
             </div>
-            <span className="text-sm text-[#141413]">{employee.manager.name}</span>
+            <span className="text-sm text-foreground">{employee.manager.name}</span>
             <a
               href={`/hr/employees/${employee.manager.id}`}
-              className="text-xs text-[#cc785c] hover:text-[#a9583e] transition-colors ml-1"
+              className="text-xs text-primary hover:text-primary/80 transition-colors ml-1"
             >
               View profile
             </a>
@@ -61,18 +61,18 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
         </FieldRow>
         <FieldRow label="Work Schedule">
           <div className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-[#8e8b82]" />
-            <p className="text-sm text-[#141413]">{employee.workSchedule}</p>
+            <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+            <p className="text-sm text-foreground">{employee.workSchedule}</p>
           </div>
         </FieldRow>
         <FieldRow label="Contract Type">
-          <p className="text-sm text-[#141413]">{employee.contractType}</p>
+          <p className="text-sm text-foreground">{employee.contractType}</p>
         </FieldRow>
         <FieldRow label="Contract End Date">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm text-[#141413]">{employee.contractEndDate}</p>
+            <p className="text-sm text-foreground">{employee.contractEndDate}</p>
             {isExpiringSoon && (
-              <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-[#c64545]/10 text-[#c64545]">
+              <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full bg-destructive/12 text-destructive">
                 Expires in {employee.daysUntilContractExpiry} days
               </span>
             )}
@@ -81,30 +81,30 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
       </div>
 
       {/* Right — compensation & access */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-[#141413] mb-4">Compensation &amp; Access</h3>
+      <div className="bg-card rounded-xl shadow-sm p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Compensation &amp; Access</h3>
         <FieldRow label="Salary Grade / Band">
-          <p className="text-sm font-medium text-[#141413]">
+          <p className="text-sm font-medium text-foreground">
             {employee.salaryGrade} · {employee.salaryRange}
           </p>
         </FieldRow>
         <FieldRow label="Probation Status">
-          <p className="text-sm text-[#141413]">{employee.probationStatus}</p>
+          <p className="text-sm text-foreground">{employee.probationStatus}</p>
         </FieldRow>
         {employee.probationEndDate && (
           <FieldRow label="Probation End Date">
-            <p className="text-sm text-[#141413]">{employee.probationEndDate}</p>
+            <p className="text-sm text-foreground">{employee.probationEndDate}</p>
           </FieldRow>
         )}
         <FieldRow label="IT Equipment">
           <div className="flex flex-col gap-3 mt-1">
             {employee.itEquipment.map((item) => (
               <div key={item.id} className="flex items-start gap-2">
-                <Laptop className="w-4 h-4 text-[#8e8b82] flex-shrink-0 mt-0.5" />
+                <Laptop className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-[#141413]">{item.name}</p>
-                  <p className="text-xs text-[#6c6a64]">{item.serialNumber}</p>
-                  <p className="text-xs text-[#8e8b82]">Assigned {item.assignedDate}</p>
+                  <p className="text-sm font-medium text-foreground">{item.name}</p>
+                  <p className="text-xs text-muted-foreground">{item.serialNumber}</p>
+                  <p className="text-xs text-muted-foreground">Assigned {item.assignedDate}</p>
                 </div>
               </div>
             ))}
@@ -115,9 +115,9 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
             {employee.systemRoles.map((role) => (
               <span
                 key={role}
-                className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-[#efe9de] text-[#141413]"
+                className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-muted text-foreground"
               >
-                <Shield className="w-3 h-3 text-[#6c6a64]" />
+                <Shield className="w-3 h-3 text-muted-foreground" />
                 {role}
               </span>
             ))}

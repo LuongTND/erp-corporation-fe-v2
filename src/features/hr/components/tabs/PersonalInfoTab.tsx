@@ -11,11 +11,11 @@ function FieldRow({ label, value, multiline = false }: {
   readonly multiline?: boolean
 }) {
   return (
-    <div className="border-b border-[#e6dfd8] pb-3 mb-3 last:border-0 last:mb-0 last:pb-0">
-      <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">{label}</p>
+    <div className="border-b border-border pb-3 mb-3 last:border-0 last:mb-0 last:pb-0">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">{label}</p>
       {multiline
-        ? <p className="text-sm text-[#141413] whitespace-pre-line">{value}</p>
-        : <p className="text-sm text-[#141413]">{value}</p>
+        ? <p className="text-sm text-foreground whitespace-pre-line">{value}</p>
+        : <p className="text-sm text-foreground">{value}</p>
       }
     </div>
   )
@@ -25,8 +25,8 @@ export function PersonalInfoTab({ employee }: PersonalInfoTabProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left — personal details */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-[#141413] mb-4">Personal Details</h3>
+      <div className="bg-card rounded-xl shadow-sm p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Personal Details</h3>
         <FieldRow label="Full Name" value={employee.fullName} />
         <FieldRow label="Date of Birth" value={employee.dateOfBirth} />
         <FieldRow label="Gender" value={employee.gender} />
@@ -39,8 +39,8 @@ export function PersonalInfoTab({ employee }: PersonalInfoTabProps) {
       </div>
 
       {/* Right — emergency, bank, insurance */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-[#141413] mb-4">Emergency &amp; Financial</h3>
+      <div className="bg-card rounded-xl shadow-sm p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Emergency &amp; Financial</h3>
 
         {/* Emergency contact — amber callout */}
         <div className="bg-amber-50 rounded-lg p-4 mb-5">
@@ -52,40 +52,40 @@ export function PersonalInfoTab({ employee }: PersonalInfoTabProps) {
           </div>
           <div className="space-y-2">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-0.5">Name</p>
-              <p className="text-sm text-[#141413]">{employee.emergencyContact.name}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-0.5">Name</p>
+              <p className="text-sm text-foreground">{employee.emergencyContact.name}</p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-0.5">Relationship</p>
-              <p className="text-sm text-[#141413]">{employee.emergencyContact.relationship}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-0.5">Relationship</p>
+              <p className="text-sm text-foreground">{employee.emergencyContact.relationship}</p>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-0.5">Phone</p>
-              <p className="text-sm text-[#141413]">{employee.emergencyContact.phone}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-0.5">Phone</p>
+              <p className="text-sm text-foreground">{employee.emergencyContact.phone}</p>
             </div>
           </div>
         </div>
 
-        <div className="border-b border-[#e6dfd8] pb-3 mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">Bank Name</p>
-          <p className="text-sm text-[#141413]">{employee.bankAccount.bankName}</p>
+        <div className="border-b border-border pb-3 mb-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Bank Name</p>
+          <p className="text-sm text-foreground">{employee.bankAccount.bankName}</p>
         </div>
-        <div className="border-b border-[#e6dfd8] pb-3 mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">Account Number</p>
+        <div className="border-b border-border pb-3 mb-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Account Number</p>
           <div className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-[#8e8b82]" />
-            <p className="text-sm text-[#141413] font-mono">{employee.bankAccount.accountNumberMasked}</p>
+            <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+            <p className="text-sm text-foreground font-mono">{employee.bankAccount.accountNumberMasked}</p>
           </div>
         </div>
-        <div className="border-b border-[#e6dfd8] pb-3 mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">
+        <div className="border-b border-border pb-3 mb-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
             Social Insurance Number
           </p>
-          <p className="text-sm text-[#141413]">{employee.socialInsuranceNumber}</p>
+          <p className="text-sm text-foreground">{employee.socialInsuranceNumber}</p>
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">Tax Code</p>
-          <p className="text-sm text-[#141413]">{employee.taxCode}</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Tax Code</p>
+          <p className="text-sm text-foreground">{employee.taxCode}</p>
         </div>
       </div>
     </div>

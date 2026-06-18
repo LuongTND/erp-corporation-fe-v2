@@ -28,7 +28,7 @@ export function CourseEnrollmentCard({ course }: CourseEnrollmentCardProps) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-md">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-md">
       {/* Thumbnail */}
       <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg bg-t-bg-selected">
         <div className="flex h-full items-center justify-center">
@@ -90,7 +90,7 @@ export function CourseEnrollmentCard({ course }: CourseEnrollmentCardProps) {
       <ul className="mb-5 space-y-2.5">
         {COURSE_FEATURES.map(({ icon: Icon, label }) => (
           <li key={label} className="flex items-center gap-2.5">
-            <Icon className="h-4 w-4 shrink-0 text-slate-400" aria-hidden />
+            <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
             <span className="text-sm text-t-text-secondary">{label}</span>
           </li>
         ))}

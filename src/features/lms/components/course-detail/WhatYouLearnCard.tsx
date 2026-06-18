@@ -6,7 +6,7 @@ interface WhatYouLearnCardProps {
 
 export function WhatYouLearnCard({ outcomes }: WhatYouLearnCardProps) {
   return (
-    <div className="mb-8 rounded-xl border border-slate-100 bg-white p-6">
+    <div className="mb-8 rounded-xl border border-border bg-card p-6">
       <h2 className="mb-4 text-lg font-semibold text-t-text-primary">What You'll Learn</h2>
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {outcomes.map((outcome) => (

@@ -18,14 +18,13 @@ export default function AttendancePage() {
   const monthLabel = selectedDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })
 
   return (
-    <div className="min-h-full" style={{ backgroundColor: '#faf9f5' }}>
+    <div className="min-h-full bg-card">
 
       {/* Page header */}
       <header
-        className="sticky top-0 z-10 flex items-center justify-between px-8 h-14 border-b"
-        style={{ backgroundColor: '#faf9f5', borderColor: '#e6dfd8' }}
+        className="sticky top-0 z-10 flex items-center justify-between px-8 h-14 border-b bg-card border-border"
       >
-        <h1 className="text-lg font-semibold text-[#141413]">Attendance</h1>
+        <h1 className="text-lg font-semibold text-foreground">Attendance</h1>
 
         <div className="flex items-center gap-2.5">
           {/* Month picker */}
@@ -33,9 +32,9 @@ export default function AttendancePage() {
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border border-[#e6dfd8] bg-white text-[#3d3d3a] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-lg border border-border bg-card text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
               >
-                <CalendarDays className="w-4 h-4 text-[#8e8b82]" />
+                <CalendarDays className="w-4 h-4 text-muted-foreground" />
                 {monthLabel}
               </button>
             </PopoverTrigger>
@@ -51,7 +50,7 @@ export default function AttendancePage() {
           {/* Department filter */}
           <Select defaultValue="all">
             <SelectTrigger
-              className="w-[160px] h-9 text-sm border-[#e6dfd8] bg-white text-[#3d3d3a] cursor-pointer"
+              className="w-[160px] h-9 text-sm border-border bg-card text-foreground cursor-pointer"
             >
               <SelectValue placeholder="Department" />
             </SelectTrigger>
@@ -69,7 +68,7 @@ export default function AttendancePage() {
           {/* Export */}
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-[#e6dfd8] bg-white text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-border bg-card text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4" />
             Export Report
@@ -78,7 +77,7 @@ export default function AttendancePage() {
           {/* Import */}
           <button
             type="button"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-[#e6dfd8] bg-white text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-border bg-card text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
           >
             <Upload className="w-4 h-4" />
             Import Timesheets

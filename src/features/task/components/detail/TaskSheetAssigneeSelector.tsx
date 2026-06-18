@@ -18,7 +18,7 @@ function UserAvatar({ user, size = 20 }: { user: UserOption; size?: number }) {
   return (
     <span
       className="rounded-full flex items-center justify-center text-white shrink-0 font-semibold"
-      style={{ width: size, height: size, fontSize: size * 0.42, backgroundColor: '#cc785c' }}
+      style={{ width: size, height: size, fontSize: size * 0.42, backgroundColor: 'oklch(var(--primary))' }}
     >
       {user.initials}
     </span>
@@ -54,7 +54,7 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 cursor-pointer rounded pl-0 pr-2 py-0.5 transition-colors duration-[120ms]"
         style={{ color: selectedUser ? '#141413' : '#8e8b82' }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
       >
         {selectedUser ? (
@@ -73,13 +73,13 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
           className="absolute left-0 top-full mt-1 z-50 rounded-lg overflow-hidden"
           style={{
             width: 200,
-            backgroundColor: '#FFFFFF',
-            border: '0.5px solid #e6dfd8',
+            backgroundColor: 'oklch(var(--card))',
+            border: '0.5px solid oklch(var(--border))',
             boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
           }}
         >
           {/* Search */}
-          <div style={{ borderBottom: '0.5px solid #e6dfd8' }} className="px-2 py-1.5">
+          <div style={{ borderBottom: '0.5px solid oklch(var(--border))' }} className="px-2 py-1.5">
             <input
               autoFocus
               value={search}
@@ -97,13 +97,13 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
               type="button"
               className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] cursor-pointer transition-colors duration-[120ms]"
               style={{ color: '#8e8b82' }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
               onClick={() => { onChange(''); setOpen(false); setSearch('') }}
             >
               <span
                 className="w-[18px] h-[18px] rounded-full border flex items-center justify-center shrink-0"
-                style={{ borderColor: '#e6dfd8' }}
+                style={{ borderColor: 'oklch(var(--border))' }}
               />
               <span>Unassigned</span>
               {!value && <Check className="ml-auto h-3.5 w-3.5" style={{ color: '#cc785c' }} />}
@@ -120,8 +120,8 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
                 key={user.value}
                 type="button"
                 className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] cursor-pointer transition-colors duration-[120ms]"
-                style={{ color: '#141413' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+                style={{ color: 'oklch(var(--foreground))' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
                 onClick={() => {
                   onChange(user.value === value ? '' : user.value)

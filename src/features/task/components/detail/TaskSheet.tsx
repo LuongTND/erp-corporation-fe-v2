@@ -35,8 +35,7 @@ export function TaskSheet(props: TaskSheetProps) {
     <Sheet open={isOpen} onOpenChange={(open) => !open && handleSheetClose()}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-[480px] p-0 gap-0 flex flex-col text-foreground [&>button]:hidden"
-        style={{ backgroundColor: '#FFFFFF', borderLeft: '0.5px solid #e6dfd8' }}
+        className="w-full sm:max-w-[480px] p-0 gap-0 flex flex-col text-foreground [&>button]:hidden bg-card border-l border-border"
       >
         <SheetTitle className="sr-only">{task ? task.title : 'Tạo Task mới'}</SheetTitle>
 
@@ -57,11 +56,10 @@ export function TaskSheet(props: TaskSheetProps) {
               onFocus={() => setTitleFocused(true)}
               onBlur={() => setTitleFocused(false)}
               placeholder="Tiêu đề task"
-              className="w-full bg-transparent border-none outline-none shadow-none h-auto py-1 text-[15px] font-semibold placeholder:text-[#8e8b82]"
+              className="w-full bg-transparent border-none outline-none shadow-none h-auto py-1 text-[15px] font-semibold placeholder:text-muted-foreground text-foreground"
               style={{
                 fontFamily: '"Cormorant Garamond", Tiempos Headline, Garamond, serif',
-                color: '#141413',
-                borderBottom: titleFocused ? '1.5px solid #cc785c' : '1.5px solid transparent',
+                borderBottom: titleFocused ? '1.5px solid oklch(var(--primary))' : '1.5px solid transparent',
                 transition: 'border-color 150ms ease',
               }}
             />
@@ -84,11 +82,11 @@ export function TaskSheet(props: TaskSheetProps) {
             createdAt={formState.createdAt}
           />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetSubTasks taskId={task?.id as string} />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetDescription
             description={formState.description}
@@ -97,23 +95,23 @@ export function TaskSheet(props: TaskSheetProps) {
             tasks={tasks}
           />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetAttachments taskId={String(task?.id ?? '')} />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetDependencies taskId={String(task?.id ?? '')} />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetCustomProperties taskId={String(task?.id ?? '')} />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetComments taskId={String(task?.id ?? '')} />
 
-          <div className="my-4" style={{ height: '0.5px', backgroundColor: '#e6dfd8' }} />
+          <div className="my-4 h-px bg-border" />
 
           <TaskSheetActivityLog taskId={String(task?.id ?? '')} />
         </div>
