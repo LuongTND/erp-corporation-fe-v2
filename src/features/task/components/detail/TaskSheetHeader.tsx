@@ -26,7 +26,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
           disabled={isUpdating}
           aria-label="Đóng"
           className="w-7 h-7 flex items-center justify-center rounded-md cursor-pointer transition-colors duration-150"
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
         >
           <X className="h-[15px] w-[15px]" style={{ color: '#6c6a64' }} />
@@ -35,7 +35,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
         {task?.code && (
           <span
             className="text-[11px] font-medium rounded px-1.5 py-0.5"
-            style={{ backgroundColor: '#f5f0e8', color: '#8e8b82' }}
+            style={{ backgroundColor: 'oklch(var(--muted) / 0.5)', color: 'oklch(var(--muted-foreground))' }}
           >
             {task.code}
           </span>
@@ -59,14 +59,14 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
                 title={isFavorite ? 'Bỏ yêu thích' : 'Thêm vào yêu thích'}
                 onClick={onToggleFavorite}
                 className="w-7 h-7 flex items-center justify-center rounded-md cursor-pointer transition-colors duration-150"
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
               >
                 <Star
                   className="h-[14px] w-[14px]"
                   style={{
-                    color: isFavorite ? '#cc785c' : '#6c6a64',
-                    fill: isFavorite ? '#cc785c' : 'transparent',
+                    color: isFavorite ? 'oklch(var(--primary))' : 'oklch(var(--muted-foreground))',
+                    fill: isFavorite ? 'oklch(var(--primary))' : 'transparent',
                   }}
                 />
               </button>
@@ -78,17 +78,17 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
               title="Mở trang đầy đủ"
               className="w-7 h-7 flex items-center justify-center rounded-md cursor-pointer transition-colors duration-150"
               onClick={() => navigate(`/task/${task.id}`)}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
             >
-              <ExternalLink className="h-[14px] w-[14px]" style={{ color: '#6c6a64' }} />
+              <ExternalLink className="h-[14px] w-[14px]" style={{ color: 'oklch(var(--muted-foreground))' }} />
             </button>
 
             <button
               type="button"
               aria-label="Xóa task"
               className="w-7 h-7 flex items-center justify-center rounded-md cursor-pointer transition-colors duration-150"
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#FDECEA' }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--destructive) / 0.1)' }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
             >
               <Trash2 className="h-[14px] w-[14px]" style={{ color: '#c64545' }} />
@@ -100,7 +100,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
           type="button"
           aria-label="Thêm tùy chọn"
           className="w-7 h-7 flex items-center justify-center rounded-md cursor-pointer transition-colors duration-150"
-          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f0e8' }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
         >
           <MoreHorizontal className="h-[15px] w-[15px]" style={{ color: '#6c6a64' }} />

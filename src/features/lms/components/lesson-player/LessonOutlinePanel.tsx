@@ -11,9 +11,9 @@ const lessonTypeIcon = (type: LessonType) => {
 };
 
 function LessonStatusIndicator({ status }: { status: LessonStatus }) {
-  if (status === 'completed') return <CheckCircle className="h-4 w-4 shrink-0 text-[#5db872]" />;
-  if (status === 'locked') return <Lock className="h-3.5 w-3.5 shrink-0 text-[#a09d96]" />;
-  if (status === 'current') return <span className="h-2 w-2 shrink-0 rounded-full bg-[#cc785c]" />;
+  if (status === 'completed') return <CheckCircle className="h-4 w-4 shrink-0 text-green-700 dark:text-green-400" />;
+  if (status === 'locked') return <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />;
+  if (status === 'current') return <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />;
   return null;
 }
 
@@ -47,17 +47,17 @@ function LessonRow({ courseId, lesson, currentLessonId }: LessonRowProps) {
       className={cn(
         'flex w-full cursor-pointer items-start gap-2.5 border-l-2 px-3 py-2 text-left transition-colors',
         isCurrent
-          ? 'border-[#cc785c] bg-[#f5f0e8] text-[#cc785c]'
-          : 'border-transparent hover:bg-[#f5f0e8]',
+          ? 'border-primary bg-muted/50 text-primary'
+          : 'border-transparent hover:bg-muted/50',
         lesson.status === 'locked' && 'cursor-not-allowed opacity-60',
       )}
     >
-      <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', isCurrent ? 'text-[#cc785c]' : 'text-[#8e8b82]')} />
+      <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', isCurrent ? 'text-primary' : 'text-muted-foreground')} />
       <div className="min-w-0 flex-1">
-        <p className={cn('truncate text-xs font-medium leading-snug', isCurrent ? 'text-[#cc785c]' : 'text-[#3d3d3a]')}>
+        <p className={cn('truncate text-xs font-medium leading-snug', isCurrent ? 'text-primary' : 'text-foreground')}>
           {lesson.title}
         </p>
-        <p className="mt-0.5 text-[10px] text-[#8e8b82]">{lesson.duration}</p>
+        <p className="mt-0.5 text-[10px] text-muted-foreground">{lesson.duration}</p>
       </div>
       <LessonStatusIndicator status={lesson.status} />
     </button>
@@ -79,18 +79,18 @@ function ChapterAccordion({ courseId, chapter, currentLessonId }: ChapterAccordi
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full cursor-pointer items-center gap-2 px-3 py-2.5 hover:bg-[#f5f0e8]"
+        className="flex w-full cursor-pointer items-center gap-2 px-3 py-2.5 hover:bg-muted/50"
       >
-        <span className="text-[10px] font-semibold uppercase tracking-wide text-[#8e8b82]">
+        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           {chapter.number.toString().padStart(2, '0')}
         </span>
-        <span className="min-w-0 flex-1 truncate text-left text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">
+        <span className="min-w-0 flex-1 truncate text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {chapter.title}
         </span>
         {open ? (
-          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[#8e8b82]" />
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         ) : (
-          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[#8e8b82]" />
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         )}
       </button>
 
@@ -116,18 +116,18 @@ export function LessonOutlinePanel({ courseId, courseTitle, chapters, currentLes
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-full w-[280px] shrink-0 flex-col border-r border-[#e6dfd8] bg-[#faf9f5]">
+    <div className="flex h-full w-[280px] shrink-0 flex-col border-r border-border bg-card">
       {/* Header */}
-      <div className="shrink-0 border-b border-[#e6dfd8] px-3 py-3">
+      <div className="shrink-0 border-b border-border px-3 py-3">
         <button
           type="button"
           onClick={() => navigate(`/lms/course/${courseId}`)}
-          className="mb-2 flex cursor-pointer items-center gap-1.5 text-xs text-[#6c6a64] hover:text-[#141413] transition-colors"
+          className="mb-2 flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to Course
         </button>
-        <p className="truncate text-sm font-semibold text-[#3d3d3a]">{courseTitle}</p>
+        <p className="truncate text-sm font-semibold text-foreground">{courseTitle}</p>
       </div>
 
       {/* Chapter list */}

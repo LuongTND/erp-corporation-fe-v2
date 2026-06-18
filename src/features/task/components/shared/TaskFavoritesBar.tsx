@@ -50,7 +50,7 @@ export function TaskFavoritesBar({ tasks, favorites, recents, onTaskClick }: Pro
     <div
       className="flex items-center gap-2 px-5 py-1.5 overflow-x-auto shrink-0"
       style={{
-        backgroundColor: '#faf9f5',
+        backgroundColor: 'oklch(var(--card))',
         borderBottom: `0.5px solid ${C.border}`,
         minHeight: 36,
       }}

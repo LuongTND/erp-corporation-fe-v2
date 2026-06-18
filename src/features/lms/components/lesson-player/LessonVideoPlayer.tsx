@@ -52,15 +52,15 @@ export function LessonVideoPlayer({
           className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-full bg-white/10 backdrop-blur-sm transition-colors hover:bg-white/20"
         >
           {playing ? (
-            <Pause className="h-9 w-9 text-[#faf9f5]" />
+            <Pause className="h-9 w-9 text-white" />
           ) : (
-            <Play className="ml-1 h-9 w-9 text-[#faf9f5]" />
+            <Play className="ml-1 h-9 w-9 text-white" />
           )}
         </button>
       </div>
 
       {/* Controls bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#141413]/90 to-transparent px-4 pb-3 pt-8">
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent px-4 pb-3 pt-8">
         {/* Progress bar */}
         <div
           role="slider"
@@ -77,10 +77,10 @@ export function LessonVideoPlayer({
           }}
         >
           <div
-            className="relative h-full rounded-full bg-[#cc785c] transition-all"
+            className="relative h-full rounded-full bg-primary transition-all"
             style={{ width: `${progressPct}%` }}
           >
-            <span className="absolute -right-1.5 -top-1 h-3 w-3 rounded-full bg-[#e8a55a]" />
+            <span className="absolute -right-1.5 -top-1 h-3 w-3 rounded-full bg-amber-400" />
           </div>
         </div>
 
@@ -91,13 +91,13 @@ export function LessonVideoPlayer({
             type="button"
             aria-label={playing ? 'Pause' : 'Play'}
             onClick={() => setPlaying((v) => !v)}
-            className="cursor-pointer text-[#faf9f5] transition-colors hover:text-white"
+            className="cursor-pointer text-white/90 transition-colors hover:text-white"
           >
             {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           </button>
 
           {/* Time */}
-          <span className="text-[11px] tabular-nums text-[#a09d96]">
+          <span className="text-[11px] tabular-nums text-white/60">
             {formatTime(currentTimeSeconds)} / {totalDurationLabel}
           </span>
 
@@ -106,7 +106,7 @@ export function LessonVideoPlayer({
 
           {/* Volume */}
           <div className="flex items-center gap-1.5">
-            <Volume2 className="h-4 w-4 text-[#a09d96]" />
+            <Volume2 className="h-4 w-4 text-white/60" />
             <input
               type="range"
               min={0}
@@ -114,7 +114,7 @@ export function LessonVideoPlayer({
               value={volume}
               onChange={(e) => setVolume(Number(e.target.value))}
               aria-label="Volume"
-              className="h-1 w-16 cursor-pointer accent-[#cc785c]"
+              className="h-1 w-16 cursor-pointer accent-primary"
             />
           </div>
 
@@ -123,20 +123,20 @@ export function LessonVideoPlayer({
             <button
               type="button"
               onClick={() => setShowSpeed((v) => !v)}
-              className="cursor-pointer rounded px-1.5 py-0.5 text-[11px] font-medium text-[#a09d96] hover:bg-white/10 hover:text-[#faf9f5]"
+              className="cursor-pointer rounded px-1.5 py-0.5 text-[11px] font-medium text-white/60 hover:bg-white/10 hover:text-white"
             >
               {speed}x
             </button>
             {showSpeed && (
-              <div className="absolute bottom-full right-0 mb-1 overflow-hidden rounded-lg border border-[#3d3d3a] bg-[#252320] py-1 shadow-lg">
+              <div className="absolute bottom-full right-0 mb-1 overflow-hidden rounded-lg border border-white/10 bg-[#1f1e1b] py-1 shadow-lg">
                 {SPEED_OPTIONS.map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => { setSpeed(s); setShowSpeed(false); }}
                     className={cn(
-                      'block w-full cursor-pointer px-4 py-1 text-left text-[11px] hover:bg-[#1f1e1b]',
-                      s === speed ? 'text-[#cc785c]' : 'text-[#a09d96]',
+                      'block w-full cursor-pointer px-4 py-1 text-left text-[11px] hover:bg-white/10',
+                      s === speed ? 'text-primary' : 'text-white/60',
                     )}
                   >
                     {s}x
@@ -147,12 +147,12 @@ export function LessonVideoPlayer({
           </div>
 
           {/* CC */}
-          <button type="button" aria-label="Closed captions" className="cursor-pointer text-[#a09d96] hover:text-[#faf9f5]">
+          <button type="button" aria-label="Closed captions" className="cursor-pointer text-white/60 hover:text-white">
             <Subtitles className="h-4 w-4" />
           </button>
 
           {/* Fullscreen */}
-          <button type="button" aria-label="Fullscreen" className="cursor-pointer text-[#a09d96] hover:text-[#faf9f5]">
+          <button type="button" aria-label="Fullscreen" className="cursor-pointer text-white/60 hover:text-white">
             <Maximize className="h-4 w-4" />
           </button>
         </div>

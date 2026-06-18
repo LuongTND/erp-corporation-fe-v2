@@ -78,7 +78,7 @@ export function ColumnTaskList({
         trigger={
           <Button
             variant="ghost"
-            className="w-full h-8 justify-start px-3 gap-1.5 rounded-md bg-transparent hover:bg-[#ede8e0] text-[#8e8b82] hover:text-[#6c6a64] border border-dashed border-[#e6dfd8] hover:border-[#cc785c]/40 transition-colors duration-150"
+            className="w-full h-8 justify-start px-3 gap-1.5 rounded-md bg-transparent hover:bg-muted text-muted-foreground hover:text-muted-foreground/80 border border-dashed border-border hover:border-primary/40 transition-colors duration-150"
           >
             <Plus className="h-3.5 w-3.5 shrink-0" />
             <span className="text-[12px] font-medium">Tạo Task</span>

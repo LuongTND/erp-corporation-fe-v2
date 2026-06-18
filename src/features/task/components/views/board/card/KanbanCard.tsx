@@ -85,7 +85,7 @@ function BoardCardBase({ task, isGhost, onTaskClick }: BoardCardProps) {
       <div
         className="flex flex-col gap-2 p-3 rounded-lg"
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'oklch(var(--card))',
           border: '0.5px solid #e6dfd8',
           boxShadow: isDragging
             ? '0 8px 24px rgba(0,0,0,0.12)'
@@ -120,7 +120,7 @@ function BoardCardBase({ task, isGhost, onTaskClick }: BoardCardProps) {
           {task.assignee && (
             <span
               className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0"
-              style={{ backgroundColor: '#cc785c' }}
+              style={{ backgroundColor: 'oklch(var(--primary))' }}
               title={task.assignee}
             >
               {task.assignee.charAt(0).toUpperCase()}
@@ -150,7 +150,7 @@ export function KanbanCardOverlay({ task, isSimple }: KanbanCardOverlayProps) {
     <div
       className="flex flex-col gap-2 p-3 rounded-lg cursor-grabbing"
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'oklch(var(--card))',
         border: '0.5px solid #e6dfd8',
         boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
         transform: isSimple ? 'none' : 'rotate(2deg) scale(1.03)',

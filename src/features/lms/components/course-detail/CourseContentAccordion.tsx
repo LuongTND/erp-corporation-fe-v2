@@ -59,7 +59,7 @@ function LessonRow({ courseId, lesson }: LessonRowProps) {
       </span>
       <span className="shrink-0 text-xs text-t-text-muted">{lesson.duration}</span>
       {lesson.locked && (
-        <Lock className="h-3.5 w-3.5 shrink-0 text-slate-300" aria-label="Locked" />
+        <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50" aria-label="Locked" />
       )}
       </button>
     </li>
@@ -88,7 +88,7 @@ export function CourseContentAccordion({ courseId, sections }: CourseContentAcco
         </span>
       </div>
 
-      <Accordion type="single" collapsible className="rounded-xl border border-slate-100 bg-white">
+      <Accordion type="single" collapsible className="rounded-xl border border-border bg-card">
         {sections.map((section) => (
           <AccordionItem key={section.id} value={section.id} className="border-t-border px-4">
             <AccordionTrigger className="py-4 hover:no-underline">

@@ -18,15 +18,15 @@ const OVERALL_SCORE = 84
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
 const STATUS_BADGE: Record<KPIStatus, string> = {
-  Achieved:    'bg-[#5db872]/10 text-[#2d7a40]',
-  'In Progress':'bg-[#e8a55a]/10 text-[#9a6b2a]',
-  Missed:      'bg-[#c64545]/10 text-[#c64545]',
+  Achieved:    'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+  'In Progress':'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  Missed:      'bg-destructive/12 text-destructive',
 }
 
-function scoreColor(score: number) {
-  if (score >= 80) return '#5db872'
-  if (score >= 60) return '#e8a55a'
-  return '#c64545'
+function scoreColorClass(score: number): { bar: string; text: string } {
+  if (score >= 80) return { bar: 'bg-green-500', text: 'text-green-700 dark:text-green-400' }
+  if (score >= 60) return { bar: 'bg-amber-400', text: 'text-amber-700 dark:text-amber-400' }
+  return { bar: 'bg-destructive', text: 'text-destructive' }
 }
 
 // ─── SVG Donut ────────────────────────────────────────────────────────────────
@@ -36,17 +36,20 @@ function DonutChart({ score }: { readonly score: number }) {
   const strokeWidth = 10
   const circumference = 2 * Math.PI * radius
   const offset = circumference - (score / 100) * circumference
-  const color = scoreColor(score)
+  const { bar } = scoreColorClass(score)
+  // SVG stroke needs a literal color; map class to value
+  const strokeColor = score >= 80 ? '#22c55e' : score >= 60 ? '#fbbf24' : 'hsl(var(--destructive))'
+  const textColor   = score >= 80 ? '#15803d' : score >= 60 ? '#b45309' : 'hsl(var(--destructive))'
 
   return (
     <svg width="140" height="140" viewBox="0 0 140 140" aria-label={`KPI score: ${score} out of 100`}>
       {/* Track */}
-      <circle cx="70" cy="70" r={radius} fill="none" stroke="#efe9de" strokeWidth={strokeWidth} />
+      <circle cx="70" cy="70" r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth={strokeWidth} />
       {/* Progress */}
       <circle
         cx="70" cy="70" r={radius}
         fill="none"
-        stroke={color}
+        stroke={strokeColor}
         strokeWidth={strokeWidth}
         strokeDasharray={circumference}
         strokeDashoffset={offset}
@@ -60,7 +63,7 @@ function DonutChart({ score }: { readonly score: number }) {
         dominantBaseline="middle"
         fontSize="28"
         fontWeight="700"
-        fill={color}
+        fill={textColor}
         fontFamily="inherit"
       >
         {score}
@@ -70,7 +73,7 @@ function DonutChart({ score }: { readonly score: number }) {
         textAnchor="middle"
         dominantBaseline="middle"
         fontSize="11"
-        fill="#6c6a64"
+        fill="hsl(var(--muted-foreground))"
         fontFamily="inherit"
       >
         / 100
@@ -82,27 +85,29 @@ function DonutChart({ score }: { readonly score: number }) {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function KpiTab() {
-  const color = scoreColor(OVERALL_SCORE)
+  const { text: scoreText } = scoreColorClass(OVERALL_SCORE)
   const label = OVERALL_SCORE >= 80 ? 'On Track' : OVERALL_SCORE >= 60 ? 'Needs Attention' : 'At Risk'
+  const labelBg = OVERALL_SCORE >= 80
+    ? 'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400'
+    : OVERALL_SCORE >= 60
+      ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400'
+      : 'bg-destructive/12 text-destructive'
 
   return (
     <div className="space-y-6">
       {/* Overall score card */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
+      <div className="bg-card rounded-xl shadow-sm p-6">
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <DonutChart score={OVERALL_SCORE} />
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-[#6c6a64] mb-1">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
               Overall Score · Q2 2025
             </p>
-            <p className="text-4xl font-bold font-display" style={{ color }}>
+            <p className={`text-4xl font-bold font-display ${scoreText}`}>
               {OVERALL_SCORE}
-              <span className="text-xl font-normal text-[#8e8b82]"> / 100</span>
+              <span className="text-xl font-normal text-muted-foreground"> / 100</span>
             </p>
-            <span
-              className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full mt-2"
-              style={{ backgroundColor: `${color}18`, color }}
-            >
+            <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full mt-2 ${labelBg}`}>
               {label}
             </span>
           </div>
@@ -110,50 +115,50 @@ export function KpiTab() {
       </div>
 
       {/* KPI items table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#e6dfd8]">
-          <h3 className="text-sm font-semibold text-[#141413]">KPI Breakdown — Q2 2025</h3>
+      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground">KPI Breakdown — Q2 2025</h3>
         </div>
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#faf9f5] hover:bg-[#faf9f5]">
+            <TableRow className="bg-card hover:bg-card">
               {['Metric', 'Target', 'Actual', 'Weight', 'Score', 'Status'].map((h) => (
-                <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">
+                <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {h}
                 </TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {KPI_ITEMS.map((item) => (
-              <TableRow key={item.id} className="hover:bg-[#faf9f5]">
-                <TableCell className="text-sm font-medium text-[#141413]">{item.metric}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a]">{item.target}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a]">{item.actual}</TableCell>
-                <TableCell className="text-sm text-[#6c6a64]">{item.weight}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-[#efe9de] rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${item.score}%`, backgroundColor: scoreColor(item.score) }}
-                      />
+            {KPI_ITEMS.map((item) => {
+              const { bar, text } = scoreColorClass(item.score)
+              return (
+                <TableRow key={item.id} className="hover:bg-card">
+                  <TableCell className="text-sm font-medium text-foreground">{item.metric}</TableCell>
+                  <TableCell className="text-sm text-foreground">{item.target}</TableCell>
+                  <TableCell className="text-sm text-foreground">{item.actual}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{item.weight}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${bar}`}
+                          style={{ width: `${item.score}%` }}
+                        />
+                      </div>
+                      <span className={`text-xs font-semibold ${text}`}>
+                        {item.score}
+                      </span>
                     </div>
-                    <span
-                      className="text-xs font-semibold"
-                      style={{ color: scoreColor(item.score) }}
-                    >
-                      {item.score}
+                  </TableCell>
+                  <TableCell>
+                    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[item.status]}`}>
+                      {item.status}
                     </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[item.status]}`}>
-                    {item.status}
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </div>

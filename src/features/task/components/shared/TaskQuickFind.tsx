@@ -85,9 +85,9 @@ export function TaskQuickFind({ tasks, open, onOpenChange }: TaskQuickFindProps)
           className="flex items-center gap-3 px-3 py-2 text-[11px] shrink-0"
           style={{ borderTop: '0.5px solid #e6dfd8', color: '#8e8b82' }}
         >
-          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: '#f5f0e8' }}>↑↓</kbd> điều hướng</span>
-          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: '#f5f0e8' }}>↵</kbd> mở</span>
-          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: '#f5f0e8' }}>Esc</kbd> đóng</span>
+          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: 'oklch(var(--muted) / 0.5)' }}>↑↓</kbd> điều hướng</span>
+          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: 'oklch(var(--muted) / 0.5)' }}>↵</kbd> mở</span>
+          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: 'oklch(var(--muted) / 0.5)' }}>Esc</kbd> đóng</span>
         </div>
       </Command>
     </CommandDialog>

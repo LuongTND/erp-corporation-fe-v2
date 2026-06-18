@@ -12,25 +12,25 @@ import type {
 } from '../../types/employee-list.types'
 
 const departmentStyle: Record<EmployeeListDepartment, string> = {
-  Engineering: 'bg-[#efe9de] text-[#141413]',
-  Sales: 'bg-[#f5f0e8] text-[#3d3d3a]',
-  Marketing: 'bg-[#e8a55a]/15 text-[#9a6b2a]',
-  HR: 'bg-[#cc785c]/12 text-[#a9583e]',
-  Finance: 'bg-[#e8e0d2] text-[#3d3d3a]',
-  Operations: 'bg-[#5db8a6]/15 text-[#357a70]',
+  Engineering: 'bg-muted text-foreground',
+  Sales: 'bg-muted/60 text-foreground',
+  Marketing: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  HR: 'bg-primary/10 text-primary',
+  Finance: 'bg-muted/50 text-foreground',
+  Operations: 'bg-teal-500/15 text-teal-700 dark:text-teal-400',
 }
 
 const statusStyle: Record<EmployeeListStatus, string> = {
-  Active: 'bg-[#5db872]/12 text-[#2d7a40]',
-  'On Leave': 'bg-[#e8a55a]/15 text-[#9a6b2a]',
-  Probation: 'bg-[#efe9de] text-[#6c6a64]',
-  Resigned: 'bg-[#c64545]/12 text-[#c64545]',
+  Active: 'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+  'On Leave': 'bg-amber-500/15 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400',
+  Probation: 'bg-muted text-muted-foreground',
+  Resigned: 'bg-destructive/12 text-destructive',
 }
 
 function attendanceColor(percent: number) {
-  if (percent >= 90) return 'bg-[#5db872]'
-  if (percent >= 75) return 'bg-[#e8a55a]'
-  return 'bg-[#c64545]'
+  if (percent >= 90) return 'bg-green-500'
+  if (percent >= 75) return 'bg-amber-500'
+  return 'bg-destructive'
 }
 
 interface EmployeeAvatarProps {
@@ -41,8 +41,8 @@ interface EmployeeAvatarProps {
 export function EmployeeAvatar({ initials, size = 40 }: EmployeeAvatarProps) {
   return (
     <div
-      className="flex shrink-0 items-center justify-center rounded-full border bg-[#efe9de] font-semibold text-[#141413]"
-      style={{ width: size, height: size, fontSize: size * 0.3, borderColor: '#e6dfd8' }}
+      className="flex shrink-0 items-center justify-center rounded-full border border-border bg-muted font-semibold text-foreground"
+      style={{ width: size, height: size, fontSize: size * 0.3 }}
     >
       {initials}
     </div>
@@ -80,10 +80,10 @@ interface EmployeeAttendanceBarProps {
 export function EmployeeAttendanceBar({ percent }: EmployeeAttendanceBarProps) {
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[#ebe6df]">
+      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-border">
         <div className={`h-full rounded-full ${attendanceColor(percent)}`} style={{ width: `${percent}%` }} />
       </div>
-      <span className="text-xs" style={{ color: '#6c6a64' }}>{percent}%</span>
+      <span className="text-xs text-muted-foreground">{percent}%</span>
     </div>
   )
 }
@@ -98,21 +98,21 @@ export function EmployeeRowActions({ employee }: EmployeeRowActionsProps) {
       <button
         type="button"
         aria-label={`View profile ${employee.name}`}
-        className="cursor-pointer rounded-md p-1.5 transition-colors hover:bg-[#f5f0e8]"
+        className="cursor-pointer rounded-md p-1.5 transition-colors hover:bg-muted/50"
       >
-        <Eye className="h-4 w-4 text-[#6c6a64]" />
+        <Eye className="h-4 w-4 text-muted-foreground" />
       </button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
             aria-label={`More actions ${employee.name}`}
-            className="cursor-pointer rounded-md p-1.5 transition-colors hover:bg-[#f5f0e8]"
+            className="cursor-pointer rounded-md p-1.5 transition-colors hover:bg-muted/50"
           >
-            <MoreHorizontal className="h-4 w-4 text-[#6c6a64]" />
+            <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-44 border-[#e6dfd8] bg-[#faf9f5] text-[#141413]">
+        <DropdownMenuContent align="end" className="w-44 border-border bg-card text-foreground">
           <DropdownMenuItem className="cursor-pointer gap-2">
             <Edit className="h-3.5 w-3.5" /> Edit
           </DropdownMenuItem>
@@ -122,7 +122,7 @@ export function EmployeeRowActions({ employee }: EmployeeRowActionsProps) {
           <DropdownMenuItem className="cursor-pointer gap-2">
             <CalendarOff className="h-3.5 w-3.5" /> Mark Leave
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
+          <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive">
             <UserX className="h-3.5 w-3.5" /> Deactivate
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -141,26 +141,23 @@ export function EmployeeContactActions({ employee }: EmployeeContactActionsProps
       <button
         type="button"
         aria-label={`View profile ${employee.name}`}
-        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border transition-colors hover:bg-[#f5f0e8]"
-        style={{ borderColor: '#e6dfd8', backgroundColor: '#faf9f5' }}
+        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-border bg-card transition-colors hover:bg-muted/50"
       >
-        <Eye className="h-3.5 w-3.5 text-[#6c6a64]" />
+        <Eye className="h-3.5 w-3.5 text-muted-foreground" />
       </button>
       <button
         type="button"
         aria-label={`Contact phone ${employee.name}`}
-        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border transition-colors hover:bg-[#f5f0e8]"
-        style={{ borderColor: '#e6dfd8', backgroundColor: '#faf9f5' }}
+        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-border bg-card transition-colors hover:bg-muted/50"
       >
-        <Phone className="h-3.5 w-3.5 text-[#6c6a64]" />
+        <Phone className="h-3.5 w-3.5 text-muted-foreground" />
       </button>
       <button
         type="button"
         aria-label={`Send email ${employee.name}`}
-        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border transition-colors hover:bg-[#f5f0e8]"
-        style={{ borderColor: '#e6dfd8', backgroundColor: '#faf9f5' }}
+        className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-border bg-card transition-colors hover:bg-muted/50"
       >
-        <Mail className="h-3.5 w-3.5 text-[#6c6a64]" />
+        <Mail className="h-3.5 w-3.5 text-muted-foreground" />
       </button>
     </div>
   )

@@ -60,7 +60,7 @@ export default function QuizPage() {
   const handleSaveExit = () => navigate(-1);
 
   return (
-    <div className="min-h-screen bg-[#f5f0e8]">
+    <div className="min-h-screen bg-muted/50">
       {/* Top bar */}
       <QuizTopBar
         courseName={MOCK_QUIZ_META.courseName}
@@ -102,7 +102,7 @@ export default function QuizPage() {
               onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
               disabled={isFirst}
               className={cn(
-                'flex cursor-pointer items-center gap-2 rounded-xl border border-[#e6dfd8] bg-[#faf9f5] px-5 py-2.5 text-sm font-medium text-[#6c6a64] transition-colors hover:bg-[#f5f0e8]',
+                'flex cursor-pointer items-center gap-2 rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/50',
                 isFirst && 'cursor-not-allowed opacity-40',
               )}
             >
@@ -118,8 +118,8 @@ export default function QuizPage() {
                 className={cn(
                   'flex cursor-pointer items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium text-white transition-colors',
                   hasAnswer || submitted
-                    ? 'bg-[#cc785c] hover:bg-[#a9583e]'
-                    : 'cursor-not-allowed bg-[#e6dfd8] text-[#8e8b82]',
+                    ? 'bg-primary hover:bg-primary/80'
+                    : 'cursor-not-allowed bg-border text-muted-foreground',
                 )}
               >
                 Next Question
@@ -130,7 +130,7 @@ export default function QuizPage() {
                 type="button"
                 onClick={() => setCurrentIndex((i) => Math.min(MOCK_QUESTIONS.length - 1, i + 1))}
                 disabled
-                className="cursor-not-allowed rounded-xl bg-[#e6dfd8] px-5 py-2.5 text-sm font-medium text-[#8e8b82]"
+                className="cursor-not-allowed rounded-xl bg-border px-5 py-2.5 text-sm font-medium text-muted-foreground"
               >
                 Last Question
               </button>

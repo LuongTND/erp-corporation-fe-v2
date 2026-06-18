@@ -22,7 +22,7 @@ export default function LessonPlayerPage() {
   const [currentTime, setCurrentTime] = useState(0);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#faf9f5]">
+    <div className="flex h-screen flex-col overflow-hidden bg-card">
       {/* 3-column body (full height minus bottom bar) */}
       <div className="flex flex-1 overflow-hidden pb-16">
         {/* LEFT — Course outline */}
@@ -47,8 +47,8 @@ export default function LessonPlayerPage() {
             {/* Lesson meta */}
             <div className="mt-4 flex items-start justify-between gap-4">
               <div>
-                <h1 className="text-lg font-semibold text-[#141413]">{MOCK_CURRENT_LESSON.title}</h1>
-                <span className="mt-1 inline-block rounded-full bg-[#efe9de] px-2.5 py-0.5 text-[11px] font-medium text-[#6c6a64]">
+                <h1 className="text-lg font-semibold text-foreground">{MOCK_CURRENT_LESSON.title}</h1>
+                <span className="mt-1 inline-block rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                   Chapter {MOCK_CURRENT_LESSON.chapterNumber}: {MOCK_CURRENT_LESSON.chapterTitle}
                 </span>
               </div>
@@ -65,7 +65,7 @@ export default function LessonPlayerPage() {
                     key={label}
                     type="button"
                     aria-label={label}
-                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-[#e6dfd8] text-[#6c6a64] transition-colors hover:border-[#cc785c] hover:text-[#cc785c]"
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                   >
                     <Icon className="h-3.5 w-3.5" />
                   </button>

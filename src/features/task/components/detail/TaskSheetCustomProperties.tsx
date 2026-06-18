@@ -102,7 +102,7 @@ export function TaskSheetCustomProperties({ taskId }: Props) {
             placeholder="Tên thuộc tính..."
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="w-full text-[12px] bg-white px-2 py-1.5 rounded outline-none"
+            className="w-full text-[12px] bg-card px-2 py-1.5 rounded outline-none"
             style={{ border: `0.5px solid ${C.border}`, color: C.text }}
             onKeyDown={(e) => { if (e.key === 'Enter') handleAddDef(); if (e.key === 'Escape') setAddOpen(false) }}
           />
@@ -131,7 +131,7 @@ export function TaskSheetCustomProperties({ taskId }: Props) {
               placeholder="Các lựa chọn, phân cách bởi dấu phẩy..."
               value={newOptions}
               onChange={(e) => setNewOptions(e.target.value)}
-              className="w-full text-[12px] bg-white px-2 py-1.5 rounded outline-none"
+              className="w-full text-[12px] bg-card px-2 py-1.5 rounded outline-none"
               style={{ border: `0.5px solid ${C.border}`, color: C.text }}
             />
           )}

@@ -53,7 +53,7 @@ function BoardColumnBase({
       ref={setNodeRef}
       style={{
         ...style,
-        backgroundColor: '#f5f0e8',
+        backgroundColor: 'oklch(var(--muted) / 0.5)',
         borderRadius: 8,
         width: 260,
         minWidth: 260,

@@ -87,7 +87,7 @@ export function TaskList({ tasks, statuses, onTaskClick, searchQuery = '' }: Tas
                         <span
                           className={cn(
                             'h-2 w-2 rounded-full',
-                            statusInfo ? statusInfo.color : 'bg-zinc-400',
+                            statusInfo ? statusInfo.color : 'bg-muted-foreground/40',
                           )}
                         />
                         <span className="text-sm font-medium text-foreground/80">

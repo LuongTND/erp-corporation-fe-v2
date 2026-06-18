@@ -89,7 +89,7 @@ export function TaskHoverPreview({ tasks }: Props) {
         top: y,
         zIndex: 9999,
         width: 280,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'oklch(var(--card))',
         border: `0.5px solid ${C.border}`,
         borderRadius: 10,
         boxShadow: '0 8px 24px rgba(0,0,0,0.10)',
