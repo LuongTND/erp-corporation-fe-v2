@@ -39,6 +39,24 @@ export const ROUTES = {
     PROGRESS: '/lms/progress',
     QUIZ: '/lms/course/:courseId/quiz/:quizId',
     LESSON: '/lms/course/:courseId/lesson/:lessonId',
+    // ── LMS Admin ──
+    ADMIN_COURSES: '/lms/admin/courses',
+    ADMIN_VIDEOS: '/lms/admin/videos',
+    ADMIN_WEBINARS: '/lms/admin/webinars',
+    ADMIN_LEARNERS: '/lms/admin/learners',
+    ADMIN_ANALYTICS: '/lms/admin/analytics',
+  },
+
+  // ── Customer Portal ──
+  CUSTOMER_PORTAL: {
+    DASHBOARD: '/customer/dashboard',
+    CATALOG: '/customer/nguyen-lieu',
+    PRODUCT_DETAIL: '/customer/nguyen-lieu/:id',
+    CART: '/customer/gio-hang',
+    ORDERS: '/customer/orders',
+    LOYALTY: '/customer/loyalty',
+    PROMOTIONS: '/customer/promotions',
+    AI_CHATBOT: '/customer/chatbot',
   },
 
   // ── Admin ──
@@ -49,4 +67,5 @@ export const ROUTES = {
     PERMISSIONS: '/admin/permissions',
   },
 } as const
+
 
