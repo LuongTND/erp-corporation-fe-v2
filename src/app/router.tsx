@@ -15,6 +15,7 @@ import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 // ── Lazy imports (nặng, load khi cần) ──
 const AppLayout = lazy(() => import('@/components/layout/AppLayout'))
 const AuthLayout = lazy(() => import('@/components/layout/AuthLayout'))
+const CustomerLayout = lazy(() => import('@/components/layout/CustomerLayout'))
 
 // Pages — lazy load theo từng module để tối ưu bundle
 const HRMDashboardPage = lazy(() => import('@/features/hr/pages/HRMDashboardPage'))
@@ -29,25 +30,26 @@ const CourseDetailPage = lazy(() => import('@/features/lms/pages/CourseDetailPag
 const LessonPlayerPage = lazy(() => import('@/features/lms/pages/LessonPlayerPage'))
 const QuizPage = lazy(() => import('@/features/lms/pages/QuizPage'))
 const LearnerProgressPage = lazy(() => import('@/features/lms/pages/LearnerProgressPage'))
+const AdminCoursesPage = lazy(() => import('@/features/lms/pages/AdminCoursesPage'))
+const AdminVideosPage = lazy(() => import('@/features/lms/pages/AdminVideosPage'))
+const AdminWebinarsPage = lazy(() => import('@/features/lms/pages/AdminWebinarsPage'))
+const AdminLearnersPage = lazy(() => import('@/features/lms/pages/AdminLearnersPage'))
+const AdminAnalyticsPage = lazy(() => import('@/features/lms/pages/AdminAnalyticsPage'))
 const AttendancePage = lazy(() => import('@/features/hr/pages/AttendancePage'))
 const PayrollPage = lazy(() => import('@/features/hr/pages/PayrollPage'))
 const KpiPage = lazy(() => import('@/features/hr/pages/KpiPage'))
 const LeavePage = lazy(() => import('@/features/hr/pages/LeavePage'))
 const OrgChartPage = lazy(() => import('@/features/hr/pages/OrgChartPage'))
 
-// ──────────────────────────────────────────────────────────────
-// Router — Chỉ chứa Route Tree
-// ──────────────────────────────────────────────────────────────
-// Guard: chỉ cho vào nếu đã đăng nhập
-// function ProtectedRoute() {
-//   return <Outlet />
-// }
-
-// const PageFallback = () => (
-//   <div className="flex h-screen items-center justify-center">
-//     <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-//   </div>
-// )
+// ── Customer Portal & Chatbot Pages ──
+const CustomerCatalogPage = lazy(() => import('@/features/customer-portal/pages/CustomerCatalogPage'))
+const CustomerProductDetailPage = lazy(() => import('@/features/customer-portal/pages/CustomerProductDetailPage'))
+const CustomerCartPage = lazy(() => import('@/features/customer-portal/pages/CustomerCartPage'))
+const CustomerLoyaltyPage = lazy(() => import('@/features/customer-portal/pages/CustomerLoyaltyPage'))
+const CustomerOrdersPage = lazy(() => import('@/features/customer-portal/pages/CustomerOrdersPage'))
+const CustomerOrderDetailPage = lazy(() => import('@/features/customer-portal/pages/CustomerOrderDetailPage'))
+const CustomerPromotionsPage = lazy(() => import('@/features/customer-portal/pages/CustomerPromotionsPage'))
+const AIChatbotPage = lazy(() => import('@/features/ai-chatbot/pages/AIChatbotPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -228,6 +230,130 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <LearnerProgressPage />
+                  </Suspense>
+                ),
+              },
+
+              // ── LMS Admin Module ──
+              {
+                path: ROUTES.LMS.ADMIN_COURSES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminCoursesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.ADMIN_VIDEOS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminVideosPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.ADMIN_WEBINARS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminWebinarsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.ADMIN_LEARNERS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminLearnersPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.LMS.ADMIN_ANALYTICS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminAnalyticsPage />
+                  </Suspense>
+                ),
+              },
+            ],
+          },
+          // ── CustomerLayout (External Customer Portal) ──
+          {
+            element: (
+              <Suspense fallback={<PageFallback />}>
+                <CustomerLayout />
+              </Suspense>
+            ),
+            children: [
+              {
+                path: '/customer',
+                element: <Navigate to={ROUTES.CUSTOMER_PORTAL.CATALOG} replace />,
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.DASHBOARD,
+                element: <Navigate to={ROUTES.CUSTOMER_PORTAL.CATALOG} replace />,
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.CATALOG,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerCatalogPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.PRODUCT_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerProductDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.CART,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerCartPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.ORDERS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerOrdersPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: `${ROUTES.CUSTOMER_PORTAL.ORDERS}/:id`,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerOrderDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.LOYALTY,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerLoyaltyPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.PROMOTIONS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CustomerPromotionsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.CUSTOMER_PORTAL.AI_CHATBOT,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AIChatbotPage />
                   </Suspense>
                 ),
               },

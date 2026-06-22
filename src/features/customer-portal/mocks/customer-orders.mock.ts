@@ -1,0 +1,103 @@
+import type { CustomerOrder } from '../types/customer-portal.types'
+
+export const MOCK_CUSTOMER_ORDERS: CustomerOrder[] = [
+  {
+    id: 'ord-001',
+    orderNumber: 'DH-2024-0891',
+    status: 'delivered',
+    createdAt: '2024-10-01T08:00:00',
+    updatedAt: '2024-10-05T14:30:00',
+    deliveryDate: '2024-10-05',
+    shippingAddress: '123 Nguyễn Văn Linh, Q.7, TP.HCM',
+    totalAmount: 12500000,
+    discount: 1250000,
+    finalAmount: 11250000,
+    note: 'Giao giờ hành chính',
+    products: [
+      { id: 'p1', name: 'Sản phẩm A Premium', sku: 'SPA-001', quantity: 50, unitPrice: 180000, totalPrice: 9000000, unit: 'thùng' },
+      { id: 'p2', name: 'Sản phẩm B Standard', sku: 'SPB-002', quantity: 25, unitPrice: 140000, totalPrice: 3500000, unit: 'thùng' },
+    ],
+  },
+  {
+    id: 'ord-002',
+    orderNumber: 'DH-2024-0924',
+    status: 'shipping',
+    createdAt: '2024-10-08T10:00:00',
+    updatedAt: '2024-10-10T09:15:00',
+    shippingAddress: '123 Nguyễn Văn Linh, Q.7, TP.HCM',
+    totalAmount: 8750000,
+    discount: 437500,
+    finalAmount: 8312500,
+    products: [
+      { id: 'p1', name: 'Sản phẩm A Premium', sku: 'SPA-001', quantity: 30, unitPrice: 180000, totalPrice: 5400000, unit: 'thùng' },
+      { id: 'p3', name: 'Sản phẩm C Special', sku: 'SPC-003', quantity: 15, unitPrice: 225000, totalPrice: 3375000, unit: 'thùng' },
+    ],
+  },
+  {
+    id: 'ord-003',
+    orderNumber: 'DH-2024-0951',
+    status: 'processing',
+    createdAt: '2024-10-12T14:30:00',
+    updatedAt: '2024-10-12T16:00:00',
+    shippingAddress: '456 Điện Biên Phủ, Q.3, TP.HCM',
+    totalAmount: 15600000,
+    discount: 1560000,
+    finalAmount: 14040000,
+    products: [
+      { id: 'p4', name: 'Sản phẩm D Exclusive', sku: 'SPD-004', quantity: 40, unitPrice: 210000, totalPrice: 8400000, unit: 'thùng' },
+      { id: 'p1', name: 'Sản phẩm A Premium', sku: 'SPA-001', quantity: 40, unitPrice: 180000, totalPrice: 7200000, unit: 'thùng' },
+    ],
+  },
+  {
+    id: 'ord-004',
+    orderNumber: 'DH-2024-0963',
+    status: 'confirmed',
+    createdAt: '2024-10-14T09:00:00',
+    updatedAt: '2024-10-14T11:00:00',
+    shippingAddress: '789 Lê Văn Việt, Q.9, TP.HCM',
+    totalAmount: 5250000,
+    discount: 0,
+    finalAmount: 5250000,
+    products: [
+      { id: 'p2', name: 'Sản phẩm B Standard', sku: 'SPB-002', quantity: 25, unitPrice: 140000, totalPrice: 3500000, unit: 'thùng' },
+      { id: 'p5', name: 'Sản phẩm E Basic', sku: 'SPE-005', quantity: 25, unitPrice: 70000, totalPrice: 1750000, unit: 'thùng' },
+    ],
+  },
+  {
+    id: 'ord-005',
+    orderNumber: 'DH-2024-0975',
+    status: 'pending',
+    createdAt: '2024-10-15T15:00:00',
+    updatedAt: '2024-10-15T15:00:00',
+    shippingAddress: '123 Nguyễn Văn Linh, Q.7, TP.HCM',
+    totalAmount: 9000000,
+    discount: 900000,
+    finalAmount: 8100000,
+    products: [
+      { id: 'p3', name: 'Sản phẩm C Special', sku: 'SPC-003', quantity: 40, unitPrice: 225000, totalPrice: 9000000, unit: 'thùng' },
+    ],
+  },
+  {
+    id: 'ord-006',
+    orderNumber: 'DH-2024-0820',
+    status: 'cancelled',
+    createdAt: '2024-09-15T10:00:00',
+    updatedAt: '2024-09-16T08:00:00',
+    shippingAddress: '456 Điện Biên Phủ, Q.3, TP.HCM',
+    totalAmount: 3500000,
+    discount: 0,
+    finalAmount: 3500000,
+    note: 'Khách hủy do thay đổi nhu cầu',
+    products: [
+      { id: 'p5', name: 'Sản phẩm E Basic', sku: 'SPE-005', quantity: 50, unitPrice: 70000, totalPrice: 3500000, unit: 'thùng' },
+    ],
+  },
+]
+
+export const MOCK_AVAILABLE_PRODUCTS = [
+  { id: 'SPA-001', name: 'Sản phẩm A Premium', sku: 'SPA-001', unitPrice: 180000, unit: 'thùng' },
+  { id: 'SPB-002', name: 'Sản phẩm B Standard', sku: 'SPB-002', unitPrice: 140000, unit: 'thùng' },
+  { id: 'SPC-003', name: 'Sản phẩm C Special', sku: 'SPC-003', unitPrice: 225000, unit: 'thùng' },
+  { id: 'SPD-004', name: 'Sản phẩm D Exclusive', sku: 'SPD-004', unitPrice: 210000, unit: 'thùng' },
+  { id: 'SPE-005', name: 'Sản phẩm E Basic', sku: 'SPE-005', unitPrice: 70000, unit: 'thùng' },
+]
