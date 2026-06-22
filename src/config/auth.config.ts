@@ -9,6 +9,7 @@ export const ROLE_REDIRECTS: Record<string, string> = {
   manager: '/dashboard',
   employee: '/dashboard',
   admin: '/dashboard',
+  customer: '/customer/nguyen-lieu',
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -75,6 +76,19 @@ export const PORTAL_ROLES: PortalRoleConfig[] = [
       'Phân quyền truy cập',
       'Cấu hình hệ thống',
       'Xem log hoạt động',
+    ],
+  },
+  {
+    id: 'customer',
+    label: 'Khách Hàng',
+    subLabel: 'Customer',
+    description: 'Truy cập cổng khách hàng tự phục vụ, đặt hàng và theo dõi ưu đãi thành viên.',
+    icon: 'User',
+    permissions: [
+      'Tự đặt hàng (Self-Service)',
+      'Theo dõi đơn hàng',
+      'Xem lịch sử mua hàng',
+      'Nhận ưu đãi cá nhân',
     ],
   },
 ]

@@ -49,6 +49,9 @@ export const PERMISSION_MAP: Record<string, RoutePermission> = {
   '/task': { roles: ROLE_GROUPS.ALL },
   '/employee': { roles: ROLE_GROUPS.ALL },
 
+  // ── Customer Portal (Khách hàng) ──
+  '/customer': { roles: [ROLES.CUSTOMER] },
+
   // ── Admin Only ──
   '/admin/accounts': { roles: ROLE_GROUPS.ADMIN_ONLY },
   '/admin/settings': { roles: ROLE_GROUPS.ADMIN_ONLY },
