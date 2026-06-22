@@ -45,7 +45,7 @@ function TriggerButton({
 }) {
   if (!date) {
     return (
-      <span className="text-[12px]" style={{ color: '#8e8b82' }}>Chọn ngày</span>
+      <span className="text-[12px]" style={{ color: 'var(--t-text-muted)' }}>Chọn ngày</span>
     )
   }
 
@@ -53,21 +53,21 @@ function TriggerButton({
   const shouldShowTime = includeTime && timeFormat !== 'hidden'
 
   return (
-    <span className="text-[12px] flex items-center gap-1" style={{ color: '#141413' }}>
+    <span className="text-[12px] flex items-center gap-1" style={{ color: 'var(--t-text-primary)' }}>
       <span>{format(date, 'MMM d, yyyy', { locale: enUS })}</span>
 
       {shouldShowTime && (
-        <span className="text-[11px] ml-0.5" style={{ color: '#8e8b82' }}>
+        <span className="text-[11px] ml-0.5" style={{ color: 'var(--t-text-muted)' }}>
           {format(date, currentTimeFormat, { locale: enUS })}
         </span>
       )}
 
       {endDateEnabled && endDate && (
         <>
-          <span className="mx-1" style={{ color: '#8e8b82' }}>→</span>
+          <span className="mx-1" style={{ color: 'var(--t-text-muted)' }}>→</span>
           <span>{format(endDate, 'MMM d, yyyy', { locale: enUS })}</span>
           {shouldShowTime && (
-            <span className="text-[11px] ml-0.5" style={{ color: '#8e8b82' }}>
+            <span className="text-[11px] ml-0.5" style={{ color: 'var(--t-text-muted)' }}>
               {format(endDate, currentTimeFormat, { locale: enUS })}
             </span>
           )}

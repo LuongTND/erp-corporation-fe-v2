@@ -31,10 +31,10 @@ const WEEK_DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
 
 function priorityPillStyle(priority?: string): { bg: string; color: string } {
   const p = (priority ?? '').toLowerCase()
-  if (p === 'urgent') return { bg: '#fee2e2', color: '#dc2626' }
-  if (p === 'high')   return { bg: '#ffedd5', color: '#ea580c' }
-  if (p === 'medium') return { bg: '#fef3c7', color: '#d97706' }
-  return { bg: '#eff6ff', color: '#2563eb' }
+  if (p === 'urgent') return { bg: 'var(--t-priority-high-bg)', color: 'var(--t-priority-high-text)' }
+  if (p === 'high')   return { bg: 'var(--t-priority-high-bg)', color: 'var(--t-priority-high-text)' }
+  if (p === 'medium') return { bg: 'var(--t-priority-med-bg)', color: 'var(--t-priority-med-text)' }
+  return { bg: 'var(--t-priority-low-bg)', color: 'var(--t-priority-low-text)' }
 }
 
 interface TaskCalendarProps {
@@ -157,7 +157,7 @@ export function TaskCalendar({ tasks }: TaskCalendarProps) {
                     className="text-[11px] font-medium w-5 h-5 flex items-center justify-center rounded-full"
                     style={{
                       backgroundColor: today ? C.accent : 'transparent',
-                      color: today ? '#FFFFFF' : inMonth ? C.text : C.muted,
+                      color: today ? 'oklch(var(--primary-foreground))' : inMonth ? C.text : C.muted,
                     }}
                   >
                     {format(day, 'd')}

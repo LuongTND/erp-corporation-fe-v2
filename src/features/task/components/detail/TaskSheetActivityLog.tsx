@@ -4,11 +4,11 @@ import type { ActivityEntry } from '@/features/task/types/task.types'
 import { taskActivityService } from '@/features/task/mocks/task.mock'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 } as const
 
 function timeAgo(iso: string): string {
@@ -41,9 +41,9 @@ function actionLabel(entry: ActivityEntry): string {
 
 function actionColor(action: ActivityEntry['action']): string {
   switch (action) {
-    case 'created':           return '#10b981'
-    case 'status_changed':    return '#6366f1'
-    case 'priority_changed':  return '#f59e0b'
+    case 'created':           return 'var(--t-status-done-text)'
+    case 'status_changed':    return 'oklch(var(--primary))'
+    case 'priority_changed':  return 'var(--t-priority-med-text)'
     case 'comment_added':     return C.accent
     default:                  return C.muted
   }

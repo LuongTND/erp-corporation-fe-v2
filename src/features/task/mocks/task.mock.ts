@@ -6,17 +6,17 @@ import type { ActivityAction, ActivityEntry, CreateTaskRequest, CreateTaskStatus
 // ─── Seed data ──────────────────────────────────────────────────────────────
 
 const SEED_STATUSES: TaskStatusDto[] = [
-  { id: 'status-1', code: 'TODO', name: 'To Do', color: '#6366f1', order: 1, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
-  { id: 'status-2', code: 'IN_PROGRESS', name: 'In Progress', color: '#f59e0b', order: 2, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
-  { id: 'status-3', code: 'IN_REVIEW', name: 'In Review', color: '#8b5cf6', order: 3, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
-  { id: 'status-4', code: 'DONE', name: 'Done', color: '#10b981', order: 4, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
+  { id: 'status-1', code: 'TODO', name: 'To Do', color: '#6B6B6B', order: 1, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
+  { id: 'status-2', code: 'IN_PROGRESS', name: 'In Progress', color: '#B7770D', order: 2, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
+  { id: 'status-3', code: 'IN_REVIEW', name: 'In Review', color: '#1A6EA8', order: 3, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
+  { id: 'status-4', code: 'DONE', name: 'Done', color: '#3B6D11', order: 4, isSystem: true, isActive: true, createdAtUtc: '2025-01-01T00:00:00Z' },
 ]
 
 const SEED_PRIORITIES: TaskPriorityDto[] = [
-  { id: 'priority-1', code: 'LOW', name: 'Low', level: 1, color: '#94a3b8', isActive: true, isSystem: true },
-  { id: 'priority-2', code: 'MEDIUM', name: 'Medium', level: 2, color: '#f59e0b', isActive: true, isSystem: true },
-  { id: 'priority-3', code: 'HIGH', name: 'High', level: 3, color: '#f97316', isActive: true, isSystem: true },
-  { id: 'priority-4', code: 'URGENT', name: 'Urgent', level: 4, color: '#ef4444', isActive: true, isSystem: true },
+  { id: 'priority-1', code: 'LOW', name: 'Low', level: 1, color: '#1A6EA8', isActive: true, isSystem: true },
+  { id: 'priority-2', code: 'MEDIUM', name: 'Medium', level: 2, color: '#B7770D', isActive: true, isSystem: true },
+  { id: 'priority-3', code: 'HIGH', name: 'High', level: 3, color: '#C0392B', isActive: true, isSystem: true },
+  { id: 'priority-4', code: 'URGENT', name: 'Urgent', level: 4, color: '#C0392B', isActive: true, isSystem: true },
 ]
 
 const SEED_TASKS: TaskItemDto[] = [

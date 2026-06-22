@@ -16,7 +16,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
   return (
     <div
       className="flex items-center justify-between h-11 px-3 shrink-0"
-      style={{ borderBottom: '0.5px solid #e6dfd8' }}
+      style={{ borderBottom: '0.5px solid var(--t-border)' }}
     >
       {/* Left: close + code */}
       <div className="flex items-center gap-2">
@@ -29,7 +29,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
         >
-          <X className="h-[15px] w-[15px]" style={{ color: '#6c6a64' }} />
+          <X className="h-[15px] w-[15px]" style={{ color: 'var(--t-text-muted)' }} />
         </button>
 
         {task?.code && (
@@ -45,7 +45,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
       {/* Right: saving indicator + actions */}
       <div className="flex items-center gap-0.5">
         {isUpdating && (
-          <span className="text-[11px] mr-2" style={{ color: '#8e8b82' }}>
+          <span className="text-[11px] mr-2 text-muted-foreground">
             Đang lưu...
           </span>
         )}
@@ -91,7 +91,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--destructive) / 0.1)' }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
             >
-              <Trash2 className="h-[14px] w-[14px]" style={{ color: '#c64545' }} />
+              <Trash2 className="h-[14px] w-[14px]" style={{ color: 'var(--t-priority-high-text)' }} />
             </button>
           </>
         )}
@@ -103,7 +103,7 @@ export function TaskSheetHeader({ task, onClose, isUpdating = false, isFavorite 
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
         >
-          <MoreHorizontal className="h-[15px] w-[15px]" style={{ color: '#6c6a64' }} />
+          <MoreHorizontal className="h-[15px] w-[15px]" style={{ color: 'var(--t-text-muted)' }} />
         </button>
       </div>
     </div>

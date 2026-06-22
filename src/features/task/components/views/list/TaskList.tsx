@@ -42,17 +42,17 @@ type SectionGroup = {
 }
 
 const STATUS_GROUPS: SectionGroup[] = [
-  { key: 'in-progress', label: 'Đang thực hiện', dot: '#d4a017', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'in-progress', label: 'Đang thực hiện', dot: 'var(--t-status-progress-text)', titleColor: 'oklch(var(--muted-foreground))' },
   { key: 'todo',        label: 'Cần làm',         dot: 'oklch(var(--muted-foreground))', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'done',        label: 'Hoàn thành',      dot: '#3B6D11', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'done',        label: 'Hoàn thành',      dot: 'var(--t-status-done-text)', titleColor: 'oklch(var(--muted-foreground))' },
 ]
 
 const PRIORITY_GROUPS: SectionGroup[] = [
-  { key: 'urgent', label: 'Khẩn cấp',        dot: '#ef4444', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'high',   label: 'Cao',              dot: '#f97316', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'medium', label: 'Trung bình',       dot: '#f59e0b', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'low',    label: 'Thấp',             dot: '#94a3b8', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'none',   label: 'Không có ưu tiên', dot: '#d1d5db', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'urgent', label: 'Khẩn cấp',        dot: 'var(--t-priority-high-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'high',   label: 'Cao',              dot: 'var(--t-priority-high-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'medium', label: 'Trung bình',       dot: 'var(--t-priority-med-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'low',    label: 'Thấp',             dot: 'var(--t-priority-low-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'none',   label: 'Không có ưu tiên', dot: 'oklch(var(--muted-foreground))', titleColor: 'oklch(var(--muted-foreground))' },
 ]
 
 function getStatusGroup(task: Task): string {
@@ -79,7 +79,7 @@ function PriorityBadge({ priority }: { priority?: string }) {
 
   let bg = 'oklch(var(--primary) / 0.1)', color = 'oklch(var(--primary))'
   if (p === 'high' || p === 'urgent') { bg = 'oklch(var(--destructive) / 0.1)'; color = 'oklch(var(--destructive))' }
-  else if (p === 'medium') { bg = '#FEF6E4'; color = '#d4a017' }
+  else if (p === 'medium') { bg = 'var(--t-priority-med-bg)'; color = 'var(--t-priority-med-text)' }
 
   return (
     <span
@@ -164,8 +164,8 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
         aria-label="Hoàn thành task"
         className="w-4 h-4 rounded-full border shrink-0 mr-3 flex items-center justify-center cursor-pointer transition-colors duration-200"
         style={{
-          borderColor: done ? '#22c55e' : hovered ? 'oklch(var(--primary))' : 'oklch(var(--border))',
-          backgroundColor: done ? '#22c55e' : 'transparent',
+          borderColor: done ? 'var(--t-status-done-text)' : hovered ? 'oklch(var(--primary))' : 'oklch(var(--border))',
+          backgroundColor: done ? 'var(--t-status-done-text)' : 'transparent',
         }}
         onClick={(e) => { e.stopPropagation(); onToggleDone?.(task) }}
       >
@@ -304,8 +304,8 @@ function DroppableSection({
       ref={setNodeRef}
       className="mb-4 rounded-lg transition-colors duration-150"
       style={{
-        backgroundColor: isOver ? 'rgba(204,120,92,0.05)' : 'transparent',
-        outline: isOver ? '1.5px dashed rgba(204,120,92,0.35)' : '1.5px solid transparent',
+        backgroundColor: isOver ? 'var(--t-accent-subtle)' : 'transparent',
+        outline: isOver ? '1.5px dashed oklch(var(--primary) / 0.35)' : '1.5px solid transparent',
       }}
     >
       <button
@@ -347,9 +347,9 @@ function DroppableSection({
         <div
           className="mx-2 h-8 rounded-md flex items-center justify-center text-[11px] mt-0.5"
           style={{
-            border: '1px dashed rgba(204,120,92,0.4)',
+            border: '1px dashed oklch(var(--primary) / 0.4)',
             color: isOver ? 'oklch(var(--primary))' : 'oklch(var(--muted-foreground))',
-            backgroundColor: isOver ? 'rgba(204,120,92,0.06)' : 'transparent',
+            backgroundColor: isOver ? 'var(--t-accent-subtle)' : 'transparent',
           }}
         >
           Thả vào đây
