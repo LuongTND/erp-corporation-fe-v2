@@ -3,12 +3,12 @@ import { CornerDownRight, Send } from 'lucide-react'
 import { format } from 'date-fns'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
-  avatarBg: '#cc785c',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
+  avatarBg: 'var(--t-accent)',
 } as const
 
 interface Comment {

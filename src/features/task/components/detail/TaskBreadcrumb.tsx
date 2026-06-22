@@ -7,9 +7,9 @@ interface Props {
 }
 
 const C = {
-  muted: '#8e8b82',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  muted: 'var(--t-text-muted)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 } as const
 
 export function TaskBreadcrumb({ task, onNavigate }: Props) {

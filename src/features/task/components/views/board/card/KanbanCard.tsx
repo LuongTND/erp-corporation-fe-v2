@@ -10,9 +10,9 @@ import { Calendar } from 'lucide-react'
 
 function priorityColor(priority?: string): string {
   const p = (priority ?? '').toLowerCase()
-  if (p === 'high' || p === 'urgent') return '#c64545'
-  if (p === 'medium') return '#d4a017'
-  return '#1A6EA8'
+  if (p === 'high' || p === 'urgent') return 'var(--t-priority-high-text)'
+  if (p === 'medium') return 'var(--t-priority-med-text)'
+  return 'var(--t-priority-low-text)'
 }
 
 function DueDateChip({ date }: { date?: string }) {
@@ -24,9 +24,9 @@ function DueDateChip({ date }: { date?: string }) {
   const isOverdue = d < today
   const isToday = d.getTime() === today.getTime()
 
-  let color = '#8e8b82'
-  if (isToday)   color = '#cc785c'
-  if (isOverdue) color = '#c64545'
+  let color = 'var(--t-text-muted)'
+  if (isToday)   color = 'var(--t-accent)'
+  if (isOverdue) color = 'var(--t-priority-high-text)'
 
   return (
     <span className="flex items-center gap-0.5 text-[11px]" style={{ color }}>
@@ -40,7 +40,7 @@ function DueDateChip({ date }: { date?: string }) {
 
 function KanbanCardMedia({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="relative w-full aspect-[2/1] rounded-md overflow-hidden mb-2" style={{ border: '0.5px solid #e6dfd8' }}>
+    <div className="relative w-full aspect-[2/1] rounded-md overflow-hidden mb-2" style={{ border: '0.5px solid var(--t-border)' }}>
       <img src={src} alt={alt} className="object-cover w-full h-full" loading="lazy" />
     </div>
   )
@@ -97,7 +97,7 @@ function BoardCardBase({ task, isGhost, onTaskClick }: BoardCardProps) {
         {task.image && <KanbanCardMedia src={task.image} alt={task.title} />}
 
         {/* Title */}
-        <p className="text-[13px] leading-snug" style={{ color: '#141413' }}>
+        <p className="text-[13px] leading-snug" style={{ color: 'var(--t-text-primary)' }}>
           {task.title}
         </p>
 
@@ -157,7 +157,7 @@ export function KanbanCardOverlay({ task, isSimple }: KanbanCardOverlayProps) {
         opacity: 1,
       }}
     >
-      <p className="text-[13px] leading-snug" style={{ color: '#141413' }}>
+      <p className="text-[13px] leading-snug" style={{ color: 'var(--t-text-primary)' }}>
         {task.title}
       </p>
     </div>

@@ -53,7 +53,7 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 cursor-pointer rounded pl-0 pr-2 py-0.5 transition-colors duration-[120ms]"
-        style={{ color: selectedUser ? '#141413' : '#8e8b82' }}
+        style={{ color: selectedUser ? 'var(--t-text-primary)' : 'var(--t-text-muted)' }}
         onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
       >
@@ -86,7 +86,7 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search person…"
               className="w-full bg-transparent border-none outline-none text-[12px]"
-              style={{ color: '#141413' }}
+              style={{ color: 'var(--t-text-primary)' }}
             />
           </div>
 
@@ -96,7 +96,7 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
             <button
               type="button"
               className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] cursor-pointer transition-colors duration-[120ms]"
-              style={{ color: '#8e8b82' }}
+              style={{ color: 'var(--t-text-muted)' }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--muted) / 0.5)' }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
               onClick={() => { onChange(''); setOpen(false); setSearch('') }}
@@ -106,7 +106,7 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
                 style={{ borderColor: 'oklch(var(--border))' }}
               />
               <span>Unassigned</span>
-              {!value && <Check className="ml-auto h-3.5 w-3.5" style={{ color: '#cc785c' }} />}
+              {!value && <Check className="ml-auto h-3.5 w-3.5" style={{ color: 'var(--t-accent)' }} />}
             </button>
 
             {filtered.length === 0 && (
@@ -132,7 +132,7 @@ export function AssigneeSelector({ users, value, onChange }: AssigneeSelectorPro
                 <UserAvatar user={user} size={18} />
                 <span>{user.label}</span>
                 {value === user.value && (
-                  <Check className="ml-auto h-3.5 w-3.5" style={{ color: '#cc785c' }} />
+                  <Check className="ml-auto h-3.5 w-3.5" style={{ color: 'var(--t-accent)' }} />
                 )}
               </button>
             ))}
