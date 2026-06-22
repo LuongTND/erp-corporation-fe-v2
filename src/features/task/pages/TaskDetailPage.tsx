@@ -18,10 +18,9 @@ const C = {
 
 function priorityColor(name?: string): string {
   const p = (name ?? '').toLowerCase()
-  if (p === 'urgent') return '#ef4444'
-  if (p === 'high') return '#f97316'
-  if (p === 'medium') return '#f59e0b'
-  return '#94a3b8'
+  if (p === 'urgent' || p === 'high') return 'var(--t-priority-high-text)'
+  if (p === 'medium') return 'var(--t-priority-med-text)'
+  return 'var(--t-priority-low-text)'
 }
 
 function formatDate(iso?: string): string {

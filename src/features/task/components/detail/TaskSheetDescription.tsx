@@ -17,8 +17,7 @@ export function TaskSheetDescription({
   return (
     <div className="flex flex-col gap-2">
       <p
-        className="text-[11px] font-medium uppercase tracking-[0.06em]"
-        style={{ color: '#8e8b82' }}
+        className="text-[11px] font-medium uppercase tracking-[0.06em] text-muted-foreground"
       >
         Mô tả
       </p>

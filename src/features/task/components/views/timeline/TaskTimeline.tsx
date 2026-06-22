@@ -27,10 +27,9 @@ const LEFT_W = 220 // px left panel
 
 function priorityColor(priority?: string): string {
   const p = (priority ?? '').toLowerCase()
-  if (p === 'urgent') return '#ef4444'
-  if (p === 'high')   return '#f97316'
-  if (p === 'medium') return '#f59e0b'
-  return '#6366f1'
+  if (p === 'urgent' || p === 'high') return 'var(--t-priority-high-text)'
+  if (p === 'medium') return 'var(--t-priority-med-text)'
+  return 'var(--t-priority-low-text)'
 }
 
 interface Props {

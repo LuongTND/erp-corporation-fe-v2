@@ -3,18 +3,18 @@ import { useEffect, useRef, useState } from 'react'
 import type { Task } from '@/features/task/types/task.types'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 } as const
 
 const PRIORITY_COLORS: Record<string, string> = {
-  urgent: '#ef4444',
-  high: '#f97316',
-  medium: '#f59e0b',
-  low: '#94a3b8',
+  urgent: 'var(--t-priority-high-text)',
+  high: 'var(--t-priority-high-text)',
+  medium: 'var(--t-priority-med-text)',
+  low: 'var(--t-priority-low-text)',
 }
 
 interface PreviewState {

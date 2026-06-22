@@ -4,11 +4,11 @@ import type { TaskItemDto, DependencyType } from '@/features/task/types/task.typ
 import { taskDependencyService, taskItemService } from '@/features/task/mocks/task.mock'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 }
 
 interface Props {
@@ -141,7 +141,7 @@ export function TaskSheetDependencies({ taskId }: Props) {
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
           <span className="text-[12px] font-medium flex items-center gap-1.5" style={{ color: C.text }}>
-            <Link2 className="h-3.5 w-3.5" style={{ color: '#ef4444' }} />
+            <Link2 className="h-3.5 w-3.5" style={{ color: 'var(--t-priority-high-text)' }} />
             Bị chặn bởi
           </span>
           <button

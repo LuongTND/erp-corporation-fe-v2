@@ -5,11 +5,11 @@ import type { TaskAttachment } from '@/features/task/types/task.types'
 import { taskAttachmentService } from '@/features/task/mocks/task.mock'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 }
 
 function formatBytes(bytes: number): string {
@@ -19,8 +19,8 @@ function formatBytes(bytes: number): string {
 }
 
 function FileTypeIcon({ mimeType }: { mimeType: string }) {
-  if (mimeType.startsWith('image/')) return <FileImage className="h-4 w-4" style={{ color: '#6366f1' }} />
-  if (mimeType === 'application/pdf') return <FileText className="h-4 w-4" style={{ color: '#ef4444' }} />
+  if (mimeType.startsWith('image/')) return <FileImage className="h-4 w-4" style={{ color: 'oklch(var(--primary))' }} />
+  if (mimeType === 'application/pdf') return <FileText className="h-4 w-4" style={{ color: 'var(--t-priority-high-text)' }} />
   return <File className="h-4 w-4" style={{ color: C.muted }} />
 }
 
@@ -133,7 +133,7 @@ export function TaskSheetAttachments({ taskId }: Props) {
                 onClick={() => handleDelete(att.id)}
                 className="opacity-0 group-hover:opacity-100 w-6 h-6 flex items-center justify-center rounded cursor-pointer transition-all duration-[120ms]"
                 style={{ color: C.muted }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ef4444' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--t-priority-high-text)' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = C.muted }}
               >
                 <Trash2 className="h-3.5 w-3.5" />

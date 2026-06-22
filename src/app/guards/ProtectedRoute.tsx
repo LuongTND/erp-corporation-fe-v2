@@ -7,6 +7,8 @@ import { ROUTES } from '@/config/routes'
  * Nếu chưa → redirect về Portal.
  */
 export function ProtectedRoute() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  return isAuthenticated ? <Outlet /> : <Navigate to={ROUTES.PORTAL} replace />
+  // TODO: bỏ comment khi test xong
+  // const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  // return isAuthenticated ? <Outlet /> : <Navigate to={ROUTES.PORTAL} replace />
+  return <Outlet />
 }
