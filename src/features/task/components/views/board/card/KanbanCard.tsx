@@ -10,9 +10,9 @@ import { Calendar } from 'lucide-react'
 
 function priorityColor(priority?: string): string {
   const p = (priority ?? '').toLowerCase()
-  if (p === 'high' || p === 'urgent') return '#c64545'
-  if (p === 'medium') return '#d4a017'
-  return '#1A6EA8'
+  if (p === 'high' || p === 'urgent') return 'var(--t-priority-high-text)'
+  if (p === 'medium') return 'var(--t-priority-med-text)'
+  return 'var(--t-priority-low-text)'
 }
 
 function DueDateChip({ date }: { date?: string }) {
@@ -24,9 +24,9 @@ function DueDateChip({ date }: { date?: string }) {
   const isOverdue = d < today
   const isToday = d.getTime() === today.getTime()
 
-  let color = '#8e8b82'
-  if (isToday)   color = '#cc785c'
-  if (isOverdue) color = '#c64545'
+  let color = 'var(--t-text-muted)'
+  if (isToday)   color = 'var(--t-accent)'
+  if (isOverdue) color = 'var(--t-priority-high-text)'
 
   return (
     <span className="flex items-center gap-0.5 text-[11px]" style={{ color }}>
@@ -40,7 +40,7 @@ function DueDateChip({ date }: { date?: string }) {
 
 function KanbanCardMedia({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="relative w-full aspect-[2/1] rounded-md overflow-hidden mb-2" style={{ border: '0.5px solid #e6dfd8' }}>
+    <div className="relative w-full aspect-[2/1] rounded-md overflow-hidden mb-2" style={{ border: '0.5px solid var(--t-border)' }}>
       <img src={src} alt={alt} className="object-cover w-full h-full" loading="lazy" />
     </div>
   )
@@ -85,7 +85,7 @@ function BoardCardBase({ task, isGhost, onTaskClick }: BoardCardProps) {
       <div
         className="flex flex-col gap-2 p-3 rounded-lg"
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'oklch(var(--card))',
           border: '0.5px solid #e6dfd8',
           boxShadow: isDragging
             ? '0 8px 24px rgba(0,0,0,0.12)'
@@ -97,7 +97,7 @@ function BoardCardBase({ task, isGhost, onTaskClick }: BoardCardProps) {
         {task.image && <KanbanCardMedia src={task.image} alt={task.title} />}
 
         {/* Title */}
-        <p className="text-[13px] leading-snug" style={{ color: '#141413' }}>
+        <p className="text-[13px] leading-snug" style={{ color: 'var(--t-text-primary)' }}>
           {task.title}
         </p>
 
@@ -120,7 +120,7 @@ function BoardCardBase({ task, isGhost, onTaskClick }: BoardCardProps) {
           {task.assignee && (
             <span
               className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0"
-              style={{ backgroundColor: '#cc785c' }}
+              style={{ backgroundColor: 'oklch(var(--primary))' }}
               title={task.assignee}
             >
               {task.assignee.charAt(0).toUpperCase()}
@@ -150,14 +150,14 @@ export function KanbanCardOverlay({ task, isSimple }: KanbanCardOverlayProps) {
     <div
       className="flex flex-col gap-2 p-3 rounded-lg cursor-grabbing"
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'oklch(var(--card))',
         border: '0.5px solid #e6dfd8',
         boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
         transform: isSimple ? 'none' : 'rotate(2deg) scale(1.03)',
         opacity: 1,
       }}
     >
-      <p className="text-[13px] leading-snug" style={{ color: '#141413' }}>
+      <p className="text-[13px] leading-snug" style={{ color: 'var(--t-text-primary)' }}>
         {task.title}
       </p>
     </div>

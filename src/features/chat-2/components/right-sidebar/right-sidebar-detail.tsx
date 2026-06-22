@@ -277,7 +277,7 @@ export function GroupMembersPanel({ onBack, totalMembers, members = [] }: GroupM
         <div className="p-4 pb-0">
           <Button
             variant="secondary"
-            className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 justify-center"
+            className="w-full bg-muted hover:bg-muted/70 text-foreground justify-center"
           >
             <UserPlus className="w-4 h-4 mr-2" />
             Thêm thành viên
@@ -296,7 +296,7 @@ export function GroupMembersPanel({ onBack, totalMembers, members = [] }: GroupM
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Tìm kiếm thành viên"
-              className="pl-9 bg-slate-50 border-slate-200"
+              className="pl-9 bg-card border-border"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

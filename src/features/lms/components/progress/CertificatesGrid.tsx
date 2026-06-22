@@ -17,7 +17,7 @@ function CertCard({ cert }: { cert: Certificate }) {
 
   return (
     <div className="flex flex-col items-center rounded-xl border-2 bg-card p-5 shadow-sm border-green-500/30">
-      <Award className="mb-3 h-12 w-12 text-[#5db872]" />
+      <Award className="mb-3 h-12 w-12 text-green-700 dark:text-green-400" />
       <p className="mb-1 text-center text-sm font-semibold text-foreground">{cert.courseName}</p>
       <p className="mb-4 text-xs text-muted-foreground">Completed {cert.completedDate}</p>
       <button

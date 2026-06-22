@@ -48,7 +48,7 @@ function TreeNode({
       {isExpanded && hasChildren && (
         <div className="flex flex-col items-center">
           {/* Stem from parent down */}
-          <div className="w-px bg-slate-200" style={{ height: 24, marginTop: node.children.length ? 12 : 0 }} />
+          <div className="w-px bg-border" style={{ height: 24, marginTop: node.children.length ? 12 : 0 }} />
 
           {/* Horizontal + vertical connectors + children */}
           <div className="flex items-start" style={{ gap }}>
@@ -63,20 +63,20 @@ function TreeNode({
                   <div className="relative flex justify-center" style={{ height: 24, width: '100%', minWidth: isRoot ? 240 : 208 }}>
                     {/* vertical segment */}
                     <div
-                      className="absolute bg-slate-200"
+                      className="absolute bg-border"
                       style={{ width: 1, height: 24, left: '50%', top: 0 }}
                     />
                     {/* horizontal left arm */}
                     {!isOnly && !isFirst && (
                       <div
-                        className="absolute bg-slate-200"
+                        className="absolute bg-border"
                         style={{ height: 1, top: 0, left: 0, right: '50%' }}
                       />
                     )}
                     {/* horizontal right arm */}
                     {!isOnly && !isLast && (
                       <div
-                        className="absolute bg-slate-200"
+                        className="absolute bg-border"
                         style={{ height: 1, top: 0, left: '50%', right: 0 }}
                       />
                     )}
@@ -130,38 +130,32 @@ function MiniMap({ scale, tx, ty }: { scale: number; tx: number; ty: number }) {
   const rectY = Math.max(0, Math.min(vh - rectH, vh * 0.5 - ty / 20 - rectH / 2))
 
   return (
-    <div
-      className="absolute bottom-4 right-4 rounded-lg overflow-hidden"
-      style={{
-        width: 120, height: 80,
-        backgroundColor: '#fff',
-        border: '1px solid #e2e8f0',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      }}
+    <div className="absolute bottom-4 right-4 rounded-lg overflow-hidden border border-border bg-card shadow-md"
+      style={{ width: 120, height: 80 }}
     >
       <svg width="120" height="80">
         {/* Tree background */}
-        <rect width="120" height="80" fill="#f8fafc" />
+        <rect width="120" height="80" fill="transparent" />
         {/* Connector lines sketch */}
-        <line x1="50" y1="14" x2="50" y2="25" stroke="#e2e8f0" strokeWidth="1" />
-        <line x1="15" y1="25" x2="85" y2="25" stroke="#e2e8f0" strokeWidth="1" />
-        <line x1="15" y1="25" x2="15" y2="43" stroke="#e2e8f0" strokeWidth="1" />
-        <line x1="50" y1="25" x2="50" y2="43" stroke="#e2e8f0" strokeWidth="1" />
-        <line x1="85" y1="25" x2="85" y2="43" stroke="#e2e8f0" strokeWidth="1" />
-        {/* Node dots */}
+        <line x1="50" y1="14" x2="50" y2="25" stroke="currentColor" strokeWidth="1" opacity="0.3" />
+        <line x1="15" y1="25" x2="85" y2="25" stroke="currentColor" strokeWidth="1" opacity="0.3" />
+        <line x1="15" y1="25" x2="15" y2="43" stroke="currentColor" strokeWidth="1" opacity="0.3" />
+        <line x1="50" y1="25" x2="50" y2="43" stroke="currentColor" strokeWidth="1" opacity="0.3" />
+        <line x1="85" y1="25" x2="85" y2="43" stroke="currentColor" strokeWidth="1" opacity="0.3" />
+        {/* Node dots — dept colors kept intentionally */}
         {dots.map((d, i) => (
           <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={d.c} opacity={0.8} />
         ))}
-        {/* Viewport rect */}
+        {/* Viewport rect — primary color via oklch var */}
         <rect
           x={rectX} y={rectY} width={rectW} height={rectH}
-          fill="rgba(204,120,92,0.12)"
-          stroke="#cc785c"
+          fill="oklch(var(--primary) / 0.12)"
+          stroke="oklch(var(--primary))"
           strokeWidth="1"
           rx="2"
         />
       </svg>
-      <p className="absolute bottom-0.5 left-0 right-0 text-center text-[8px] text-slate-400">
+      <p className="absolute bottom-0.5 left-0 right-0 text-center text-[8px] text-muted-foreground">
         {Math.round(scale * 100)}%
       </p>
     </div>
@@ -236,13 +230,11 @@ export function OrgChartTree({
   return (
     <div
       ref={containerRef}
-      className="relative w-full flex-1 overflow-hidden rounded-xl"
+      className="relative w-full h-full overflow-hidden rounded-xl"
       style={{
         cursor: 'grab',
-        // Dot grid
-        backgroundImage: 'radial-gradient(circle, #cbd5e1 1px, transparent 1px)',
+        backgroundImage: 'radial-gradient(circle, oklch(var(--border)) 1px, transparent 1px)',
         backgroundSize: '20px 20px',
-        backgroundColor: '#f8fafc',
         minHeight: 500,
       }}
       onMouseDown={handleMouseDown}

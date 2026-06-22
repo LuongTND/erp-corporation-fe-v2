@@ -236,9 +236,9 @@ export function TaskView() {
           <div className="text-center">
             <div
               className="animate-spin rounded-full h-8 w-8 border-b-2 mx-auto mb-4"
-              style={{ borderColor: '#cc785c' }}
+              style={{ borderColor: 'oklch(var(--primary))' }}
             />
-            <p className="text-sm" style={{ color: '#8e8b82' }}>
+            <p className="text-sm text-muted-foreground">
               Đang tải danh sách công việc...
             </p>
           </div>

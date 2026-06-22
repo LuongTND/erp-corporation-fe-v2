@@ -7,12 +7,12 @@ import { taskPriorityService } from '@/features/task/mocks/task.mock'
 import { TaskCreateDialog } from '../board/dialogs/TaskCreateDialog'
 
 const C = {
-  bg: '#FFFFFF',
-  bgHover: '#f5f0e8',
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
+  bg: 'oklch(var(--card))',
+  bgHover: 'var(--t-bg-hover)',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
 } as const
 
 function hexAlpha(hex: string, alpha: number) {
@@ -21,8 +21,8 @@ function hexAlpha(hex: string, alpha: number) {
 }
 
 function StatusPill({ color, label }: { color?: string; label: string }) {
-  const bg = color ? hexAlpha(color, 0.12) : '#f5f0e8'
-  const txt = color || '#6c6a64'
+  const bg = color ? hexAlpha(color, 0.12) : 'var(--t-bg-hover)'
+  const txt = color || 'var(--t-text-muted)'
   return (
     <span
       className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium whitespace-nowrap"
@@ -237,7 +237,7 @@ export function TaskTable({
           <button
             type="button"
             className="cursor-pointer hover:underline"
-            style={{ color: '#dc2626' }}
+            style={{ color: 'var(--t-status-overdue-text)' }}
             onClick={() => setSelectedIds(new Set())}
           >
             Bỏ chọn
@@ -424,7 +424,7 @@ export function TaskTable({
                     {dueDate ? (
                       <span
                         className="text-[12px]"
-                        style={{ color: isOverdue ? '#d97706' : C.text }}
+                        style={{ color: isOverdue ? 'var(--t-status-overdue-text)' : C.text }}
                       >
                         {format(new Date(dueDate), 'dd/MM/yyyy')}
                       </span>

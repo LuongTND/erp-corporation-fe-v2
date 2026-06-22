@@ -1,19 +1,20 @@
 import { Link } from 'react-router-dom'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ROUTES } from '@/config/routes'
 import {
   ArrowRight,
-  Users,
   BookOpen,
   MessageSquare,
   Trophy,
   CheckSquare,
   Zap,
-  Activity,
+    Activity,
+  CreditCard,
+  Users,
 } from 'lucide-react'
 
 // ─── Data ──────────────────────────────────────────────────────────────────

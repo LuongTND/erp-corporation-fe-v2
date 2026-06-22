@@ -84,22 +84,21 @@ const TABS = [
 
 export default function EmployeeDetailPage() {
   return (
-    <div className="min-h-full" style={{ backgroundColor: '#faf9f5' }}>
+    <div className="min-h-full bg-card">
 
       {/* Sticky page header */}
       <header
-        className="sticky top-0 z-10 flex items-center px-8 h-14 border-b"
-        style={{ backgroundColor: '#faf9f5', borderColor: '#e6dfd8' }}
+        className="sticky top-0 z-10 flex items-center px-8 h-14 border-b bg-card border-border"
       >
         <nav className="flex items-center gap-1.5 text-sm" aria-label="Breadcrumb">
           <a
             href="/hr/employees"
-            className="text-[#6c6a64] hover:text-[#141413] transition-colors"
+            className="text-muted-foreground hover:text-foreground transition-colors"
           >
             Employees
           </a>
-          <ChevronRight className="w-3.5 h-3.5 text-[#8e8b82]" aria-hidden="true" />
-          <span className="text-[#141413] font-medium">{MOCK_EMPLOYEE.fullName}</span>
+          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
+          <span className="text-foreground font-medium">{MOCK_EMPLOYEE.fullName}</span>
         </nav>
       </header>
 
@@ -112,14 +111,13 @@ export default function EmployeeDetailPage() {
         {/* Tabs */}
         <Tabs defaultValue="personal" className="flex flex-col">
           <TabsList
-            className="w-full justify-start h-auto p-1 rounded-lg gap-0.5 overflow-x-auto"
-            style={{ backgroundColor: '#f5f0e8' }}
+            className="w-full justify-start h-auto p-1 rounded-lg gap-0.5 overflow-x-auto bg-muted/50"
           >
             {TABS.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="text-sm text-[#6c6a64] data-[state=active]:bg-[#efe9de] data-[state=active]:text-[#141413] data-[state=active]:shadow-none rounded-md px-3 py-2 font-medium whitespace-nowrap transition-colors"
+                className="text-sm text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none rounded-md px-3 py-2 font-medium whitespace-nowrap transition-colors"
               >
                 {tab.label}
               </TabsTrigger>

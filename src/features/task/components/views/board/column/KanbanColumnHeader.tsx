@@ -53,7 +53,7 @@ export function ColumnHeader({
       {/* Status dot */}
       <span
         className="w-2 h-2 rounded-full shrink-0"
-        style={{ backgroundColor: column.color || '#8e8b82' }}
+        style={{ backgroundColor: column.color || 'oklch(var(--muted-foreground))' }}
       />
 
       {/* Title */}
@@ -64,13 +64,12 @@ export function ColumnHeader({
           onChange={(e) => setTitle(e.target.value)}
           onBlur={handleSave}
           onKeyDown={handleKeyDown}
-          className="h-6 px-1 py-0 text-[11px] font-medium bg-white border-[#e6dfd8] focus-visible:ring-1 focus-visible:ring-[#cc785c]"
+          className="h-6 px-1 py-0 text-[11px] font-medium bg-card border-border focus-visible:ring-1 focus-visible:ring-primary"
         />
       ) : (
         <span
           onClick={() => setIsRenaming(true)}
-          className="text-[11px] font-medium uppercase tracking-[0.06em] cursor-text truncate"
-          style={{ color: '#6c6a64' }}
+          className="text-[11px] font-medium uppercase tracking-[0.06em] cursor-text truncate text-muted-foreground"
         >
           {title}
         </span>
@@ -78,8 +77,7 @@ export function ColumnHeader({
 
       {/* Count badge */}
       <span
-        className="text-[11px] rounded-full px-[7px] py-px shrink-0"
-        style={{ backgroundColor: '#e6dfd8', color: '#6c6a64' }}
+        className="text-[11px] rounded-full px-[7px] py-px shrink-0 bg-border text-muted-foreground"
       >
         {taskCount}
       </span>

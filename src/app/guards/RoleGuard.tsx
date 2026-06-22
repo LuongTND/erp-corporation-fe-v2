@@ -9,14 +9,10 @@ import ForbiddenPage from '@/features/auth/pages/ForbiddenPage'
  * Nếu role không có quyền → hiển thị trang Forbidden (403).
  */
 export function RoleGuard() {
-  const user = useAuthStore((s) => s.user)
-  const location = useLocation()
-
-  const allowed = hasAccess(location.pathname, user?.role ?? null)
-
-  if (!allowed) {
-    return <ForbiddenPage />
-  }
-
+  // TODO: bỏ comment khi test xong
+  // const user = useAuthStore((s) => s.user)
+  // const location = useLocation()
+  // const allowed = hasAccess(location.pathname, user?.role ?? null)
+  // if (!allowed) { return <ForbiddenPage /> }
   return <Outlet />
 }

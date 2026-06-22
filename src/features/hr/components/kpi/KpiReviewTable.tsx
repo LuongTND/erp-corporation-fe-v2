@@ -147,11 +147,11 @@ const achievementColor = (pct: number) =>
   pct >= 100 ? '#2d7a40' : pct >= 75 ? '#9a6b2a' : '#c64545'
 
 const getScoreLabel = (score: number) =>
-  score >= 90 ? { label: 'Excellent Performance', color: '#2d7a40' } :
-  score >= 75 ? { label: 'Good Performance',       color: '#2d7a40' } :
-  score >= 60 ? { label: 'Meets Expectations',      color: '#a9583e' } :
-  score >= 50 ? { label: 'Needs Improvement',       color: '#9a6b2a' } :
-               { label: 'Unsatisfactory',            color: '#c64545' }
+  score >= 90 ? { label: 'Excellent Performance', colorCls: 'text-green-700 dark:text-green-400' } :
+  score >= 75 ? { label: 'Good Performance',       colorCls: 'text-green-700 dark:text-green-400' } :
+  score >= 60 ? { label: 'Meets Expectations',      colorCls: 'text-primary' } :
+  score >= 50 ? { label: 'Needs Improvement',       colorCls: 'text-amber-700 dark:text-amber-400' } :
+               { label: 'Unsatisfactory',            colorCls: 'text-destructive' }
 
 // ─── SVG ring helpers ─────────────────────────────────────────────────────────
 
@@ -161,18 +161,18 @@ function ScoreDonut({ score }: { score: number }) {
   return (
     <div className="relative w-[120px] h-[120px] shrink-0">
       <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
-        <circle cx="60" cy="60" r={r} fill="none" stroke="#f0ebe3" strokeWidth="10" />
+        <circle cx="60" cy="60" r={r} fill="none" stroke="oklch(var(--border))" strokeWidth="10" />
         <circle
           cx="60" cy="60" r={r}
-          fill="none" stroke="#cc785c" strokeWidth="10"
+          fill="none" stroke="oklch(var(--primary))" strokeWidth="10"
           strokeDasharray={circ}
           strokeDashoffset={circ * (1 - score / 100)}
           strokeLinecap="round"
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <p className="text-2xl font-bold text-[#141413] leading-none">{score}</p>
-        <p className="text-[10px] text-[#8e8b82]">/100</p>
+        <p className="text-2xl font-bold text-foreground leading-none">{score}</p>
+        <p className="text-[10px] text-muted-foreground">/100</p>
       </div>
     </div>
   )
@@ -184,7 +184,7 @@ function MiniDonut({ score, color }: { score: number; color: string }) {
   return (
     <div className="relative w-[44px] h-[44px]">
       <svg viewBox="0 0 44 44" className="w-full h-full -rotate-90">
-        <circle cx="22" cy="22" r={r} fill="none" stroke="#f0ebe3" strokeWidth="5" />
+        <circle cx="22" cy="22" r={r} fill="none" stroke="oklch(var(--border))" strokeWidth="5" />
         <circle
           cx="22" cy="22" r={r}
           fill="none" stroke={color} strokeWidth="5"
@@ -206,10 +206,10 @@ function MiniRing({ met, total }: { met: number; total: number }) {
   const pct = total > 0 ? met / total : 0
   return (
     <svg viewBox="0 0 20 20" className="w-5 h-5 -rotate-90 shrink-0">
-      <circle cx="10" cy="10" r={r} fill="none" stroke="#f0ebe3" strokeWidth="2.5" />
+      <circle cx="10" cy="10" r={r} fill="none" stroke="oklch(var(--border))" strokeWidth="2.5" />
       <circle
         cx="10" cy="10" r={r}
-        fill="none" stroke="#5db872" strokeWidth="2.5"
+        fill="none" stroke="#22c55e" strokeWidth="2.5"
         strokeDasharray={circ}
         strokeDashoffset={circ * (1 - pct)}
         strokeLinecap="round"
@@ -221,17 +221,17 @@ function MiniRing({ met, total }: { met: number; total: number }) {
 // ─── Cell sub-components ──────────────────────────────────────────────────────
 
 const STATUS_STYLES: Record<ReviewStatus, string> = {
-  'Completed':           'bg-[#5db872]/10 text-[#2d7a40]',
-  'In Progress':         'bg-[#cc785c]/10 text-[#a9583e]',
-  'Pending Self Review': 'bg-[#e8a55a]/10 text-[#9a6b2a]',
-  'Not Started':         'bg-[#f0ebe3] text-[#8e8b82]',
+  'Completed':           'bg-green-500/12 dark:bg-green-500/20 text-green-700 dark:text-green-400',
+  'In Progress':         'bg-primary/10 text-primary',
+  'Pending Self Review': 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  'Not Started':         'bg-muted text-muted-foreground',
 }
 
 function StatusBadge({ status }: { status: ReviewStatus }) {
   return (
     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${STATUS_STYLES[status]}`}>
       {status === 'In Progress' && (
-        <span className="w-1.5 h-1.5 rounded-full bg-[#cc785c] animate-pulse shrink-0" />
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shrink-0" />
       )}
       {status}
     </span>
@@ -239,14 +239,14 @@ function StatusBadge({ status }: { status: ReviewStatus }) {
 }
 
 function ScoreBar({ score }: { score: number | null }) {
-  if (score == null) return <span className="text-xs text-[#8e8b82]">—</span>
+  if (score == null) return <span className="text-xs text-muted-foreground">—</span>
   const color = score >= 75 ? '#5db872' : score >= 50 ? '#e8a55a' : '#c64545'
   return (
     <div>
-      <p className="text-sm font-semibold text-[#141413]">
-        {score}<span className="text-xs text-[#8e8b82] font-normal">/100</span>
+      <p className="text-sm font-semibold text-foreground">
+        {score}<span className="text-xs text-muted-foreground font-normal">/100</span>
       </p>
-      <div className="w-16 h-1.5 bg-[#f0ebe3] rounded-full mt-1 overflow-hidden">
+      <div className="w-16 h-1.5 bg-muted rounded-full mt-1 overflow-hidden">
         <div className="h-1.5 rounded-full" style={{ width: `${score}%`, backgroundColor: color }} />
       </div>
     </div>
@@ -254,9 +254,9 @@ function ScoreBar({ score }: { score: number | null }) {
 }
 
 const TREND_ICONS: Record<ScoreTrend, { Icon: LucideIcon; cls: string }> = {
-  up:   { Icon: TrendingUp,   cls: 'text-[#2d7a40]' },
-  down: { Icon: TrendingDown, cls: 'text-[#c64545]' },
-  flat: { Icon: Minus,        cls: 'text-[#8e8b82]' },
+  up:   { Icon: TrendingUp,   cls: 'text-green-700 dark:text-green-400' },
+  down: { Icon: TrendingDown, cls: 'text-destructive' },
+  flat: { Icon: Minus,        cls: 'text-muted-foreground' },
 }
 
 // ─── KPI Detail Sheet body ────────────────────────────────────────────────────
@@ -264,7 +264,7 @@ const TREND_ICONS: Record<ScoreTrend, { Icon: LucideIcon; cls: string }> = {
 function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
   if (emp.reviewStatus === 'Not Started') {
     return (
-      <div className="py-12 text-center text-sm text-[#8e8b82]">
+      <div className="py-12 text-center text-sm text-muted-foreground">
         Review not started yet.
       </div>
     )
@@ -276,11 +276,11 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
     <div className="space-y-5 py-4">
 
       {/* Score Summary */}
-      <div className="p-5 rounded-xl bg-[#f5f0e8] border border-[#e6dfd8]">
+      <div className="p-5 rounded-xl bg-muted/50 border border-border">
         <div className="flex items-center gap-5">
           {emp.overallScore != null && <ScoreDonut score={emp.overallScore} />}
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold mb-4" style={{ color: label.color }}>
+            <p className={`text-sm font-semibold mb-4 ${label.colorCls}`}>
               {label.label}
             </p>
             {emp.subScores && (
@@ -292,7 +292,7 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
                 ] as [string, number, string][]).map(([name, score, color]) => (
                   <div key={name} className="flex flex-col items-center gap-1">
                     <MiniDonut score={score} color={color} />
-                    <p className="text-[9px] text-[#8e8b82] text-center leading-tight">{name}</p>
+                    <p className="text-[9px] text-muted-foreground text-center leading-tight">{name}</p>
                   </div>
                 ))}
               </div>
@@ -304,34 +304,34 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
       {/* KPI Items */}
       {emp.kpiItems.length > 0 && (
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8e8b82] mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
             KPI Breakdown
           </p>
-          <div className="rounded-lg border border-[#f0ebe3] overflow-hidden">
+          <div className="rounded-lg border border-border overflow-hidden">
             <table className="w-full text-xs">
               <thead>
-                <tr className="bg-[#faf9f5] border-b border-[#f0ebe3]">
-                  <th className="text-left px-3 py-2 text-[#8e8b82] font-medium">KPI</th>
-                  <th className="text-center px-2 py-2 text-[#8e8b82] font-medium">Wt.</th>
-                  <th className="text-right px-2 py-2 text-[#8e8b82] font-medium">Target</th>
-                  <th className="text-right px-2 py-2 text-[#8e8b82] font-medium">Actual</th>
-                  <th className="text-right px-2 py-2 text-[#8e8b82] font-medium">Ach.</th>
-                  <th className="text-right px-3 py-2 text-[#8e8b82] font-medium">Score</th>
+                <tr className="bg-card border-b border-border">
+                  <th className="text-left px-3 py-2 text-muted-foreground font-medium">KPI</th>
+                  <th className="text-center px-2 py-2 text-muted-foreground font-medium">Wt.</th>
+                  <th className="text-right px-2 py-2 text-muted-foreground font-medium">Target</th>
+                  <th className="text-right px-2 py-2 text-muted-foreground font-medium">Actual</th>
+                  <th className="text-right px-2 py-2 text-muted-foreground font-medium">Ach.</th>
+                  <th className="text-right px-3 py-2 text-muted-foreground font-medium">Score</th>
                 </tr>
               </thead>
               <tbody>
                 {emp.kpiItems.map((item: KpiItem, idx: number) => {
                   const achColor = achievementColor(item.achievement)
                   return (
-                    <tr key={idx} className={idx % 2 === 1 ? 'bg-[#faf9f5]/60' : ''}>
-                      <td className="px-3 py-2 text-[#3d3d3a] font-medium">{item.name}</td>
+                    <tr key={idx} className={idx % 2 === 1 ? 'bg-card/60' : ''}>
+                      <td className="px-3 py-2 text-foreground font-medium">{item.name}</td>
                       <td className="px-2 py-2 text-center">
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#f0ebe3] text-[#6c6a64] font-medium">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">
                           {item.weight}%
                         </span>
                       </td>
-                      <td className="px-2 py-2 text-right text-[#6c6a64]">{item.target}</td>
-                      <td className="px-2 py-2 text-right text-[#3d3d3a] font-medium">{item.actual}</td>
+                      <td className="px-2 py-2 text-right text-muted-foreground">{item.target}</td>
+                      <td className="px-2 py-2 text-right text-foreground font-medium">{item.actual}</td>
                       <td className="px-2 py-2 text-right">
                         <span
                           className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
@@ -340,7 +340,7 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
                           {item.achievement}%
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-right font-semibold text-[#3d3d3a]">
+                      <td className="px-3 py-2 text-right font-semibold text-foreground">
                         {item.score}/{item.maxScore}
                       </td>
                     </tr>
@@ -354,18 +354,18 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
 
       {/* Manager Comments */}
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8e8b82] mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
           Manager Comments
         </p>
-        <div className="p-4 rounded-lg bg-white border border-[#e6dfd8]">
+        <div className="p-4 rounded-lg bg-card border border-border">
           <div className="flex items-center gap-2.5 mb-3">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-[#5db8a6]/15 text-[#357a70] shrink-0">
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-teal-500/15 text-teal-700 dark:text-teal-400 shrink-0">
               {emp.manager.initials}
             </div>
-            <p className="text-xs font-medium text-[#3d3d3a]">{emp.manager.name}</p>
-            <span className="text-[10px] text-[#8e8b82]">· Manager</span>
+            <p className="text-xs font-medium text-foreground">{emp.manager.name}</p>
+            <span className="text-[10px] text-muted-foreground">· Manager</span>
           </div>
-          <p className="text-sm text-[#6c6a64] leading-relaxed italic pl-4 border-l-[3px] border-[#cc785c]/50">
+          <p className="text-sm text-muted-foreground leading-relaxed italic pl-4 border-l-[3px] border-primary/50">
             {emp.manager.comment}
           </p>
         </div>
@@ -374,11 +374,11 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
       {/* Self Assessment */}
       {emp.selfReviewSubmitted && emp.selfAssessment && (
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8e8b82] mb-2">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
             Self Assessment
           </p>
-          <div className="p-4 rounded-lg border border-[#e8a55a]/25" style={{ backgroundColor: 'rgba(232,165,90,0.06)' }}>
-            <p className="text-sm text-[#6c6a64] leading-relaxed italic pl-4 border-l-[3px] border-[#e8a55a]/60">
+          <div className="p-4 rounded-lg border border-amber-500/25 bg-amber-500/6">
+            <p className="text-sm text-muted-foreground leading-relaxed italic pl-4 border-l-[3px] border-amber-500/60">
               {emp.selfAssessment}
             </p>
           </div>
@@ -386,22 +386,22 @@ function KpiDetailSheet({ emp }: { emp: KpiEmployee }) {
       )}
 
       {/* Actions */}
-      <div className="flex gap-2 pt-2 border-t border-[#e6dfd8]">
+      <div className="flex gap-2 pt-2 border-t border-border">
         <button
           type="button"
-          className="flex-1 py-2 text-sm font-medium rounded-lg bg-[#5db872] text-white hover:bg-[#4da862] transition-colors cursor-pointer"
+          className="flex-1 py-2 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors cursor-pointer"
         >
           Approve & Finalize
         </button>
         <button
           type="button"
-          className="flex-1 py-2 text-sm font-medium rounded-lg border border-[#e8a55a] text-[#9a6b2a] hover:bg-[#e8a55a]/5 transition-colors cursor-pointer"
+          className="flex-1 py-2 text-sm font-medium rounded-lg border border-amber-500 text-amber-700 dark:text-amber-400 hover:bg-amber-500/5 transition-colors cursor-pointer"
         >
           Request Revision
         </button>
         <button
           type="button"
-          className="flex-1 py-2 text-sm font-medium rounded-lg border border-[#e6dfd8] text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+          className="flex-1 py-2 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
         >
           Download PDF
         </button>
@@ -440,22 +440,22 @@ export function KpiReviewTable() {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
 
         {/* Filter row */}
-        <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#f0ebe3] flex-wrap">
+        <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border flex-wrap">
           <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8e8b82]" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search name or ID…"
-              className="w-full pl-8 pr-3 h-8 rounded-lg border border-[#e6dfd8] text-sm text-[#3d3d3a] bg-white placeholder:text-[#8e8b82] outline-none focus:ring-1 focus:ring-[#cc785c]"
+              className="w-full pl-8 pr-3 h-8 rounded-lg border border-border text-sm text-foreground bg-card placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
           <Select value={deptFilter} onValueChange={setDeptFilter}>
-            <SelectTrigger className="w-[140px] h-8 text-sm border-[#e6dfd8] cursor-pointer">
+            <SelectTrigger className="w-[140px] h-8 text-sm border-border cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -469,7 +469,7 @@ export function KpiReviewTable() {
           </Select>
 
           <Select value={scoreFilter} onValueChange={setScoreFilter}>
-            <SelectTrigger className="w-[140px] h-8 text-sm border-[#e6dfd8] cursor-pointer">
+            <SelectTrigger className="w-[140px] h-8 text-sm border-border cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -481,7 +481,7 @@ export function KpiReviewTable() {
           </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px] h-8 text-sm border-[#e6dfd8] cursor-pointer">
+            <SelectTrigger className="w-[160px] h-8 text-sm border-border cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -497,15 +497,15 @@ export function KpiReviewTable() {
         {/* Table */}
         <Table>
           <TableHeader>
-            <TableRow className="border-[#f0ebe3]">
-              <TableHead className="text-xs font-medium text-[#8e8b82] pl-5">Employee</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Manager</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Review Status</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Overall Score</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Trend</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">KPIs Met</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Self Review</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Action</TableHead>
+            <TableRow className="border-border">
+              <TableHead className="text-xs font-medium text-muted-foreground pl-5">Employee</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Manager</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Review Status</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Overall Score</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Trend</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">KPIs Met</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Self Review</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -515,17 +515,17 @@ export function KpiReviewTable() {
                 <TableRow
                   key={emp.id}
                   onClick={() => setSelectedEmp(emp)}
-                  className="border-[#f0ebe3] cursor-pointer hover:bg-[#faf9f5] transition-colors"
+                  className="border-border cursor-pointer hover:bg-card transition-colors"
                 >
                   {/* Employee */}
                   <TableCell className="pl-5 py-3">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-[#cc785c]/15 text-[#a9583e] shrink-0">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-primary/15 text-primary shrink-0">
                         {emp.initials}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-[#141413] leading-tight">{emp.name}</p>
-                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[#f0ebe3] text-[#6c6a64]">
+                        <p className="text-sm font-medium text-foreground leading-tight">{emp.name}</p>
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">
                           {emp.department}
                         </span>
                       </div>
@@ -533,7 +533,7 @@ export function KpiReviewTable() {
                   </TableCell>
 
                   {/* Manager */}
-                  <TableCell className="text-sm text-[#6c6a64]">{emp.manager.name}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{emp.manager.name}</TableCell>
 
                   {/* Review Status */}
                   <TableCell>
@@ -554,19 +554,19 @@ export function KpiReviewTable() {
                   <TableCell>
                     {emp.kpisTotal > 0 ? (
                       <div className="flex items-center gap-1.5">
-                        <span className="text-sm text-[#3d3d3a]">{emp.kpisMet}/{emp.kpisTotal}</span>
+                        <span className="text-sm text-foreground">{emp.kpisMet}/{emp.kpisTotal}</span>
                         <MiniRing met={emp.kpisMet} total={emp.kpisTotal} />
                       </div>
                     ) : (
-                      <span className="text-xs text-[#8e8b82]">—</span>
+                      <span className="text-xs text-muted-foreground">—</span>
                     )}
                   </TableCell>
 
                   {/* Self Review */}
                   <TableCell>
                     {emp.selfReviewSubmitted
-                      ? <CheckCircle className="w-4 h-4 text-[#2d7a40]" />
-                      : <Clock className="w-4 h-4 text-[#8e8b82]" />
+                      ? <CheckCircle className="w-4 h-4 text-green-700 dark:text-green-400" />
+                      : <Clock className="w-4 h-4 text-muted-foreground" />
                     }
                   </TableCell>
 
@@ -576,14 +576,14 @@ export function KpiReviewTable() {
                       <button
                         type="button"
                         onClick={() => setSelectedEmp(emp)}
-                        className="p-1.5 rounded-md text-[#6c6a64] hover:bg-[#f5f0e8] hover:text-[#3d3d3a] transition-colors cursor-pointer"
+                        className="p-1.5 rounded-md text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
                         aria-label="View details"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
                         type="button"
-                        className="p-1.5 rounded-md text-[#6c6a64] hover:bg-[#f5f0e8] hover:text-[#3d3d3a] transition-colors cursor-pointer"
+                        className="p-1.5 rounded-md text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors cursor-pointer"
                         aria-label="Send reminder"
                       >
                         <Bell className="w-4 h-4" />
@@ -600,20 +600,20 @@ export function KpiReviewTable() {
       {/* Detail Sheet */}
       <Sheet open={!!selectedEmp} onOpenChange={(open) => { if (!open) setSelectedEmp(null) }}>
         <SheetContent className="sm:max-w-[560px] overflow-y-auto">
-          <SheetHeader className="border-b border-[#e6dfd8] pb-4 mb-0">
+          <SheetHeader className="border-b border-border pb-4 mb-0">
             {selectedEmp && (
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold bg-[#cc785c]/15 text-[#a9583e] shrink-0">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold bg-primary/15 text-primary shrink-0">
                   {selectedEmp.initials}
                 </div>
                 <div>
-                  <SheetTitle className="text-base font-semibold text-[#141413]">
+                  <SheetTitle className="text-base font-semibold text-foreground">
                     {selectedEmp.name}
                   </SheetTitle>
-                  <p className="text-xs text-[#8e8b82]">
+                  <p className="text-xs text-muted-foreground">
                     {selectedEmp.position} · {selectedEmp.department}
                   </p>
-                  <p className="text-[10px] font-medium text-[#cc785c] mt-0.5">Q2 2025 Review</p>
+                  <p className="text-[10px] font-medium text-primary mt-0.5">Q2 2025 Review</p>
                 </div>
               </div>
             )}

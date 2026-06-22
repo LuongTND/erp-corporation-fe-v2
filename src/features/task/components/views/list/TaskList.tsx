@@ -42,17 +42,17 @@ type SectionGroup = {
 }
 
 const STATUS_GROUPS: SectionGroup[] = [
-  { key: 'in-progress', label: 'Đang thực hiện', dot: '#d4a017', titleColor: '#6c6a64' },
-  { key: 'todo',        label: 'Cần làm',         dot: '#8e8b82', titleColor: '#6c6a64' },
-  { key: 'done',        label: 'Hoàn thành',      dot: '#3B6D11', titleColor: '#8e8b82' },
+  { key: 'in-progress', label: 'Đang thực hiện', dot: 'var(--t-status-progress-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'todo',        label: 'Cần làm',         dot: 'oklch(var(--muted-foreground))', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'done',        label: 'Hoàn thành',      dot: 'var(--t-status-done-text)', titleColor: 'oklch(var(--muted-foreground))' },
 ]
 
 const PRIORITY_GROUPS: SectionGroup[] = [
-  { key: 'urgent', label: 'Khẩn cấp',        dot: '#ef4444', titleColor: '#6c6a64' },
-  { key: 'high',   label: 'Cao',              dot: '#f97316', titleColor: '#6c6a64' },
-  { key: 'medium', label: 'Trung bình',       dot: '#f59e0b', titleColor: '#6c6a64' },
-  { key: 'low',    label: 'Thấp',             dot: '#94a3b8', titleColor: '#6c6a64' },
-  { key: 'none',   label: 'Không có ưu tiên', dot: '#d1d5db', titleColor: '#8e8b82' },
+  { key: 'urgent', label: 'Khẩn cấp',        dot: 'var(--t-priority-high-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'high',   label: 'Cao',              dot: 'var(--t-priority-high-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'medium', label: 'Trung bình',       dot: 'var(--t-priority-med-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'low',    label: 'Thấp',             dot: 'var(--t-priority-low-text)', titleColor: 'oklch(var(--muted-foreground))' },
+  { key: 'none',   label: 'Không có ưu tiên', dot: 'oklch(var(--muted-foreground))', titleColor: 'oklch(var(--muted-foreground))' },
 ]
 
 function getStatusGroup(task: Task): string {
@@ -77,9 +77,9 @@ function PriorityBadge({ priority }: { priority?: string }) {
   if (!priority) return null
   const p = priority.toLowerCase()
 
-  let bg = '#E8F4FD', color = '#1A6EA8'
-  if (p === 'high' || p === 'urgent') { bg = '#FDECEA'; color = '#c64545' }
-  else if (p === 'medium') { bg = '#FEF6E4'; color = '#d4a017' }
+  let bg = 'oklch(var(--primary) / 0.1)', color = 'oklch(var(--primary))'
+  if (p === 'high' || p === 'urgent') { bg = 'oklch(var(--destructive) / 0.1)'; color = 'oklch(var(--destructive))' }
+  else if (p === 'medium') { bg = 'var(--t-priority-med-bg)'; color = 'var(--t-priority-med-text)' }
 
   return (
     <span
@@ -102,9 +102,9 @@ function DueDateChip({ date }: { date?: string }) {
   const isToday = d.getTime() === today.getTime()
   const isOverdue = d < today
 
-  let color = '#8e8b82', bg = 'transparent', padding = '0'
-  if (isToday)   { color = '#cc785c'; bg = 'rgba(204,120,92,0.1)'; padding = '2px 6px' }
-  if (isOverdue) { color = '#c64545'; bg = '#FDECEA'; padding = '2px 6px' }
+  let color = 'oklch(var(--muted-foreground))', bg = 'transparent', padding = '0'
+  if (isToday)   { color = 'oklch(var(--primary))'; bg = 'oklch(var(--primary) / 0.1)'; padding = '2px 6px' }
+  if (isOverdue) { color = 'oklch(var(--destructive))'; bg = 'oklch(var(--destructive) / 0.1)'; padding = '2px 6px' }
 
   const label = isToday
     ? 'Today'
@@ -137,8 +137,8 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
       role="row"
       className="flex items-center h-11 px-2 rounded-md cursor-pointer group relative"
       style={{
-        borderBottom: '0.5px solid #e6dfd8',
-        backgroundColor: hovered ? '#f5f0e8' : 'transparent',
+        borderBottom: '0.5px solid oklch(var(--border))',
+        backgroundColor: hovered ? 'oklch(var(--muted) / 0.5)' : 'transparent',
         transition: 'background 120ms ease',
         opacity: isDragging ? 0.35 : 1,
       }}
@@ -153,9 +153,9 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
         style={{ width: 8, minWidth: 8 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="w-1 h-1 rounded-full" style={{ backgroundColor: '#8e8b82' }} />
-        <span className="w-1 h-1 rounded-full" style={{ backgroundColor: '#8e8b82' }} />
-        <span className="w-1 h-1 rounded-full" style={{ backgroundColor: '#8e8b82' }} />
+        <span className="w-1 h-1 rounded-full bg-muted-foreground" />
+        <span className="w-1 h-1 rounded-full bg-muted-foreground" />
+        <span className="w-1 h-1 rounded-full bg-muted-foreground" />
       </div>
 
       {/* Checkbox */}
@@ -164,8 +164,8 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
         aria-label="Hoàn thành task"
         className="w-4 h-4 rounded-full border shrink-0 mr-3 flex items-center justify-center cursor-pointer transition-colors duration-200"
         style={{
-          borderColor: done ? '#5db872' : hovered ? '#cc785c' : '#e6dfd8',
-          backgroundColor: done ? '#5db872' : 'transparent',
+          borderColor: done ? 'var(--t-status-done-text)' : hovered ? 'oklch(var(--primary))' : 'oklch(var(--border))',
+          backgroundColor: done ? 'var(--t-status-done-text)' : 'transparent',
         }}
         onClick={(e) => { e.stopPropagation(); onToggleDone?.(task) }}
       >
@@ -180,7 +180,7 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
       <span
         className="flex-1 text-[13px] truncate"
         style={{
-          color: done ? '#8e8b82' : '#141413',
+          color: done ? 'oklch(var(--muted-foreground))' : 'oklch(var(--foreground))',
           textDecoration: done ? 'line-through' : 'none',
         }}
       >
@@ -191,8 +191,7 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
       <div className="flex items-center gap-1.5 ml-3 shrink-0">
         {task.assignee && (
           <span
-            className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0"
-            style={{ backgroundColor: '#cc785c' }}
+            className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0 bg-primary"
             title={task.assignee}
           >
             {task.assignee.charAt(0).toUpperCase()}
@@ -209,9 +208,9 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
             type="button"
             aria-label="Edit task"
             className="w-[22px] h-[22px] rounded flex items-center justify-center cursor-pointer transition-colors duration-[120ms]"
-            style={{ color: '#8e8b82' }}
+            style={{ color: 'oklch(var(--muted-foreground))' }}
             onClick={(e) => { e.stopPropagation(); onClick?.(task) }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#e6dfd8' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--border))' }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
           >
             <Edit2 className="h-3.5 w-3.5" />
@@ -223,8 +222,8 @@ function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick
                 type="button"
                 aria-label="More options"
                 className="w-[22px] h-[22px] rounded flex items-center justify-center cursor-pointer transition-colors duration-[120ms]"
-                style={{ color: '#8e8b82' }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = '#e6dfd8' }}
+                style={{ color: 'oklch(var(--muted-foreground))' }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'oklch(var(--border))' }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent' }}
               >
                 <MoreHorizontal className="h-3.5 w-3.5" />
@@ -262,17 +261,17 @@ function DragCard({ task }: { task: Task }) {
     <div
       className="flex items-center gap-2 h-11 px-3 rounded-md text-[13px]"
       style={{
-        backgroundColor: '#FFFFFF',
-        border: '0.5px solid #e6dfd8',
+        backgroundColor: 'oklch(var(--card))',
+        border: '0.5px solid oklch(var(--border))',
         boxShadow: '0 8px 20px rgba(0,0,0,0.14)',
-        color: '#141413',
+        color: 'oklch(var(--foreground))',
         width: 360,
         cursor: 'grabbing',
       }}
     >
       <span className="flex-1 truncate">{task.title}</span>
       {task.priority && (
-        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: '#8e8b82' }} />
+        <span className="w-2 h-2 rounded-full shrink-0 bg-muted-foreground" />
       )}
     </div>
   )
@@ -305,8 +304,8 @@ function DroppableSection({
       ref={setNodeRef}
       className="mb-4 rounded-lg transition-colors duration-150"
       style={{
-        backgroundColor: isOver ? 'rgba(204,120,92,0.05)' : 'transparent',
-        outline: isOver ? '1.5px dashed rgba(204,120,92,0.35)' : '1.5px solid transparent',
+        backgroundColor: isOver ? 'var(--t-accent-subtle)' : 'transparent',
+        outline: isOver ? '1.5px dashed oklch(var(--primary) / 0.35)' : '1.5px solid transparent',
       }}
     >
       <button
@@ -319,16 +318,15 @@ function DroppableSection({
         onMouseLeave={() => setHeaderHovered(false)}
       >
         {expanded
-          ? <ChevronDown className="h-[13px] w-[13px] shrink-0" style={{ color: '#6c6a64' }} />
-          : <ChevronRight className="h-[13px] w-[13px] shrink-0" style={{ color: '#6c6a64' }} />
+          ? <ChevronDown className="h-[13px] w-[13px] shrink-0 text-muted-foreground" />
+          : <ChevronRight className="h-[13px] w-[13px] shrink-0 text-muted-foreground" />
         }
         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: group.dot }} />
         <span className="text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: group.titleColor }}>
           {group.label}
         </span>
         <span
-          className="text-[11px] rounded-full px-[7px] py-px"
-          style={{ backgroundColor: '#efe9de', color: '#6c6a64' }}
+          className="text-[11px] rounded-full px-[7px] py-px bg-muted text-muted-foreground"
         >
           {items.length}
         </span>
@@ -337,8 +335,7 @@ function DroppableSection({
           <div className="flex items-center gap-0.5 ml-auto" onClick={(e) => e.stopPropagation()}>
             <button
               type="button"
-              className="w-6 h-6 rounded flex items-center justify-center cursor-pointer hover:bg-[#e6dfd8] transition-colors"
-              style={{ color: '#8e8b82' }}
+              className="w-6 h-6 rounded flex items-center justify-center cursor-pointer hover:bg-border transition-colors text-muted-foreground"
             >
               <Plus className="h-3 w-3" />
             </button>
@@ -350,9 +347,9 @@ function DroppableSection({
         <div
           className="mx-2 h-8 rounded-md flex items-center justify-center text-[11px] mt-0.5"
           style={{
-            border: '1px dashed rgba(204,120,92,0.4)',
-            color: isOver ? '#cc785c' : '#8e8b82',
-            backgroundColor: isOver ? 'rgba(204,120,92,0.06)' : 'transparent',
+            border: '1px dashed oklch(var(--primary) / 0.4)',
+            color: isOver ? 'oklch(var(--primary))' : 'oklch(var(--muted-foreground))',
+            backgroundColor: isOver ? 'var(--t-accent-subtle)' : 'transparent',
           }}
         >
           Thả vào đây
@@ -402,16 +399,15 @@ function StaticSection({
         onMouseLeave={() => setHeaderHovered(false)}
       >
         {expanded
-          ? <ChevronDown className="h-[13px] w-[13px] shrink-0" style={{ color: '#6c6a64' }} />
-          : <ChevronRight className="h-[13px] w-[13px] shrink-0" style={{ color: '#6c6a64' }} />
+          ? <ChevronDown className="h-[13px] w-[13px] shrink-0 text-muted-foreground" />
+          : <ChevronRight className="h-[13px] w-[13px] shrink-0 text-muted-foreground" />
         }
         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: group.dot }} />
         <span className="text-[11px] font-medium uppercase tracking-[0.06em]" style={{ color: group.titleColor }}>
           {group.label}
         </span>
         <span
-          className="text-[11px] rounded-full px-[7px] py-px"
-          style={{ backgroundColor: '#efe9de', color: '#6c6a64' }}
+          className="text-[11px] rounded-full px-[7px] py-px bg-muted text-muted-foreground"
         >
           {items.length}
         </span>
@@ -437,8 +433,8 @@ function AddTaskRow() {
     <div
       className="flex items-center gap-2 h-9 px-2 rounded-md cursor-pointer"
       style={{
-        color: hovered ? '#141413' : '#8e8b82',
-        backgroundColor: hovered ? '#f5f0e8' : 'transparent',
+        color: hovered ? 'oklch(var(--foreground))' : 'oklch(var(--muted-foreground))',
+        backgroundColor: hovered ? 'oklch(var(--muted) / 0.5)' : 'transparent',
         transition: 'all 120ms ease',
       }}
       onMouseEnter={() => setHovered(true)}
@@ -566,8 +562,7 @@ export function TaskList({
 
         {filteredTasks.length === 0 && (
           <div
-            className="flex items-center justify-center h-24 text-[13px]"
-            style={{ color: '#8e8b82' }}
+            className="flex items-center justify-center h-24 text-[13px] text-muted-foreground"
           >
             Không tìm thấy task nào.
           </div>

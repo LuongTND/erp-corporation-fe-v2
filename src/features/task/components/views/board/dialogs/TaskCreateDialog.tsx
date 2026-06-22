@@ -42,12 +42,12 @@ import { useAuthStore } from '@/stores/auth.store'
 
 // ── Design tokens (matches task page palette) ─────────────────────────────────
 const C = {
-  bg: '#FFFFFF',
-  bgHover: '#f5f0e8',
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
+  bg: 'oklch(var(--card))',
+  bgHover: 'oklch(var(--muted) / 0.5)',
+  text: 'oklch(var(--foreground))',
+  muted: 'oklch(var(--muted-foreground))',
+  border: 'oklch(var(--border))',
+  accent: 'oklch(var(--primary))',
 } as const
 
 const MOCK_USERS: UserOption[] = [
@@ -92,7 +92,7 @@ function hexAlpha(hex: string, alpha: number) {
 
 function StatusPill({ color, label }: { color?: string; label: string }) {
   const bg = color ? hexAlpha(color, 0.12) : C.bgHover
-  const txt = color || '#6c6a64'
+  const txt = color || 'oklch(var(--muted-foreground))'
   return (
     <div
       className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[12px] font-medium"
@@ -134,7 +134,7 @@ function PropertyRow({
         <div className="flex-1 flex items-center min-w-0">{children}</div>
       </div>
       {error && (
-        <p className="text-[11px] ml-4 mt-0.5" style={{ color: '#e53e3e' }}>
+        <p className="text-[11px] ml-4 mt-0.5 text-destructive">
           {error}
         </p>
       )}
@@ -357,7 +357,7 @@ export function TaskCreateDialog({
                       }}
                     />
                     {fieldState.error && (
-                      <p className="text-[11px] mt-1" style={{ color: '#e53e3e' }}>
+                      <p className="text-[11px] mt-1 text-destructive">
                         {fieldState.error.message}
                       </p>
                     )}
@@ -467,7 +467,7 @@ export function TaskCreateDialog({
                         position="popper"
                         align="start"
                         sideOffset={4}
-                        className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-[#f5f0e8] [&_[data-highlighted]]:text-[#141413]"
+                        className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-muted/50 [&_[data-highlighted]]:text-foreground"
                         style={SELECT_CONTENT_STYLE}
                       >
                         {activeStatuses.map((s) => (
@@ -519,7 +519,7 @@ export function TaskCreateDialog({
                         position="popper"
                         align="start"
                         sideOffset={4}
-                        className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-[#f5f0e8] [&_[data-highlighted]]:text-[#141413]"
+                        className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-muted/50 [&_[data-highlighted]]:text-foreground"
                         style={SELECT_CONTENT_STYLE}
                       >
                         <SelectItem

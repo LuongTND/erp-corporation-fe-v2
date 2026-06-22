@@ -89,9 +89,9 @@ const EMPLOYEES: PayrollEmployee[] = [
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
 const STATUS_BADGE: Record<EmployeePayStatus, { bg: string; text: string; Icon: LucideIcon }> = {
-  Paid:    { bg: 'bg-[#5db872]/10', text: 'text-[#2d7a40]', Icon: CheckCircle },
-  Pending: { bg: 'bg-[#e8a55a]/10', text: 'text-[#9a6b2a]', Icon: Clock },
-  Error:   { bg: 'bg-[#c64545]/10', text: 'text-[#c64545]', Icon: AlertCircle },
+  Paid:    { bg: 'bg-green-500/12 dark:bg-green-500/20', text: 'text-green-700 dark:text-green-400', Icon: CheckCircle },
+  Pending: { bg: 'bg-amber-500/15', text: 'text-amber-700 dark:text-amber-400', Icon: Clock },
+  Error:   { bg: 'bg-destructive/12', text: 'text-destructive', Icon: AlertCircle },
 }
 
 // ─── Formatters ───────────────────────────────────────────────────────────────
@@ -113,41 +113,41 @@ function PayslipContent({ employee }: { employee: PayrollEmployee }) {
   return (
     <div className="py-4 space-y-5 text-sm">
       {/* Company header */}
-      <div className="text-center pb-4 border-b border-[#e6dfd8]">
-        <div className="w-10 h-10 rounded-xl bg-[#cc785c] text-white font-bold text-lg flex items-center justify-center mx-auto mb-2">
+      <div className="text-center pb-4 border-b border-border">
+        <div className="w-10 h-10 rounded-xl bg-primary text-white font-bold text-lg flex items-center justify-center mx-auto mb-2">
           D
         </div>
-        <p className="font-bold text-[#141413]">DigiFNB Corporation</p>
-        <p className="text-xs text-[#8e8b82]">123 Nguyễn Huệ, Quận 1, TP.HCM</p>
+        <p className="font-bold text-foreground">DigiFNB Corporation</p>
+        <p className="text-xs text-muted-foreground">123 Nguyễn Huệ, Quận 1, TP.HCM</p>
       </div>
 
       {/* Employee info */}
-      <div className="grid grid-cols-2 gap-2 p-3 rounded-lg bg-[#faf9f5] border border-[#e6dfd8] text-xs">
+      <div className="grid grid-cols-2 gap-2 p-3 rounded-lg bg-card border border-border text-xs">
         <div>
-          <p className="text-[#8e8b82] mb-0.5">Name</p>
-          <p className="font-medium text-[#141413]">{employee.name}</p>
+          <p className="text-muted-foreground mb-0.5">Name</p>
+          <p className="font-medium text-foreground">{employee.name}</p>
         </div>
         <div>
-          <p className="text-[#8e8b82] mb-0.5">Employee ID</p>
-          <p className="font-mono font-medium text-[#141413]">{employee.id}</p>
+          <p className="text-muted-foreground mb-0.5">Employee ID</p>
+          <p className="font-mono font-medium text-foreground">{employee.id}</p>
         </div>
         <div>
-          <p className="text-[#8e8b82] mb-0.5">Department</p>
-          <p className="font-medium text-[#141413]">{employee.department}</p>
+          <p className="text-muted-foreground mb-0.5">Department</p>
+          <p className="font-medium text-foreground">{employee.department}</p>
         </div>
         <div>
-          <p className="text-[#8e8b82] mb-0.5">Position</p>
-          <p className="font-medium text-[#141413]">{employee.position}</p>
+          <p className="text-muted-foreground mb-0.5">Position</p>
+          <p className="font-medium text-foreground">{employee.position}</p>
         </div>
         <div className="col-span-2">
-          <p className="text-[#8e8b82] mb-0.5">Bank Account</p>
-          <p className="font-mono font-medium text-[#141413]">{employee.bankAccount}</p>
+          <p className="text-muted-foreground mb-0.5">Bank Account</p>
+          <p className="font-mono font-medium text-foreground">{employee.bankAccount}</p>
         </div>
       </div>
 
       {/* Earnings */}
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8e8b82] mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
           Earnings
         </p>
         <div className="space-y-1.5">
@@ -158,20 +158,20 @@ function PayslipContent({ employee }: { employee: PayrollEmployee }) {
             ['Bonus',        employee.bonus],
           ] as [string, number][]).map(([label, value]) => (
             <div key={label} className="flex justify-between text-sm">
-              <span className="text-[#6c6a64]">{label}</span>
-              <span className="font-mono text-[#3d3d3a]">{fmtCurrency(value)}</span>
+              <span className="text-muted-foreground">{label}</span>
+              <span className="font-mono text-foreground">{fmtCurrency(value)}</span>
             </div>
           ))}
-          <div className="flex justify-between text-sm font-semibold border-t border-[#f0ebe3] pt-1.5 mt-1">
-            <span className="text-[#141413]">Subtotal</span>
-            <span className="font-mono text-[#141413]">{fmtCurrency(totalEarnings)}</span>
+          <div className="flex justify-between text-sm font-semibold border-t border-border pt-1.5 mt-1">
+            <span className="text-foreground">Subtotal</span>
+            <span className="font-mono text-foreground">{fmtCurrency(totalEarnings)}</span>
           </div>
         </div>
       </div>
 
       {/* Deductions */}
       <div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8e8b82] mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground mb-2">
           Deductions
         </p>
         <div className="space-y-1.5">
@@ -182,21 +182,21 @@ function PayslipContent({ employee }: { employee: PayrollEmployee }) {
             ['Other',               employee.deductions.other],
           ] as [string, number][]).map(([label, value]) => (
             <div key={label} className="flex justify-between text-sm">
-              <span className="text-[#6c6a64]">{label}</span>
-              <span className="font-mono text-[#c64545]">-{fmtCurrency(value)}</span>
+              <span className="text-muted-foreground">{label}</span>
+              <span className="font-mono text-destructive">-{fmtCurrency(value)}</span>
             </div>
           ))}
-          <div className="flex justify-between text-sm font-semibold border-t border-[#f0ebe3] pt-1.5 mt-1">
-            <span className="text-[#141413]">Subtotal</span>
-            <span className="font-mono text-[#c64545]">-{fmtCurrency(totalDeductions)}</span>
+          <div className="flex justify-between text-sm font-semibold border-t border-border pt-1.5 mt-1">
+            <span className="text-foreground">Subtotal</span>
+            <span className="font-mono text-destructive">-{fmtCurrency(totalDeductions)}</span>
           </div>
         </div>
       </div>
 
       {/* Net Pay */}
-      <div className="flex justify-between items-center p-4 rounded-lg bg-[#5db872]/10 border border-[#5db872]/30">
-        <span className="font-bold text-[#141413]">NET PAY</span>
-        <span className="font-mono text-xl font-bold text-[#2d7a40]">
+      <div className="flex justify-between items-center p-4 rounded-lg bg-green-500/12 dark:bg-green-500/20 border border-green-500/30">
+        <span className="font-bold text-foreground">NET PAY</span>
+        <span className="font-mono text-xl font-bold text-green-700 dark:text-green-400">
           {fmtCurrency(employee.netPay)}
         </span>
       </div>
@@ -205,24 +205,24 @@ function PayslipContent({ employee }: { employee: PayrollEmployee }) {
       <div className="grid grid-cols-2 gap-6">
         {['HR Manager', 'Employee'].map((role) => (
           <div key={role} className="text-center">
-            <p className="text-xs text-[#8e8b82] mb-8">{role}</p>
-            <div className="border-t border-dashed border-[#8e8b82]" />
-            <p className="text-xs text-[#6c6a64] mt-1">Signature</p>
+            <p className="text-xs text-muted-foreground mb-8">{role}</p>
+            <div className="border-t border-dashed border-muted-foreground" />
+            <p className="text-xs text-muted-foreground mt-1">Signature</p>
           </div>
         ))}
       </div>
 
       {/* Footer actions */}
-      <div className="flex gap-2 pt-2 border-t border-[#e6dfd8]">
+      <div className="flex gap-2 pt-2 border-t border-border">
         <button
           type="button"
-          className="flex-1 py-2 text-sm font-medium rounded-lg bg-[#cc785c] text-white hover:bg-[#a9583e] transition-colors cursor-pointer"
+          className="flex-1 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/80 transition-colors cursor-pointer"
         >
           Download PDF
         </button>
         <button
           type="button"
-          className="flex-1 py-2 text-sm font-medium rounded-lg border border-[#e6dfd8] text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+          className="flex-1 py-2 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
         >
           Send to Email
         </button>
@@ -267,21 +267,21 @@ export function PayrollTable() {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
         {/* Filter row */}
-        <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[#f0ebe3]">
+        <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border">
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8e8b82]" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search name or ID…"
-              className="w-full pl-8 pr-3 h-8 rounded-lg border border-[#e6dfd8] text-sm text-[#3d3d3a] bg-white placeholder:text-[#8e8b82] outline-none focus:ring-1 focus:ring-[#cc785c]"
+              className="w-full pl-8 pr-3 h-8 rounded-lg border border-border text-sm text-foreground bg-card placeholder:text-muted-foreground outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
           <Select value={deptFilter} onValueChange={setDeptFilter}>
-            <SelectTrigger className="w-[140px] h-8 text-sm border-[#e6dfd8] cursor-pointer">
+            <SelectTrigger className="w-[140px] h-8 text-sm border-border cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -295,7 +295,7 @@ export function PayrollTable() {
           </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[120px] h-8 text-sm border-[#e6dfd8] cursor-pointer">
+            <SelectTrigger className="w-[120px] h-8 text-sm border-border cursor-pointer">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -310,7 +310,7 @@ export function PayrollTable() {
         {/* Table */}
         <Table>
           <TableHeader>
-            <TableRow className="border-[#f0ebe3]">
+            <TableRow className="border-border">
               <TableHead className="w-10 pl-5">
                 <input
                   type="checkbox"
@@ -319,15 +319,15 @@ export function PayrollTable() {
                   className="cursor-pointer"
                 />
               </TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Employee</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Department</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82] text-right">Base Salary</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82] text-right">Allowances</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82] text-right">Overtime</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82] text-right">Deductions</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82] text-right">Net Pay</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Status</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Payslip</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Employee</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Department</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground text-right">Base Salary</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground text-right">Allowances</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground text-right">Overtime</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground text-right">Deductions</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground text-right">Net Pay</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Status</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Payslip</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -343,8 +343,8 @@ export function PayrollTable() {
                   key={emp.id}
                   onClick={() => setSheetEmployee(emp)}
                   className={[
-                    'border-[#f0ebe3] cursor-pointer transition-colors',
-                    emp.status === 'Error' ? 'bg-red-50/60 hover:bg-red-50' : 'hover:bg-[#faf9f5]',
+                    'border-border cursor-pointer transition-colors',
+                    emp.status === 'Error' ? 'bg-red-50/60 hover:bg-red-50' : 'hover:bg-card',
                   ].join(' ')}
                 >
                   <TableCell className="pl-5" onClick={(e) => e.stopPropagation()}>
@@ -358,22 +358,22 @@ export function PayrollTable() {
 
                   <TableCell className="py-3">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-[#cc785c]/15 text-[#a9583e] shrink-0">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-primary/15 text-primary/80 shrink-0">
                         {emp.initials}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-[#141413] leading-tight">{emp.name}</p>
-                        <p className="text-xs text-[#8e8b82] font-mono">{emp.id}</p>
+                        <p className="text-sm font-medium text-foreground leading-tight">{emp.name}</p>
+                        <p className="text-xs text-muted-foreground font-mono">{emp.id}</p>
                       </div>
                     </div>
                   </TableCell>
 
-                  <TableCell className="text-sm text-[#6c6a64]">{emp.department}</TableCell>
-                  <TableCell className="font-mono text-sm text-[#6c6a64] text-right">{fmtM(emp.baseSalary)}</TableCell>
-                  <TableCell className="font-mono text-sm text-[#6c6a64] text-right">{fmtM(emp.allowances)}</TableCell>
-                  <TableCell className="font-mono text-sm text-[#6c6a64] text-right">{fmtM(emp.overtime)}</TableCell>
-                  <TableCell className="font-mono text-sm text-[#c64545] text-right">-{fmtM(totalDeduct)}</TableCell>
-                  <TableCell className="font-mono text-sm font-semibold text-[#141413] text-right">{fmtM(emp.netPay)}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{emp.department}</TableCell>
+                  <TableCell className="font-mono text-sm text-muted-foreground text-right">{fmtM(emp.baseSalary)}</TableCell>
+                  <TableCell className="font-mono text-sm text-muted-foreground text-right">{fmtM(emp.allowances)}</TableCell>
+                  <TableCell className="font-mono text-sm text-muted-foreground text-right">{fmtM(emp.overtime)}</TableCell>
+                  <TableCell className="font-mono text-sm text-destructive text-right">-{fmtM(totalDeduct)}</TableCell>
+                  <TableCell className="font-mono text-sm font-semibold text-foreground text-right">{fmtM(emp.netPay)}</TableCell>
 
                   <TableCell>
                     <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${badge.bg} ${badge.text}`}>
@@ -385,7 +385,7 @@ export function PayrollTable() {
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1 text-xs font-medium text-[#cc785c] hover:underline cursor-pointer"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline cursor-pointer"
                     >
                       <FileText className="w-3 h-3" />
                       Download
@@ -399,23 +399,23 @@ export function PayrollTable() {
 
         {/* Bulk actions bar */}
         {selectedRows.size > 0 && (
-          <div className="flex items-center gap-2 px-5 py-3 border-t border-[#f0ebe3] bg-[#faf9f5]">
-            <span className="text-xs text-[#6c6a64] mr-1">{selectedRows.size} selected</span>
+          <div className="flex items-center gap-2 px-5 py-3 border-t border-border bg-card">
+            <span className="text-xs text-muted-foreground mr-1">{selectedRows.size} selected</span>
             <button
               type="button"
-              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#5db872] text-white hover:bg-[#4da862] transition-colors cursor-pointer"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors cursor-pointer"
             >
               Approve Selected
             </button>
             <button
               type="button"
-              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#e6dfd8] text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
             >
               Export Selected
             </button>
             <button
               type="button"
-              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#5db872] text-[#2d7a40] hover:bg-[#5db872]/5 transition-colors cursor-pointer"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-green-500 text-green-700 dark:text-green-400 hover:bg-green-500/5 transition-colors cursor-pointer"
             >
               Mark as Paid
             </button>
@@ -426,8 +426,8 @@ export function PayrollTable() {
       {/* Payslip slide-over */}
       <Sheet open={!!sheetEmployee} onOpenChange={(open) => { if (!open) setSheetEmployee(null) }}>
         <SheetContent className="sm:max-w-[480px] overflow-y-auto">
-          <SheetHeader className="border-b border-[#e6dfd8] pb-4">
-            <SheetTitle className="text-base font-semibold text-[#141413]">
+          <SheetHeader className="border-b border-border pb-4">
+            <SheetTitle className="text-base font-semibold text-foreground">
               Payslip — {sheetEmployee?.name} — May 2025
             </SheetTitle>
           </SheetHeader>

@@ -87,7 +87,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[520px] overflow-y-auto max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="text-base font-semibold text-[#141413]">
+          <DialogTitle className="text-base font-semibold text-foreground">
             New Leave Request
           </DialogTitle>
         </DialogHeader>
@@ -96,13 +96,12 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
 
           {/* Leave Type */}
           <div>
-            <label className="text-xs font-medium text-[#3d3d3a] block mb-1.5">
-              Leave Type <span className="text-[#c64545]">*</span>
+            <label className="text-xs font-medium text-foreground block mb-1.5">
+              Leave Type <span className="text-destructive">*</span>
             </label>
             <Select value={leaveType} onValueChange={(v) => setLeaveType(v as LeaveType)}>
               <SelectTrigger
-                className="w-full h-9 text-sm border cursor-pointer"
-                style={{ borderColor: '#e6dfd8', color: '#3d3d3a' }}
+                className="w-full h-9 text-sm border border-border cursor-pointer text-foreground"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -117,21 +116,20 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
           {/* Date range */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="leave-from" className="text-xs font-medium text-[#3d3d3a] block mb-1.5">
-                From <span className="text-[#c64545]">*</span>
+              <label htmlFor="leave-from" className="text-xs font-medium text-foreground block mb-1.5">
+                From <span className="text-destructive">*</span>
               </label>
               <input
                 id="leave-from"
                 type="date"
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="w-full h-9 px-3 rounded-lg border text-sm text-[#3d3d3a] outline-none focus:ring-1 cursor-pointer"
-                style={{ borderColor: '#e6dfd8' }}
+                className="w-full h-9 px-3 rounded-lg border border-border text-sm text-foreground outline-none focus:ring-1 cursor-pointer"
               />
             </div>
             <div>
-              <label htmlFor="leave-to" className="text-xs font-medium text-[#3d3d3a] block mb-1.5">
-                To <span className="text-[#c64545]">*</span>
+              <label htmlFor="leave-to" className="text-xs font-medium text-foreground block mb-1.5">
+                To <span className="text-destructive">*</span>
               </label>
               <input
                 id="leave-to"
@@ -139,8 +137,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
                 value={toDate}
                 min={fromDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="w-full h-9 px-3 rounded-lg border text-sm text-[#3d3d3a] outline-none focus:ring-1 cursor-pointer"
-                style={{ borderColor: '#e6dfd8' }}
+                className="w-full h-9 px-3 rounded-lg border border-border text-sm text-foreground outline-none focus:ring-1 cursor-pointer"
               />
             </div>
           </div>
@@ -149,18 +146,12 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
           {days > 0 && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <span
-                  className="text-sm font-semibold"
-                  style={{ color: '#cc785c' }}
-                >
+                <span className="text-sm font-semibold text-primary">
                   {days} working {days === 1 ? 'day' : 'days'}
                 </span>
               </div>
               {overlaps.length > 0 && (
-                <div
-                  className="flex items-start gap-2 text-xs rounded-lg px-3 py-2.5"
-                  style={{ backgroundColor: 'rgba(232,165,90,0.12)', color: '#9a6b2a' }}
-                >
+                <div className="flex items-start gap-2 text-xs rounded-lg px-3 py-2.5 bg-amber-500/15 text-amber-700 dark:text-amber-400">
                   <span className="font-semibold shrink-0">⚠</span>
                   <span>
                     Team {overlaps.length === 1 ? 'member' : 'members'}{' '}
@@ -174,7 +165,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
 
           {/* Reason */}
           <div>
-            <label htmlFor="leave-reason" className="text-xs font-medium text-[#3d3d3a] block mb-1.5">
+            <label htmlFor="leave-reason" className="text-xs font-medium text-foreground block mb-1.5">
               Reason
             </label>
             <textarea
@@ -183,32 +174,30 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Brief reason for leave..."
-              className="w-full px-3 py-2 rounded-lg border text-sm text-[#3d3d3a] placeholder:text-[#8e8b82] outline-none focus:ring-1 resize-none"
-              style={{ borderColor: '#e6dfd8' }}
+              className="w-full px-3 py-2 rounded-lg border border-border text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 resize-none"
             />
           </div>
 
           {/* Medical certificate (Sick Leave only) */}
           {isSickLeave && (
             <div>
-              <label className="text-xs font-medium text-[#3d3d3a] block mb-1.5">
+              <label className="text-xs font-medium text-foreground block mb-1.5">
                 Medical Certificate
               </label>
               <label
                 htmlFor="leave-cert"
-                className="flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-5 cursor-pointer transition-colors hover:border-[#cc785c]/50 hover:bg-[#faf9f5]"
-                style={{ borderColor: '#e6dfd8' }}
+                className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg p-5 cursor-pointer transition-colors hover:border-primary/50 hover:bg-card"
               >
                 {fileName ? (
-                  <div className="flex items-center gap-2 text-sm text-[#cc785c]">
+                  <div className="flex items-center gap-2 text-sm text-primary">
                     <Paperclip className="w-4 h-4" />
                     <span className="font-medium truncate max-w-[280px]">{fileName}</span>
                   </div>
                 ) : (
                   <>
-                    <Upload className="w-5 h-5 text-[#8e8b82] mb-1.5" />
-                    <p className="text-sm text-[#8e8b82]">Click to upload or drag and drop</p>
-                    <p className="text-[10px] text-[#c0bbb5] mt-0.5">PDF, JPG, PNG up to 5MB</p>
+                    <Upload className="w-5 h-5 text-muted-foreground mb-1.5" />
+                    <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">PDF, JPG, PNG up to 5MB</p>
                   </>
                 )}
                 <input
@@ -234,7 +223,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
             />
             <label
               htmlFor="notify-manager"
-              className="text-sm text-[#3d3d3a] cursor-pointer select-none"
+              className="text-sm text-foreground cursor-pointer select-none"
             >
               Notify manager via email
             </label>
@@ -242,20 +231,18 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
 
         </div>
 
-        <DialogFooter className="gap-2 pt-2 border-t border-[#f0ebe3]">
+        <DialogFooter className="gap-2 pt-2 border-t border-border">
           <button
             type="button"
             onClick={handleClose}
-            className="px-4 py-2 text-sm font-medium border rounded-lg cursor-pointer transition-colors hover:bg-[#f5f0e8]"
-            style={{ borderColor: '#e6dfd8', color: '#6c6a64' }}
+            className="px-4 py-2 text-sm font-medium border border-border rounded-lg cursor-pointer transition-colors hover:bg-muted/50 text-muted-foreground"
           >
             Cancel
           </button>
           <button
             type="button"
             disabled={!fromDate || !toDate || !leaveType}
-            className="px-5 py-2 text-sm font-medium rounded-lg text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#cc785c' }}
+            className="px-5 py-2 text-sm font-medium rounded-lg text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed bg-primary"
           >
             Submit Request
           </button>

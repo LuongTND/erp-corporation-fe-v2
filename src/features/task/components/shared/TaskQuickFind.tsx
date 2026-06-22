@@ -19,10 +19,9 @@ interface TaskQuickFindProps {
 
 function priorityDot(priority?: string): string {
   const p = (priority ?? '').toLowerCase()
-  if (p === 'urgent') return '#ef4444'
-  if (p === 'high') return '#f97316'
-  if (p === 'medium') return '#f59e0b'
-  return '#94a3b8'
+  if (p === 'urgent' || p === 'high') return 'var(--t-priority-high-text)'
+  if (p === 'medium') return 'var(--t-priority-med-text)'
+  return 'var(--t-priority-low-text)'
 }
 
 function statusLabel(status?: string): string {
@@ -43,7 +42,7 @@ export function TaskQuickFind({ tasks, open, onOpenChange }: TaskQuickFindProps)
         <CommandInput placeholder="Tìm task theo tên, mã, trạng thái..." />
         <CommandList className="max-h-80">
           <CommandEmpty>
-            <span className="text-[13px]" style={{ color: '#8e8b82' }}>
+            <span className="text-[13px]" style={{ color: 'var(--t-text-muted)' }}>
               Không tìm thấy task nào.
             </span>
           </CommandEmpty>
@@ -62,11 +61,11 @@ export function TaskQuickFind({ tasks, open, onOpenChange }: TaskQuickFindProps)
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: priorityDot(task.priority) }}
                 />
-                <span className="flex-1 text-[13px] truncate" style={{ color: '#141413' }}>
+                <span className="flex-1 text-[13px] truncate text-foreground">
                   {task.title}
                 </span>
                 {task.code && (
-                  <span className="text-[11px] shrink-0" style={{ color: '#8e8b82' }}>
+                  <span className="text-[11px] shrink-0" style={{ color: 'var(--t-text-muted)' }}>
                     {task.code}
                   </span>
                 )}
@@ -83,11 +82,11 @@ export function TaskQuickFind({ tasks, open, onOpenChange }: TaskQuickFindProps)
         {/* Footer hint */}
         <div
           className="flex items-center gap-3 px-3 py-2 text-[11px] shrink-0"
-          style={{ borderTop: '0.5px solid #e6dfd8', color: '#8e8b82' }}
+          style={{ borderTop: '0.5px solid var(--t-border)', color: 'var(--t-text-muted)' }}
         >
-          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: '#f5f0e8' }}>↑↓</kbd> điều hướng</span>
-          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: '#f5f0e8' }}>↵</kbd> mở</span>
-          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: '#f5f0e8' }}>Esc</kbd> đóng</span>
+          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: 'oklch(var(--muted) / 0.5)' }}>↑↓</kbd> điều hướng</span>
+          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: 'oklch(var(--muted) / 0.5)' }}>↵</kbd> mở</span>
+          <span><kbd className="px-1 py-0.5 rounded text-[10px]" style={{ backgroundColor: 'oklch(var(--muted) / 0.5)' }}>Esc</kbd> đóng</span>
         </div>
       </Command>
     </CommandDialog>

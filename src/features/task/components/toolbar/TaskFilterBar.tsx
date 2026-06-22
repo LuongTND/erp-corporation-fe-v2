@@ -5,12 +5,12 @@ import type { TaskStatusDto } from '@/features/task/types/task.types'
 import type { TaskPriorityDto } from '@/features/task/types/priority.types'
 
 const C = {
-  bg: '#FFFFFF',
-  bgHover: '#f5f0e8',
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
+  bg: 'oklch(var(--card))',
+  bgHover: 'var(--t-bg-hover)',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
 } as const
 
 interface TaskFilterBarProps {
@@ -75,7 +75,7 @@ export function TaskFilterBar({
     <div
       className="flex items-center gap-2 px-5 py-2 overflow-x-auto shrink-0"
       style={{
-        backgroundColor: '#faf9f5',
+        backgroundColor: 'oklch(var(--card))',
         borderBottom: `0.5px solid ${C.border}`,
         minHeight: 42,
       }}
@@ -229,12 +229,12 @@ export function TaskFilterBar({
                 type="button"
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-[13px] cursor-pointer transition-colors duration-[120ms]"
                 style={{
-                  backgroundColor: active ? '#f5f0e8' : 'transparent',
+                  backgroundColor: active ? 'oklch(var(--muted) / 0.5)' : 'transparent',
                   color: C.text,
                 }}
                 onClick={() => toggleStatus(s.id)}
                 onMouseEnter={(e) => {
-                  if (!active) e.currentTarget.style.backgroundColor = '#f5f0e8'
+                  if (!active) e.currentTarget.style.backgroundColor = 'oklch(var(--muted) / 0.5)'
                 }}
                 onMouseLeave={(e) => {
                   if (!active) e.currentTarget.style.backgroundColor = 'transparent'
@@ -274,12 +274,12 @@ export function TaskFilterBar({
                 type="button"
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-[13px] cursor-pointer transition-colors duration-[120ms]"
                 style={{
-                  backgroundColor: active ? '#f5f0e8' : 'transparent',
+                  backgroundColor: active ? 'oklch(var(--muted) / 0.5)' : 'transparent',
                   color: C.text,
                 }}
                 onClick={() => togglePriority(p.id)}
                 onMouseEnter={(e) => {
-                  if (!active) e.currentTarget.style.backgroundColor = '#f5f0e8'
+                  if (!active) e.currentTarget.style.backgroundColor = 'oklch(var(--muted) / 0.5)'
                 }}
                 onMouseLeave={(e) => {
                   if (!active) e.currentTarget.style.backgroundColor = 'transparent'
@@ -308,10 +308,10 @@ export function TaskFilterBar({
               <button
                 type="button"
                 className="flex items-center gap-2 w-full px-2 py-1.5 rounded text-[12px] cursor-pointer transition-colors duration-[120ms]"
-                style={{ color: '#dc2626' }}
+                style={{ color: 'oklch(var(--destructive))' }}
                 onClick={clearAll}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#fee2e2'
+                  e.currentTarget.style.backgroundColor = 'oklch(var(--destructive) / 0.1)'
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent'
@@ -332,7 +332,7 @@ export function TaskFilterBar({
           style={{ color: C.muted }}
           onClick={clearAll}
           onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#dc2626'
+            e.currentTarget.style.color = 'oklch(var(--destructive))'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.color = C.muted

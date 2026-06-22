@@ -30,7 +30,7 @@ export function EmployeeListPagination({
 
   return (
     <div className="flex items-center justify-between pt-2">
-      <p className="text-sm" style={{ color: '#6B6B6B' }}>
+      <p className="text-sm text-muted-foreground">
         Showing {start}-{end} of {total} employees
       </p>
       <Pagination className="mx-0 w-auto justify-end">

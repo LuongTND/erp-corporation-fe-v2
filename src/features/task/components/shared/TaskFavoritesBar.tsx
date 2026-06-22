@@ -2,11 +2,11 @@ import { Clock, Star } from 'lucide-react'
 import type { Task } from '@/features/task/types/task.types'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 } as const
 
 interface Props {
@@ -50,7 +50,7 @@ export function TaskFavoritesBar({ tasks, favorites, recents, onTaskClick }: Pro
     <div
       className="flex items-center gap-2 px-5 py-1.5 overflow-x-auto shrink-0"
       style={{
-        backgroundColor: '#faf9f5',
+        backgroundColor: 'oklch(var(--card))',
         borderBottom: `0.5px solid ${C.border}`,
         minHeight: 36,
       }}

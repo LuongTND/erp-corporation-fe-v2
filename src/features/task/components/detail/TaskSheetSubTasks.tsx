@@ -2,11 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import { Plus, X, Check } from 'lucide-react'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 } as const
 
 interface SubTask {
@@ -96,7 +96,7 @@ export function TaskSheetSubTasks({ taskId }: TaskSheetSubTasksProps) {
             className="h-full rounded-full transition-all duration-300"
             style={{
               width: `${progress}%`,
-              backgroundColor: progress === 100 ? '#22c55e' : C.accent,
+              backgroundColor: progress === 100 ? 'var(--t-status-done-text)' : C.accent,
             }}
           />
         </div>

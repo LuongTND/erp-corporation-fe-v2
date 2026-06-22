@@ -43,7 +43,7 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
         style={{ width: 360, maxWidth: '100vw' }}
       >
         {/* Header */}
-        <SheetHeader className="p-5 border-b border-slate-100">
+        <SheetHeader className="p-5 border-b border-border">
           <div className="flex items-start gap-4">
             {/* Avatar 80px */}
             <div
@@ -53,10 +53,10 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
               {person.initials}
             </div>
             <div className="flex-1 min-w-0 pt-1">
-              <SheetTitle className="text-base font-semibold text-slate-900 leading-tight">
+              <SheetTitle className="text-base font-semibold text-foreground leading-tight">
                 {person.name}
               </SheetTitle>
-              <p className="text-sm text-slate-500 mt-0.5">{person.title}</p>
+              <p className="text-sm text-muted-foreground mt-0.5">{person.title}</p>
               <div className="flex items-center gap-2 mt-2 flex-wrap">
                 {/* Dept badge */}
                 <span
@@ -66,7 +66,7 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
                   {person.department}
                 </span>
                 {/* Status */}
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-[#edfbf1] text-[#2d7a40]">
+                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400">
                   Active
                 </span>
               </div>
@@ -77,14 +77,13 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
           <div className="flex items-center gap-2 mt-4">
             <button
               type="button"
-              className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg text-xs font-medium text-white cursor-pointer transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#cc785c' }}
+              className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg text-xs font-medium text-white bg-primary cursor-pointer transition-opacity hover:opacity-90"
             >
               View Full Profile
             </button>
             <button
               type="button"
-              className="h-8 px-3 rounded-lg text-xs font-medium border border-slate-200 text-slate-600 cursor-pointer hover:bg-slate-50 transition-colors flex items-center gap-1.5"
+              className="h-8 px-3 rounded-lg text-xs font-medium border border-border text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors flex items-center gap-1.5"
             >
               <MessageSquare className="w-3.5 h-3.5" />
               Message
@@ -92,7 +91,7 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
             <button
               type="button"
               aria-label="Send email"
-              className="h-8 w-8 rounded-lg text-xs font-medium border border-slate-200 text-slate-600 cursor-pointer hover:bg-slate-50 transition-colors flex items-center justify-center"
+              className="h-8 w-8 rounded-lg text-xs font-medium border border-border text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors flex items-center justify-center"
             >
               <Mail className="w-3.5 h-3.5" />
             </button>
@@ -105,12 +104,12 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
           <div className="space-y-3">
             {INFO_ROWS.map(({ icon: Icon, label, value }) => (
               <div key={label} className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
-                  <Icon className="w-3.5 h-3.5 text-slate-400" />
+                <div className="w-7 h-7 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                  <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] text-slate-400 leading-none mb-0.5">{label}</p>
-                  <p className="text-sm text-slate-700 truncate">{value}</p>
+                  <p className="text-[10px] text-muted-foreground leading-none mb-0.5">{label}</p>
+                  <p className="text-sm text-foreground truncate">{value}</p>
                 </div>
               </div>
             ))}
@@ -118,16 +117,15 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
             {/* Reports to */}
             {manager && (
               <div className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center shrink-0">
-                  <Users className="w-3.5 h-3.5 text-slate-400" />
+                <div className="w-7 h-7 rounded-lg bg-muted/50 flex items-center justify-center shrink-0">
+                  <Users className="w-3.5 h-3.5 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] text-slate-400 leading-none mb-0.5">Reports to</p>
+                  <p className="text-[10px] text-muted-foreground leading-none mb-0.5">Reports to</p>
                   <button
                     type="button"
                     onClick={() => { onFocusNode(manager.id); onClose() }}
-                    className="text-sm font-medium cursor-pointer hover:underline text-left"
-                    style={{ color: '#cc785c' }}
+                    className="text-sm font-medium text-primary cursor-pointer hover:underline text-left"
                   >
                     {manager.name}
                   </button>
@@ -139,7 +137,7 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
           {/* Direct Reports */}
           {person.children.length > 0 && (
             <div>
-              <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
                 Direct Reports ({person.children.length})
               </h4>
               <div className="space-y-1">
@@ -150,7 +148,7 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
                       key={child.id}
                       type="button"
                       onClick={() => { onFocusNode(child.id); onClose() }}
-                      className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group"
+                      className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group"
                     >
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
@@ -159,10 +157,10 @@ export function OrgChartSheet({ person, open, onClose, onFocusNode }: Props) {
                         {child.initials}
                       </div>
                       <div className="flex-1 text-left min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">{child.name}</p>
-                        <p className="text-[10px] text-slate-500 truncate">{child.title}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{child.name}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{child.title}</p>
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-slate-500 transition-colors" />
+                      <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
                     </button>
                   )
                 })}

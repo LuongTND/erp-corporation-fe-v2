@@ -66,15 +66,11 @@ function PropertyRow({ icon, label, children }: { icon: ReactNode; label: string
 
   return (
     <div
-      className="flex items-center min-h-[34px] -mx-4 px-4 rounded-md transition-colors duration-[120ms]"
-      style={{ backgroundColor: hovered ? '#f5f0e8' : 'transparent' }}
+      className={`flex items-center min-h-[34px] -mx-4 px-4 rounded-md transition-colors duration-[120ms] ${hovered ? 'bg-muted/50' : ''}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div
-        className="w-[120px] flex-none flex items-center gap-2 text-[12px]"
-        style={{ color: '#8e8b82' }}
-      >
+      <div className="w-[120px] flex-none flex items-center gap-2 text-[12px] text-muted-foreground">
         {icon}
         <span>{label}</span>
       </div>
@@ -86,8 +82,8 @@ function PropertyRow({ icon, label, children }: { icon: ReactNode; label: string
 // ── Status pill ───────────────────────────────────────────────────────────────
 
 function StatusPill({ color, label }: { color?: string; label: string }) {
-  const bg  = color ? hexAlpha(color, 0.12) : '#f5f0e8'
-  const txt = color || '#6c6a64'
+  const bg  = color ? hexAlpha(color, 0.12) : 'oklch(var(--muted) / 0.5)'
+  const txt = color || 'oklch(var(--muted-foreground))'
   return (
     <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[12px] font-medium" style={{ backgroundColor: bg, color: txt }}>
       <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: txt }} />
@@ -130,7 +126,7 @@ export function TaskSheetProperties({
             <SelectValue>
               {statusInfo
                 ? <StatusPill color={statusInfo.color} label={statusInfo.title} />
-                : <span className="text-[12px]" style={{ color: '#8e8b82' }}>Chọn trạng thái</span>
+                : <span className="text-[12px] text-muted-foreground">Chọn trạng thái</span>
               }
             </SelectValue>
           </SelectTrigger>
@@ -138,8 +134,7 @@ export function TaskSheetProperties({
             position="popper"
             align="start"
             sideOffset={4}
-            className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-[#f5f0e8] [&_[data-highlighted]]:text-[#141413]"
-            style={{ backgroundColor: '#FFFFFF', border: '0.5px solid #e6dfd8', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}
+            className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-muted/50 [&_[data-highlighted]]:text-foreground bg-card border border-border"
           >
             {columns?.map((col) => (
               <SelectItem
@@ -148,7 +143,7 @@ export function TaskSheetProperties({
                 className="text-[13px] rounded-md cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: col.color || '#8e8b82' }} />
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: col.color || 'oklch(var(--muted-foreground))' }} />
                   {col.title}
                 </div>
               </SelectItem>
@@ -170,7 +165,7 @@ export function TaskSheetProperties({
             <SelectValue>
               {selectedPri
                 ? <StatusPill color={selectedPri.color} label={selectedPri.name} />
-                : <span className="text-[12px]" style={{ color: '#8e8b82' }}>
+                : <span className="text-[12px] text-muted-foreground">
                     {isLoadingPriorities ? 'Đang tải...' : 'Chọn độ ưu tiên'}
                   </span>
               }
@@ -180,11 +175,10 @@ export function TaskSheetProperties({
             position="popper"
             align="start"
             sideOffset={4}
-            className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-[#f5f0e8] [&_[data-highlighted]]:text-[#141413]"
-            style={{ backgroundColor: '#FFFFFF', border: '0.5px solid #e6dfd8', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}
+            className="min-w-[160px] p-1 [&_[data-highlighted]]:bg-muted/50 [&_[data-highlighted]]:text-foreground bg-card border border-border"
           >
             <SelectItem value="none" className="text-[13px] rounded-md cursor-pointer">
-              <span style={{ color: '#8e8b82' }}>Không có ưu tiên</span>
+              <span className="text-muted-foreground">Không có ưu tiên</span>
             </SelectItem>
             {priorities.map((p) => (
               <SelectItem key={p.id} value={p.id} className="text-[13px] rounded-md cursor-pointer">
@@ -209,8 +203,7 @@ export function TaskSheetProperties({
           value={tag}
           onChange={(e) => setTag(e.target.value)}
           placeholder="Thêm nhãn..."
-          className="w-full bg-transparent border-none outline-none text-[12px]"
-          style={{ color: '#141413' }}
+          className="w-full bg-transparent border-none outline-none text-[12px] text-foreground"
         />
       </PropertyRow>
 
@@ -226,7 +219,7 @@ export function TaskSheetProperties({
 
       {/* CREATED */}
       <PropertyRow icon={<Clock className="h-3.5 w-3.5 shrink-0" />} label="Created">
-        <span className="text-[12px]" style={{ color: '#8e8b82' }}>
+        <span className="text-[12px] text-muted-foreground">
           {createdAtFormatter.format(createdAt)}
         </span>
       </PropertyRow>

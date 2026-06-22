@@ -25,9 +25,9 @@ function KpiLabel({ x = 0, y = 0, width = 0, value = 0 }: KpiLabelProps) {
 
 export function HRMDashboardKpiSnapshot() {
   return (
-    <div className="rounded-xl border bg-white p-6 shadow-sm" style={{ borderColor: '#F0EDE8' }}>
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
       <div className="mb-6 flex items-start justify-between">
-        <h2 className="text-sm font-semibold" style={{ color: '#1A1A1A' }}>
+        <h2 className="text-sm font-semibold text-foreground">
           KPI Performance - Q2 2025
         </h2>
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -43,6 +43,7 @@ export function HRMDashboardKpiSnapshot() {
         </div>
       </div>
 
+      <div className="text-muted-foreground">
       <ResponsiveContainer width="100%" height={departmentKpiData.length * 46}>
         <BarChart
           data={departmentKpiData}
@@ -50,11 +51,11 @@ export function HRMDashboardKpiSnapshot() {
           barCategoryGap="28%"
           margin={{ top: 0, right: 60, bottom: 0, left: 80 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.12} horizontal={false} />
           <XAxis
             type="number"
             domain={[0, 100]}
-            tick={{ fontSize: 11, fill: '#94a3b8' }}
+            tick={{ fontSize: 11, fill: 'currentColor' }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(value) => `${value}%`}
@@ -62,7 +63,7 @@ export function HRMDashboardKpiSnapshot() {
           <YAxis
             type="category"
             dataKey="dept"
-            tick={{ fontSize: 12, fill: '#475569' }}
+            tick={{ fontSize: 12, fill: 'currentColor' }}
             axisLine={false}
             tickLine={false}
             width={76}
@@ -76,9 +77,9 @@ export function HRMDashboardKpiSnapshot() {
               if (typeof rawValue !== 'number') return null
 
               return (
-                <div className="rounded-lg border border-slate-100 bg-white px-3 py-2 text-xs shadow-lg">
+                <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs shadow-lg">
                   <span className="font-semibold" style={{ color: getDepartmentKpiColor(rawValue) }}>{rawValue}%</span>
-                  <span className="ml-1 text-slate-500">completion</span>
+                  <span className="ml-1 text-muted-foreground">completion</span>
                 </div>
               )
             }}
@@ -91,6 +92,7 @@ export function HRMDashboardKpiSnapshot() {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      </div>
     </div>
   )
 }

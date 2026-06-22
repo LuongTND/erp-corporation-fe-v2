@@ -52,9 +52,9 @@ const CORRECTIONS: CorrectionRequest[] = [
 // ─── Style maps ───────────────────────────────────────────────────────────────
 
 const STATUS_BADGE: Record<CorrectionStatus, string> = {
-  Pending:  'bg-[#e8a55a]/10 text-[#9a6b2a]',
-  Approved: 'bg-[#5db872]/10 text-[#2d7a40]',
-  Rejected: 'bg-[#c64545]/10 text-[#c64545]',
+  Pending:  'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  Approved: 'bg-green-500/12 dark:bg-green-500/20 text-green-700 dark:text-green-400',
+  Rejected: 'bg-destructive/12 text-destructive',
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -65,12 +65,12 @@ export function ManualCorrectionTable() {
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
         {/* Header */}
-        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-[#f0ebe3]">
-          <h3 className="text-sm font-semibold text-[#141413]">Manual Correction Requests</h3>
+        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground">Manual Correction Requests</h3>
           {pendingCount > 0 && (
-            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#e8a55a]/15 text-[#9a6b2a]">
+            <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400">
               {pendingCount} pending
             </span>
           )}
@@ -78,38 +78,38 @@ export function ManualCorrectionTable() {
 
         <Table>
           <TableHeader>
-            <TableRow className="border-[#f0ebe3]">
-              <TableHead className="text-xs font-medium text-[#8e8b82] pl-5">Employee</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Date</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Original</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Requested</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Reason</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Status</TableHead>
-              <TableHead className="text-xs font-medium text-[#8e8b82]">Action</TableHead>
+            <TableRow className="border-border">
+              <TableHead className="text-xs font-medium text-muted-foreground pl-5">Employee</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Date</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Original</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Requested</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Reason</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Status</TableHead>
+              <TableHead className="text-xs font-medium text-muted-foreground">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {CORRECTIONS.map((req) => (
-              <TableRow key={req.id} className="border-[#f0ebe3]">
+              <TableRow key={req.id} className="border-border">
                 <TableCell className="pl-5 py-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-[#cc785c]/15 text-[#a9583e] shrink-0">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-semibold bg-primary/15 text-primary shrink-0">
                       {req.employee.initials}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-[#141413] leading-tight">{req.employee.name}</p>
-                      <p className="text-xs text-[#8e8b82]">{req.employee.department}</p>
+                      <p className="text-sm font-medium text-foreground leading-tight">{req.employee.name}</p>
+                      <p className="text-xs text-muted-foreground">{req.employee.department}</p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm text-[#6c6a64]">{req.date}</TableCell>
-                <TableCell className="font-mono text-xs text-[#6c6a64]">
+                <TableCell className="text-sm text-muted-foreground">{req.date}</TableCell>
+                <TableCell className="font-mono text-xs text-muted-foreground">
                   {req.originalCheckIn} – {req.originalCheckOut}
                 </TableCell>
-                <TableCell className="font-mono text-xs text-[#3d3d3a] font-medium">
+                <TableCell className="font-mono text-xs text-foreground font-medium">
                   {req.requestedCheckIn} – {req.requestedCheckOut}
                 </TableCell>
-                <TableCell className="text-xs text-[#8e8b82] italic max-w-[180px] truncate">
+                <TableCell className="text-xs text-muted-foreground italic max-w-[180px] truncate">
                   {req.reason}
                 </TableCell>
                 <TableCell>
@@ -121,7 +121,7 @@ export function ManualCorrectionTable() {
                   <button
                     type="button"
                     onClick={() => setSelected(req)}
-                    className="text-xs font-medium px-2.5 py-1 rounded-md border border-[#cc785c] text-[#cc785c] hover:bg-[#cc785c]/5 transition-colors cursor-pointer"
+                    className="text-xs font-medium px-2.5 py-1 rounded-md border border-primary text-primary hover:bg-primary/5 transition-colors cursor-pointer"
                   >
                     Review
                   </button>
@@ -137,50 +137,50 @@ export function ManualCorrectionTable() {
         {selected && (
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-base font-semibold text-[#141413]">
+              <DialogTitle className="text-base font-semibold text-foreground">
                 Review Correction Request
               </DialogTitle>
             </DialogHeader>
 
             {/* Employee info */}
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#faf9f5] border border-[#e6dfd8]">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold bg-[#cc785c]/15 text-[#a9583e] shrink-0">
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold bg-primary/15 text-primary shrink-0">
                 {selected.employee.initials}
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#141413]">{selected.employee.name}</p>
-                <p className="text-xs text-[#8e8b82]">{selected.employee.id} · {selected.employee.department}</p>
+                <p className="text-sm font-semibold text-foreground">{selected.employee.name}</p>
+                <p className="text-xs text-muted-foreground">{selected.employee.id} · {selected.employee.department}</p>
               </div>
-              <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-[#efe9de] text-[#6c6a64]">
+              <span className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
                 {selected.date}
               </span>
             </div>
 
             {/* Time comparison */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 rounded-lg border border-[#f0ebe3]">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-[#8e8b82] mb-1.5">Original</p>
+              <div className="p-3 rounded-lg border border-border">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground mb-1.5">Original</p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#6c6a64]">Check-in</span>
-                    <span className="font-mono font-medium text-[#3d3d3a]">{selected.originalCheckIn}</span>
+                    <span className="text-muted-foreground">Check-in</span>
+                    <span className="font-mono font-medium text-foreground">{selected.originalCheckIn}</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#6c6a64]">Check-out</span>
-                    <span className="font-mono font-medium text-[#3d3d3a]">{selected.originalCheckOut}</span>
+                    <span className="text-muted-foreground">Check-out</span>
+                    <span className="font-mono font-medium text-foreground">{selected.originalCheckOut}</span>
                   </div>
                 </div>
               </div>
-              <div className="p-3 rounded-lg border border-[#cc785c]/30 bg-[#cc785c]/5">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-[#cc785c] mb-1.5">Requested</p>
+              <div className="p-3 rounded-lg border border-primary/30 bg-primary/5">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-primary mb-1.5">Requested</p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#6c6a64]">Check-in</span>
-                    <span className="font-mono font-medium text-[#3d3d3a]">{selected.requestedCheckIn}</span>
+                    <span className="text-muted-foreground">Check-in</span>
+                    <span className="font-mono font-medium text-foreground">{selected.requestedCheckIn}</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-[#6c6a64]">Check-out</span>
-                    <span className="font-mono font-medium text-[#3d3d3a]">{selected.requestedCheckOut}</span>
+                    <span className="text-muted-foreground">Check-out</span>
+                    <span className="font-mono font-medium text-foreground">{selected.requestedCheckOut}</span>
                   </div>
                 </div>
               </div>
@@ -188,8 +188,8 @@ export function ManualCorrectionTable() {
 
             {/* Reason */}
             <div>
-              <p className="text-xs font-medium text-[#8e8b82] mb-1.5">Reason</p>
-              <p className="text-sm text-[#3d3d3a] leading-relaxed bg-[#faf9f5] p-3 rounded-lg border border-[#e6dfd8]">
+              <p className="text-xs font-medium text-muted-foreground mb-1.5">Reason</p>
+              <p className="text-sm text-foreground leading-relaxed bg-card p-3 rounded-lg border border-border">
                 {selected.reason}
               </p>
             </div>
@@ -198,21 +198,21 @@ export function ManualCorrectionTable() {
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-[#e6dfd8] text-[#6c6a64] hover:bg-[#f5f0e8] transition-colors cursor-pointer"
+                className="px-4 py-2 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 text-sm font-medium rounded-lg border border-[#c64545] text-[#c64545] hover:bg-[#c64545]/5 transition-colors cursor-pointer"
+                className="px-4 py-2 text-sm font-medium rounded-lg border border-destructive text-destructive hover:bg-destructive/5 transition-colors cursor-pointer"
               >
                 Reject
               </button>
               <button
                 type="button"
                 onClick={() => setSelected(null)}
-                className="px-4 py-2 text-sm font-medium rounded-lg bg-[#5db872] text-white hover:bg-[#4da862] transition-colors cursor-pointer"
+                className="px-4 py-2 text-sm font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors cursor-pointer"
               >
                 Approve
               </button>

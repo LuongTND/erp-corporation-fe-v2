@@ -4,11 +4,11 @@ import type { CustomPropDef, CustomPropType, CustomPropValue } from '@/features/
 import { customPropertyService } from '@/features/task/mocks/task.mock'
 
 const C = {
-  text: '#141413',
-  muted: '#8e8b82',
-  border: '#e6dfd8',
-  accent: '#cc785c',
-  bgHover: '#f5f0e8',
+  text: 'var(--t-text-primary)',
+  muted: 'var(--t-text-muted)',
+  border: 'var(--t-border)',
+  accent: 'var(--t-accent)',
+  bgHover: 'var(--t-bg-hover)',
 }
 
 const TYPE_META: Record<CustomPropType, { label: string; icon: React.ElementType }> = {
@@ -102,7 +102,7 @@ export function TaskSheetCustomProperties({ taskId }: Props) {
             placeholder="Tên thuộc tính..."
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="w-full text-[12px] bg-white px-2 py-1.5 rounded outline-none"
+            className="w-full text-[12px] bg-card px-2 py-1.5 rounded outline-none"
             style={{ border: `0.5px solid ${C.border}`, color: C.text }}
             onKeyDown={(e) => { if (e.key === 'Enter') handleAddDef(); if (e.key === 'Escape') setAddOpen(false) }}
           />
@@ -131,7 +131,7 @@ export function TaskSheetCustomProperties({ taskId }: Props) {
               placeholder="Các lựa chọn, phân cách bởi dấu phẩy..."
               value={newOptions}
               onChange={(e) => setNewOptions(e.target.value)}
-              className="w-full text-[12px] bg-white px-2 py-1.5 rounded outline-none"
+              className="w-full text-[12px] bg-card px-2 py-1.5 rounded outline-none"
               style={{ border: `0.5px solid ${C.border}`, color: C.text }}
             />
           )}
@@ -205,7 +205,7 @@ function PropRow({
         onClick={onDelete}
         className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded cursor-pointer transition-all duration-[120ms] shrink-0"
         style={{ color: C.muted }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#ef4444' }}
+        onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = 'var(--t-priority-high-text)' }}
         onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = C.muted }}
       >
         <Trash2 className="h-3 w-3" />

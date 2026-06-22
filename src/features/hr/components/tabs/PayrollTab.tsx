@@ -26,8 +26,8 @@ function formatVND(amount: number) {
 }
 
 const STATUS_BADGE: Record<PayrollStatus, string> = {
-  Paid:       'bg-[#5db872]/10 text-[#2d7a40]',
-  Processing: 'bg-[#e8a55a]/10 text-[#9a6b2a]',
+  Paid:       'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
+  Processing: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
 }
 
 const chartData = PAYROLL_RECORDS.slice().reverse().map((r) => ({
@@ -43,15 +43,15 @@ function CustomTooltip({ active, payload, label }: {
 }) {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-[#e6dfd8] px-3 py-2 min-w-[130px]">
-      <p className="text-xs font-semibold text-[#141413] mb-1.5">{label}</p>
+    <div className="bg-card rounded-lg shadow-lg border border-border px-3 py-2 min-w-[130px]">
+      <p className="text-xs font-semibold text-foreground mb-1.5">{label}</p>
       {payload.map((p) => (
         <div key={p.name} className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-            <span className="text-xs text-[#6c6a64]">{p.name}</span>
+            <span className="text-xs text-muted-foreground">{p.name}</span>
           </div>
-          <span className="text-xs font-medium text-[#141413]">₫{p.value}M</span>
+          <span className="text-xs font-medium text-foreground">₫{p.value}M</span>
         </div>
       ))}
     </div>
@@ -64,19 +64,19 @@ export function PayrollTab() {
   return (
     <div className="space-y-6">
       {/* Chart card */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-[#141413] mb-5">Last 6 Months — Gross vs Net</h3>
+      <div className="bg-card rounded-xl shadow-sm p-6">
+        <h3 className="text-sm font-semibold text-foreground mb-5">Last 6 Months — Gross vs Net</h3>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={chartData} barGap={4} barCategoryGap="30%">
-            <CartesianGrid strokeDasharray="3 3" stroke="#e6dfd8" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 11, fill: '#6c6a64' }}
+              tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: '#6c6a64' }}
+              tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `₫${v}M`}
@@ -84,24 +84,24 @@ export function PayrollTab() {
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend
-              wrapperStyle={{ fontSize: 12, color: '#6c6a64', paddingTop: 12 }}
+              wrapperStyle={{ fontSize: 12, paddingTop: 12 }}
             />
-            <Bar dataKey="Gross" fill="#cc785c" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Net"   fill="#5db872" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="Gross" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="Net"   fill="#22c55e" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* Payslip table */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#e6dfd8]">
-          <h3 className="text-sm font-semibold text-[#141413]">Payslip History</h3>
+      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h3 className="text-sm font-semibold text-foreground">Payslip History</h3>
         </div>
         <Table>
           <TableHeader>
-            <TableRow className="bg-[#faf9f5] hover:bg-[#faf9f5]">
+            <TableRow className="bg-card hover:bg-card">
               {['Month', 'Gross', 'Deductions', 'Net Pay', 'Status', 'Payslip'].map((h) => (
-                <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-[#6c6a64]">
+                <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {h}
                 </TableHead>
               ))}
@@ -109,11 +109,11 @@ export function PayrollTab() {
           </TableHeader>
           <TableBody>
             {PAYROLL_RECORDS.map((record) => (
-              <TableRow key={record.month} className="hover:bg-[#faf9f5]">
-                <TableCell className="text-sm font-medium text-[#141413]">{record.month}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a] font-mono">{formatVND(record.gross)}</TableCell>
-                <TableCell className="text-sm text-[#3d3d3a] font-mono">{formatVND(record.deductions)}</TableCell>
-                <TableCell className="text-sm font-semibold text-[#141413] font-mono">{formatVND(record.netPay)}</TableCell>
+              <TableRow key={record.month} className="hover:bg-card">
+                <TableCell className="text-sm font-medium text-foreground">{record.month}</TableCell>
+                <TableCell className="text-sm text-foreground font-mono">{formatVND(record.gross)}</TableCell>
+                <TableCell className="text-sm text-foreground font-mono">{formatVND(record.deductions)}</TableCell>
+                <TableCell className="text-sm font-semibold text-foreground font-mono">{formatVND(record.netPay)}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[record.status]}`}>
                     {record.status}
@@ -123,13 +123,13 @@ export function PayrollTab() {
                   {record.status === 'Paid' ? (
                     <button
                       type="button"
-                      className="inline-flex items-center gap-1 text-xs text-[#cc785c] hover:text-[#a9583e] transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Download PDF
                     </button>
                   ) : (
-                    <span className="text-xs text-[#8e8b82]">Pending</span>
+                    <span className="text-xs text-muted-foreground">Pending</span>
                   )}
                 </TableCell>
               </TableRow>
