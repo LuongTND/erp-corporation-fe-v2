@@ -6,9 +6,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { TaskActionsProvider } from '@/features/task/context/TaskActionsContext'
-import { useMockTaskWorkspaceData, mapTaskItemToTask } from '@/features/task/hooks/useMockTaskData'
+import { mapTaskItemToTask, useMockTaskWorkspaceData } from '@/features/task/hooks/useMockTaskData'
 import { useTaskFavorites } from '@/features/task/hooks/useTaskFavorites'
 import { useTaskRecents } from '@/features/task/hooks/useTaskRecents'
+import {
+  exportTasksToCSV,
+  importTasksFromCSV,
+  taskItemService,
+} from '@/features/task/mocks/task.mock'
 import type {
   Id,
   SortOption,
@@ -17,22 +22,18 @@ import type {
   TaskItemDto,
   UpdateTaskRequest,
 } from '@/features/task/types/task.types'
-import { ArrowUpDown, Check, Download, Filter, Layers, MoreHorizontal, Plus, Search, Share2, Upload } from 'lucide-react'
+import { ArrowUpDown, Check, Download, Filter, Layers, Moon, MoreHorizontal, Plus, Search, Share2, Sun, Upload } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import {
-  exportTasksToCSV,
-  importTasksFromCSV,
-  taskItemService,
-} from '@/features/task/mocks/task.mock'
 import { TaskSheet } from '../../detail/TaskSheet'
 import { TaskFavoritesBar } from '../../shared/TaskFavoritesBar'
 import { TaskHoverPreview } from '../../shared/TaskHoverPreview'
 import { TaskQuickFind } from '../../shared/TaskQuickFind'
 import { TaskFilterBar } from '../../toolbar/TaskFilterBar'
-import { TaskCalendar } from '../calendar/TaskCalendar'
 import { TaskCreateDialog } from '../board/dialogs/TaskCreateDialog'
 import { KanbanBoard } from '../board/KanbanBoard'
+import { TaskCalendar } from '../calendar/TaskCalendar'
 import { TaskList } from '../list/TaskList'
 import { TaskTable } from '../table/TaskTable'
 import { TaskTimeline } from '../timeline/TaskTimeline'
@@ -48,6 +49,7 @@ const VIEW_TABS: { key: ViewMode; label: string }[] = [
 ]
 
 export function TaskView() {
+  const { theme, setTheme } = useTheme()
   const [view, setView] = useState<ViewMode>('list')
   const {
     columns,
