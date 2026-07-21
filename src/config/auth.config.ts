@@ -5,10 +5,9 @@ import type { UserRole } from './roles'
 // ──────────────────────────────────────────────────────────────
 
 export const ROLE_REDIRECTS: Record<string, string> = {
-  // bod: '/dashboard',
-  manager: '/dashboard',
-  employee: '/dashboard',
-  admin: '/dashboard',
+  ROLE_SUPER_ADMIN: '/dashboard',
+  ROLE_HR_ADMIN: '/dashboard',
+  ROLE_EMPLOYEE: '/dashboard',
   customer: '/customer/nguyen-lieu',
 }
 
@@ -40,9 +39,9 @@ export const PORTAL_ROLES: PortalRoleConfig[] = [
   //   ],
   // },
   {
-    id: 'manager',
-    label: 'Quản Lý',
-    subLabel: 'Manager',
+    id: 'ROLE_HR_ADMIN',
+    label: 'Quản Lý HR',
+    subLabel: 'HR Administrator',
     description: 'Quản lý hoạt động vận hành hàng ngày, theo dõi nhân viên và hiệu suất.',
     icon: 'Users',
     permissions: [
@@ -53,7 +52,7 @@ export const PORTAL_ROLES: PortalRoleConfig[] = [
     ],
   },
   {
-    id: 'employee',
+    id: 'ROLE_EMPLOYEE',
     label: 'Nhân Viên',
     subLabel: 'Employee',
     description: 'Truy cập các công cụ làm việc hàng ngày, quản lý task và giao tiếp nội bộ.',
@@ -66,9 +65,9 @@ export const PORTAL_ROLES: PortalRoleConfig[] = [
     ],
   },
   {
-    id: 'admin',
+    id: 'ROLE_SUPER_ADMIN',
     label: 'Quản Trị Hệ Thống',
-    subLabel: 'System Administrator',
+    subLabel: 'Super Administrator',
     description: 'Cấu hình hệ thống, quản lý tài khoản người dùng và phân quyền truy cập.',
     icon: 'Shield',
     permissions: [

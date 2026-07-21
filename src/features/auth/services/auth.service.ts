@@ -15,8 +15,14 @@ export interface LoginRequest {
  * và refreshToken. Thông tin user được decode từ JWT.
  */
 export interface LoginResponse {
-  accessToken: string
-  refreshToken?: string
+  token: string
+  refreshToken: string
+  expiry: string
+  employeeCode: string
+  fullName: string
+  userId: string
+  // alias for compatibility
+  accessToken?: string
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -25,22 +31,22 @@ export interface LoginResponse {
 
 export const authService = {
   login: async (credentials: LoginRequest) => {
-    return apiCall.post<LoginResponse>('/auth/login', credentials)
+    return apiCall.post<LoginResponse>('/api/auth/login', credentials)
   },
 
   refreshToken: async (token: string) => {
-    return apiCall.post<LoginResponse>('/auth/refresh-token', { token })
+    return apiCall.post<LoginResponse>('/api/auth/refresh', { token })
   },
 
   logout: async (token?: string) => {
-    return apiCall.post('/auth/logout', { token })
+    return apiCall.post('/api/auth/revoke', { token })
   },
 
   getProfile: async () => {
-    return apiCall.get('/auth/profile')
+    return apiCall.get('/api/auth/me')
   },
 
   updateProfile: async (data: any) => {
-    return apiCall.patch('/auth/profile', data)
+    return apiCall.patch('/api/auth/profile', data)
   },
 }

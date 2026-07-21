@@ -3,7 +3,7 @@ import { ArrowUp, ArrowDown, ArrowUpDown, Plus } from 'lucide-react'
 import { format } from 'date-fns'
 import type { Task, Column, TaskItemDto } from '@/features/task/types/task.types'
 import type { TaskPriorityDto } from '@/features/task/types/priority.types'
-import { taskPriorityService } from '@/features/task/mocks/task.mock'
+import { taskPriorityService } from '@/features/task/services/task.service'
 import { TaskCreateDialog } from '../board/dialogs/TaskCreateDialog'
 
 const C = {

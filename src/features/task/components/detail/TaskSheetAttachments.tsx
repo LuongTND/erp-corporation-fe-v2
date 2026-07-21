@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { File, FileImage, FileText, Paperclip, Trash2, Upload } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import type { TaskAttachment } from '@/features/task/types/task.types'
-import { taskAttachmentService } from '@/features/task/mocks/task.mock'
+import { taskAttachmentService } from '@/features/task/services/task.service'
 
 const C = {
   text: 'var(--t-text-primary)',
@@ -52,7 +52,7 @@ export function TaskSheetAttachments({ taskId }: Props) {
   }
 
   const handleDelete = async (id: string) => {
-    await taskAttachmentService.delete(id)
+    await taskAttachmentService.delete(taskId, id)
     setAttachments((prev) => prev.filter((a) => a.id !== id))
   }
 

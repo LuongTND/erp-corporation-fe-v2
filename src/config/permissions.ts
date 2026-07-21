@@ -5,23 +5,23 @@ import { ROLES, type UserRole } from './roles'
 // ──────────────────────────────────────────────────────────────
 
 export const ROLE_GROUPS = {
-  /** Tất cả roles */
-  ALL: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EMPLOYEE] as UserRole[],
+  /** Tất cả roles nội bộ */
+  ALL: [ROLES.SUPER_ADMIN, ROLES.HR_ADMIN, ROLES.EMPLOYEE] as UserRole[],
 
-  /** Nhân sự nội bộ (trừ Admin kỹ thuật) */
-  INTERNAL: [ROLES.MANAGER, ROLES.EMPLOYEE] as UserRole[],
+  /** Nhân sự nội bộ (trừ Super Admin) */
+  INTERNAL: [ROLES.HR_ADMIN, ROLES.EMPLOYEE] as UserRole[],
 
-  /** Ban lãnh đạo */
-  MANAGEMENT: [ROLES.MANAGER] as UserRole[],
+  /** HR Admin trở lên */
+  MANAGEMENT: [ROLES.HR_ADMIN, ROLES.SUPER_ADMIN] as UserRole[],
 
-  /** Vận hành (Manager + Employee) */
-  OPS: [ROLES.MANAGER, ROLES.EMPLOYEE] as UserRole[],
+  /** Vận hành */
+  OPS: [ROLES.HR_ADMIN, ROLES.EMPLOYEE] as UserRole[],
 
-  /** Chỉ Admin */
-  ADMIN_ONLY: [ROLES.ADMIN] as UserRole[],
+  /** Chỉ Super Admin */
+  ADMIN_ONLY: [ROLES.SUPER_ADMIN] as UserRole[],
 
-  /** Admin + BOD */
-  HIGH_LEVEL: [ROLES.ADMIN] as UserRole[],
+  /** Super Admin */
+  HIGH_LEVEL: [ROLES.SUPER_ADMIN] as UserRole[],
 } as const
 
 // ──────────────────────────────────────────────────────────────

@@ -83,7 +83,7 @@ function RoleCard({ role, index }: { role: PortalRoleConfig; index: number }) {
 
 export default function PortalPage() {
   return (
-    <div className="min-h-screen w-full bg-background transition-colors duration-500">
+    <div className="flex-1 w-full bg-background transition-colors duration-500">
       <div className="mx-auto flex max-w-6xl flex-col px-4 py-8 md:px-8">
 
         {/* Header */}

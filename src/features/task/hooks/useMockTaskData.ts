@@ -3,7 +3,7 @@ import {
   taskItemService,
   taskPriorityService,
   taskStatusService,
-} from '@/features/task/mocks/task.mock'
+} from '@/features/task/services/task.service'
 import type { TaskPriorityDto } from '@/features/task/types/priority.types'
 import type { Column, Task, TaskItemDto, TaskStatusDto } from '@/features/task/types/task.types'
 

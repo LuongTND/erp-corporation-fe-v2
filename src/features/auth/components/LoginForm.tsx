@@ -57,8 +57,6 @@ export function LoginForm() {
 
   const onSubmit = async (values: FormValues) => {
 
-    console.log("Có call API không?", values)
-
     setIsLoading(true)
     try {
       await login(
