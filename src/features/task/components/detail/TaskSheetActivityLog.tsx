@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Clock, User } from 'lucide-react'
 import type { ActivityEntry } from '@/features/task/types/task.types'
-import { taskActivityService } from '@/features/task/mocks/task.mock'
+import { taskActivityService } from '@/features/task/services/task.service'
 
 const C = {
   text: 'var(--t-text-primary)',

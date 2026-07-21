@@ -36,7 +36,7 @@ import {
 
 import { AssigneeSelector, type UserOption } from '@/features/task/components/detail/TaskSheetAssigneeSelector'
 import { useMockTaskMeta } from '@/features/task/hooks/useMockTaskData'
-import { taskItemService } from '@/features/task/mocks/task.mock'
+import { taskItemService } from '@/features/task/services/task.service'
 import type { CreateTaskRequest, TaskItemDto } from '@/features/task/types/task.types'
 import { useAuthStore } from '@/stores/auth.store'
 

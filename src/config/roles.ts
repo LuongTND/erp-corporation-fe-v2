@@ -3,10 +3,10 @@
 // ──────────────────────────────────────────────────────────────
 
 export const ROLES = {
-  MANAGER: 'manager',
-  EMPLOYEE: 'employee',
-  ADMIN: 'admin',
-  CUSTOMER: 'customer',
+  SUPER_ADMIN: 'ROLE_SUPER_ADMIN',
+  HR_ADMIN: 'ROLE_HR_ADMIN',
+  EMPLOYEE: 'ROLE_EMPLOYEE',
+  CUSTOMER: 'customer', // ponytail: no BE backing yet, keep until customer portal is defined
 } as const
 
 export type UserRole = (typeof ROLES)[keyof typeof ROLES]

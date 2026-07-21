@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link2, Plus, X } from 'lucide-react'
 import type { TaskItemDto, DependencyType } from '@/features/task/types/task.types'
-import { taskDependencyService, taskItemService } from '@/features/task/mocks/task.mock'
+import { taskDependencyService, taskItemService } from '@/features/task/services/task.service'
 
 const C = {
   text: 'var(--t-text-primary)',

@@ -1,21 +1,16 @@
 import { cn } from '@/lib/utils'
 import {
   Banknote,
-  BarChart3,
   BookOpen,
   Calendar,
   CalendarDays,
   CheckSquare,
   ChevronDown,
   Compass,
-  DollarSign,
-  FolderOpen,
   GraduationCap,
-  Inbox,
   LayoutDashboard,
   MessageSquare,
   Network,
-  Package,
   Search,
   Settings,
   Target,
@@ -38,22 +33,18 @@ type ModuleItem = {
 }
 
 const CORE_ITEMS: ModuleItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard',  href: ROUTES.DASHBOARD },
-  { icon: CheckSquare,     label: 'My Tasks',   href: ROUTES.TASK,     badge: 9 },
-  { icon: Inbox,           label: 'Inbox',      href: '/inbox',    badge: 3 },
-  { icon: Calendar,        label: 'Calendar',   href: '/calendar' },
+  { icon: LayoutDashboard, label: 'Dashboard', href: ROUTES.DASHBOARD },
+  { icon: CheckSquare,     label: 'My Tasks',  href: ROUTES.TASK, badge: 9 },
 ]
 
 const MODULE_ITEMS: ModuleItem[] = [
-  { icon: MessageSquare, label: 'Chat',        href: ROUTES.CHAT },
-  { icon: Users2,        label: 'CRM',         href: '/crm' },
-  { icon: DollarSign,    label: 'Finance',     href: '/finance' },
+  { icon: MessageSquare, label: 'Chat', href: ROUTES.CHAT },
   {
     icon: Users,
     label: 'HR & Payroll',
     href: ROUTES.HR.DASHBOARD,
     subItems: [
-      { icon: LayoutDashboard, label: 'Overview',    href: ROUTES.HR.DASHBOARD },
+      { icon: LayoutDashboard, label: 'Overview',   href: ROUTES.HR.DASHBOARD },
       { icon: Users2,          label: 'Employees',  href: ROUTES.HR.EMPLOYEES },
       { icon: Calendar,        label: 'Attendance', href: ROUTES.HR.ATTENDANCE },
       { icon: Banknote,        label: 'Payroll',    href: ROUTES.HR.PAYROLL },
@@ -62,9 +53,6 @@ const MODULE_ITEMS: ModuleItem[] = [
       { icon: Network,         label: 'Org Chart',  href: ROUTES.HR.ORG_CHART },
     ],
   },
-  { icon: Package,       label: 'Inventory',   href: '/inventory' },
-  { icon: FolderOpen,    label: 'Projects',    href: '/projects' },
-  { icon: BarChart3,     label: 'Reports',     href: '/reports' },
   {
     icon: GraduationCap,
     label: 'LMS',

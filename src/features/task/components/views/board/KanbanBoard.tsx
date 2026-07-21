@@ -12,7 +12,7 @@ import { toast } from 'sonner'
 
 import type { ColumnPositionSnapshot } from '@/features/task/hooks/useKanbanDnd'
 import { useKanbanDnd } from '@/features/task/hooks/useKanbanDnd'
-import { taskStatusService } from '@/features/task/mocks/task.mock'
+import { taskStatusService } from '@/features/task/services/task.service'
 import type { Column, Id, Task, TaskItemDto } from '@/features/task/types/task.types'
 import { KanbanCardOverlay } from './card/KanbanCard'
 import { BoardColumn } from './column/KanbanColumn'

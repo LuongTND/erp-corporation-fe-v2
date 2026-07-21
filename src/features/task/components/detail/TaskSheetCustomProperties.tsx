@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Check, ExternalLink, Hash, List, Plus, Tags, ToggleLeft, Trash2 } from 'lucide-react'
 import type { CustomPropDef, CustomPropType, CustomPropValue } from '@/features/task/types/task.types'
-import { customPropertyService } from '@/features/task/mocks/task.mock'
+import { customPropertyService } from '@/features/task/services/task.service'
 
 const C = {
   text: 'var(--t-text-primary)',

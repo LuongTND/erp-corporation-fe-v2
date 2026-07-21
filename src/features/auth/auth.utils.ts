@@ -61,7 +61,7 @@ export const decodeUserFromToken = (token: string): DecodedUser | null => {
       decoded[MICROSOFT_ROLE_CLAIM] ||
       decoded.role ||
       '',
-    ).toLowerCase()
+    )
 
     const avatar = decoded.avatarUrl || decoded.avatar || decoded.picture || undefined
 

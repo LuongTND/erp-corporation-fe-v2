@@ -13,7 +13,7 @@ import {
   exportTasksToCSV,
   importTasksFromCSV,
   taskItemService,
-} from '@/features/task/mocks/task.mock'
+} from '@/features/task/services/task.service'
 import type {
   Id,
   SortOption,

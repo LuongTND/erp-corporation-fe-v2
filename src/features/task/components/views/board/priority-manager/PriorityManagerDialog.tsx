@@ -15,7 +15,7 @@ import {
 import { cn } from '@/lib/utils'
 
 import { setMockTaskMeta, useMockTaskMeta } from '@/features/task/hooks/useMockTaskData'
-import { taskPriorityService } from '@/features/task/mocks/task.mock'
+import { taskPriorityService } from '@/features/task/services/task.service'
 import type { TaskPriorityDto } from '@/features/task/types/priority.types'
 import type { PriorityLevel } from '@/features/task/types/priority.types'
 import { PriorityForm } from './PriorityForm'
