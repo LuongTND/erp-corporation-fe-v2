@@ -65,6 +65,8 @@ export const ROUTES = {
     ACCOUNTS: '/admin/accounts',
     SETTINGS: '/admin/settings',
     PERMISSIONS: '/admin/permissions',
+    DEPARTMENTS: '/admin/departments',
+    JOB_LEVELS: '/admin/job-levels',
   },
 } as const
 

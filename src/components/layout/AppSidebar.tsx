@@ -1,30 +1,67 @@
-import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   Banknote,
   BookOpen,
+  Building2,
   Calendar,
   CalendarDays,
   CheckSquare,
-  ChevronDown,
+  ChevronRight,
   Compass,
   GraduationCap,
+  KeyRound,
   LayoutDashboard,
+  LogOut,
   MessageSquare,
   Network,
   Search,
   Settings,
+  Shield,
   Target,
   TrendingUp,
   Users,
   Users2,
   type LucideIcon,
 } from 'lucide-react'
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/config/routes'
+import { useAuthStore } from '@/stores/auth.store'
+import { cn } from '@/lib/utils'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInput,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarSeparator,
+} from '@/components/ui/sidebar'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type SubItem = { icon: LucideIcon; label: string; href: string }
-type ModuleItem = {
+type NavItem = {
   icon: LucideIcon
   label: string
   href: string
@@ -32,25 +69,27 @@ type ModuleItem = {
   subItems?: SubItem[]
 }
 
-const CORE_ITEMS: ModuleItem[] = [
+// ── Nav config ────────────────────────────────────────────────────────────────
+
+const CORE_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', href: ROUTES.DASHBOARD },
-  { icon: CheckSquare,     label: 'My Tasks',  href: ROUTES.TASK, badge: 9 },
+  { icon: CheckSquare, label: 'My Tasks', href: ROUTES.TASK, badge: 9 },
 ]
 
-const MODULE_ITEMS: ModuleItem[] = [
+const MODULE_ITEMS: NavItem[] = [
   { icon: MessageSquare, label: 'Chat', href: ROUTES.CHAT },
   {
     icon: Users,
     label: 'HR & Payroll',
     href: ROUTES.HR.DASHBOARD,
     subItems: [
-      { icon: LayoutDashboard, label: 'Overview',   href: ROUTES.HR.DASHBOARD },
-      { icon: Users2,          label: 'Employees',  href: ROUTES.HR.EMPLOYEES },
-      { icon: Calendar,        label: 'Attendance', href: ROUTES.HR.ATTENDANCE },
-      { icon: Banknote,        label: 'Payroll',    href: ROUTES.HR.PAYROLL },
-      { icon: Target,          label: 'KPI',        href: ROUTES.HR.KPI },
-      { icon: CalendarDays,    label: 'Leave',      href: ROUTES.HR.LEAVE },
-      { icon: Network,         label: 'Org Chart',  href: ROUTES.HR.ORG_CHART },
+      { icon: LayoutDashboard, label: 'Overview', href: ROUTES.HR.DASHBOARD },
+      { icon: Users2, label: 'Employees', href: ROUTES.HR.EMPLOYEES },
+      { icon: Calendar, label: 'Attendance', href: ROUTES.HR.ATTENDANCE },
+      { icon: Banknote, label: 'Payroll', href: ROUTES.HR.PAYROLL },
+      { icon: Target, label: 'KPI', href: ROUTES.HR.KPI },
+      { icon: CalendarDays, label: 'Leave', href: ROUTES.HR.LEAVE },
+      { icon: Network, label: 'Org Chart', href: ROUTES.HR.ORG_CHART },
     ],
   },
   {
@@ -63,185 +102,209 @@ const MODULE_ITEMS: ModuleItem[] = [
       { icon: TrendingUp, label: 'Progress', href: ROUTES.LMS.PROGRESS },
     ],
   },
+  {
+    icon: Shield,
+    label: 'Admin',
+    href: ROUTES.ADMIN.ACCOUNTS,
+    subItems: [
+      { icon: KeyRound, label: 'Roles', href: ROUTES.ADMIN.ACCOUNTS },
+      { icon: Shield, label: 'Permissions', href: ROUTES.ADMIN.PERMISSIONS },
+      { icon: Building2, label: 'Departments', href: ROUTES.ADMIN.DEPARTMENTS },
+      { icon: Users2, label: 'Job Levels', href: ROUTES.ADMIN.JOB_LEVELS },
+    ],
+  },
 ]
 
-function NavButton({
-  icon: Icon,
-  label,
-  badge,
-  active,
-  depth = 0,
-  onClick,
-}: {
-  icon: LucideIcon
-  label: string
-  href?: string
-  badge?: number
-  active: boolean
-  depth?: number
-  onClick: () => void
-}) {
+// ── Collapsible nav item ───────────────────────────────────────────────────────
+
+function CollapsibleNavItem({ item }: { item: NavItem }) {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const isActive = location.pathname.startsWith(item.href)
+  const [open, setOpen] = useState(isActive)
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'flex items-center gap-2 h-8 rounded-md w-full text-[13px] font-normal transition-colors duration-[120ms] cursor-pointer',
-        depth === 0 ? 'px-2 border-l-2' : 'pl-7 pr-2',
-        active
-          ? (depth === 0 ? 'bg-primary/15 text-primary border-l-primary pl-[6px]' : 'bg-primary/15 text-primary')
-          : (depth > 0 ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent' : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent border-transparent')
-      )}
-    >
-      <Icon className="h-4 w-4 shrink-0" />
-      <span className="flex-1 text-left truncate">{label}</span>
-      {badge != null && (
-        <span
-          className="text-[10px] font-medium rounded-full px-1.5 py-px leading-none bg-primary text-primary-foreground"
-        >
-          {badge}
-        </span>
-      )}
-    </button>
+    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton
+            isActive={isActive}
+            tooltip={item.label}
+            className="cursor-pointer"
+          >
+            <item.icon />
+            <span>{item.label}</span>
+            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {item.subItems!.map((sub) => (
+              <SidebarMenuSubItem key={sub.href}>
+                <SidebarMenuSubButton
+                  isActive={location.pathname === sub.href}
+                  onClick={() => navigate(sub.href)}
+                  className="cursor-pointer"
+                >
+                  <sub.icon />
+                  <span>{sub.label}</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
   )
 }
+
+// ── User footer ───────────────────────────────────────────────────────────────
+
+function UserFooter() {
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
+  const navigate = useNavigate()
+
+  const initials = user?.name
+    ? user.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+    : '?'
+
+  const handleLogout = () => {
+    logout()
+    navigate(ROUTES.PORTAL)
+  }
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <SidebarMenuButton
+          size="lg"
+          className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
+            {initials}
+          </span>
+          <div className="flex flex-col items-start min-w-0 flex-1">
+            <span className="truncate text-[13px] font-medium">{user?.name ?? 'My Account'}</span>
+            <span className="truncate text-[11px] text-muted-foreground">{user?.email ?? ''}</span>
+          </div>
+          <ChevronRight className="ml-auto rotate-90" />
+        </SidebarMenuButton>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent side="top" align="start" className="w-56">
+        <DropdownMenuItem onClick={() => navigate('/settings')}>
+          <Settings className="mr-2 h-4 w-4" />
+          Settings
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="text-destructive focus:text-destructive"
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+// ── AppSidebar ────────────────────────────────────────────────────────────────
 
 export function AppSidebar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [modulesOpen, setModulesOpen] = useState(true)
-
+  const [search, setSearch] = useState('')
 
   return (
-    <aside
-      className="flex flex-col h-full shrink-0 overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground"
-      style={{ width: 240 }}
-    >
+    <Sidebar collapsible="icon">
       {/* Workspace header */}
-      <button
-        type="button"
-        className="flex items-center gap-2 h-[52px] px-3 w-full transition-colors duration-[120ms] rounded-md mx-1 hover:bg-sidebar-accent/50 cursor-pointer"
-      >
-        <span
-          className="flex items-center justify-center w-8 h-8 rounded-md shrink-0 text-white font-bold text-sm bg-primary"
-        >
-          D
-        </span>
-        <div className="flex flex-col items-start flex-1 min-w-0">
-          <span className="text-[13px] font-semibold truncate w-full text-left text-sidebar-foreground">
-            DigiFNB ERP
-          </span>
-          <span className="text-[10px] truncate w-full text-left text-sidebar-foreground/50">
-            Corporation v2
-          </span>
-        </div>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-sidebar-foreground/45" />
-      </button>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" className="cursor-pointer">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+                D
+              </span>
+              <div className="flex flex-col items-start min-w-0 flex-1">
+                <span className="truncate text-[13px] font-semibold">DigiFNB ERP</span>
+                <span className="truncate text-[10px] text-muted-foreground">Corporation v2</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
 
-      {/* Search bar */}
-      <div className="px-2 mb-1">
-        <div
-          className="flex items-center gap-2 h-[30px] px-2.5 rounded-md border text-[12px] bg-sidebar-accent/40 border-sidebar-border/60 text-sidebar-foreground/60"
-        >
-          <Search className="h-3.5 w-3.5 shrink-0" />
-          <span>Search...</span>
-        </div>
-      </div>
+        <SidebarInput
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-8"
+        />
+      </SidebarHeader>
 
-      {/* Scrollable nav area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-1 mt-1" style={{ scrollbarWidth: 'none' }}>
-        {/* Core nav */}
-        <nav className="flex flex-col gap-0.5">
-          {CORE_ITEMS.map((item) => (
-            <NavButton
-              key={item.href}
-              {...item}
-              active={location.pathname === item.href}
-              onClick={() => navigate(item.href)}
-            />
-          ))}
-        </nav>
+      <SidebarContent>
+        {/* Core */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {CORE_ITEMS.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    isActive={location.pathname === item.href}
+                    onClick={() => navigate(item.href)}
+                    tooltip={item.label}
+                    className="cursor-pointer"
+                  >
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </SidebarMenuButton>
+                  {item.badge != null && (
+                    <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                  )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-        {/* Modules section */}
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => setModulesOpen((v) => !v)}
-            className="flex items-center gap-1 w-full px-2 py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] cursor-pointer transition-colors duration-[120ms] text-sidebar-foreground/40 hover:text-sidebar-foreground/60"
-          >
-            <ChevronDown
-              className="h-3 w-3 shrink-0 transition-transform duration-200"
-              style={{ transform: modulesOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}
-            />
-            Modules
-          </button>
+        <SidebarSeparator />
 
-          {modulesOpen && (
-            <div className="flex flex-col gap-0.5 mt-0.5">
-              {MODULE_ITEMS.map((item) => {
-                const isModuleActive = item.subItems
-                  ? location.pathname.startsWith(item.href)
-                  : location.pathname === item.href
-                const isExpanded = item.subItems && location.pathname.startsWith(item.href)
-
-                return (
-                  <div key={item.href}>
-                    <NavButton
-                      icon={item.icon}
-                      label={item.label}
-                      href={item.href}
-                      active={isModuleActive}
+        {/* Modules */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Modules</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {MODULE_ITEMS.map((item) =>
+                item.subItems ? (
+                  <CollapsibleNavItem key={item.href} item={item} />
+                ) : (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      isActive={location.pathname === item.href}
                       onClick={() => navigate(item.href)}
-                    />
-                    {isExpanded && item.subItems && (
-                      <div className="flex flex-col gap-0.5 mt-0.5">
-                        {item.subItems.map((sub) => (
-                          <NavButton
-                            key={sub.href}
-                            icon={sub.icon}
-                            label={sub.label}
-                            href={sub.href}
-                            active={location.pathname === sub.href}
-                            depth={1}
-                            onClick={() => navigate(sub.href)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                      tooltip={item.label}
+                      className="cursor-pointer"
+                    >
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 )
-              })}
-            </div>
-          )}
-        </div>
-      </div>
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
 
-      {/* Settings */}
-      <button
-        type="button"
-        className="flex items-center gap-2 h-8 mx-1 px-2 rounded-md text-[13px] transition-colors duration-[120ms] cursor-pointer text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-      >
-        <Settings className="h-4 w-4 shrink-0" />
-        <span>Settings</span>
-      </button>
-
-      {/* Divider */}
-      <div className="h-px bg-sidebar-border mx-2 my-1" />
-
-      {/* User row */}
-      <div
-        className="flex items-center gap-2 h-10 px-3 mx-1 mb-1 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-sidebar-accent/50"
-      >
-        <span
-          className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0 bg-primary"
-        >
-          MT
-        </span>
-        <span className="text-[12px] flex-1 truncate text-sidebar-foreground/75">
-          My Account
-        </span>
-        <ChevronDown className="h-3 w-3 shrink-0 text-sidebar-foreground/45" />
-      </div>
-    </aside>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <UserFooter />
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
   )
 }

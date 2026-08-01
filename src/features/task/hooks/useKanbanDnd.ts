@@ -72,6 +72,7 @@ export function useKanbanDnd({ setTasks, tasksByColumn, columnPositionsByIdRef }
   const dropHintRef = useRef<DropHint>(null)
 
   const activeColumnIdRef = useRef<Id | null>(null)
+  const originalIndexRef = useRef<number>(0)
   const pointerStartRef = useRef<{ x: number; y: number } | null>(null)
   const pointerOffsetYRef = useRef<number>(0)
 
@@ -115,6 +116,8 @@ export function useKanbanDnd({ setTasks, tasksByColumn, columnPositionsByIdRef }
       const task = event.active.data.current.task as Task
       setActiveTask(task)
       activeColumnIdRef.current = task.columnId
+      const colTasks = tasksByColumn.get(task.columnId) ?? []
+      originalIndexRef.current = colTasks.findIndex((t) => t.id === task.id)
     }
 
     const p = getClientPoint(event.activatorEvent)
@@ -293,21 +296,23 @@ export function useKanbanDnd({ setTasks, tasksByColumn, columnPositionsByIdRef }
       return
     }
 
+    const snapshotColumnId = activeColumnIdRef.current!
+    const snapshotIndex = originalIndexRef.current
+
     setTasks((prev) =>
       moveTaskToColumnAtIndex(prev, activeId, latestDropHint.columnId, latestDropHint.index),
     )
 
-    if (activeColumnIdRef.current !== latestDropHint.columnId) {
+    if (snapshotColumnId !== latestDropHint.columnId) {
       try {
         await taskItemService.updateStatus(String(activeId), {
           statusId: String(latestDropHint.columnId),
         })
-        toast.success('Cập nhật trạng thái công việc thành công')
       } catch (error) {
         console.error('Lỗi khi cập nhật trạng thái task:', error)
         toast.error('Không thể cập nhật trạng thái công việc')
         setTasks((prev) =>
-          moveTaskToColumnAtIndex(prev, activeId, activeColumnIdRef.current!, 0),
+          moveTaskToColumnAtIndex(prev, activeId, snapshotColumnId, snapshotIndex),
         )
       }
     }
@@ -316,6 +321,7 @@ export function useKanbanDnd({ setTasks, tasksByColumn, columnPositionsByIdRef }
     setActiveId(null)
     setIsDragging(false)
     activeColumnIdRef.current = null
+    originalIndexRef.current = 0
     pointerStartRef.current = null
     pointerOffsetYRef.current = 0
     clearDropHint()
@@ -326,6 +332,7 @@ export function useKanbanDnd({ setTasks, tasksByColumn, columnPositionsByIdRef }
     setActiveId(null)
     setIsDragging(false)
     activeColumnIdRef.current = null
+    originalIndexRef.current = 0
     pointerStartRef.current = null
     pointerOffsetYRef.current = 0
     clearDropHint()

@@ -1,17 +1,18 @@
 import { Outlet } from 'react-router-dom'
 import { AppSidebar } from './AppSidebar'
 import { Header } from './Header'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
 export default function AppLayout() {
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      <Header />
-      <div className="flex flex-1 overflow-hidden">
-        <AppSidebar />
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset className="flex flex-col overflow-hidden">
+        <Header />
         <main className="flex-1 overflow-auto bg-background text-foreground">
           <Outlet />
         </main>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

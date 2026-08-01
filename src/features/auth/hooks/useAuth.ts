@@ -26,7 +26,7 @@ export const useAuth = () => {
       try {
         // B1: Gọi API login
         const response = await authService.login(credentials)
-        const accessToken = response.token || response.accessToken
+        const accessToken = response.accessToken
         const { refreshToken } = response
 
         if (!accessToken) {

@@ -9,20 +9,10 @@ export interface LoginRequest {
   password: string
 }
 
-/**
- * Response trả về từ Backend .NET
- * Dựa trên pattern POS-BAHUNG: server trả về accessToken (JWT)
- * và refreshToken. Thông tin user được decode từ JWT.
- */
 export interface LoginResponse {
-  token: string
+  accessToken: string
   refreshToken: string
-  expiry: string
-  employeeCode: string
-  fullName: string
-  userId: string
-  // alias for compatibility
-  accessToken?: string
+  expiresIn: number
 }
 
 // ──────────────────────────────────────────────────────────────

@@ -51,6 +51,12 @@ const CustomerOrderDetailPage = lazy(() => import('@/features/customer-portal/pa
 const CustomerPromotionsPage = lazy(() => import('@/features/customer-portal/pages/CustomerPromotionsPage'))
 const AIChatbotPage = lazy(() => import('@/features/ai-chatbot/pages/AIChatbotPage'))
 
+// ── Admin Module ──
+const AdminRolesPage = lazy(() => import('@/features/admin/pages/RolesPage'))
+const AdminPermissionsPage = lazy(() => import('@/features/admin/pages/PermissionsPage'))
+const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/DepartmentsPage'))
+const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
+
 export const router = createBrowserRouter([
   // ── Landing (public) ──
   {
@@ -188,6 +194,40 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <OrgChartPage />
+                  </Suspense>
+                ),
+              },
+
+              // ── Admin Module ──
+              {
+                path: ROUTES.ADMIN.ACCOUNTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminRolesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.PERMISSIONS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminPermissionsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.DEPARTMENTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminDepartmentsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.JOB_LEVELS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminJobLevelsPage />
                   </Suspense>
                 ),
               },
