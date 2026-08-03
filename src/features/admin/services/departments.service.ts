@@ -1,5 +1,13 @@
 import { apiCall } from '@/lib/api'
-import type { DepartmentResponse, ListParams, QueryResult } from '../types/admin.types'
+import type {
+  AddDepartmentMemberPayload,
+  DepartmentMemberResponse,
+  DepartmentResponse,
+  DepartmentTreeResponse,
+  ListParams,
+  QueryResult,
+  UpdateDepartmentMemberPayload,
+} from '../types/admin.types'
 
 export const departmentsService = {
   list: (params?: ListParams) =>
@@ -13,4 +21,19 @@ export const departmentsService = {
 
   delete: (id: string) =>
     apiCall.delete<void>(`/api/departments/${id}`),
+
+  tree: () =>
+    apiCall.get<DepartmentTreeResponse[]>('/api/departments/tree'),
+
+  getMembers: (departmentId: string) =>
+    apiCall.get<DepartmentMemberResponse[]>(`/api/departments/${departmentId}/members`),
+
+  addMember: (userId: string, data: AddDepartmentMemberPayload) =>
+    apiCall.post<string>(`/api/users/${userId}/departments`, data),
+
+  updateMember: (userId: string, departmentId: string, data: UpdateDepartmentMemberPayload) =>
+    apiCall.put<void>(`/api/users/${userId}/departments/${departmentId}`, data),
+
+  removeMember: (userId: string, departmentId: string) =>
+    apiCall.delete<void>(`/api/users/${userId}/departments/${departmentId}`),
 }

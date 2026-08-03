@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Bell, Trash2, Check, AlertCircle, MessageSquare, ClipboardList, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -20,7 +19,6 @@ interface MockNotification {
 }
 
 export function NotificationPopover() {
-  const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
   // Standard mock ERP notifications
@@ -66,29 +64,17 @@ export function NotificationPopover() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
     )
-    toast.success(
-      i18n.language === 'en'
-        ? 'Notification marked as read'
-        : 'Đã đánh dấu thông báo là đã đọc'
-    )
+    toast.success('Đã đánh dấu thông báo là đã đọc')
   }
 
   const handleMarkAllAsRead = () => {
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
-    toast.success(
-      i18n.language === 'en'
-        ? 'All notifications marked as read'
-        : 'Đã đánh dấu tất cả thông báo là đã đọc'
-    )
+    toast.success('Đã đánh dấu tất cả thông báo là đã đọc')
   }
 
   const handleClearAll = () => {
     setNotifications([])
-    toast.info(
-      i18n.language === 'en'
-        ? 'All notifications cleared'
-        : 'Đã xóa tất cả thông báo'
-    )
+    toast.info('Đã xóa tất cả thông báo')
   }
 
   const getIcon = (type: MockNotification['type']) => {
@@ -103,8 +89,6 @@ export function NotificationPopover() {
         return <Info className="h-4 w-4 text-muted-foreground" />
     }
   }
-
-  const isEn = i18n.language === 'en'
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -129,13 +113,9 @@ export function NotificationPopover() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div>
-            <h4 className="text-sm font-semibold">
-              {isEn ? 'Notifications' : 'Thông báo'}
-            </h4>
+            <h4 className="text-sm font-semibold">Thông báo</h4>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {isEn
-                ? `You have ${unreadCount} unread messages`
-                : `Bạn có ${unreadCount} thông báo chưa đọc`}
+              {`Bạn có ${unreadCount} thông báo chưa đọc`}
             </p>
           </div>
           {unreadCount > 0 && (
@@ -146,7 +126,7 @@ export function NotificationPopover() {
               className="h-8 px-2 text-xs text-primary hover:text-primary/95"
             >
               <Check className="h-3.5 w-3.5 mr-1" />
-              {isEn ? 'Read all' : 'Đọc tất cả'}
+              Đọc tất cả
             </Button>
           )}
         </div>
@@ -170,17 +150,17 @@ export function NotificationPopover() {
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between gap-2">
                       <p className={cn('text-xs font-semibold text-foreground', !n.isRead && 'font-bold')}>
-                        {isEn ? n.titleEn : n.titleVi}
+                        {n.titleVi}
                       </p>
                       {!n.isRead && (
                         <span className="h-1.5 w-1.5 rounded-full bg-primary flex-shrink-0" />
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground leading-normal">
-                      {isEn ? n.descEn : n.descVi}
+                      {n.descVi}
                     </p>
                     <p className="text-[10px] text-muted-foreground font-medium pt-1">
-                      {isEn ? n.timeEn : n.timeVi}
+                      {n.timeVi}
                     </p>
                   </div>
                 </div>
@@ -190,10 +170,10 @@ export function NotificationPopover() {
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <Bell className="h-8 w-8 text-muted-foreground/40 mb-2" />
               <p className="text-sm font-medium text-muted-foreground">
-                {isEn ? 'No notifications' : 'Không có thông báo nào'}
+                Không có thông báo nào
               </p>
               <p className="text-xs text-muted-foreground/60 mt-1">
-                {isEn ? "We'll let you know when something comes up" : 'Chúng tôi sẽ báo cho bạn khi có tin mới'}
+                Chúng tôi sẽ báo cho bạn khi có tin mới
               </p>
             </div>
           )}
@@ -209,7 +189,7 @@ export function NotificationPopover() {
               className="w-full h-8 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
-              {isEn ? 'Clear all notifications' : 'Xóa tất cả thông báo'}
+              Xóa tất cả thông báo
             </Button>
           </div>
         )}

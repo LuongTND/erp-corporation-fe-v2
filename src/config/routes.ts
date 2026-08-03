@@ -7,7 +7,6 @@
 export const ROUTES = {
   // ── Public ──
   LANDING: '/',
-  PORTAL: '/portal',
   LOGIN: '/login',
   FORBIDDEN: '/forbidden',
 
@@ -67,6 +66,8 @@ export const ROUTES = {
     PERMISSIONS: '/admin/permissions',
     DEPARTMENTS: '/admin/departments',
     JOB_LEVELS: '/admin/job-levels',
+    ROLE_HIERARCHY: '/admin/role-hierarchy',
+    ORG_HIERARCHY: '/admin/org-hierarchy',
   },
 } as const
 

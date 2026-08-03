@@ -2,7 +2,9 @@
 export interface ApiResponse<T> {
   data: T
   message: string
-  success: boolean
+  isSuccess: boolean
+  statusCode: number
+  errors: Record<string, string[]> | null
 }
 
 // Pagination

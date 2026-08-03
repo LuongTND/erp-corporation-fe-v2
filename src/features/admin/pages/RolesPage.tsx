@@ -1,319 +1,278 @@
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Edit2, Plus, Shield, Trash2 } from 'lucide-react'
+import { ArrowUpDown, ChevronDown, ChevronUp, Plus } from 'lucide-react'
+import {
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { restrictToVerticalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers'
 import { HRPageHeader } from '@/features/hr/components/HRPageHeader'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { roleSchema, type RoleFormValues } from '../schemas/admin.schemas'
-import { useAssignPermissions, useCreateRole, useDeleteRole, useRoles, useUpdateRole } from '../hooks/use-roles'
-import { usePermissions, useRolePermissionIds } from '../hooks/use-permissions'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { useDeleteRole, useRoles } from '../hooks/use-roles'
 import type { RoleResponse } from '../types/admin.types'
+import { RoleDialog } from '../components/RolesPage/RoleDialog'
+import { PermissionsSheet } from '../components/RolesPage/PermissionsSheet'
+import { SortableRoleRow } from '../components/RolesPage/SortableRoleRow'
 
-// ── Role Dialog (Create / Edit) ───────────────────────────────────────────────
+type SortKey = 'roleName' | 'permissions'
+type SortDir = 'asc' | 'desc'
+type TypeFilter = 'all' | 'system' | 'custom'
 
-function RoleDialog({
-  open,
-  role,
-  onOpenChange,
-}: {
-  open: boolean
-  role?: RoleResponse
-  onOpenChange: (open: boolean) => void
-}) {
-  const createRole = useCreateRole()
-  const updateRole = useUpdateRole()
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<RoleFormValues>({
-    resolver: zodResolver(roleSchema),
-    defaultValues: { roleName: role?.roleName ?? '', description: role?.description ?? '' },
-  })
-
-  useEffect(() => {
-    if (open) reset({ roleName: role?.roleName ?? '', description: role?.description ?? '' })
-  }, [open, role, reset])
-
-  const onSubmit = async (values: RoleFormValues) => {
-    if (role) {
-      await updateRole.mutateAsync({ id: role.id, data: values })
-    } else {
-      await createRole.mutateAsync(values)
-    }
-    onOpenChange(false)
-  }
-
-  const isPending = createRole.isPending || updateRole.isPending
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>{role ? 'Edit Role' : 'Create Role'}</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="roleName">Role Name <span aria-hidden="true" className="text-destructive">*</span></Label>
-            <Input id="roleName" {...register('roleName')} placeholder="e.g. hr-manager" />
-            {errors.roleName && <p className="text-xs text-destructive">{errors.roleName.message}</p>}
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="description">Description</Label>
-            <Textarea id="description" {...register('description')} rows={3} placeholder="Optional description" />
-            {errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? 'Saving...' : role ? 'Save Changes' : 'Create Role'}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
+function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
+  if (col !== sortKey) return <ArrowUpDown className="h-3 w-3 ml-1 opacity-40" />
+  return sortDir === 'asc'
+    ? <ChevronUp className="h-3 w-3 ml-1" />
+    : <ChevronDown className="h-3 w-3 ml-1" />
 }
-
-// ── Permissions Sheet ─────────────────────────────────────────────────────────
-
-function PermissionsSheet({
-  open,
-  role,
-  onOpenChange,
-}: {
-  open: boolean
-  role: RoleResponse | undefined
-  onOpenChange: (open: boolean) => void
-}) {
-  const { data: allPermissions, isLoading: loadingAll } = usePermissions({ Top: 200, NeedTotalCount: false })
-  const { data: rolePermissions, isLoading: loadingRole } = useRolePermissionIds(role?.id)
-  const assignPermissions = useAssignPermissions()
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    if (rolePermissions) setSelected(new Set(rolePermissions.map((p) => p.id)))
-  }, [rolePermissions])
-
-  const toggle = (id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
-      return next
-    })
-  }
-
-  const handleSave = async () => {
-    if (!role) return
-    await assignPermissions.mutateAsync({ roleId: role.id, permissionIds: [...selected] })
-    onOpenChange(false)
-  }
-
-  // Group by resource (prefix before ':')
-  const grouped = (allPermissions?.items ?? []).reduce<Record<string, NonNullable<typeof allPermissions>['items']>>((acc, p) => {
-    const resource = p.permissionCode.split(':')[0] ?? 'other'
-    ;(acc[resource] ??= []).push(p)
-    return acc
-  }, {})
-
-  const isLoading = loadingAll || loadingRole
-
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[480px] sm:max-w-[480px] flex flex-col gap-0 p-0">
-        <SheetHeader className="px-6 py-4 border-b">
-          <SheetTitle className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Permissions — {role?.roleName}
-          </SheetTitle>
-        </SheetHeader>
-
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
-          {isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-lg" />)
-          ) : (
-            Object.entries(grouped).map(([resource, permissions]) => (
-              <div key={resource}>
-                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{resource}</p>
-                <div className="space-y-2">
-                  {permissions.map((permission) => (
-                    <label
-                      key={permission.id}
-                      className="flex items-center gap-3 cursor-pointer rounded-md px-3 py-2 hover:bg-accent transition-colors"
-                    >
-                      <Checkbox
-                        checked={selected.has(permission.id)}
-                        onCheckedChange={() => toggle(permission.id)}
-                        id={permission.id}
-                      />
-                      <span className="text-sm font-mono">{permission.permissionCode}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="px-6 py-4 border-t flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-          <Button onClick={handleSave} disabled={assignPermissions.isPending}>
-            {assignPermissions.isPending ? 'Saving...' : 'Save Permissions'}
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
-}
-
-// ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function RolesPage() {
   const [search, setSearch] = useState('')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  const [sortKey, setSortKey] = useState<SortKey>('roleName')
+  const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editRole, setEditRole] = useState<RoleResponse | undefined>()
   const [permSheet, setPermSheet] = useState<RoleResponse | undefined>()
+  const [localRoles, setLocalRoles] = useState<RoleResponse[]>([])
+  const [activeRole, setActiveRole] = useState<RoleResponse | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<RoleResponse | null>(null)
 
-  const { data, isLoading } = useRoles({ Top: 100, SearchText: search || undefined, NeedTotalCount: true })
+  const { data, isLoading } = useRoles()
   const deleteRole = useDeleteRole()
+
+  useEffect(() => {
+    if (data) setLocalRoles(data)
+  }, [data])
+
+  const isSearching = search.trim().length > 0
+  const isFiltering = typeFilter !== 'all' || isSearching
+
+  // ponytail: client-side filter+sort — BE has no search/sort params (≤100 roles)
+  const displayRoles = [...localRoles]
+    .filter((r) => {
+      if (isSearching && !r.roleName.toLowerCase().includes(search.toLowerCase())) return false
+      if (typeFilter === 'system' && !r.isSystemRole) return false
+      if (typeFilter === 'custom' && r.isSystemRole) return false
+      return true
+    })
+    .sort((a, b) => {
+      const mul = sortDir === 'asc' ? 1 : -1
+      if (sortKey === 'roleName') return mul * a.roleName.localeCompare(b.roleName)
+      return mul * (a.permissions.length - b.permissions.length)
+    })
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))
+    else { setSortKey(key); setSortDir('asc') }
+  }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveRole(localRoles.find((r) => r.id === event.active.id) ?? null)
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveRole(null)
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    setLocalRoles((prev) => {
+      const oldIdx = prev.findIndex((r) => r.id === active.id)
+      const newIdx = prev.findIndex((r) => r.id === over.id)
+      return arrayMove(prev, oldIdx, newIdx)
+    })
+  }
 
   const openCreate = () => { setEditRole(undefined); setDialogOpen(true) }
   const openEdit = (role: RoleResponse) => { setEditRole(role); setDialogOpen(true) }
-
-  const handleDelete = (role: RoleResponse) => {
-    if (!confirm(`Delete role "${role.roleName}"?`)) return
-    deleteRole.mutate(role.id)
-  }
+  const confirmDelete = (role: RoleResponse) => setDeleteTarget(role)
 
   return (
     <div className="min-h-full bg-background text-foreground">
-      <HRPageHeader
-        breadcrumbs={[
-          { label: 'Admin' },
-          { label: 'Roles & Permissions', isActive: true },
-        ]}
-      />
+      <HRPageHeader breadcrumbs={[{ label: 'Admin' }, { label: 'Roles & Permissions', isActive: true }]} />
 
-      <main className="max-w-7xl mx-auto p-8 space-y-5">
-        {/* Toolbar */}
-        <div className="flex items-center justify-between gap-4">
+      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-5">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-xl font-semibold">Roles</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              {data?.totalCount ?? 0} roles total
-            </p>
+            <h1 className="text-xl font-semibold">Vai trò</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">{displayRoles.length} vai trò</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Input
-              placeholder="Search roles..."
+              placeholder="Tìm vai trò..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-56"
+              className="w-48"
             />
+            <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as TypeFilter)}>
+              <SelectTrigger className="w-36 h-9">
+                <SelectValue placeholder="Loại" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả loại</SelectItem>
+                <SelectItem value="system">Hệ thống</SelectItem>
+                <SelectItem value="custom">Tùy chỉnh</SelectItem>
+              </SelectContent>
+            </Select>
             <Button onClick={openCreate} size="sm" className="gap-1.5">
               <Plus className="h-3.5 w-3.5" />
-              Create Role
+              Tạo vai trò
             </Button>
           </div>
         </div>
 
-        {/* Table */}
         <div className="rounded-lg border bg-card overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Role Name</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="w-[120px] text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    {Array.from({ length: 5 }).map((__, j) => (
-                      <TableCell key={j}><Skeleton className="h-4 w-full" /></TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (data?.items ?? []).length === 0 ? (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground text-sm">
-                    No roles found
-                  </TableCell>
+                  <TableHead className="w-8" />
+                  <TableHead>
+                    <button
+                      className="flex items-center text-xs font-medium hover:text-foreground transition-colors"
+                      onClick={() => toggleSort('roleName')}
+                    >
+                      Tên vai trò
+                      <SortIcon col="roleName" sortKey={sortKey} sortDir={sortDir} />
+                    </button>
+                  </TableHead>
+                  <TableHead>Tên hiển thị</TableHead>
+                  <TableHead>Mô tả</TableHead>
+                  <TableHead>Loại</TableHead>
+                  <TableHead>
+                    <button
+                      className="flex items-center text-xs font-medium hover:text-foreground transition-colors"
+                      onClick={() => toggleSort('permissions')}
+                    >
+                      Số quyền
+                      <SortIcon col="permissions" sortKey={sortKey} sortDir={sortDir} />
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-[140px] text-right">Thao tác</TableHead>
                 </TableRow>
-              ) : (
-                (data?.items ?? []).map((role) => (
-                  <TableRow key={role.id}>
-                    <TableCell className="font-medium">{role.roleName}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{role.description ?? '—'}</TableCell>
-                    <TableCell>
-                      {role.isSystemRole
-                        ? <Badge variant="secondary">System</Badge>
-                        : <Badge variant="outline">Custom</Badge>
-                      }
-                    </TableCell>
-                    <TableCell>
-                      {role.isActive
-                        ? <Badge className="bg-green-500/10 text-green-600 border-green-200 dark:border-green-900 dark:text-green-400">Active</Badge>
-                        : <Badge variant="destructive">Inactive</Badge>
-                      }
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost" size="sm"
-                          className="h-7 px-2 text-xs"
-                          onClick={() => setPermSheet(role)}
-                        >
-                          <Shield className="h-3.5 w-3.5 mr-1" />
-                          Perms
-                        </Button>
-                        <Button
-                          variant="ghost" size="sm"
-                          className="h-7 w-7 p-0"
-                          onClick={() => openEdit(role)}
-                          aria-label={`Edit ${role.roleName}`}
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost" size="sm"
-                          className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                          onClick={() => handleDelete(role)}
-                          disabled={role.isSystemRole}
-                          aria-label={`Delete ${role.roleName}`}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      {Array.from({ length: 7 }).map((__, j) => (
+                        <TableCell key={j}><Skeleton className="h-4 w-full" /></TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : displayRoles.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-12 text-muted-foreground text-sm">
+                      {isFiltering ? 'Không tìm thấy vai trò nào' : 'Không có vai trò nào'}
                     </TableCell>
                   </TableRow>
-                ))
+                ) : (
+                  <SortableContext items={displayRoles.map((r) => r.id)} strategy={verticalListSortingStrategy}>
+                    {displayRoles.map((role) => (
+                      <SortableRoleRow
+                        key={role.id}
+                        role={role}
+                        isDragDisabled={isFiltering || role.isSystemRole}
+                        onEdit={openEdit}
+                        onDelete={confirmDelete}
+                        onPermissions={setPermSheet}
+                      />
+                    ))}
+                  </SortableContext>
+                )}
+              </TableBody>
+            </Table>
+
+            <DragOverlay>
+              {activeRole && (
+                <table className="w-full">
+                  <tbody>
+                    <tr className="bg-card border rounded-lg shadow-2xl ring-1 ring-border flex items-center px-2">
+                      <td className="w-8 p-2 text-muted-foreground/60">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
+                      </td>
+                      <td className="flex-1 p-2 font-medium text-sm">{activeRole.roleName}</td>
+                      <td className="p-2 text-sm hidden sm:table-cell">{activeRole.displayName ?? '—'}</td>
+                      <td className="p-2 text-muted-foreground text-sm hidden sm:table-cell">{activeRole.description ?? '—'}</td>
+                      <td className="p-2">
+                        {activeRole.isSystemRole
+                          ? <Badge variant="secondary">Hệ thống</Badge>
+                          : <Badge variant="outline">Tùy chỉnh</Badge>}
+                      </td>
+                      <td className="p-2 text-sm text-muted-foreground">{activeRole.permissions.length}</td>
+                    </tr>
+                  </tbody>
+                </table>
               )}
-            </TableBody>
-          </Table>
+            </DragOverlay>
+          </DndContext>
         </div>
       </main>
 
-      <RoleDialog
-        open={dialogOpen}
-        role={editRole}
-        onOpenChange={setDialogOpen}
-      />
+      <RoleDialog open={dialogOpen} role={editRole} onOpenChange={setDialogOpen} />
 
       <PermissionsSheet
         open={!!permSheet}
         role={permSheet}
         onOpenChange={(open) => { if (!open) setPermSheet(undefined) }}
       />
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xóa vai trò</AlertDialogTitle>
+            <AlertDialogDescription>
+              Xóa vai trò <span className="font-semibold text-foreground">"{deleteTarget?.roleName}"</span>?
+              Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { if (deleteTarget) deleteRole.mutate(deleteTarget.id) }}
+            >
+              Xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

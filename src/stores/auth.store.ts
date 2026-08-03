@@ -15,6 +15,7 @@ interface AuthState {
   accessToken: string | null
   isAuthenticated: boolean
   setAuth: (user: User, accessToken: string, refreshToken?: string) => void
+  setPermissions: (permissions: string[]) => void
   logout: () => void
   hasPermission: (permission: string) => boolean
 }
@@ -32,6 +33,11 @@ export const useAuthStore = create<AuthState>()(
           localStorage.setItem('refresh_token', refreshToken)
         }
         set({ user, accessToken, isAuthenticated: true })
+      },
+
+      setPermissions: (permissions) => {
+        const { user } = get()
+        if (user) set({ user: { ...user, permissions } })
       },
 
       logout: () => {

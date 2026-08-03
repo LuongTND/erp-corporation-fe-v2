@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { permissionsService } from '../services/permissions.service'
-import type { ListParams } from '../types/admin.types'
 
 const KEY = 'permissions'
 
-export function usePermissions(params?: ListParams) {
+export function usePermissions() {
   return useQuery({
-    queryKey: [KEY, params],
-    queryFn: () => permissionsService.list(params),
+    queryKey: [KEY],
+    queryFn: () => permissionsService.list(),
   })
 }
 

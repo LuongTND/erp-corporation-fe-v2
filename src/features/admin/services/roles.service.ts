@@ -1,17 +1,17 @@
 import { apiCall } from '@/lib/api'
-import type { ListParams, QueryResult, RoleResponse } from '../types/admin.types'
+import type { RoleResponse } from '../types/admin.types'
 
 export const rolesService = {
-  list: (params?: ListParams) =>
-    apiCall.get<QueryResult<RoleResponse>>('/api/roles', { params }),
+  list: () =>
+    apiCall.get<RoleResponse[]>('/api/roles'),
 
   getById: (id: string) =>
     apiCall.get<RoleResponse>(`/api/roles/${id}`),
 
-  create: (data: { roleName: string; description?: string }) =>
+  create: (data: { roleName: string; displayName: string; description: string }) =>
     apiCall.post<string>('/api/roles', data),
 
-  update: (id: string, data: { roleName: string; description?: string }) =>
+  update: (id: string, data: { displayName: string; description: string }) =>
     apiCall.put<void>(`/api/roles/${id}`, data),
 
   delete: (id: string) =>

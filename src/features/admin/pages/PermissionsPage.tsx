@@ -8,10 +8,14 @@ import { usePermissions } from '../hooks/use-permissions'
 
 export default function PermissionsPage() {
   const [search, setSearch] = useState('')
-  const { data, isLoading } = usePermissions({ Top: 200, SearchText: search || undefined, NeedTotalCount: true })
+  const { data, isLoading } = usePermissions()
 
-  // Group by resource prefix
-  const grouped = (data?.items ?? []).reduce<Record<string, NonNullable<typeof data>['items']>>((acc, p) => {
+  // ponytail: BE GetPermissions has no server-side search — filter client-side
+  const filtered = (data ?? []).filter(
+    (permission) => !search || permission.permissionCode.toLowerCase().includes(search.toLowerCase()),
+  )
+
+  const grouped = filtered.reduce<Record<string, typeof filtered>>((acc, p) => {
     const resource = p.permissionCode.split(':')[0] ?? 'other'
     ;(acc[resource] ??= []).push(p)
     return acc
@@ -26,17 +30,17 @@ export default function PermissionsPage() {
         ]}
       />
 
-      <main className="max-w-7xl mx-auto p-8 space-y-5">
+      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-5">
         {/* Toolbar */}
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold">Permissions</h1>
+            <h1 className="text-xl font-semibold">Quyền hạn</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              Auto-seeded from API attributes · {data?.totalCount ?? 0} total
+              Tự động từ API · {filtered.length} quyền
             </p>
           </div>
           <Input
-            placeholder="Search permissions..."
+            placeholder="Tìm quyền hạn..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-56"
@@ -60,9 +64,9 @@ export default function PermissionsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Permission Code</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>Mã quyền</TableHead>
+                      <TableHead>Hành động</TableHead>
+                      <TableHead>Mô tả</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -72,12 +76,7 @@ export default function PermissionsPage() {
                         <TableRow key={permission.id}>
                           <TableCell className="font-mono text-sm">{permission.permissionCode}</TableCell>
                           <TableCell className="text-muted-foreground text-sm">{action}</TableCell>
-                          <TableCell>
-                            {permission.isActive
-                              ? <Badge className="bg-green-500/10 text-green-600 border-green-200 dark:border-green-900 dark:text-green-400">Active</Badge>
-                              : <Badge variant="destructive">Inactive</Badge>
-                            }
-                          </TableCell>
+                          <TableCell className="text-muted-foreground text-sm">{permission.description ?? '—'}</TableCell>
                         </TableRow>
                       )
                     })}
@@ -87,7 +86,7 @@ export default function PermissionsPage() {
             ))}
             {Object.keys(grouped).length === 0 && (
               <div className="rounded-lg border bg-card py-12 text-center text-sm text-muted-foreground">
-                No permissions found. Start the API to auto-seed permissions.
+                Không có quyền nào. Khởi động API để tự động tạo quyền.
               </div>
             )}
           </div>

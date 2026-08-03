@@ -6,15 +6,17 @@ export interface QueryResult<T> {
 export interface RoleResponse {
   id: string
   roleName: string
+  displayName?: string
   description?: string
   isSystemRole: boolean
-  isActive: boolean
+  permissions: PermissionResponse[]
 }
 
 export interface PermissionResponse {
   id: string
   permissionCode: string
-  isActive: boolean
+  module: string
+  description?: string
 }
 
 export interface DepartmentResponse {
@@ -45,6 +47,51 @@ export const SCOPE_TYPE_LABELS = {
   3: 'Department',
   4: 'All',
 } as const satisfies Record<ScopeType, string>
+
+export interface RoleNode {
+  id: string
+  roleName: string
+  displayName?: string
+  description?: string
+  isSystemRole: boolean
+  permissionCount: number
+  permissions: PermissionResponse[]
+  children: RoleNode[]
+}
+
+export interface DepartmentTreeResponse {
+  id: string
+  departmentName: string
+  departmentCode: string
+  managerId?: string
+  managerName?: string
+  isActive: boolean
+  children: DepartmentTreeResponse[]
+}
+
+export interface DepartmentMemberResponse {
+  userDepartmentId: string
+  userId: string
+  fullName: string
+  employeeCode: string
+  email: string
+  avatarUrl?: string
+  jobLevelId?: string
+  jobLevelName?: string
+  jobLevelOrder?: number
+  isPrimary: boolean
+  startDate: string
+}
+
+export interface AddDepartmentMemberPayload {
+  departmentId: string
+  startDate: string
+  jobLevelId?: string
+}
+
+export interface UpdateDepartmentMemberPayload {
+  jobLevelId: string | null
+}
 
 // PascalCase to match BE QueryInfo model
 export interface ListParams {

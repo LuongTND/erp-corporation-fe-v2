@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 
 interface CurrentTimeProps {
@@ -7,7 +6,6 @@ interface CurrentTimeProps {
 }
 
 export function CurrentTime({ className }: CurrentTimeProps) {
-  const { i18n } = useTranslation()
   const [date, setDate] = useState<Date | null>(null)
 
   useEffect(() => {
@@ -18,8 +16,7 @@ export function CurrentTime({ className }: CurrentTimeProps) {
 
   if (!date) return null
 
-  // Determine locale based on i18next active language
-  const currentLocale = i18n.language === 'en' ? 'en-US' : 'vi-VN'
+  const currentLocale = 'vi-VN'
 
   const timeStr = new Intl.DateTimeFormat(currentLocale, {
     hour: '2-digit',

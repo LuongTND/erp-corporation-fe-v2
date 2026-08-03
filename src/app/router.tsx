@@ -8,7 +8,6 @@ import { PageFallback } from '@/components/common/PageFallback'
 // ── Eager imports (nhẹ, cần ngay) ──
 import LandingPage from '@/features/landing/pages/LandingPage'
 import LoginPage from '@/features/auth/pages/LoginPage'
-import PortalPage from '@/features/auth/pages/PortalPage'
 import ForbiddenPage from '@/features/auth/pages/ForbiddenPage'
 import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 
@@ -56,6 +55,8 @@ const AdminRolesPage = lazy(() => import('@/features/admin/pages/RolesPage'))
 const AdminPermissionsPage = lazy(() => import('@/features/admin/pages/PermissionsPage'))
 const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/DepartmentsPage'))
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
+const AdminRoleHierarchyPage = lazy(() => import('@/features/admin/pages/RoleHierarchyPage'))
+const AdminOrgHierarchyPage = lazy(() => import('@/features/admin/pages/OrgHierarchyPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -92,7 +93,6 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
         children: [
-          { path: ROUTES.PORTAL, element: <PortalPage /> },
           { path: ROUTES.LOGIN, element: <LoginPage /> },
         ],
       },
@@ -228,6 +228,23 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminJobLevelsPage />
+                  </Suspense>
+                ),
+              },
+              // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
+              // {
+              //   path: ROUTES.ADMIN.ROLE_HIERARCHY,
+              //   element: (
+              //     <Suspense fallback={<PageFallback />}>
+              //       <AdminRoleHierarchyPage />
+              //     </Suspense>
+              //   ),
+              // },
+              {
+                path: ROUTES.ADMIN.ORG_HIERARCHY,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminOrgHierarchyPage />
                   </Suspense>
                 ),
               },

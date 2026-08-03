@@ -24,15 +24,21 @@
 ## Folder Structure
 ```
 src/features/<feature>/
-├── pages/       # Default exports, lazy-loaded
-├── components/  # Feature UI components
-├── hooks/       # React Query hooks
-├── services/    # Axios wrappers (plain objects)
-├── schemas/     # Zod schemas
-├── types/       # TypeScript types
+├── pages/           # Default exports, lazy-loaded (thin shells — state + layout only)
+├── components/      # Feature UI components
+│   └── <PageName>/  # Sub-components for a specific page (dialogs, sheets, tables)
+├── hooks/           # React Query hooks
+├── services/        # Axios wrappers (plain objects)
+├── schemas/         # Zod schemas
+├── types/           # TypeScript types
 ```
 Shared primitives → `src/components/ui/`
 Zustand stores → `src/stores/`
+
+## No God-Class Pages
+- Pages must NOT contain component definitions. Each dialog, sheet, or complex sub-component gets its own file.
+- Place page sub-components in `components/<PageName>/` (e.g., `DepartmentsPage/DepartmentDialog.tsx`).
+- Pages import from components — they only manage state and compose layout.
 
 ## Error Handling
 - Never swallow errors silently.
@@ -64,6 +70,8 @@ Zustand stores → `src/stores/`
 - Field errors from `form.formState.errors`, not global state.
 
 ## Styling
+- Tailwind CSS **v4** (CSS-first config in `src/index.css` via `@theme`; no `tailwind.config.js`, no PostCSS config — uses `@tailwindcss/vite`).
+- When copying components from shadcn/ui, use the Tailwind v4 versions (current default). v4 syntax like `w-(--var)` is valid here.
 - Tailwind CSS only. Class order: layout → spacing → typography → colors → states.
 - Conditional/merged classes always use `cn()` from `src/lib/utils.ts`.
 - Component variants use CVA (`class-variance-authority`).
@@ -88,3 +96,14 @@ Zustand stores → `src/stores/`
 - Lazy routes wrapped in `<Suspense fallback={<Spinner />}>`.
 - Protected routes use `ProtectedRoute` (checks `useAuthStore`).
 - `useNavigate` only inside components or hooks, never in services.
+
+## BE–FE Contract (bắt buộc)
+
+Before writing any form/service/schema for a feature, read the corresponding BE Command and Validator files. Then:
+
+1. **Field names must match exactly** — use the same casing as the BE DTO (camelCase in JSON). No aliases, no renaming.
+2. **Zod schema must mirror BE validator** — every `NotEmpty`, `MaximumLength`, `MinimumLength`, `GreaterThan`, `EmailAddress`, etc. must have an equivalent Zod rule.
+3. **Service payload must match the BE Command** — only send fields the BE Command declares. Never send extra fields; never omit required ones.
+4. **Separate Create vs Update schemas** when BE Commands differ (e.g. Create has `roleName` + `displayName`, Update has only `displayName`). Use `z.object` per command, not one shared schema.
+5. **`RoleResponse` / response types must include all fields the BE returns** — read the BE `*Response.cs` before writing the TS interface.
+6. **When BE adds/removes a field, update in this order**: schema → types → service → hook → component.

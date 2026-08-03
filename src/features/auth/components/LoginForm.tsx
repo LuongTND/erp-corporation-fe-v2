@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { useSearchParams } from 'react-router-dom'
 import { Loader2, Mail, KeyRound, Eye, EyeOff, Layers } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -27,21 +26,8 @@ type FormValues = z.infer<typeof formSchema>
 
 export function LoginForm() {
   const { login } = useAuth()
-  const [searchParams] = useSearchParams()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-
-  // Lấy role từ URL param (khi user click từ Portal Page)
-  const roleParam = searchParams.get('role')
-  const expectedRole = roleParam || undefined
-
-  // Hiển thị title dựa trên role
-  const titleText = expectedRole
-    ? `Đăng nhập — ${expectedRole.charAt(0).toUpperCase() + expectedRole.slice(1)}`
-    : 'Đăng nhập'
-  const descText = expectedRole
-    ? `Nhập thông tin để đăng nhập với vai trò ${expectedRole}.`
-    : 'Nhập thông tin để đăng nhập vào hệ thống.'
 
   const {
     register,
@@ -59,10 +45,7 @@ export function LoginForm() {
 
     setIsLoading(true)
     try {
-      await login(
-        { email: values.email, password: values.password },
-        expectedRole,
-      )
+      await login({ email: values.email, password: values.password })
     } catch {
       // Error đã được xử lý trong useAuth hook (toast.error)
     } finally {
@@ -76,8 +59,8 @@ export function LoginForm() {
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl border bg-primary/5">
           <Layers className="h-6 w-6 text-primary" />
         </div>
-        <CardTitle className="text-2xl font-bold">{titleText}</CardTitle>
-        <CardDescription>{descText}</CardDescription>
+        <CardTitle className="text-2xl font-bold">Đăng nhập</CardTitle>
+        <CardDescription>Nhập thông tin để đăng nhập vào hệ thống.</CardDescription>
       </CardHeader>
       <CardContent>
         <form id="login-form" onSubmit={handleSubmit(onSubmit)}>
@@ -142,14 +125,6 @@ export function LoginForm() {
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
         </Button>
-        {expectedRole && (
-          <a
-            href="/portal"
-            className="text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            ← Quay lại chọn vai trò
-          </a>
-        )}
       </CardFooter>
     </Card>
   )

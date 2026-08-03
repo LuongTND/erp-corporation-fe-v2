@@ -1,41 +1,15 @@
-import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import logoBahung from '@/assets/logo/logo-bahung.png'
 import {
-  Banknote,
-  BookOpen,
-  Building2,
-  Calendar,
-  CalendarDays,
-  CheckSquare,
-  ChevronRight,
-  Compass,
-  GraduationCap,
-  KeyRound,
-  LayoutDashboard,
-  LogOut,
-  MessageSquare,
-  Network,
-  Search,
-  Settings,
-  Shield,
-  Target,
-  TrendingUp,
-  Users,
-  Users2,
-  type LucideIcon,
-} from 'lucide-react'
-import { ROUTES } from '@/config/routes'
-import { useAuthStore } from '@/stores/auth.store'
-import { cn } from '@/lib/utils'
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuBadge,
   SidebarMenuButton,
@@ -43,20 +17,20 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
+  useSidebar,
 } from '@/components/ui/sidebar'
+import { ROUTES } from '@/config/routes'
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Building2,
+  ChevronRight,
+  KeyRound,
+  Network,
+  Shield,
+  Users2,
+  type LucideIcon,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -72,45 +46,27 @@ type NavItem = {
 // ── Nav config ────────────────────────────────────────────────────────────────
 
 const CORE_ITEMS: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: ROUTES.DASHBOARD },
-  { icon: CheckSquare, label: 'My Tasks', href: ROUTES.TASK, badge: 9 },
+  // ponytail: all core items hidden while focusing on admin module
+  // { icon: LayoutDashboard, label: 'Bảng điều khiển', href: ROUTES.DASHBOARD },
+  // { icon: CheckSquare, label: 'Công việc', href: ROUTES.TASK, badge: 9 },
 ]
 
 const MODULE_ITEMS: NavItem[] = [
-  { icon: MessageSquare, label: 'Chat', href: ROUTES.CHAT },
-  {
-    icon: Users,
-    label: 'HR & Payroll',
-    href: ROUTES.HR.DASHBOARD,
-    subItems: [
-      { icon: LayoutDashboard, label: 'Overview', href: ROUTES.HR.DASHBOARD },
-      { icon: Users2, label: 'Employees', href: ROUTES.HR.EMPLOYEES },
-      { icon: Calendar, label: 'Attendance', href: ROUTES.HR.ATTENDANCE },
-      { icon: Banknote, label: 'Payroll', href: ROUTES.HR.PAYROLL },
-      { icon: Target, label: 'KPI', href: ROUTES.HR.KPI },
-      { icon: CalendarDays, label: 'Leave', href: ROUTES.HR.LEAVE },
-      { icon: Network, label: 'Org Chart', href: ROUTES.HR.ORG_CHART },
-    ],
-  },
-  {
-    icon: GraduationCap,
-    label: 'LMS',
-    href: ROUTES.LMS.DASHBOARD,
-    subItems: [
-      { icon: BookOpen, label: 'My Courses', href: ROUTES.LMS.DASHBOARD },
-      { icon: Compass, label: 'Explore', href: ROUTES.LMS.EXPLORE },
-      { icon: TrendingUp, label: 'Progress', href: ROUTES.LMS.PROGRESS },
-    ],
-  },
+  // ponytail: non-admin modules hidden while admin API is in development
+  // { icon: MessageSquare, label: 'Trò chuyện', href: ROUTES.CHAT },
+  // { icon: Users, label: 'Nhân sự & Lương', href: ROUTES.HR.DASHBOARD, subItems: [...] },
+  // { icon: GraduationCap, label: 'Đào tạo', href: ROUTES.LMS.DASHBOARD, subItems: [...] },
   {
     icon: Shield,
-    label: 'Admin',
+    label: 'Quản trị',
     href: ROUTES.ADMIN.ACCOUNTS,
     subItems: [
-      { icon: KeyRound, label: 'Roles', href: ROUTES.ADMIN.ACCOUNTS },
-      { icon: Shield, label: 'Permissions', href: ROUTES.ADMIN.PERMISSIONS },
-      { icon: Building2, label: 'Departments', href: ROUTES.ADMIN.DEPARTMENTS },
-      { icon: Users2, label: 'Job Levels', href: ROUTES.ADMIN.JOB_LEVELS },
+      { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS },
+      { icon: Shield, label: 'Quyền hạn', href: ROUTES.ADMIN.PERMISSIONS },
+      { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS },
+      { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
+      // { icon: Network, label: 'Phân cấp vai trò', href: ROUTES.ADMIN.ROLE_HIERARCHY }, // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
+      { icon: Building2, label: 'Cơ cấu tổ chức', href: ROUTES.ADMIN.ORG_HIERARCHY },
     ],
   },
 ]
@@ -120,8 +76,14 @@ const MODULE_ITEMS: NavItem[] = [
 function CollapsibleNavItem({ item }: { item: NavItem }) {
   const location = useLocation()
   const navigate = useNavigate()
+  const { isMobile, setOpenMobile } = useSidebar()
   const isActive = location.pathname.startsWith(item.href)
   const [open, setOpen] = useState(isActive)
+
+  const handleNavigate = (href: string) => {
+    navigate(href)
+    if (isMobile) setOpenMobile(false)
+  }
 
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
@@ -130,84 +92,40 @@ function CollapsibleNavItem({ item }: { item: NavItem }) {
           <SidebarMenuButton
             isActive={isActive}
             tooltip={item.label}
-            className="cursor-pointer"
+            aria-current={isActive ? 'page' : undefined}
+            className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
           >
-            <item.icon />
+            <item.icon aria-hidden="true" />
             <span>{item.label}</span>
-            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+            <ChevronRight
+              aria-hidden="true"
+              className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+            />
           </SidebarMenuButton>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
           <SidebarMenuSub>
-            {item.subItems!.map((sub) => (
-              <SidebarMenuSubItem key={sub.href}>
-                <SidebarMenuSubButton
-                  isActive={location.pathname === sub.href}
-                  onClick={() => navigate(sub.href)}
-                  className="cursor-pointer"
-                >
-                  <sub.icon />
-                  <span>{sub.label}</span>
-                </SidebarMenuSubButton>
-              </SidebarMenuSubItem>
-            ))}
+            {item.subItems!.map((sub) => {
+              const subActive = location.pathname === sub.href
+              return (
+                <SidebarMenuSubItem key={sub.href}>
+                  <SidebarMenuSubButton
+                    isActive={subActive}
+                    onClick={() => handleNavigate(sub.href)}
+                    aria-current={subActive ? 'page' : undefined}
+                    className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                  >
+                    <sub.icon aria-hidden="true" />
+                    <span>{sub.label}</span>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              )
+            })}
           </SidebarMenuSub>
         </CollapsibleContent>
       </SidebarMenuItem>
     </Collapsible>
-  )
-}
-
-// ── User footer ───────────────────────────────────────────────────────────────
-
-function UserFooter() {
-  const user = useAuthStore((s) => s.user)
-  const logout = useAuthStore((s) => s.logout)
-  const navigate = useNavigate()
-
-  const initials = user?.name
-    ? user.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
-    : '?'
-
-  const handleLogout = () => {
-    logout()
-    navigate(ROUTES.PORTAL)
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <SidebarMenuButton
-          size="lg"
-          className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-        >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
-            {initials}
-          </span>
-          <div className="flex flex-col items-start min-w-0 flex-1">
-            <span className="truncate text-[13px] font-medium">{user?.name ?? 'My Account'}</span>
-            <span className="truncate text-[11px] text-muted-foreground">{user?.email ?? ''}</span>
-          </div>
-          <ChevronRight className="ml-auto rotate-90" />
-        </SidebarMenuButton>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent side="top" align="start" className="w-56">
-        <DropdownMenuItem onClick={() => navigate('/settings')}>
-          <Settings className="mr-2 h-4 w-4" />
-          Settings
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="text-destructive focus:text-destructive"
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   )
 }
 
@@ -216,7 +134,17 @@ function UserFooter() {
 export function AppSidebar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [search, setSearch] = useState('')
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  // Close mobile drawer on route change
+  useEffect(() => {
+    if (isMobile) setOpenMobile(false)
+  }, [location.pathname, isMobile, setOpenMobile])
+
+  const handleNavigate = (href: string) => {
+    navigate(href)
+    if (isMobile) setOpenMobile(false)
+  }
 
   return (
     <Sidebar collapsible="icon">
@@ -225,55 +153,53 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" className="cursor-pointer">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-                D
-              </span>
+              <img
+                src={logoBahung}
+                alt="Ba Hưng logo"
+                className="h-8 w-8 shrink-0 rounded-md object-contain"
+              />
               <div className="flex flex-col items-start min-w-0 flex-1">
-                <span className="truncate text-[13px] font-semibold">DigiFNB ERP</span>
-                <span className="truncate text-[10px] text-muted-foreground">Corporation v2</span>
+                <span className="truncate text-[13px] font-semibold">Ba Hưng</span>
+                <span className="truncate text-[10px] text-muted-foreground">HRM & LMS</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-
-        <SidebarInput
-          placeholder="Search..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-8"
-        />
       </SidebarHeader>
 
       <SidebarContent>
         {/* Core */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {CORE_ITEMS.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    isActive={location.pathname === item.href}
-                    onClick={() => navigate(item.href)}
-                    tooltip={item.label}
-                    className="cursor-pointer"
-                  >
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                  {item.badge != null && (
-                    <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-                  )}
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
+        {CORE_ITEMS.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {CORE_ITEMS.map((item) => {
+                  const isActive = location.pathname === item.href
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => handleNavigate(item.href)}
+                        tooltip={item.label}
+                        aria-current={isActive ? 'page' : undefined}
+                        className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                      >
+                        <item.icon aria-hidden="true" />
+                        <span>{item.label}</span>
+                      </SidebarMenuButton>
+                      {item.badge != null && (
+                        <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                      )}
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         {/* Modules */}
         <SidebarGroup>
-          <SidebarGroupLabel>Modules</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {MODULE_ITEMS.map((item) =>
@@ -283,11 +209,12 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.href}>
                     <SidebarMenuButton
                       isActive={location.pathname === item.href}
-                      onClick={() => navigate(item.href)}
+                      onClick={() => handleNavigate(item.href)}
                       tooltip={item.label}
-                      className="cursor-pointer"
+                      aria-current={location.pathname === item.href ? 'page' : undefined}
+                      className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                     >
-                      <item.icon />
+                      <item.icon aria-hidden="true" />
                       <span>{item.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -297,14 +224,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <UserFooter />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   )
 }

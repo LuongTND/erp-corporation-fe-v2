@@ -1,14 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 import { rolesService } from '../services/roles.service'
-import type { ListParams } from '../types/admin.types'
 
 const KEY = 'roles'
 
-export function useRoles(params?: ListParams) {
+function beError(error: unknown, fallback: string): string {
+  if (error instanceof AxiosError) {
+    return error.response?.data?.message || fallback
+  }
+  return fallback
+}
+
+export function useRoles() {
   return useQuery({
-    queryKey: [KEY, params],
-    queryFn: () => rolesService.list(params),
+    queryKey: [KEY],
+    queryFn: () => rolesService.list(),
   })
 }
 
@@ -24,18 +31,28 @@ export function useCreateRole() {
   const client = useQueryClient()
   return useMutation({
     mutationFn: rolesService.create,
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Role created') },
-    onError: (error) => { console.error(error); toast.error('Failed to create role') },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [KEY] })
+      toast.success('Tạo vai trò thành công')
+    },
+    onError: (error) => {
+      toast.error(beError(error, 'Tạo vai trò thất bại'))
+    },
   })
 }
 
 export function useUpdateRole() {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { roleName: string; description?: string } }) =>
+    mutationFn: ({ id, data }: { id: string; data: { displayName: string; description: string } }) =>
       rolesService.update(id, data),
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Role updated') },
-    onError: (error) => { console.error(error); toast.error('Failed to update role') },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [KEY] })
+      toast.success('Cập nhật vai trò thành công')
+    },
+    onError: (error) => {
+      toast.error(beError(error, 'Cập nhật vai trò thất bại'))
+    },
   })
 }
 
@@ -43,8 +60,13 @@ export function useDeleteRole() {
   const client = useQueryClient()
   return useMutation({
     mutationFn: rolesService.delete,
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Role deleted') },
-    onError: (error) => { console.error(error); toast.error('Failed to delete role') },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [KEY] })
+      toast.success('Xóa vai trò thành công')
+    },
+    onError: (error) => {
+      toast.error(beError(error, 'Xóa vai trò thất bại'))
+    },
   })
 }
 
@@ -53,7 +75,12 @@ export function useAssignPermissions() {
   return useMutation({
     mutationFn: ({ roleId, permissionIds }: { roleId: string; permissionIds: string[] }) =>
       rolesService.assignPermissions(roleId, permissionIds),
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Permissions updated') },
-    onError: (error) => { console.error(error); toast.error('Failed to update permissions') },
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [KEY] })
+      toast.success('Cập nhật quyền hạn thành công')
+    },
+    onError: (error) => {
+      toast.error(beError(error, 'Cập nhật quyền hạn thất bại'))
+    },
   })
 }

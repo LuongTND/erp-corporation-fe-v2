@@ -16,8 +16,8 @@ export function useCreateJobLevel() {
   const client = useQueryClient()
   return useMutation({
     mutationFn: jobLevelsService.create,
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Job level created') },
-    onError: (error) => { console.error(error); toast.error('Failed to create job level') },
+    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Tạo cấp bậc thành công') },
+    onError: (error) => { console.error(error); toast.error('Tạo cấp bậc thất bại') },
   })
 }
 
@@ -26,8 +26,8 @@ export function useUpdateJobLevel() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Parameters<typeof jobLevelsService.update>[1] }) =>
       jobLevelsService.update(id, data),
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Job level updated') },
-    onError: (error) => { console.error(error); toast.error('Failed to update job level') },
+    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Cập nhật cấp bậc thành công') },
+    onError: (error) => { console.error(error); toast.error('Cập nhật cấp bậc thất bại') },
   })
 }
 
@@ -35,7 +35,7 @@ export function useDeleteJobLevel() {
   const client = useQueryClient()
   return useMutation({
     mutationFn: jobLevelsService.delete,
-    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Job level deleted') },
-    onError: (error) => { console.error(error); toast.error('Failed to delete job level') },
+    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Xóa cấp bậc thành công') },
+    onError: (error) => { console.error(error); toast.error('Xóa cấp bậc thất bại') },
   })
 }

@@ -1,8 +1,9 @@
 import { z } from 'zod'
 
 export const roleSchema = z.object({
-  roleName: z.string().min(1, 'Role name is required').max(100),
-  description: z.string().max(500).optional(),
+  roleName: z.string().min(1, 'Tên role là bắt buộc').max(100, 'Tối đa 100 ký tự'),
+  displayName: z.string().min(1, 'Tên hiển thị là bắt buộc').max(100, 'Tối đa 100 ký tự'),
+  description: z.string().max(500, 'Tối đa 500 ký tự').optional(),
 })
 export type RoleFormValues = z.infer<typeof roleSchema>
 

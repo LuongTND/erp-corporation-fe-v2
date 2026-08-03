@@ -1,21 +1,33 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { OrgChartNode } from './OrgChartNode'
-import type { OrgPerson } from './orgchart.types'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+
+// ─── Generic render-node contract ────────────────────────────────────────────
+
+export interface RenderNodeProps<TNode> {
+  node: TNode
+  isRoot: boolean
+  selected: boolean
+  isExpanded: boolean
+  hasChildren: boolean
+  onSelect: () => void
+  onToggle: (event: React.MouseEvent) => void
+  editMode: boolean
+}
 
 // ─── Recursive tree renderer ──────────────────────────────────────────────────
 
-interface TreeNodeProps {
-  node: OrgPerson
+interface TreeNodeProps<TNode extends { id: string; children: readonly TNode[] }> {
+  node: TNode
   isRoot?: boolean
   selectedId: string | null
   expandedIds: Set<string>
-  onSelect: (node: OrgPerson) => void
+  onSelect: (node: TNode) => void
   onToggle: (id: string) => void
   editMode: boolean
   depth?: number
+  renderNode: (props: RenderNodeProps<TNode>) => ReactNode
 }
 
-function TreeNode({
+function TreeNode<TNode extends { id: string; children: readonly TNode[] }>({
   node,
   isRoot = false,
   selectedId,
@@ -24,56 +36,50 @@ function TreeNode({
   onToggle,
   editMode,
   depth = 0,
-}: TreeNodeProps) {
-  const isExpanded   = expandedIds.has(node.id)
-  const isSelected   = selectedId === node.id
-  const hasChildren  = node.children.length > 0
+  renderNode,
+}: TreeNodeProps<TNode>) {
+  const isExpanded  = expandedIds.has(node.id)
+  const isSelected  = selectedId === node.id
+  const hasChildren = node.children.length > 0
 
-  const gap = depth <= 1 ? 32 : 24   // px gap between siblings
+  const gap = depth <= 1 ? 32 : 24
 
   return (
     <div className="flex flex-col items-center">
-      <OrgChartNode
-        node={node}
-        isRoot={isRoot}
-        selected={isSelected}
-        onSelect={() => onSelect(node)}
-        isExpanded={isExpanded}
-        hasChildren={hasChildren}
-        onToggle={(e) => { e.stopPropagation(); onToggle(node.id) }}
-        editMode={editMode}
-      />
+      {renderNode({
+        node,
+        isRoot,
+        selected: isSelected,
+        isExpanded,
+        hasChildren,
+        onSelect: () => onSelect(node),
+        onToggle: (event) => { event.stopPropagation(); onToggle(node.id) },
+        editMode,
+      })}
 
-      {/* Children group */}
       {isExpanded && hasChildren && (
         <div className="flex flex-col items-center">
-          {/* Stem from parent down */}
           <div className="w-px bg-border" style={{ height: 24, marginTop: node.children.length ? 12 : 0 }} />
 
-          {/* Horizontal + vertical connectors + children */}
           <div className="flex items-start" style={{ gap }}>
-            {node.children.map((child, i) => {
-              const isFirst = i === 0
-              const isLast  = i === node.children.length - 1
+            {node.children.map((child, index) => {
+              const isFirst = index === 0
+              const isLast  = index === node.children.length - 1
               const isOnly  = node.children.length === 1
 
               return (
                 <div key={child.id} className="flex flex-col items-center">
-                  {/* Connector stem above each child */}
                   <div className="relative flex justify-center" style={{ height: 24, width: '100%', minWidth: isRoot ? 240 : 208 }}>
-                    {/* vertical segment */}
                     <div
                       className="absolute bg-border"
                       style={{ width: 1, height: 24, left: '50%', top: 0 }}
                     />
-                    {/* horizontal left arm */}
                     {!isOnly && !isFirst && (
                       <div
                         className="absolute bg-border"
                         style={{ height: 1, top: 0, left: 0, right: '50%' }}
                       />
                     )}
-                    {/* horizontal right arm */}
                     {!isOnly && !isLast && (
                       <div
                         className="absolute bg-border"
@@ -82,7 +88,6 @@ function TreeNode({
                     )}
                   </div>
 
-                  {/* Recursive child */}
                   <TreeNode
                     node={child}
                     selectedId={selectedId}
@@ -91,6 +96,7 @@ function TreeNode({
                     onToggle={onToggle}
                     editMode={editMode}
                     depth={depth + 1}
+                    renderNode={renderNode}
                   />
                 </div>
               )
@@ -105,15 +111,11 @@ function TreeNode({
 // ─── MiniMap ──────────────────────────────────────────────────────────────────
 
 function MiniMap({ scale, tx, ty }: { scale: number; tx: number; ty: number }) {
-  // Mini dots representing approximate node positions (hardcoded layout)
   const dots = [
-    // CEO
     { x: 50, y: 10, r: 4, c: '#cc785c' },
-    // VPs
     { x: 15, y: 28, r: 3, c: '#cc785c' },
     { x: 50, y: 28, r: 3, c: '#5db872' },
     { x: 85, y: 28, r: 3, c: '#5db8a6' },
-    // Dept heads
     { x: 7,  y: 46, r: 2.5, c: '#cc785c' },
     { x: 22, y: 46, r: 2.5, c: '#cc785c' },
     { x: 43, y: 46, r: 2.5, c: '#5db872' },
@@ -122,7 +124,6 @@ function MiniMap({ scale, tx, ty }: { scale: number; tx: number; ty: number }) {
     { x: 92, y: 46, r: 2.5, c: '#64748b' },
   ]
 
-  // Viewport rect: invert transform to get visible area hint
   const vw = 120, vh = 80
   const rectW = Math.min(vw, vw / scale) * 0.6
   const rectH = Math.min(vh, vh / scale) * 0.6
@@ -134,19 +135,15 @@ function MiniMap({ scale, tx, ty }: { scale: number; tx: number; ty: number }) {
       style={{ width: 120, height: 80 }}
     >
       <svg width="120" height="80">
-        {/* Tree background */}
         <rect width="120" height="80" fill="transparent" />
-        {/* Connector lines sketch */}
         <line x1="50" y1="14" x2="50" y2="25" stroke="currentColor" strokeWidth="1" opacity="0.3" />
         <line x1="15" y1="25" x2="85" y2="25" stroke="currentColor" strokeWidth="1" opacity="0.3" />
         <line x1="15" y1="25" x2="15" y2="43" stroke="currentColor" strokeWidth="1" opacity="0.3" />
         <line x1="50" y1="25" x2="50" y2="43" stroke="currentColor" strokeWidth="1" opacity="0.3" />
         <line x1="85" y1="25" x2="85" y2="43" stroke="currentColor" strokeWidth="1" opacity="0.3" />
-        {/* Node dots — dept colors kept intentionally */}
-        {dots.map((d, i) => (
-          <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={d.c} opacity={0.8} />
+        {dots.map((dot, index) => (
+          <circle key={index} cx={dot.x} cy={dot.y} r={dot.r} fill={dot.c} opacity={0.8} />
         ))}
-        {/* Viewport rect — primary color via oklch var */}
         <rect
           x={rectX} y={rectY} width={rectW} height={rectH}
           fill="oklch(var(--primary) / 0.12)"
@@ -164,19 +161,22 @@ function MiniMap({ scale, tx, ty }: { scale: number; tx: number; ty: number }) {
 
 // ─── OrgChartTree (pan + zoom container) ─────────────────────────────────────
 
-interface OrgChartTreeProps {
+interface OrgChartTreeProps<TNode extends { id: string; children: readonly TNode[] }> {
+  tree: TNode
+  renderNode: (props: RenderNodeProps<TNode>) => ReactNode
   selectedId: string | null
   expandedIds: Set<string>
-  onSelect: (node: OrgPerson) => void
+  onSelect: (node: TNode) => void
   onToggle: (id: string) => void
   onZoomChange: (scale: number) => void
   scale: number
   editMode: boolean
-  tree: OrgPerson
   focusId?: string | null
 }
 
-export function OrgChartTree({
+export function OrgChartTree<TNode extends { id: string; children: readonly TNode[] }>({
+  tree,
+  renderNode,
   selectedId,
   expandedIds,
   onSelect,
@@ -184,45 +184,40 @@ export function OrgChartTree({
   onZoomChange,
   scale,
   editMode,
-  tree,
   focusId,
-}: OrgChartTreeProps) {
+}: OrgChartTreeProps<TNode>) {
   const [translate, setTranslate] = useState({ x: 0, y: 40 })
   const isDragging   = useRef(false)
   const lastMouse    = useRef({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Auto-reset translate when focusId changes
   useEffect(() => {
-    if (focusId) {
-      setTranslate({ x: 0, y: 40 })
-    }
+    if (focusId) setTranslate({ x: 0, y: 40 })
   }, [focusId])
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    // Don't start drag if clicking a button/interactive element
-    if ((e.target as HTMLElement).closest('button, [role="button"]')) return
+  const handleMouseDown = useCallback((event: React.MouseEvent) => {
+    if ((event.target as HTMLElement).closest('button, [role="button"]')) return
     isDragging.current = true
-    lastMouse.current = { x: e.clientX, y: e.clientY }
+    lastMouse.current = { x: event.clientX, y: event.clientY }
     if (containerRef.current) containerRef.current.style.cursor = 'grabbing'
   }, [])
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((event: React.MouseEvent) => {
     if (!isDragging.current) return
-    const dx = e.clientX - lastMouse.current.x
-    const dy = e.clientY - lastMouse.current.y
-    lastMouse.current = { x: e.clientX, y: e.clientY }
+    const dx = event.clientX - lastMouse.current.x
+    const dy = event.clientY - lastMouse.current.y
+    lastMouse.current = { x: event.clientX, y: event.clientY }
     setTranslate(prev => ({ x: prev.x + dx, y: prev.y + dy }))
   }, [])
 
-  const stopDrag = useCallback((_e: React.MouseEvent) => {
+  const stopDrag = useCallback((_event: React.MouseEvent) => {
     isDragging.current = false
     if (containerRef.current) containerRef.current.style.cursor = 'grab'
   }, [])
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault()
-    const delta = e.deltaY > 0 ? -0.08 : 0.08
+  const handleWheel = useCallback((event: React.WheelEvent) => {
+    event.preventDefault()
+    const delta = event.deltaY > 0 ? -0.08 : 0.08
     const next = Math.max(0.3, Math.min(2, scale + delta))
     onZoomChange(next)
   }, [scale, onZoomChange])
@@ -243,7 +238,6 @@ export function OrgChartTree({
       onMouseLeave={stopDrag}
       onWheel={handleWheel}
     >
-      {/* Transformed tree */}
       <div
         className="absolute"
         style={{
@@ -263,10 +257,10 @@ export function OrgChartTree({
           onToggle={onToggle}
           editMode={editMode}
           depth={0}
+          renderNode={renderNode}
         />
       </div>
 
-      {/* MiniMap */}
       <MiniMap scale={scale} tx={translate.x} ty={translate.y} />
     </div>
   )
