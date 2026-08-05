@@ -12,6 +12,7 @@ export const departmentSchema = z.object({
   departmentCode: z.string().min(1, 'Department code is required').max(50),
   parentDepartmentId: z.string().uuid().optional().or(z.literal('')),
   managerId: z.string().uuid().optional().or(z.literal('')),
+  isActive: z.boolean(),
 })
 export type DepartmentFormValues = z.infer<typeof departmentSchema>
 

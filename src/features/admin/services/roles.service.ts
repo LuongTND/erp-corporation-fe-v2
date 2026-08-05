@@ -1,5 +1,5 @@
 import { apiCall } from '@/lib/api'
-import type { RoleResponse } from '../types/admin.types'
+import type { RoleResponse, UserSummaryResponse } from '../types/admin.types'
 
 export const rolesService = {
   list: () =>
@@ -19,4 +19,10 @@ export const rolesService = {
 
   assignPermissions: (id: string, permissionIds: string[]) =>
     apiCall.put<void>(`/api/roles/${id}/permissions`, { permissionIds }),
+
+  getUsersByRole: (roleId: string) =>
+    apiCall.get<UserSummaryResponse[]>(`/api/roles/${roleId}/users`),
+
+  syncUsers: (roleId: string, toAdd: string[], toRemove: string[], expiresAt?: string | null) =>
+    apiCall.put<void>(`/api/roles/${roleId}/users`, { toAdd, toRemove, expiresAt: expiresAt ?? null }),
 }

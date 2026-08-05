@@ -63,6 +63,7 @@ export interface DepartmentTreeResponse {
   id: string
   departmentName: string
   departmentCode: string
+  parentDepartmentId?: string
   managerId?: string
   managerName?: string
   isActive: boolean
@@ -91,6 +92,14 @@ export interface AddDepartmentMemberPayload {
 
 export interface UpdateDepartmentMemberPayload {
   jobLevelId: string | null
+}
+
+export interface UserSummaryResponse {
+  id: string
+  fullName: string
+  employeeCode: string
+  email: string
+  avatarUrl?: string
 }
 
 // PascalCase to match BE QueryInfo model

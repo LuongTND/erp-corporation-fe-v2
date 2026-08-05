@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Edit2, GripVertical, Shield, Trash2 } from 'lucide-react'
+import { Edit2, GripVertical, Shield, Trash2, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
@@ -15,6 +15,7 @@ interface Props {
   onEdit: (role: RoleResponse) => void
   onDelete: (role: RoleResponse) => void
   onPermissions: (role: RoleResponse) => void
+  onUsers: (role: RoleResponse) => void
 }
 
 const DESC_LIMIT = 40
@@ -72,7 +73,7 @@ function PermissionsPreview({ role, onOpen }: { role: RoleResponse; onOpen: () =
   )
 }
 
-export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPermissions }: Props) {
+export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPermissions, onUsers }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: role.id,
     disabled: isDragDisabled,
@@ -114,6 +115,21 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
       <TableCell>
         <div className="flex items-center justify-end gap-1">
           <PermissionsPreview role={role} onOpen={() => onPermissions(role)} />
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={() => onUsers(role)}
+                aria-label={`Gán người dùng vào ${role.roleName}`}
+              >
+                <Users className="h-3.5 w-3.5 mr-1" />
+                Users
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Gán người dùng vào vai trò</TooltipContent>
+          </Tooltip>
           <Button
             variant="ghost"
             size="sm"

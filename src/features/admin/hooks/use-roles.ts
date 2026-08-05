@@ -2,8 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 import { rolesService } from '../services/roles.service'
+import { usersService } from '../services/users.service'
 
 const KEY = 'roles'
+const USERS_KEY = 'users'
 
 function beError(error: unknown, fallback: string): string {
   if (error instanceof AxiosError) {
@@ -81,6 +83,36 @@ export function useAssignPermissions() {
     },
     onError: (error) => {
       toast.error(beError(error, 'Cập nhật quyền hạn thất bại'))
+    },
+  })
+}
+
+export function useAllUsers() {
+  return useQuery({
+    queryKey: [USERS_KEY],
+    queryFn: () => usersService.list(),
+  })
+}
+
+export function useRoleUsers(roleId: string | undefined) {
+  return useQuery({
+    queryKey: [KEY, roleId, 'users'],
+    queryFn: () => rolesService.getUsersByRole(roleId!),
+    enabled: !!roleId,
+  })
+}
+
+export function useSyncRoleUsers() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ roleId, toAdd, toRemove }: { roleId: string; toAdd: string[]; toRemove: string[] }) =>
+      rolesService.syncUsers(roleId, toAdd, toRemove),
+    onSuccess: (_data, { roleId }) => {
+      client.invalidateQueries({ queryKey: [KEY, roleId, 'users'] })
+      toast.success('Cập nhật người dùng thành công')
+    },
+    onError: (error) => {
+      toast.error(beError(error, 'Cập nhật người dùng thất bại'))
     },
   })
 }
