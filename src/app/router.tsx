@@ -52,11 +52,8 @@ const AIChatbotPage = lazy(() => import('@/features/ai-chatbot/pages/AIChatbotPa
 
 // ── Admin Module ──
 const AdminRolesPage = lazy(() => import('@/features/admin/pages/RolesPage'))
-const AdminPermissionsPage = lazy(() => import('@/features/admin/pages/PermissionsPage'))
 const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/DepartmentsPage'))
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
-const AdminRoleHierarchyPage = lazy(() => import('@/features/admin/pages/RoleHierarchyPage'))
-const AdminOrgHierarchyPage = lazy(() => import('@/features/admin/pages/OrgHierarchyPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -207,14 +204,7 @@ export const router = createBrowserRouter([
                   </Suspense>
                 ),
               },
-              {
-                path: ROUTES.ADMIN.PERMISSIONS,
-                element: (
-                  <Suspense fallback={<PageFallback />}>
-                    <AdminPermissionsPage />
-                  </Suspense>
-                ),
-              },
+              // ponytail: Quyền hạn merged into Vai trò tab
               {
                 path: ROUTES.ADMIN.DEPARTMENTS,
                 element: (
@@ -240,14 +230,7 @@ export const router = createBrowserRouter([
               //     </Suspense>
               //   ),
               // },
-              {
-                path: ROUTES.ADMIN.ORG_HIERARCHY,
-                element: (
-                  <Suspense fallback={<PageFallback />}>
-                    <AdminOrgHierarchyPage />
-                  </Suspense>
-                ),
-              },
+              // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
 
               // ── LMS Module ──
               {

@@ -4,7 +4,7 @@
 - Correctness and clarity over speed. Accessibility is required.
 - Comments only explain *why*, never *what*.
 - Add to existing files before creating new ones.
-- No generic names like `index.tsx` — use explicit names like `UserProfile.tsx`.
+- No generic names like `index.tsx` at the feature root — use explicit names like `UserProfile.tsx`. Exception: `index.tsx` is allowed as the entry point of a named subfolder (the folder name IS the component name, e.g. `OrgHierarchyView/index.tsx`).
 - No abbreviated variable names (`error` not `err`, `button` not `btn`).
 
 ## File Naming
@@ -20,6 +20,7 @@
 ## Exports
 - **Pages only**: Default Export (required for `React.lazy()`).
 - **Everything else**: Named Export.
+- **Component subdirectories** (`components/<PageName>/`): must have an `index.ts` barrel that re-exports all named exports. Pages import from the barrel (`../components/RolesPage`), not individual files.
 
 ## Folder Structure
 ```
@@ -27,6 +28,10 @@ src/features/<feature>/
 ├── pages/           # Default exports, lazy-loaded (thin shells — state + layout only)
 ├── components/      # Feature UI components
 │   └── <PageName>/  # Sub-components for a specific page (dialogs, sheets, tables)
+│       └── <ViewName>/  # Nested subfolder when a sub-view grows beyond ~150 lines
+│           ├── index.tsx    # Entry point — named export of the view
+│           ├── types.ts     # Local types shared within this view only
+│           └── *.tsx        # Sub-components (ListView, TreeView, MembersPanel, ...)
 ├── hooks/           # React Query hooks
 ├── services/        # Axios wrappers (plain objects)
 ├── schemas/         # Zod schemas
@@ -38,7 +43,12 @@ Zustand stores → `src/stores/`
 ## No God-Class Pages
 - Pages must NOT contain component definitions. Each dialog, sheet, or complex sub-component gets its own file.
 - Place page sub-components in `components/<PageName>/` (e.g., `DepartmentsPage/DepartmentDialog.tsx`).
-- Pages import from components — they only manage state and compose layout.
+- Pages are thin shells: fetch API data via hooks, pass data down as props, compose layout. No business logic in pages.
+- Orchestrator components (e.g., `RolesTab`) own UI state (dialogs, filters) and pass callbacks to children.
+- Pages import from the barrel (`components/<PageName>`), not individual files.
+- Internal imports within the same `<PageName>/` folder stay relative (sibling-to-sibling).
+- Internal imports within a `<ViewName>/` subfolder also stay relative. Siblings import each other directly (`./MembersPanel`), not through the barrel.
+- Types shared only within a `<ViewName>/` folder go in `types.ts` inside that folder, not in `features/<feature>/types/`.
 
 ## Error Handling
 - Never swallow errors silently.

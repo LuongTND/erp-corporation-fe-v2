@@ -47,7 +47,8 @@ const refreshAccessToken = async (): Promise<string> => {
     RefreshToken: refreshToken,
   })
 
-  return data.access_token
+  setTokens(data.data.accessToken, data.data.refreshToken)
+  return data.data.accessToken
 }
 
 const processPendingRequests = (token: string): void => {
@@ -72,7 +73,7 @@ const handleTokenRefresh = async (): Promise<string> => {
         headers: { Authorization: `Bearer ${newToken}` },
       })
       .then((res) => useAuthStore.getState().setPermissions(res.data.data))
-      .catch(() => {})
+      .catch((err) => console.error('[auth] permission sync failed after token refresh:', err))
     processPendingRequests(newToken)
     return newToken
   } catch (error) {

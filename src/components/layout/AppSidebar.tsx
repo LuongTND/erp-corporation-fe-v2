@@ -29,7 +29,8 @@ import {
   Users2,
   type LucideIcon,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useLocalStorage } from '@/hooks/use-local-storage'
+import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -62,11 +63,11 @@ const MODULE_ITEMS: NavItem[] = [
     href: ROUTES.ADMIN.ACCOUNTS,
     subItems: [
       { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS },
-      { icon: Shield, label: 'Quyền hạn', href: ROUTES.ADMIN.PERMISSIONS },
+      // ponytail: Quyền hạn merged into Vai trò tab
       { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS },
       { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
       // { icon: Network, label: 'Phân cấp vai trò', href: ROUTES.ADMIN.ROLE_HIERARCHY }, // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
-      { icon: Building2, label: 'Cơ cấu tổ chức', href: ROUTES.ADMIN.ORG_HIERARCHY },
+      // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
     ],
   },
 ]
@@ -78,7 +79,7 @@ function CollapsibleNavItem({ item }: { item: NavItem }) {
   const navigate = useNavigate()
   const { isMobile, setOpenMobile } = useSidebar()
   const isActive = location.pathname.startsWith(item.href)
-  const [open, setOpen] = useState(isActive)
+  const [open, setOpen] = useLocalStorage(`sidebar-group-${item.href}`, isActive)
 
   const handleNavigate = (href: string) => {
     navigate(href)
