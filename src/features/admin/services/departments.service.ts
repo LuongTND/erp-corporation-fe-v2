@@ -16,7 +16,7 @@ export const departmentsService = {
   create: (data: { departmentName: string; departmentCode: string; parentDepartmentId?: string; managerId?: string }) =>
     apiCall.post<string>('/api/departments', data),
 
-  update: (id: string, data: { departmentName: string; departmentCode: string; parentDepartmentId?: string; managerId?: string }) =>
+  update: (id: string, data: { departmentName: string; departmentCode: string; parentDepartmentId?: string; managerId?: string; isActive: boolean }) =>
     apiCall.put<void>(`/api/departments/${id}`, data),
 
   delete: (id: string) =>

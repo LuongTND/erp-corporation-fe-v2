@@ -48,7 +48,7 @@ export default function ForbiddenPage() {
             variant="destructive"
             onClick={() => {
               logout()
-              navigate('/portal')
+              navigate('/login')
             }}
             className="gap-2"
           >
