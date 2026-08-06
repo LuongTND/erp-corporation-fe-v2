@@ -39,11 +39,11 @@ export default function JobLevelsPage() {
   }
 
   return (
-    <div className="min-h-full bg-background text-foreground">
+    <div className="h-full flex flex-col bg-background text-foreground">
       <HRPageHeader breadcrumbs={[{ label: 'Admin' }, { label: 'Job Levels', isActive: true }]} />
 
-      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-5">
-        <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
+        <div className="flex items-center justify-between gap-4 shrink-0">
           <div>
             <h1 className="text-xl font-semibold">Cấp bậc</h1>
             <p className="text-sm text-muted-foreground mt-0.5">{data?.totalCount ?? 0} cấp bậc</p>
@@ -54,9 +54,9 @@ export default function JobLevelsPage() {
           </Button>
         </div>
 
-        <div className="rounded-lg border bg-card overflow-hidden">
+        <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 z-10 bg-card">
               <TableRow>
                 <TableHead className="w-12">#</TableHead>
                 <TableHead>Tên</TableHead>
@@ -116,7 +116,7 @@ export default function JobLevelsPage() {
             </TableBody>
           </Table>
         </div>
-      </main>
+      </div>
 
       <JobLevelDialog open={dialogOpen} jobLevel={editLevel} onOpenChange={setDialogOpen} />
     </div>

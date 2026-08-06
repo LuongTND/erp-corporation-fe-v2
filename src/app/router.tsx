@@ -54,6 +54,8 @@ const AIChatbotPage = lazy(() => import('@/features/ai-chatbot/pages/AIChatbotPa
 const AdminRolesPage = lazy(() => import('@/features/admin/pages/RolesPage'))
 const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/DepartmentsPage'))
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
+const AdminEmployeesPage = lazy(() => import('@/features/admin/pages/EmployeesPage'))
+const AdminCustomFieldsPage = lazy(() => import('@/features/admin/pages/CustomFieldsPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -218,6 +220,30 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminJobLevelsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.EMPLOYEES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminEmployeesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.EMPLOYEE_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <EmployeeDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.CUSTOM_FIELDS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminCustomFieldsPage />
                   </Suspense>
                 ),
               },

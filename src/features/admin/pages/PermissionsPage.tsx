@@ -22,17 +22,17 @@ export default function PermissionsPage() {
   }, {})
 
   return (
-    <div className="min-h-full bg-background text-foreground">
+    <div className="h-full flex flex-col bg-background text-foreground">
       <HRPageHeader
         breadcrumbs={[
           { label: 'Admin' },
-          { label: 'Permissions', isActive: true },
+          { label: 'Phân quyền', isActive: true },
         ]}
       />
 
-      <main className="max-w-7xl mx-auto p-4 md:p-8 space-y-5">
+      <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
         {/* Toolbar */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-4 shrink-0">
           <div>
             <h1 className="text-xl font-semibold">Quyền hạn</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
@@ -47,6 +47,7 @@ export default function PermissionsPage() {
           />
         </div>
 
+        <div className="overflow-auto flex-1 min-h-0">
         {isLoading ? (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -90,8 +91,9 @@ export default function PermissionsPage() {
               </div>
             )}
           </div>
-        )}
-      </main>
+        }
+        </div>
+      </div>
     </div>
   )
 }

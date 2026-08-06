@@ -66,8 +66,11 @@ export const ROUTES = {
     PERMISSIONS: '/admin/permissions',
     DEPARTMENTS: '/admin/departments',
     JOB_LEVELS: '/admin/job-levels',
+    EMPLOYEES: '/admin/employees',
+    EMPLOYEE_DETAIL: '/admin/employees/:id',
     ROLE_HIERARCHY: '/admin/role-hierarchy',
     ORG_HIERARCHY: '/admin/org-hierarchy',
+    CUSTOM_FIELDS: '/admin/custom-fields',
   },
 } as const
 

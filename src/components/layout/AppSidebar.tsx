@@ -26,6 +26,7 @@ import {
   KeyRound,
   Network,
   Shield,
+  SlidersHorizontal,
   Users2,
   type LucideIcon,
 } from 'lucide-react'
@@ -66,6 +67,8 @@ const MODULE_ITEMS: NavItem[] = [
       // ponytail: Quyền hạn merged into Vai trò tab
       { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS },
       { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
+      { icon: Network, label: 'Nhân sự', href: ROUTES.ADMIN.EMPLOYEES },
+      { icon: SlidersHorizontal, label: 'Trường tùy chỉnh', href: ROUTES.ADMIN.CUSTOM_FIELDS },
       // { icon: Network, label: 'Phân cấp vai trò', href: ROUTES.ADMIN.ROLE_HIERARCHY }, // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
       // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
     ],

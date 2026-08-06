@@ -49,7 +49,7 @@ export default function RoleHierarchyPage() {
         <div className="bg-card rounded-xl shadow-sm p-4 flex items-center gap-3 flex-wrap shrink-0 border border-border">
           <div className="flex items-center gap-2 mr-2">
             <Network className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-semibold text-foreground">Role Hierarchy</h1>
+            <h1 className="text-xl font-semibold text-foreground">Phân cấp vai trò</h1>
           </div>
 
           <div className="flex-1" />
@@ -61,7 +61,7 @@ export default function RoleHierarchyPage() {
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search role..."
+              placeholder="Tìm vai trò..."
               className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground text-sm"
             />
           </div>
@@ -75,7 +75,7 @@ export default function RoleHierarchyPage() {
                 'h-9 w-9 flex items-center justify-center transition-colors cursor-pointer',
                 viewMode === 'tree' ? 'bg-primary/10 text-primary' : 'bg-card text-muted-foreground',
               )}
-              aria-label="Tree view"
+              aria-label="Dạng cây"
             >
               <Share2 className="w-4 h-4" />
             </button>
@@ -86,7 +86,7 @@ export default function RoleHierarchyPage() {
                 'h-9 w-9 flex items-center justify-center transition-colors cursor-pointer border-l border-border',
                 viewMode === 'list' ? 'bg-primary/10 text-primary' : 'bg-card text-muted-foreground',
               )}
-              aria-label="List view"
+              aria-label="Dạng danh sách"
             >
               <List className="w-4 h-4" />
             </button>
@@ -98,7 +98,7 @@ export default function RoleHierarchyPage() {
               type="button"
               onClick={zoomOut}
               className="h-9 w-9 flex items-center justify-center hover:bg-muted/50 transition-colors cursor-pointer text-muted-foreground"
-              aria-label="Zoom out"
+              aria-label="Thu nhỏ"
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
@@ -109,7 +109,7 @@ export default function RoleHierarchyPage() {
               type="button"
               onClick={zoomIn}
               className="h-9 w-9 flex items-center justify-center hover:bg-muted/50 transition-colors cursor-pointer text-muted-foreground border-l border-border"
-              aria-label="Zoom in"
+              aria-label="Phóng to"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
