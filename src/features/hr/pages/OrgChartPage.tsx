@@ -81,7 +81,7 @@ export default function OrgChartPage() {
           {/* Title */}
           <div className="flex items-center gap-2 mr-2">
             <Network className="w-5 h-5 text-primary" />
-            <h1 className="text-xl font-semibold text-foreground">Organization Chart</h1>
+            <h1 className="text-xl font-semibold text-foreground">Sơ đồ tổ chức</h1>
           </div>
 
           <div className="flex-1" />
@@ -93,7 +93,7 @@ export default function OrgChartPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search employee or team..."
+              placeholder="Tìm nhân viên hoặc nhóm..."
               className="flex-1 bg-transparent outline-none text-foreground placeholder:text-muted-foreground text-sm"
             />
           </div>
@@ -119,7 +119,7 @@ export default function OrgChartPage() {
                 'h-9 w-9 flex items-center justify-center transition-colors cursor-pointer',
                 viewMode === 'tree' ? 'bg-primary/10 text-primary' : 'bg-card text-muted-foreground',
               )}
-              aria-label="Tree view"
+              aria-label="Dạng cây"
             >
               <Share2 className="w-4 h-4" />
             </button>
@@ -130,7 +130,7 @@ export default function OrgChartPage() {
                 'h-9 w-9 flex items-center justify-center transition-colors cursor-pointer border-l border-border',
                 viewMode === 'list' ? 'bg-primary/10 text-primary' : 'bg-card text-muted-foreground',
               )}
-              aria-label="List view"
+              aria-label="Dạng danh sách"
             >
               <List className="w-4 h-4" />
             </button>
@@ -142,7 +142,7 @@ export default function OrgChartPage() {
               type="button"
               onClick={zoomOut}
               className="h-9 w-9 flex items-center justify-center hover:bg-muted/50 transition-colors cursor-pointer text-muted-foreground"
-              aria-label="Zoom out"
+              aria-label="Thu nhỏ"
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
@@ -153,7 +153,7 @@ export default function OrgChartPage() {
               type="button"
               onClick={zoomIn}
               className="h-9 w-9 flex items-center justify-center hover:bg-muted/50 transition-colors cursor-pointer text-muted-foreground border-l border-border"
-              aria-label="Zoom in"
+              aria-label="Phóng to"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
@@ -165,7 +165,7 @@ export default function OrgChartPage() {
             className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium border border-border text-muted-foreground cursor-pointer hover:bg-muted/50 transition-colors"
           >
             <Download className="w-4 h-4" />
-            Export PNG
+            Xuất PNG
           </button>
 
           {/* Edit Structure */}
@@ -178,7 +178,7 @@ export default function OrgChartPage() {
             )}
           >
             <Settings className="w-4 h-4" />
-            {editMode ? 'Exit Edit' : 'Edit Structure'}
+            {editMode ? 'Thoát chỉnh sửa' : 'Chỉnh sửa cấu trúc'}
           </button>
         </div>
 
@@ -186,23 +186,23 @@ export default function OrgChartPage() {
         {editMode && (
           <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium shrink-0 bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300">
             <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500 text-white">
-              EDITING MODE
+              CHẾ ĐỘ CHỈNH SỬA
             </span>
-            <span>Drag nodes to restructure. Add (+) or delete (×) leaf nodes.</span>
+            <span>Kéo nút để tái cơ cấu. Thêm (+) hoặc xóa (×) nút lá.</span>
             <div className="flex-1" />
             <button
               type="button"
               onClick={() => setEditMode(false)}
               className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-semibold text-white cursor-pointer transition-opacity hover:opacity-90 bg-green-600"
             >
-              Save Changes
+              Lưu thay đổi
             </button>
             <button
               type="button"
               onClick={() => setEditMode(false)}
               className="flex items-center gap-1.5 h-7 px-3 rounded-lg text-xs font-semibold border border-destructive/40 text-destructive cursor-pointer hover:bg-destructive/10 transition-colors"
             >
-              Discard
+              Hủy bỏ
             </button>
           </div>
         )}

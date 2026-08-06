@@ -1,5 +1,10 @@
+import { useState } from 'react'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import { ChevronRight } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ROUTES } from '@/config/routes'
+import { useEmployeeDetail } from '../hooks/use-employee-detail'
 import { EmployeeProfileCard } from '../components/EmployeeProfileCard'
 import { PersonalInfoTab } from '../components/tabs/PersonalInfoTab'
 import { WorkInfoTab } from '../components/tabs/WorkInfoTab'
@@ -8,112 +13,65 @@ import { PayrollTab } from '../components/tabs/PayrollTab'
 import { KpiTab } from '../components/tabs/KpiTab'
 import { DocumentsTab } from '../components/tabs/DocumentsTab'
 import { ActivityLogTab } from '../components/tabs/ActivityLogTab'
-import type { EmployeeDetail } from '../types/employee.types'
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_EMPLOYEE: EmployeeDetail = {
-  id:             'EMP-0042',
-  fullName:       'Nguyễn Văn An',
-  position:       'Senior Product Designer',
-  department:     'Product',
-  employmentType: 'Full-time',
-  employeeCode:   'EMP-0042',
-  joinDate:       '15 Jan 2022',
-  initials:       'NVA',
-  isOnline:       true,
-
-  // Personal Info
-  dateOfBirth:      '12 Aug 1992',
-  gender:           'Male',
-  nationality:      'Vietnamese',
-  personalEmail:    'nguyenvanan@gmail.com',
-  personalPhone:    '+84 912 345 678',
-  idNumber:         '079092012345',
-  idExpiry:         '15 Mar 2028',
-  permanentAddress: '45 Trần Phú, Phường 4,\nQuận 5, Thành phố Hồ Chí Minh',
-
-  emergencyContact: {
-    name:         'Nguyễn Thị Lan',
-    relationship: 'Spouse',
-    phone:        '+84 909 876 543',
-  },
-  bankAccount: {
-    bankName:            'Vietcombank',
-    accountNumberMasked: '**** **** **** 4821',
-  },
-  socialInsuranceNumber: 'BH-7823456',
-  taxCode:               '8823456789',
-
-  // Work Info
-  manager: {
-    id:       'EMP-0006',
-    name:     'Tống Minh Long',
-    initials: 'TML',
-  },
-  workLocation:    'Hybrid',
-  workSchedule:    'Mon–Fri · 08:00–17:00',
-  contractType:    'Indefinite Term',
-  contractEndDate: 'N/A',
-
-  salaryGrade:     'Grade 4',
-  salaryRange:     '₫18M–25M',
-  probationStatus: 'Completed',
-  probationEndDate:'15 Apr 2022',
-
-  itEquipment: [
-    { id: '1', name: 'MacBook Pro 14"', serialNumber: 'C02ZM3XKMD6N', assignedDate: '20 Jan 2022' },
-    { id: '2', name: 'Dell Monitor 27"', serialNumber: 'DEL-7823-XZ',  assignedDate: '20 Jan 2022' },
-  ],
-  systemRoles: ['HR Manager', 'Employee'],
-}
-
-// ─── Tab config ───────────────────────────────────────────────────────────────
+import {
+  EditEmployeeSheet,
+  EmployeeDetailSkeleton,
+  mapToEmployeeDetail,
+} from '../components/EmployeeDetailPage'
 
 const TABS = [
-  { value: 'personal',   label: 'Personal Info'  },
-  { value: 'work',       label: 'Work Info'      },
-  { value: 'attendance', label: 'Attendance'     },
-  { value: 'payroll',    label: 'Payroll'        },
-  { value: 'kpi',        label: 'KPI'            },
-  { value: 'documents',  label: 'Documents'      },
-  { value: 'activity',   label: 'Activity'       },
+  { value: 'personal',   label: 'Thông tin cá nhân' },
+  { value: 'work',       label: 'Công việc'          },
+  { value: 'attendance', label: 'Chấm công'          },
+  { value: 'payroll',    label: 'Lương'              },
+  { value: 'kpi',        label: 'KPI'                },
+  { value: 'documents',  label: 'Tài liệu'           },
+  { value: 'activity',   label: 'Lịch sử'            },
 ]
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function EmployeeDetailPage() {
+  const { id } = useParams<{ id: string }>()
+  const { data: dto, isLoading, isError } = useEmployeeDetail(id ?? '')
+  const [editOpen, setEditOpen] = useState(false)
+  const location = useLocation()
+  const backRoute = location.pathname.startsWith('/admin')
+    ? ROUTES.ADMIN.EMPLOYEES
+    : ROUTES.HR.EMPLOYEES
+
+  if (isLoading) {
+    return (
+      <div className="min-h-full bg-card">
+        <div className="max-w-6xl mx-auto p-8">
+          <Skeleton className="h-3 w-40 mb-5" />
+          <EmployeeDetailSkeleton />
+        </div>
+      </div>
+    )
+  }
+
+  if (isError || !dto) {
+    return (
+      <div className="min-h-full bg-card flex items-center justify-center">
+        <p className="text-muted-foreground">Không tìm thấy nhân viên.</p>
+      </div>
+    )
+  }
+
+  const employee = mapToEmployeeDetail(dto)
+
   return (
     <div className="min-h-full bg-card">
+      <main className="max-w-5xl mx-auto p-6 space-y-4">
+        {/* <nav className="flex items-center gap-1.5 text-xs text-muted-foreground" aria-label="Breadcrumb">
+          <Link to={backRoute} className="hover:text-foreground transition-colors">Nhân viên</Link>
+          <ChevronRight className="w-3 h-3" aria-hidden="true" />
+          <span className="text-foreground">{dto.fullName}</span>
+        </nav> */}
+        <EmployeeProfileCard employee={employee} onEditClick={() => setEditOpen(true)} />
 
-      {/* Sticky page header */}
-      <header
-        className="sticky top-0 z-10 flex items-center px-8 h-14 border-b bg-card border-border"
-      >
-        <nav className="flex items-center gap-1.5 text-sm" aria-label="Breadcrumb">
-          <a
-            href="/hr/employees"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Employees
-          </a>
-          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" aria-hidden="true" />
-          <span className="text-foreground font-medium">{MOCK_EMPLOYEE.fullName}</span>
-        </nav>
-      </header>
-
-      {/* Main content */}
-      <main className="max-w-6xl mx-auto p-8 space-y-5">
-
-        {/* Profile card */}
-        <EmployeeProfileCard employee={MOCK_EMPLOYEE} />
-
-        {/* Tabs */}
         <Tabs defaultValue="personal" className="flex flex-col">
-          <TabsList
-            className="w-full justify-start h-auto p-1 rounded-lg gap-0.5 overflow-x-auto bg-muted/50"
-          >
-            {TABS.map((tab) => (
+          <TabsList className="w-full justify-start h-auto p-1 rounded-lg gap-0.5 overflow-x-auto bg-muted/50">
+            {TABS.map(tab => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
@@ -126,35 +84,21 @@ export default function EmployeeDetailPage() {
 
           <div className="mt-5">
             <TabsContent value="personal">
-              <PersonalInfoTab employee={MOCK_EMPLOYEE} />
+              <PersonalInfoTab employee={employee} customFields={dto.customFields} />
             </TabsContent>
-
             <TabsContent value="work">
-              <WorkInfoTab employee={MOCK_EMPLOYEE} />
+              <WorkInfoTab employee={employee} />
             </TabsContent>
-
-            <TabsContent value="attendance">
-              <AttendanceTab />
-            </TabsContent>
-
-            <TabsContent value="payroll">
-              <PayrollTab />
-            </TabsContent>
-
-            <TabsContent value="kpi">
-              <KpiTab />
-            </TabsContent>
-
-            <TabsContent value="documents">
-              <DocumentsTab />
-            </TabsContent>
-
-            <TabsContent value="activity">
-              <ActivityLogTab />
-            </TabsContent>
+            <TabsContent value="attendance"><AttendanceTab /></TabsContent>
+            <TabsContent value="payroll"><PayrollTab /></TabsContent>
+            <TabsContent value="kpi"><KpiTab /></TabsContent>
+            <TabsContent value="documents"><DocumentsTab /></TabsContent>
+            <TabsContent value="activity"><ActivityLogTab /></TabsContent>
           </div>
         </Tabs>
       </main>
+
+      <EditEmployeeSheet open={editOpen} employee={dto} onOpenChange={setEditOpen} />
     </div>
   )
 }

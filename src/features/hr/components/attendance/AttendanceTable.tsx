@@ -12,10 +12,10 @@ import type { AttendanceStatus, DailyAttendanceRecord } from '../../types/attend
 
 const RECORDS: DailyAttendanceRecord[] = [
   { id: '1', employee: { id: 'EMP-0042', name: 'Nguyễn Văn An',   initials: 'NVA' }, department: 'Product',   checkIn: '08:02', checkOut: '17:15', workingHours: 9.2,  status: 'On Time', note: '' },
-  { id: '2', employee: { id: 'EMP-0017', name: 'Trần Thị Bích',   initials: 'TTB' }, department: 'Engineering', checkIn: '08:27', checkOut: '17:30', workingHours: 9.0,  status: 'Late',    lateMinutes: 12, note: 'Traffic jam' },
-  { id: '3', employee: { id: 'EMP-0031', name: 'Lê Minh Dũng',    initials: 'LMD' }, department: 'Design',    checkIn: '08:00', checkOut: '17:00', workingHours: 9.0,  status: 'WFH',     note: 'Work from home' },
-  { id: '4', employee: { id: 'EMP-0058', name: 'Phạm Hải Yến',    initials: 'PHY' }, department: 'HR',        checkIn: null,    checkOut: null,    workingHours: 0,    status: 'Absent',  note: 'No notice' },
-  { id: '5', employee: { id: 'EMP-0023', name: 'Hoàng Thanh Tú',  initials: 'HTT' }, department: 'Finance',   checkIn: null,    checkOut: null,    workingHours: 0,    status: 'Leave',   note: 'Annual leave' },
+  { id: '2', employee: { id: 'EMP-0017', name: 'Trần Thị Bích',   initials: 'TTB' }, department: 'Engineering', checkIn: '08:27', checkOut: '17:30', workingHours: 9.0,  status: 'Late',    lateMinutes: 12, note: 'Kẹt xe' },
+  { id: '3', employee: { id: 'EMP-0031', name: 'Lê Minh Dũng',    initials: 'LMD' }, department: 'Design',    checkIn: '08:00', checkOut: '17:00', workingHours: 9.0,  status: 'WFH',     note: 'Làm tại nhà' },
+  { id: '4', employee: { id: 'EMP-0058', name: 'Phạm Hải Yến',    initials: 'PHY' }, department: 'HR',        checkIn: null,    checkOut: null,    workingHours: 0,    status: 'Absent',  note: 'Không thông báo' },
+  { id: '5', employee: { id: 'EMP-0023', name: 'Hoàng Thanh Tú',  initials: 'HTT' }, department: 'Finance',   checkIn: null,    checkOut: null,    workingHours: 0,    status: 'Leave',   note: 'Nghỉ phép năm' },
   { id: '6', employee: { id: 'EMP-0009', name: 'Vũ Quốc Hùng',    initials: 'VQH' }, department: 'Engineering', checkIn: '07:55', checkOut: '18:45', workingHours: 10.8, status: 'On Time', note: '' },
   { id: '7', employee: { id: 'EMP-0044', name: 'Đặng Thị Mai',    initials: 'ĐTM' }, department: 'Product',   checkIn: '08:45', checkOut: '17:30', workingHours: 8.7,  status: 'Late',    lateMinutes: 30, note: '' },
   { id: '8', employee: { id: 'EMP-0062', name: 'Bùi Tuấn Kiệt',   initials: 'BTK' }, department: 'Sales',     checkIn: '08:05', checkOut: '17:10', workingHours: 9.1,  status: 'On Time', note: '' },
@@ -32,12 +32,20 @@ const STATUS_BADGE: Record<AttendanceStatus, string> = {
 }
 
 const FILTER_TABS: { label: string; value: AttendanceStatus | 'All' }[] = [
-  { label: 'All',     value: 'All'     },
-  { label: 'Present', value: 'On Time' },
-  { label: 'Late',    value: 'Late'    },
-  { label: 'Absent',  value: 'Absent'  },
-  { label: 'Leave',   value: 'Leave'   },
+  { label: 'Tất cả',    value: 'All'     },
+  { label: 'Có mặt',   value: 'On Time' },
+  { label: 'Trễ',      value: 'Late'    },
+  { label: 'Vắng',     value: 'Absent'  },
+  { label: 'Nghỉ phép', value: 'Leave'  },
 ]
+
+const STATUS_LABELS: Record<AttendanceStatus, string> = {
+  'On Time': 'Đúng giờ',
+  'Late':    'Trễ',
+  'Absent':  'Vắng',
+  'Leave':   'Nghỉ phép',
+  'WFH':     'WFH',
+}
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -98,13 +106,13 @@ export function AttendanceTable() {
       <Table>
         <TableHeader>
           <TableRow className="border-border">
-            <TableHead className="text-xs font-medium text-muted-foreground pl-5">Employee</TableHead>
-            <TableHead className="text-xs font-medium text-muted-foreground">Department</TableHead>
-            <TableHead className="text-xs font-medium text-muted-foreground">Check-in</TableHead>
-            <TableHead className="text-xs font-medium text-muted-foreground">Check-out</TableHead>
-            <TableHead className="text-xs font-medium text-muted-foreground">Hours</TableHead>
-            <TableHead className="text-xs font-medium text-muted-foreground">Status</TableHead>
-            <TableHead className="text-xs font-medium text-muted-foreground">Note</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground pl-5">Nhân viên</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Phòng ban</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Giờ vào</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Giờ ra</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Giờ làm</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Trạng thái</TableHead>
+            <TableHead className="text-xs font-medium text-muted-foreground">Ghi chú</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -147,7 +155,7 @@ export function AttendanceTable() {
               {/* Status */}
               <TableCell>
                 <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[record.status]}`}>
-                  {record.status}
+                  {STATUS_LABELS[record.status]}
                   {record.status === 'Late' && record.lateMinutes && (
                     <span className="font-normal opacity-75">+{record.lateMinutes}m</span>
                   )}

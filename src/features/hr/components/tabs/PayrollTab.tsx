@@ -11,12 +11,12 @@ import type { PayrollRecord, PayrollStatus } from '../../types/employee.types'
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const PAYROLL_RECORDS: PayrollRecord[] = [
-  { month: 'May 2025', gross: 22_000_000, deductions: 2_640_000, netPay: 19_360_000, status: 'Processing' },
-  { month: 'Apr 2025', gross: 22_000_000, deductions: 2_640_000, netPay: 19_360_000, status: 'Paid' },
-  { month: 'Mar 2025', gross: 22_000_000, deductions: 2_640_000, netPay: 19_360_000, status: 'Paid' },
-  { month: 'Feb 2025', gross: 20_000_000, deductions: 2_400_000, netPay: 17_600_000, status: 'Paid' },
-  { month: 'Jan 2025', gross: 20_000_000, deductions: 2_400_000, netPay: 17_600_000, status: 'Paid' },
-  { month: 'Dec 2024', gross: 24_000_000, deductions: 2_880_000, netPay: 21_120_000, status: 'Paid' },
+  { month: 'Th5/2025', gross: 22_000_000, deductions: 2_640_000, netPay: 19_360_000, status: 'Processing' },
+  { month: 'Th4/2025', gross: 22_000_000, deductions: 2_640_000, netPay: 19_360_000, status: 'Paid' },
+  { month: 'Th3/2025', gross: 22_000_000, deductions: 2_640_000, netPay: 19_360_000, status: 'Paid' },
+  { month: 'Th2/2025', gross: 20_000_000, deductions: 2_400_000, netPay: 17_600_000, status: 'Paid' },
+  { month: 'Th1/2025', gross: 20_000_000, deductions: 2_400_000, netPay: 17_600_000, status: 'Paid' },
+  { month: 'Th12/2024', gross: 24_000_000, deductions: 2_880_000, netPay: 21_120_000, status: 'Paid' },
 ]
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -24,6 +24,8 @@ const PAYROLL_RECORDS: PayrollRecord[] = [
 function formatVND(amount: number) {
   return `₫${(amount / 1_000_000).toFixed(1)}M`
 }
+
+const STATUS_VI: Record<PayrollStatus, string> = { Paid: 'Đã thanh toán', Processing: 'Đang xử lý' }
 
 const STATUS_BADGE: Record<PayrollStatus, string> = {
   Paid:       'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
@@ -65,7 +67,7 @@ export function PayrollTab() {
     <div className="space-y-6">
       {/* Chart card */}
       <div className="bg-card rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-5">Last 6 Months — Gross vs Net</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-5">6 tháng gần đây — Gross vs Net</h3>
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={chartData} barGap={4} barCategoryGap="30%">
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
@@ -95,12 +97,12 @@ export function PayrollTab() {
       {/* Payslip table */}
       <div className="bg-card rounded-xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-sm font-semibold text-foreground">Payslip History</h3>
+          <h3 className="text-sm font-semibold text-foreground">Lịch sử phiếu lương</h3>
         </div>
         <Table>
           <TableHeader>
             <TableRow className="bg-card hover:bg-card">
-              {['Month', 'Gross', 'Deductions', 'Net Pay', 'Status', 'Payslip'].map((h) => (
+              {['Tháng', 'Gross', 'Khấu trừ', 'Thực lĩnh', 'Trạng thái', 'Phiếu lương'].map((h) => (
                 <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {h}
                 </TableHead>
@@ -116,7 +118,7 @@ export function PayrollTab() {
                 <TableCell className="text-sm font-semibold text-foreground font-mono">{formatVND(record.netPay)}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[record.status]}`}>
-                    {record.status}
+                    {STATUS_VI[record.status]}
                   </span>
                 </TableCell>
                 <TableCell>
@@ -126,10 +128,10 @@ export function PayrollTab() {
                       className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      Download PDF
+                      Tải PDF
                     </button>
                   ) : (
-                    <span className="text-xs text-muted-foreground">Pending</span>
+                    <span className="text-xs text-muted-foreground">Đang xử lý</span>
                   )}
                 </TableCell>
               </TableRow>

@@ -114,16 +114,16 @@ export function EmployeeRowActions({ employee }: EmployeeRowActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44 border-border bg-card text-foreground">
           <DropdownMenuItem className="cursor-pointer gap-2">
-            <Edit className="h-3.5 w-3.5" /> Edit
+            <Edit className="h-3.5 w-3.5" /> Chỉnh sửa
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer gap-2">
-            <KeyRound className="h-3.5 w-3.5" /> Reset Password
+            <KeyRound className="h-3.5 w-3.5" /> Đặt lại mật khẩu
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer gap-2">
-            <CalendarOff className="h-3.5 w-3.5" /> Mark Leave
+            <CalendarOff className="h-3.5 w-3.5" /> Đánh dấu nghỉ phép
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive">
-            <UserX className="h-3.5 w-3.5" /> Deactivate
+            <UserX className="h-3.5 w-3.5" /> Vô hiệu hóa
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

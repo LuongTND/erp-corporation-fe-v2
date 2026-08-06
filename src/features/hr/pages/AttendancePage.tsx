@@ -15,16 +15,16 @@ export default function AttendancePage() {
   const [calOpen, setCalOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date(2025, 4, 1))
 
-  const monthLabel = selectedDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+  const monthLabel = selectedDate.toLocaleString('vi-VN', { month: 'long', year: 'numeric' })
 
   return (
-    <div className="min-h-full bg-card">
+    <div className="h-full flex flex-col bg-background text-foreground">
 
       {/* Page header */}
       <header
-        className="sticky top-0 z-10 flex items-center justify-between px-8 h-14 border-b bg-card border-border"
+        className="shrink-0 sticky top-0 z-10 flex items-center justify-between px-8 h-14 border-b bg-card border-border"
       >
-        <h1 className="text-lg font-semibold text-foreground">Attendance</h1>
+        <h1 className="text-lg font-semibold text-foreground">Chấm công</h1>
 
         <div className="flex items-center gap-2.5">
           {/* Month picker */}
@@ -52,16 +52,16 @@ export default function AttendancePage() {
             <SelectTrigger
               className="w-[160px] h-9 text-sm border-border bg-card text-foreground cursor-pointer"
             >
-              <SelectValue placeholder="Department" />
+              <SelectValue placeholder="Phòng ban" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Departments</SelectItem>
-              <SelectItem value="product">Product</SelectItem>
-              <SelectItem value="engineering">Engineering</SelectItem>
-              <SelectItem value="design">Design</SelectItem>
-              <SelectItem value="hr">HR</SelectItem>
-              <SelectItem value="finance">Finance</SelectItem>
-              <SelectItem value="sales">Sales</SelectItem>
+              <SelectItem value="all">Tất cả phòng ban</SelectItem>
+              <SelectItem value="product">Sản phẩm</SelectItem>
+              <SelectItem value="engineering">Kỹ thuật</SelectItem>
+              <SelectItem value="design">Thiết kế</SelectItem>
+              <SelectItem value="hr">Nhân sự</SelectItem>
+              <SelectItem value="finance">Tài chính</SelectItem>
+              <SelectItem value="sales">Kinh doanh</SelectItem>
             </SelectContent>
           </Select>
 
@@ -71,7 +71,7 @@ export default function AttendancePage() {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-border bg-card text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4" />
-            Export Report
+            Xuất báo cáo
           </button>
 
           {/* Import */}
@@ -80,30 +80,32 @@ export default function AttendancePage() {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-border bg-card text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer"
           >
             <Upload className="w-4 h-4" />
-            Import Timesheets
+            Nhập bảng chấm công
           </button>
         </div>
       </header>
 
       {/* Main content */}
-      <main className="max-w-7xl mx-auto p-8 space-y-6">
+      <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
 
         {/* Section 1 — stat cards */}
-        <AttendanceStatCards />
+        <div className="shrink-0"><AttendanceStatCards /></div>
 
         {/* Section 2 — table + calendar (65/35) */}
-        <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-5">
-          <AttendanceTable />
+        <div className="flex-1 min-h-0 grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-5">
+          <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
+            <AttendanceTable />
+          </div>
           <AttendanceCalendarHeatmap />
         </div>
 
         {/* Section 3 — charts */}
-        <LateOvertimeCharts />
+        <div className="shrink-0"><LateOvertimeCharts /></div>
 
         {/* Section 4 — manual corrections */}
-        <ManualCorrectionTable />
+        <div className="shrink-0"><ManualCorrectionTable /></div>
 
-      </main>
+      </div>
     </div>
   )
 }

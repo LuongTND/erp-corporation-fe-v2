@@ -87,6 +87,88 @@ Zustand stores → `src/stores/`
 - Component variants use CVA (`class-variance-authority`).
 - Do not manually reorder Tailwind classes — `prettier-plugin-tailwindcss` handles it.
 
+## Animation (bắt buộc)
+
+Animation library: `tw-animate-css` (imported in `src/index.css`). Use `data-[state=open]:` / `data-[state=closed]:` syntax — NOT `data-open:` / `data-closed:` — to match Radix UI's `data-state` attribute.
+
+### Mọi overlay / modal / dialog
+
+```
+data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4
+data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-2
+animation-duration-250
+```
+
+### Mọi dropdown / popover / select content
+
+```
+data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95
+data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
+data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2
+data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2
+animation-duration-200
+```
+
+### Sheet / Drawer
+
+```
+data-[state=open]:animate-in data-[state=open]:slide-in-from-right
+data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right
+animation-duration-300
+```
+
+### Duration chuẩn
+
+| Loại | Duration |
+|------|----------|
+| Dropdown / Select / Tooltip | 200ms |
+| Dialog / Modal | 250ms |
+| Sheet / Drawer | 300ms |
+| Micro-interaction (button, badge) | 150ms |
+
+- Dùng `animation-duration-*` (tw-animate-css utility, set `--tw-animation-duration`) — KHÔNG dùng `duration-*` (Tailwind transition utility, không ảnh hưởng animation).
+- Easing mặc định: `ease` (enter). Sheet dùng `ease-out`.
+
+## Dropdown Alignment (bắt buộc)
+
+- **`SelectContent` luôn dùng `align="start"`** (không để mặc định `center` — gây lệch sang giữa).
+- **`DropdownMenuContent`** dùng `align="end"` khi mở từ góc phải (avatar, action menu), `align="start"` cho menu bên trái.
+- **`PopoverContent`** dùng `align="start"` mặc định trừ khi thiết kế yêu cầu khác.
+- Không dùng `position="item-aligned"` trong Select (gây scroll container clipping trong Dialog).
+- Luôn thêm `sideOffset={4}` để dropdown không dính vào trigger.
+
+## Fixed Viewport Layout (bắt buộc cho trang có bảng)
+
+Mọi page có bảng dữ liệu phải dùng cấu trúc sau — không để browser scroll toàn trang:
+
+```tsx
+// Page root
+<div className="h-full flex flex-col bg-background text-foreground">
+  <HRPageHeader … />                         {/* shrink-0 tự động */}
+
+  <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
+    <div className="… shrink-0">             {/* title + actions */}
+    <div className="… shrink-0">             {/* search / filters */}
+
+    {/* Table card — shrink theo content, cap tại viewport, scroll nội bộ */}
+    <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
+      <Table>
+        <TableHeader className="sticky top-0 z-10 bg-card">…</TableHeader>
+        <TableBody>…</TableBody>
+      </Table>
+    </div>
+  </div>
+</div>
+```
+
+- Root: `h-full flex flex-col` (không dùng `min-h-full`)
+- Content wrapper: `flex-1 min-h-0` — bắt buộc cả hai, thiếu `min-h-0` thì overflow không hoạt động
+- Toolbar/header: `shrink-0` — không bị co lại
+- Scroll chỉ xảy ra bên trong table card, không phải toàn trang
+- `overflow-auto` phải đặt trực tiếp trên card (không nested div) — `sticky` chỉ work khi scroll container là direct ancestor
+- `max-h-full` (không phải `flex-1`) trên card: ít row → shrink to content; nhiều row → cap tại viewport và scroll
+- `TableHeader` luôn có `sticky top-0 z-10 bg-card`
+
 ## TypeScript
 - No `any`. Use `unknown` and narrow the type, or define a proper type.
 - No type assertions (`as SomeType`) unless unavoidable — add a comment explaining why.

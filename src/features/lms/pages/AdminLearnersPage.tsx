@@ -50,9 +50,10 @@ export default function AdminLearnersPage() {
     : []
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="h-full flex flex-col bg-background text-foreground">
+    <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
       {/* Page header */}
-      <div>
+      <div className="shrink-0">
         <h1 className="text-xl font-semibold text-foreground">Quản lý Học viên</h1>
         <p className="mt-0.5 text-sm text-muted-foreground">
           {learners.length} học viên · {filtered.length} hiển thị
@@ -60,7 +61,7 @@ export default function AdminLearnersPage() {
       </div>
 
       {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="shrink-0 flex flex-wrap items-center gap-2">
         {/* Search */}
         <div className="relative">
           <Search
@@ -110,11 +111,13 @@ export default function AdminLearnersPage() {
       </div>
 
       {/* Learner table */}
-      <LearnerTable
-        learners={filtered}
-        onViewDetail={handleViewDetail}
-        onDelete={handleDelete}
-      />
+      <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
+        <LearnerTable
+          learners={filtered}
+          onViewDetail={handleViewDetail}
+          onDelete={handleDelete}
+        />
+      </div>
 
       {/* Learner detail sheet */}
       <LearnerDetailSheet
@@ -123,6 +126,7 @@ export default function AdminLearnersPage() {
         learner={selectedLearner}
         enrollments={enrollments}
       />
+    </div>
     </div>
   )
 }

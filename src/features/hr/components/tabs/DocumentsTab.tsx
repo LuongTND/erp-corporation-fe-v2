@@ -5,12 +5,12 @@ import type { DocumentFile } from '../../types/employee.types'
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const DOCUMENTS: DocumentFile[] = [
-  { id: '1', name: 'Employment Contract.pdf',   uploadDate: '15 Jan 2022', fileSize: '1.2 MB',  fileType: 'pdf'   },
-  { id: '2', name: 'ID Card Copy.jpg',           uploadDate: '15 Jan 2022', fileSize: '890 KB',  fileType: 'image' },
-  { id: '3', name: 'Degree Certificate.pdf',     uploadDate: '20 Jan 2022', fileSize: '2.4 MB',  fileType: 'pdf'   },
-  { id: '4', name: 'Probation Review Q1.pdf',    uploadDate: '20 Apr 2022', fileSize: '540 KB',  fileType: 'pdf'   },
-  { id: '5', name: 'Annual Review 2023.pdf',     uploadDate: '10 Jan 2024', fileSize: '1.8 MB',  fileType: 'pdf'   },
-  { id: '6', name: 'Training Certificate.pdf',   uploadDate: '15 Jun 2024', fileSize: '670 KB',  fileType: 'pdf'   },
+  { id: '1', name: 'Hợp đồng lao động.pdf',      uploadDate: '15/01/2022', fileSize: '1.2 MB',  fileType: 'pdf'   },
+  { id: '2', name: 'Bản sao CCCD.jpg',            uploadDate: '15/01/2022', fileSize: '890 KB',  fileType: 'image' },
+  { id: '3', name: 'Bằng tốt nghiệp.pdf',         uploadDate: '20/01/2022', fileSize: '2.4 MB',  fileType: 'pdf'   },
+  { id: '4', name: 'Đánh giá thử việc Q1.pdf',    uploadDate: '20/04/2022', fileSize: '540 KB',  fileType: 'pdf'   },
+  { id: '5', name: 'Đánh giá năm 2023.pdf',       uploadDate: '10/01/2024', fileSize: '1.8 MB',  fileType: 'pdf'   },
+  { id: '6', name: 'Chứng chỉ đào tạo.pdf',       uploadDate: '15/06/2024', fileSize: '670 KB',  fileType: 'pdf'   },
 ]
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -32,13 +32,13 @@ export function DocumentsTab() {
         }`}
       >
         <UploadCloud className="w-10 h-10 mx-auto mb-3 text-muted-foreground" />
-        <p className="text-sm font-medium text-foreground">Drop files or click to upload</p>
-        <p className="text-xs text-muted-foreground mt-1">PDF, JPG, PNG up to 10 MB</p>
+        <p className="text-sm font-medium text-foreground">Kéo thả hoặc click để tải lên</p>
+        <p className="text-xs text-muted-foreground mt-1">PDF, JPG, PNG tối đa 10 MB</p>
         <button
           type="button"
           className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-xs font-medium border border-border text-foreground rounded-lg bg-card hover:bg-muted/50 transition-colors cursor-pointer"
         >
-          Browse files
+          Chọn tệp
         </button>
       </div>
 
@@ -59,19 +59,19 @@ export function DocumentsTab() {
               <button
                 type="button"
                 className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                aria-label={`Preview ${doc.name}`}
+                aria-label={`Xem trước ${doc.name}`}
               >
                 <Eye className="w-3.5 h-3.5" />
-                Preview
+                Xem trước
               </button>
               <div className="w-px h-4 bg-border" />
               <button
                 type="button"
                 className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors cursor-pointer"
-                aria-label={`Download ${doc.name}`}
+                aria-label={`Tải về ${doc.name}`}
               >
                 <Download className="w-3.5 h-3.5" />
-                Download
+                Tải về
               </button>
             </div>
           </div>

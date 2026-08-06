@@ -1,93 +1,135 @@
-import { AlertTriangle, Lock } from 'lucide-react'
+import type React from 'react'
+import { CustomFieldsSection } from '../EmployeeDetailPage'
+import { useCustomFields } from '@/features/admin/hooks/use-custom-fields'
 import type { EmployeeDetail } from '../../types/employee.types'
+import type { CustomFieldValueDto } from '../../types/user-detail.types'
+
+// ─── types ───────────────────────────────────────────────────────────────────
+
+type FieldType = 'text' | 'mono' | 'multiline'
+
+interface FieldDef {
+  label: string
+  value: string
+  type?: FieldType
+}
 
 interface PersonalInfoTabProps {
   readonly employee: EmployeeDetail
+  readonly customFields?: CustomFieldValueDto[]
 }
 
-function FieldRow({ label, value, multiline = false }: {
-  readonly label: string
-  readonly value: string
-  readonly multiline?: boolean
-}) {
+// ─── constants ───────────────────────────────────────────────────────────────
+
+const GENDER_LABELS: Record<string, string> = { Male: 'Nam', Female: 'Nữ', Other: 'Khác' }
+
+// ─── primitives ──────────────────────────────────────────────────────────────
+
+function FieldRow({ label, value, type = 'text' }: FieldDef) {
+  const isMultiline = type === 'multiline'
   return (
-    <div className="border-b border-border pb-3 mb-3 last:border-0 last:mb-0 last:pb-0">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">{label}</p>
-      {multiline
-        ? <p className="text-sm text-foreground whitespace-pre-line">{value}</p>
-        : <p className="text-sm text-foreground">{value}</p>
-      }
+    <div className={`flex ${isMultiline ? 'items-start' : 'items-center'} gap-3 py-2 border-b border-border/60 last:border-0`}>
+      <span className="w-40 shrink-0 text-xs text-muted-foreground leading-5">{label}</span>
+      <span className={`flex-1 text-sm text-foreground min-w-0 ${type === 'mono' ? 'font-mono' : ''} ${isMultiline ? 'whitespace-pre-line' : 'truncate'}`}>
+        {value || '—'}
+      </span>
     </div>
   )
 }
 
-export function PersonalInfoTab({ employee }: PersonalInfoTabProps) {
+function Section({
+  title,
+  fields,
+  children,
+  urgent = false,
+}: {
+  readonly title: string
+  readonly fields: FieldDef[]
+  readonly children?: React.ReactNode
+  readonly urgent?: boolean
+}) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Left — personal details */}
-      <div className="bg-card rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Personal Details</h3>
-        <FieldRow label="Full Name" value={employee.fullName} />
-        <FieldRow label="Date of Birth" value={employee.dateOfBirth} />
-        <FieldRow label="Gender" value={employee.gender} />
-        <FieldRow label="Nationality" value={employee.nationality} />
-        <FieldRow label="Personal Email" value={employee.personalEmail} />
-        <FieldRow label="Personal Phone" value={employee.personalPhone} />
-        <FieldRow label="ID / Passport Number" value={employee.idNumber} />
-        <FieldRow label="ID / Passport Expiry" value={employee.idExpiry} />
-        <FieldRow label="Permanent Address" value={employee.permanentAddress} multiline />
+    <div className={`rounded-xl border p-5 ${urgent ? 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900/60' : 'bg-card border-border'}`}>
+      <h3 className={`text-xs font-semibold uppercase tracking-wider mb-3 ${urgent ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground'}`}>
+        {title}
+      </h3>
+      <div>
+        {fields.map((f) => <FieldRow key={f.label} {...f} />)}
+        {children}
       </div>
+    </div>
+  )
+}
 
-      {/* Right — emergency, bank, insurance */}
-      <div className="bg-card rounded-xl shadow-sm p-6">
-        <h3 className="text-sm font-semibold text-foreground mb-4">Emergency &amp; Financial</h3>
+// ─── main ─────────────────────────────────────────────────────────────────────
 
-        {/* Emergency contact — amber callout */}
-        <div className="bg-amber-50 rounded-lg p-4 mb-5">
-          <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
-            <span className="text-xs font-semibold uppercase tracking-wide text-amber-700">
-              Emergency Contact
-            </span>
-          </div>
-          <div className="space-y-2">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-0.5">Name</p>
-              <p className="text-sm text-foreground">{employee.emergencyContact.name}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-0.5">Relationship</p>
-              <p className="text-sm text-foreground">{employee.emergencyContact.relationship}</p>
-            </div>
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-0.5">Phone</p>
-              <p className="text-sm text-foreground">{employee.emergencyContact.phone}</p>
-            </div>
-          </div>
-        </div>
+export function PersonalInfoTab({ employee, customFields = [] }: PersonalInfoTabProps) {
+  const { data: definitions = [] } = useCustomFields('Employee')
 
-        <div className="border-b border-border pb-3 mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Bank Name</p>
-          <p className="text-sm text-foreground">{employee.bankAccount.bankName}</p>
+  const mergedCustomFields: CustomFieldValueDto[] = definitions
+    .filter((d) => d.isActive)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((def) => {
+      const existing = customFields.find((f) => f.definitionId === def.id)
+      const raw = existing?.value ?? ''
+      let display = raw
+      if (def.fieldType === 'Select') {
+        display = def.options.find((o) => o.value === raw)?.label ?? raw
+      } else if (def.fieldType === 'MultiSelect') {
+        display = raw.split(',').filter(Boolean).map((v) => def.options.find((o) => o.value === v)?.label ?? v).join(', ')
+      } else if (def.fieldType === 'Checkbox') {
+        display = raw === 'true' ? 'Có' : raw === 'false' ? 'Không' : raw
+      }
+      return { definitionId: def.id, code: def.code, name: def.name, fieldType: def.fieldType, group: def.group, sortOrder: def.sortOrder, value: display }
+    })
+
+  const personalFields: FieldDef[] = [
+    { label: 'Họ và tên',                    value: employee.fullName },
+    { label: 'Ngày sinh',                    value: employee.dateOfBirth },
+    { label: 'Giới tính',                    value: GENDER_LABELS[employee.gender] ?? employee.gender },
+    { label: 'Quốc tịch',                    value: employee.nationality },
+    { label: 'Email',                         value: employee.personalEmail },
+    { label: 'Số điện thoại',                value: employee.personalPhone },
+    { label: 'Số CCCD / Hộ chiếu',           value: employee.idNumber },
+    { label: 'Ngày hết hạn CCCD',            value: employee.idExpiry },
+    { label: 'Địa chỉ thường trú',           value: employee.permanentAddress, type: 'multiline' },
+  ]
+
+  const workFields: FieldDef[] = [
+    { label: 'Mã nhân viên',   value: employee.employeeCode },
+    { label: 'Phòng ban',      value: employee.department },
+    { label: 'Quản lý',        value: employee.manager?.name ?? '—' },
+    { label: 'Cấp bậc',        value: employee.salaryGrade },
+    { label: 'Loại hợp đồng',  value: employee.employmentType },
+    { label: 'Địa điểm',       value: employee.workLocation },
+    { label: 'Lịch làm việc',  value: employee.workSchedule },
+  ]
+
+  const financeFields: FieldDef[] = [
+    { label: 'Ngân hàng',     value: employee.bankAccount.bankName },
+    { label: 'Số tài khoản',  value: employee.bankAccount.accountNumberMasked, type: 'mono' },
+    { label: 'Mã số thuế',    value: employee.taxCode },
+    { label: 'Số BHXH',       value: employee.socialInsuranceNumber },
+  ]
+
+  const emergencyFields: FieldDef[] = [
+    { label: 'Họ tên',        value: employee.emergencyContact.name },
+    { label: 'Mối quan hệ',   value: employee.emergencyContact.relationship },
+    { label: 'Điện thoại',    value: employee.emergencyContact.phone },
+  ]
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <Section title="Thông tin cá nhân" fields={personalFields} />
+      <Section title="Công việc"         fields={workFields} />
+      <Section title="Tài chính"         fields={financeFields} />
+      <Section title="Liên hệ khẩn cấp" fields={emergencyFields} urgent />
+
+      {mergedCustomFields.length > 0 && (
+        <div className="lg:col-span-2">
+          <CustomFieldsSection customFields={mergedCustomFields} />
         </div>
-        <div className="border-b border-border pb-3 mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Account Number</p>
-          <div className="flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-muted-foreground" />
-            <p className="text-sm text-foreground font-mono">{employee.bankAccount.accountNumberMasked}</p>
-          </div>
-        </div>
-        <div className="border-b border-border pb-3 mb-3">
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
-            Social Insurance Number
-          </p>
-          <p className="text-sm text-foreground">{employee.socialInsuranceNumber}</p>
-        </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">Tax Code</p>
-          <p className="text-sm text-foreground">{employee.taxCode}</p>
-        </div>
-      </div>
+      )}
     </div>
   )
 }

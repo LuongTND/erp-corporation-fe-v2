@@ -70,9 +70,10 @@ export default function AdminWebinarsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6">
+    <div className="h-full flex flex-col bg-background text-foreground">
+    <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="shrink-0 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-foreground">Quản lý Webinar</h1>
           <p className="mt-0.5 text-sm text-muted-foreground">
@@ -86,8 +87,8 @@ export default function AdminWebinarsPage() {
       </div>
 
       {/* Tabs: Upcoming / Past */}
-      <Tabs defaultValue="upcoming">
-        <TabsList>
+      <Tabs defaultValue="upcoming" className="flex-1 min-h-0 flex flex-col">
+        <TabsList className="shrink-0">
           <TabsTrigger value="upcoming">
             Sắp diễn ra
             {upcomingWebinars.length > 0 && (
@@ -99,7 +100,7 @@ export default function AdminWebinarsPage() {
           <TabsTrigger value="past">Đã kết thúc / Đã huỷ</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="upcoming" className="mt-4">
+        <TabsContent value="upcoming" className="mt-4 rounded-lg border bg-card overflow-auto max-h-full min-h-0">
           <WebinarTable
             webinars={upcomingWebinars}
             onEdit={handleEdit}
@@ -107,7 +108,7 @@ export default function AdminWebinarsPage() {
           />
         </TabsContent>
 
-        <TabsContent value="past" className="mt-4">
+        <TabsContent value="past" className="mt-4 rounded-lg border bg-card overflow-auto max-h-full min-h-0">
           <WebinarTable
             webinars={pastWebinars}
             onEdit={handleEdit}
@@ -126,6 +127,7 @@ export default function AdminWebinarsPage() {
         editingWebinar={editingWebinar}
         onSubmit={handleSubmit}
       />
+    </div>
     </div>
   )
 }

@@ -49,6 +49,16 @@ const LEAVE_TYPES: LeaveType[] = [
   'Compassionate', 'Unpaid Leave',
 ]
 
+const LEAVE_TYPE_LABELS: Record<LeaveType, string> = {
+  'Annual Leave':  'Nghỉ phép năm',
+  'Sick Leave':    'Nghỉ ốm',
+  'WFH':           'Làm từ xa',
+  'Maternity':     'Nghỉ thai sản',
+  'Paternity':     'Nghỉ nuôi con (cha)',
+  'Compassionate': 'Nghỉ hữu sự',
+  'Unpaid Leave':  'Nghỉ không lương',
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 interface Props {
@@ -88,7 +98,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
       <DialogContent className="sm:max-w-[520px] overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-base font-semibold text-foreground">
-            New Leave Request
+            Tạo đơn nghỉ phép
           </DialogTitle>
         </DialogHeader>
 
@@ -97,7 +107,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
           {/* Leave Type */}
           <div>
             <label className="text-xs font-medium text-foreground block mb-1.5">
-              Leave Type <span className="text-destructive">*</span>
+              Loại nghỉ phép <span className="text-destructive">*</span>
             </label>
             <Select value={leaveType} onValueChange={(v) => setLeaveType(v as LeaveType)}>
               <SelectTrigger
@@ -107,7 +117,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
               </SelectTrigger>
               <SelectContent>
                 {LEAVE_TYPES.map((t) => (
-                  <SelectItem key={t} value={t} className="text-sm cursor-pointer">{t}</SelectItem>
+                  <SelectItem key={t} value={t} className="text-sm cursor-pointer">{LEAVE_TYPE_LABELS[t]}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -117,7 +127,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label htmlFor="leave-from" className="text-xs font-medium text-foreground block mb-1.5">
-                From <span className="text-destructive">*</span>
+                Từ ngày <span className="text-destructive">*</span>
               </label>
               <input
                 id="leave-from"
@@ -129,7 +139,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
             </div>
             <div>
               <label htmlFor="leave-to" className="text-xs font-medium text-foreground block mb-1.5">
-                To <span className="text-destructive">*</span>
+                Đến ngày <span className="text-destructive">*</span>
               </label>
               <input
                 id="leave-to"
@@ -147,16 +157,16 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-primary">
-                  {days} working {days === 1 ? 'day' : 'days'}
+                  {days} ngày làm việc
                 </span>
               </div>
               {overlaps.length > 0 && (
                 <div className="flex items-start gap-2 text-xs rounded-lg px-3 py-2.5 bg-amber-500/15 text-amber-700 dark:text-amber-400">
                   <span className="font-semibold shrink-0">⚠</span>
                   <span>
-                    Team {overlaps.length === 1 ? 'member' : 'members'}{' '}
+                    Thành viên nhóm{' '}
                     <span className="font-medium">{overlaps.join(', ')}</span>{' '}
-                    {overlaps.length === 1 ? 'is' : 'are'} also on leave during this period.
+                    cũng nghỉ phép trong khoảng thời gian này.
                   </span>
                 </div>
               )}
@@ -166,14 +176,14 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
           {/* Reason */}
           <div>
             <label htmlFor="leave-reason" className="text-xs font-medium text-foreground block mb-1.5">
-              Reason
+              Lý do
             </label>
             <textarea
               id="leave-reason"
               rows={3}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Brief reason for leave..."
+              placeholder="Mô tả lý do..."
               className="w-full px-3 py-2 rounded-lg border border-border text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-1 resize-none"
             />
           </div>
@@ -182,7 +192,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
           {isSickLeave && (
             <div>
               <label className="text-xs font-medium text-foreground block mb-1.5">
-                Medical Certificate
+                Giấy chứng nhận y tế
               </label>
               <label
                 htmlFor="leave-cert"
@@ -196,8 +206,8 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
                 ) : (
                   <>
                     <Upload className="w-5 h-5 text-muted-foreground mb-1.5" />
-                    <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
-                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">PDF, JPG, PNG up to 5MB</p>
+                    <p className="text-sm text-muted-foreground">Nhấn để tải lên hoặc kéo thả</p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">PDF, JPG, PNG tối đa 5MB</p>
                   </>
                 )}
                 <input
@@ -225,7 +235,7 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
               htmlFor="notify-manager"
               className="text-sm text-foreground cursor-pointer select-none"
             >
-              Notify manager via email
+              Thông báo quản lý qua email
             </label>
           </div>
 
@@ -237,14 +247,14 @@ export function NewLeaveDialog({ open, onOpenChange }: Props) {
             onClick={handleClose}
             className="px-4 py-2 text-sm font-medium border border-border rounded-lg cursor-pointer transition-colors hover:bg-muted/50 text-muted-foreground"
           >
-            Cancel
+            Hủy
           </button>
           <button
             type="button"
             disabled={!fromDate || !toDate || !leaveType}
             className="px-5 py-2 text-sm font-medium rounded-lg text-white cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed bg-primary"
           >
-            Submit Request
+            Gửi đơn
           </button>
         </DialogFooter>
       </DialogContent>
