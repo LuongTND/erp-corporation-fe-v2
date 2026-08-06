@@ -6,16 +6,22 @@ import type { KPIItem, KPIStatus } from '../../types/employee.types'
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const KPI_ITEMS: KPIItem[] = [
-  { id: '1', metric: 'Design Delivery Rate',    target: '95%', actual: '98%', weight: '30%', score: 100, status: 'Achieved'    },
-  { id: '2', metric: 'User Research Sessions',  target: '8',   actual: '7',   weight: '20%', score: 87,  status: 'Achieved'    },
-  { id: '3', metric: 'Design System Updates',   target: '4',   actual: '2',   weight: '20%', score: 50,  status: 'Missed'      },
-  { id: '4', metric: 'Cross-team Collaboration',target: '10',  actual: '8',   weight: '15%', score: 80,  status: 'In Progress' },
-  { id: '5', metric: 'Team NPS Score',          target: '8.5', actual: '8.2', weight: '15%', score: 96,  status: 'Achieved'    },
+  { id: '1', metric: 'Tỷ lệ bàn giao đúng hạn',  target: '95%', actual: '98%', weight: '30%', score: 100, status: 'Achieved'    },
+  { id: '2', metric: 'Buổi nghiên cứu người dùng',target: '8', actual: '7',   weight: '20%', score: 87,  status: 'Achieved'    },
+  { id: '3', metric: 'Cập nhật Design System',    target: '4',  actual: '2',   weight: '20%', score: 50,  status: 'Missed'      },
+  { id: '4', metric: 'Phối hợp liên phòng ban',   target: '10', actual: '8',   weight: '15%', score: 80,  status: 'In Progress' },
+  { id: '5', metric: 'Điểm NPS nội bộ',           target: '8.5',actual: '8.2', weight: '15%', score: 96,  status: 'Achieved'    },
 ]
 
 const OVERALL_SCORE = 84
 
 // ─── Style maps ───────────────────────────────────────────────────────────────
+
+const STATUS_VI: Record<KPIStatus, string> = {
+  Achieved:    'Đạt',
+  'In Progress':'Đang thực hiện',
+  Missed:      'Không đạt',
+}
 
 const STATUS_BADGE: Record<KPIStatus, string> = {
   Achieved:    'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
@@ -86,7 +92,7 @@ function DonutChart({ score }: { readonly score: number }) {
 
 export function KpiTab() {
   const { text: scoreText } = scoreColorClass(OVERALL_SCORE)
-  const label = OVERALL_SCORE >= 80 ? 'On Track' : OVERALL_SCORE >= 60 ? 'Needs Attention' : 'At Risk'
+  const label = OVERALL_SCORE >= 80 ? 'Đạt mục tiêu' : OVERALL_SCORE >= 60 ? 'Cần cải thiện' : 'Nguy hiểm'
   const labelBg = OVERALL_SCORE >= 80
     ? 'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400'
     : OVERALL_SCORE >= 60
@@ -101,7 +107,7 @@ export function KpiTab() {
           <DonutChart score={OVERALL_SCORE} />
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-1">
-              Overall Score · Q2 2025
+              Điểm tổng · Q2 2025
             </p>
             <p className={`text-4xl font-bold font-display ${scoreText}`}>
               {OVERALL_SCORE}
@@ -117,12 +123,12 @@ export function KpiTab() {
       {/* KPI items table */}
       <div className="bg-card rounded-xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-sm font-semibold text-foreground">KPI Breakdown — Q2 2025</h3>
+          <h3 className="text-sm font-semibold text-foreground">Chi tiết KPI — Q2 2025</h3>
         </div>
         <Table>
           <TableHeader>
             <TableRow className="bg-card hover:bg-card">
-              {['Metric', 'Target', 'Actual', 'Weight', 'Score', 'Status'].map((h) => (
+              {['Chỉ số', 'Mục tiêu', 'Thực tế', 'Trọng số', 'Điểm', 'Trạng thái'].map((h) => (
                 <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   {h}
                 </TableHead>
@@ -153,7 +159,7 @@ export function KpiTab() {
                   </TableCell>
                   <TableCell>
                     <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[item.status]}`}>
-                      {item.status}
+                      {STATUS_VI[item.status]}
                     </span>
                   </TableCell>
                 </TableRow>

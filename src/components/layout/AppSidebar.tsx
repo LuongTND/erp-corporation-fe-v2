@@ -1,30 +1,43 @@
-import { cn } from '@/lib/utils'
+import logoBahung from '@/assets/logo/logo-bahung.png'
 import {
-  Banknote,
-  BookOpen,
-  Calendar,
-  CalendarDays,
-  CheckSquare,
-  ChevronDown,
-  Compass,
-  GraduationCap,
-  LayoutDashboard,
-  MessageSquare,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  useSidebar,
+} from '@/components/ui/sidebar'
+import { ROUTES } from '@/config/routes'
+import {
+  Building2,
+  ChevronRight,
+  KeyRound,
   Network,
-  Search,
-  Settings,
-  Target,
-  TrendingUp,
-  Users,
+  Shield,
+  SlidersHorizontal,
   Users2,
   type LucideIcon,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useLocalStorage } from '@/hooks/use-local-storage'
+import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ROUTES } from '@/config/routes'
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type SubItem = { icon: LucideIcon; label: string; href: string }
-type ModuleItem = {
+type NavItem = {
   icon: LucideIcon
   label: string
   href: string
@@ -32,216 +45,189 @@ type ModuleItem = {
   subItems?: SubItem[]
 }
 
-const CORE_ITEMS: ModuleItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: ROUTES.DASHBOARD },
-  { icon: CheckSquare,     label: 'My Tasks',  href: ROUTES.TASK, badge: 9 },
+// ── Nav config ────────────────────────────────────────────────────────────────
+
+const CORE_ITEMS: NavItem[] = [
+  // ponytail: all core items hidden while focusing on admin module
+  // { icon: LayoutDashboard, label: 'Bảng điều khiển', href: ROUTES.DASHBOARD },
+  // { icon: CheckSquare, label: 'Công việc', href: ROUTES.TASK, badge: 9 },
 ]
 
-const MODULE_ITEMS: ModuleItem[] = [
-  { icon: MessageSquare, label: 'Chat', href: ROUTES.CHAT },
+const MODULE_ITEMS: NavItem[] = [
+  // ponytail: non-admin modules hidden while admin API is in development
+  // { icon: MessageSquare, label: 'Trò chuyện', href: ROUTES.CHAT },
+  // { icon: Users, label: 'Nhân sự & Lương', href: ROUTES.HR.DASHBOARD, subItems: [...] },
+  // { icon: GraduationCap, label: 'Đào tạo', href: ROUTES.LMS.DASHBOARD, subItems: [...] },
   {
-    icon: Users,
-    label: 'HR & Payroll',
-    href: ROUTES.HR.DASHBOARD,
+    icon: Shield,
+    label: 'Quản trị',
+    href: ROUTES.ADMIN.ACCOUNTS,
     subItems: [
-      { icon: LayoutDashboard, label: 'Overview',   href: ROUTES.HR.DASHBOARD },
-      { icon: Users2,          label: 'Employees',  href: ROUTES.HR.EMPLOYEES },
-      { icon: Calendar,        label: 'Attendance', href: ROUTES.HR.ATTENDANCE },
-      { icon: Banknote,        label: 'Payroll',    href: ROUTES.HR.PAYROLL },
-      { icon: Target,          label: 'KPI',        href: ROUTES.HR.KPI },
-      { icon: CalendarDays,    label: 'Leave',      href: ROUTES.HR.LEAVE },
-      { icon: Network,         label: 'Org Chart',  href: ROUTES.HR.ORG_CHART },
-    ],
-  },
-  {
-    icon: GraduationCap,
-    label: 'LMS',
-    href: ROUTES.LMS.DASHBOARD,
-    subItems: [
-      { icon: BookOpen, label: 'My Courses', href: ROUTES.LMS.DASHBOARD },
-      { icon: Compass, label: 'Explore', href: ROUTES.LMS.EXPLORE },
-      { icon: TrendingUp, label: 'Progress', href: ROUTES.LMS.PROGRESS },
+      { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS },
+      // ponytail: Quyền hạn merged into Vai trò tab
+      { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS },
+      { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
+      { icon: Network, label: 'Nhân sự', href: ROUTES.ADMIN.EMPLOYEES },
+      { icon: SlidersHorizontal, label: 'Trường tùy chỉnh', href: ROUTES.ADMIN.CUSTOM_FIELDS },
+      // { icon: Network, label: 'Phân cấp vai trò', href: ROUTES.ADMIN.ROLE_HIERARCHY }, // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
+      // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
     ],
   },
 ]
 
-function NavButton({
-  icon: Icon,
-  label,
-  badge,
-  active,
-  depth = 0,
-  onClick,
-}: {
-  icon: LucideIcon
-  label: string
-  href?: string
-  badge?: number
-  active: boolean
-  depth?: number
-  onClick: () => void
-}) {
+// ── Collapsible nav item ───────────────────────────────────────────────────────
+
+function CollapsibleNavItem({ item }: { item: NavItem }) {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { isMobile, setOpenMobile } = useSidebar()
+  const isActive = location.pathname.startsWith(item.href)
+  const [open, setOpen] = useLocalStorage(`sidebar-group-${item.href}`, isActive)
+
+  const handleNavigate = (href: string) => {
+    navigate(href)
+    if (isMobile) setOpenMobile(false)
+  }
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'flex items-center gap-2 h-8 rounded-md w-full text-[13px] font-normal transition-colors duration-[120ms] cursor-pointer',
-        depth === 0 ? 'px-2 border-l-2' : 'pl-7 pr-2',
-        active
-          ? (depth === 0 ? 'bg-primary/15 text-primary border-l-primary pl-[6px]' : 'bg-primary/15 text-primary')
-          : (depth > 0 ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent' : 'text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent border-transparent')
-      )}
-    >
-      <Icon className="h-4 w-4 shrink-0" />
-      <span className="flex-1 text-left truncate">{label}</span>
-      {badge != null && (
-        <span
-          className="text-[10px] font-medium rounded-full px-1.5 py-px leading-none bg-primary text-primary-foreground"
-        >
-          {badge}
-        </span>
-      )}
-    </button>
+    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton
+            isActive={isActive}
+            tooltip={item.label}
+            aria-current={isActive ? 'page' : undefined}
+            className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+          >
+            <item.icon aria-hidden="true" />
+            <span>{item.label}</span>
+            <ChevronRight
+              aria-hidden="true"
+              className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+            />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {item.subItems!.map((sub) => {
+              const subActive = location.pathname === sub.href
+              return (
+                <SidebarMenuSubItem key={sub.href}>
+                  <SidebarMenuSubButton
+                    isActive={subActive}
+                    onClick={() => handleNavigate(sub.href)}
+                    aria-current={subActive ? 'page' : undefined}
+                    className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                  >
+                    <sub.icon aria-hidden="true" />
+                    <span>{sub.label}</span>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              )
+            })}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
   )
 }
+
+// ── AppSidebar ────────────────────────────────────────────────────────────────
 
 export function AppSidebar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [modulesOpen, setModulesOpen] = useState(true)
+  const { isMobile, setOpenMobile } = useSidebar()
 
+  // Close mobile drawer on route change
+  useEffect(() => {
+    if (isMobile) setOpenMobile(false)
+  }, [location.pathname, isMobile, setOpenMobile])
+
+  const handleNavigate = (href: string) => {
+    navigate(href)
+    if (isMobile) setOpenMobile(false)
+  }
 
   return (
-    <aside
-      className="flex flex-col h-full shrink-0 overflow-hidden border-r border-sidebar-border bg-sidebar text-sidebar-foreground"
-      style={{ width: 240 }}
-    >
+    <Sidebar collapsible="icon">
       {/* Workspace header */}
-      <button
-        type="button"
-        className="flex items-center gap-2 h-[52px] px-3 w-full transition-colors duration-[120ms] rounded-md mx-1 hover:bg-sidebar-accent/50 cursor-pointer"
-      >
-        <span
-          className="flex items-center justify-center w-8 h-8 rounded-md shrink-0 text-white font-bold text-sm bg-primary"
-        >
-          D
-        </span>
-        <div className="flex flex-col items-start flex-1 min-w-0">
-          <span className="text-[13px] font-semibold truncate w-full text-left text-sidebar-foreground">
-            DigiFNB ERP
-          </span>
-          <span className="text-[10px] truncate w-full text-left text-sidebar-foreground/50">
-            Corporation v2
-          </span>
-        </div>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 text-sidebar-foreground/45" />
-      </button>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" className="cursor-pointer">
+              <img
+                src={logoBahung}
+                alt="Ba Hưng logo"
+                className="h-8 w-8 shrink-0 rounded-md object-contain"
+              />
+              <div className="flex flex-col items-start min-w-0 flex-1">
+                <span className="truncate text-[13px] font-semibold">Ba Hưng</span>
+                <span className="truncate text-[10px] text-muted-foreground">HRM & LMS</span>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-      {/* Search bar */}
-      <div className="px-2 mb-1">
-        <div
-          className="flex items-center gap-2 h-[30px] px-2.5 rounded-md border text-[12px] bg-sidebar-accent/40 border-sidebar-border/60 text-sidebar-foreground/60"
-        >
-          <Search className="h-3.5 w-3.5 shrink-0" />
-          <span>Search...</span>
-        </div>
-      </div>
+      <SidebarContent>
+        {/* Core */}
+        {CORE_ITEMS.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {CORE_ITEMS.map((item) => {
+                  const isActive = location.pathname === item.href
+                  return (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton
+                        isActive={isActive}
+                        onClick={() => handleNavigate(item.href)}
+                        tooltip={item.label}
+                        aria-current={isActive ? 'page' : undefined}
+                        className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                      >
+                        <item.icon aria-hidden="true" />
+                        <span>{item.label}</span>
+                      </SidebarMenuButton>
+                      {item.badge != null && (
+                        <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                      )}
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
-      {/* Scrollable nav area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-1 mt-1" style={{ scrollbarWidth: 'none' }}>
-        {/* Core nav */}
-        <nav className="flex flex-col gap-0.5">
-          {CORE_ITEMS.map((item) => (
-            <NavButton
-              key={item.href}
-              {...item}
-              active={location.pathname === item.href}
-              onClick={() => navigate(item.href)}
-            />
-          ))}
-        </nav>
-
-        {/* Modules section */}
-        <div className="mt-4">
-          <button
-            type="button"
-            onClick={() => setModulesOpen((v) => !v)}
-            className="flex items-center gap-1 w-full px-2 py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] cursor-pointer transition-colors duration-[120ms] text-sidebar-foreground/40 hover:text-sidebar-foreground/60"
-          >
-            <ChevronDown
-              className="h-3 w-3 shrink-0 transition-transform duration-200"
-              style={{ transform: modulesOpen ? 'rotate(0deg)' : 'rotate(-90deg)' }}
-            />
-            Modules
-          </button>
-
-          {modulesOpen && (
-            <div className="flex flex-col gap-0.5 mt-0.5">
-              {MODULE_ITEMS.map((item) => {
-                const isModuleActive = item.subItems
-                  ? location.pathname.startsWith(item.href)
-                  : location.pathname === item.href
-                const isExpanded = item.subItems && location.pathname.startsWith(item.href)
-
-                return (
-                  <div key={item.href}>
-                    <NavButton
-                      icon={item.icon}
-                      label={item.label}
-                      href={item.href}
-                      active={isModuleActive}
-                      onClick={() => navigate(item.href)}
-                    />
-                    {isExpanded && item.subItems && (
-                      <div className="flex flex-col gap-0.5 mt-0.5">
-                        {item.subItems.map((sub) => (
-                          <NavButton
-                            key={sub.href}
-                            icon={sub.icon}
-                            label={sub.label}
-                            href={sub.href}
-                            active={location.pathname === sub.href}
-                            depth={1}
-                            onClick={() => navigate(sub.href)}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+        {/* Modules */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {MODULE_ITEMS.map((item) =>
+                item.subItems ? (
+                  <CollapsibleNavItem key={item.href} item={item} />
+                ) : (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      isActive={location.pathname === item.href}
+                      onClick={() => handleNavigate(item.href)}
+                      tooltip={item.label}
+                      aria-current={location.pathname === item.href ? 'page' : undefined}
+                      className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                    >
+                      <item.icon aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 )
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Settings */}
-      <button
-        type="button"
-        className="flex items-center gap-2 h-8 mx-1 px-2 rounded-md text-[13px] transition-colors duration-[120ms] cursor-pointer text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-      >
-        <Settings className="h-4 w-4 shrink-0" />
-        <span>Settings</span>
-      </button>
-
-      {/* Divider */}
-      <div className="h-px bg-sidebar-border mx-2 my-1" />
-
-      {/* User row */}
-      <div
-        className="flex items-center gap-2 h-10 px-3 mx-1 mb-1 rounded-md cursor-pointer transition-colors duration-[120ms] hover:bg-sidebar-accent/50"
-      >
-        <span
-          className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[9px] font-semibold text-white shrink-0 bg-primary"
-        >
-          MT
-        </span>
-        <span className="text-[12px] flex-1 truncate text-sidebar-foreground/75">
-          My Account
-        </span>
-        <ChevronDown className="h-3 w-3 shrink-0 text-sidebar-foreground/45" />
-      </div>
-    </aside>
+              )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   )
 }

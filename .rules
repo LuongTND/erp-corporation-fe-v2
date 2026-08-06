@@ -4,7 +4,7 @@
 - Correctness and clarity over speed. Accessibility is required.
 - Comments only explain *why*, never *what*.
 - Add to existing files before creating new ones.
-- No generic names like `index.tsx` — use explicit names like `UserProfile.tsx`.
+- No generic names like `index.tsx` at the feature root — use explicit names like `UserProfile.tsx`. Exception: `index.tsx` is allowed as the entry point of a named subfolder (the folder name IS the component name, e.g. `OrgHierarchyView/index.tsx`).
 - No abbreviated variable names (`error` not `err`, `button` not `btn`).
 
 ## File Naming
@@ -20,19 +20,35 @@
 ## Exports
 - **Pages only**: Default Export (required for `React.lazy()`).
 - **Everything else**: Named Export.
+- **Component subdirectories** (`components/<PageName>/`): must have an `index.ts` barrel that re-exports all named exports. Pages import from the barrel (`../components/RolesPage`), not individual files.
 
 ## Folder Structure
 ```
 src/features/<feature>/
-├── pages/       # Default exports, lazy-loaded
-├── components/  # Feature UI components
-├── hooks/       # React Query hooks
-├── services/    # Axios wrappers (plain objects)
-├── schemas/     # Zod schemas
-├── types/       # TypeScript types
+├── pages/           # Default exports, lazy-loaded (thin shells — state + layout only)
+├── components/      # Feature UI components
+│   └── <PageName>/  # Sub-components for a specific page (dialogs, sheets, tables)
+│       └── <ViewName>/  # Nested subfolder when a sub-view grows beyond ~150 lines
+│           ├── index.tsx    # Entry point — named export of the view
+│           ├── types.ts     # Local types shared within this view only
+│           └── *.tsx        # Sub-components (ListView, TreeView, MembersPanel, ...)
+├── hooks/           # React Query hooks
+├── services/        # Axios wrappers (plain objects)
+├── schemas/         # Zod schemas
+├── types/           # TypeScript types
 ```
 Shared primitives → `src/components/ui/`
 Zustand stores → `src/stores/`
+
+## No God-Class Pages
+- Pages must NOT contain component definitions. Each dialog, sheet, or complex sub-component gets its own file.
+- Place page sub-components in `components/<PageName>/` (e.g., `DepartmentsPage/DepartmentDialog.tsx`).
+- Pages are thin shells: fetch API data via hooks, pass data down as props, compose layout. No business logic in pages.
+- Orchestrator components (e.g., `RolesTab`) own UI state (dialogs, filters) and pass callbacks to children.
+- Pages import from the barrel (`components/<PageName>`), not individual files.
+- Internal imports within the same `<PageName>/` folder stay relative (sibling-to-sibling).
+- Internal imports within a `<ViewName>/` subfolder also stay relative. Siblings import each other directly (`./MembersPanel`), not through the barrel.
+- Types shared only within a `<ViewName>/` folder go in `types.ts` inside that folder, not in `features/<feature>/types/`.
 
 ## Error Handling
 - Never swallow errors silently.
@@ -64,10 +80,94 @@ Zustand stores → `src/stores/`
 - Field errors from `form.formState.errors`, not global state.
 
 ## Styling
+- Tailwind CSS **v4** (CSS-first config in `src/index.css` via `@theme`; no `tailwind.config.js`, no PostCSS config — uses `@tailwindcss/vite`).
+- When copying components from shadcn/ui, use the Tailwind v4 versions (current default). v4 syntax like `w-(--var)` is valid here.
 - Tailwind CSS only. Class order: layout → spacing → typography → colors → states.
 - Conditional/merged classes always use `cn()` from `src/lib/utils.ts`.
 - Component variants use CVA (`class-variance-authority`).
 - Do not manually reorder Tailwind classes — `prettier-plugin-tailwindcss` handles it.
+
+## Animation (bắt buộc)
+
+Animation library: `tw-animate-css` (imported in `src/index.css`). Use `data-[state=open]:` / `data-[state=closed]:` syntax — NOT `data-open:` / `data-closed:` — to match Radix UI's `data-state` attribute.
+
+### Mọi overlay / modal / dialog
+
+```
+data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-bottom-4
+data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-bottom-2
+animation-duration-250
+```
+
+### Mọi dropdown / popover / select content
+
+```
+data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95
+data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
+data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2
+data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2
+animation-duration-200
+```
+
+### Sheet / Drawer
+
+```
+data-[state=open]:animate-in data-[state=open]:slide-in-from-right
+data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right
+animation-duration-300
+```
+
+### Duration chuẩn
+
+| Loại | Duration |
+|------|----------|
+| Dropdown / Select / Tooltip | 200ms |
+| Dialog / Modal | 250ms |
+| Sheet / Drawer | 300ms |
+| Micro-interaction (button, badge) | 150ms |
+
+- Dùng `animation-duration-*` (tw-animate-css utility, set `--tw-animation-duration`) — KHÔNG dùng `duration-*` (Tailwind transition utility, không ảnh hưởng animation).
+- Easing mặc định: `ease` (enter). Sheet dùng `ease-out`.
+
+## Dropdown Alignment (bắt buộc)
+
+- **`SelectContent` luôn dùng `align="start"`** (không để mặc định `center` — gây lệch sang giữa).
+- **`DropdownMenuContent`** dùng `align="end"` khi mở từ góc phải (avatar, action menu), `align="start"` cho menu bên trái.
+- **`PopoverContent`** dùng `align="start"` mặc định trừ khi thiết kế yêu cầu khác.
+- Không dùng `position="item-aligned"` trong Select (gây scroll container clipping trong Dialog).
+- Luôn thêm `sideOffset={4}` để dropdown không dính vào trigger.
+
+## Fixed Viewport Layout (bắt buộc cho trang có bảng)
+
+Mọi page có bảng dữ liệu phải dùng cấu trúc sau — không để browser scroll toàn trang:
+
+```tsx
+// Page root
+<div className="h-full flex flex-col bg-background text-foreground">
+  <HRPageHeader … />                         {/* shrink-0 tự động */}
+
+  <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
+    <div className="… shrink-0">             {/* title + actions */}
+    <div className="… shrink-0">             {/* search / filters */}
+
+    {/* Table card — shrink theo content, cap tại viewport, scroll nội bộ */}
+    <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
+      <Table>
+        <TableHeader className="sticky top-0 z-10 bg-card">…</TableHeader>
+        <TableBody>…</TableBody>
+      </Table>
+    </div>
+  </div>
+</div>
+```
+
+- Root: `h-full flex flex-col` (không dùng `min-h-full`)
+- Content wrapper: `flex-1 min-h-0` — bắt buộc cả hai, thiếu `min-h-0` thì overflow không hoạt động
+- Toolbar/header: `shrink-0` — không bị co lại
+- Scroll chỉ xảy ra bên trong table card, không phải toàn trang
+- `overflow-auto` phải đặt trực tiếp trên card (không nested div) — `sticky` chỉ work khi scroll container là direct ancestor
+- `max-h-full` (không phải `flex-1`) trên card: ít row → shrink to content; nhiều row → cap tại viewport và scroll
+- `TableHeader` luôn có `sticky top-0 z-10 bg-card`
 
 ## TypeScript
 - No `any`. Use `unknown` and narrow the type, or define a proper type.
@@ -88,3 +188,14 @@ Zustand stores → `src/stores/`
 - Lazy routes wrapped in `<Suspense fallback={<Spinner />}>`.
 - Protected routes use `ProtectedRoute` (checks `useAuthStore`).
 - `useNavigate` only inside components or hooks, never in services.
+
+## BE–FE Contract (bắt buộc)
+
+Before writing any form/service/schema for a feature, read the corresponding BE Command and Validator files. Then:
+
+1. **Field names must match exactly** — use the same casing as the BE DTO (camelCase in JSON). No aliases, no renaming.
+2. **Zod schema must mirror BE validator** — every `NotEmpty`, `MaximumLength`, `MinimumLength`, `GreaterThan`, `EmailAddress`, etc. must have an equivalent Zod rule.
+3. **Service payload must match the BE Command** — only send fields the BE Command declares. Never send extra fields; never omit required ones.
+4. **Separate Create vs Update schemas** when BE Commands differ (e.g. Create has `roleName` + `displayName`, Update has only `displayName`). Use `z.object` per command, not one shared schema.
+5. **`RoleResponse` / response types must include all fields the BE returns** — read the BE `*Response.cs` before writing the TS interface.
+6. **When BE adds/removes a field, update in this order**: schema → types → service → hook → component.

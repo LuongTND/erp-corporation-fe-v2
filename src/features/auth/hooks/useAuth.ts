@@ -3,56 +3,37 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth.store'
 import { authService, type LoginRequest } from '@/features/auth/services/auth.service'
-import { decodeUserFromToken } from '@/features/auth/auth.utils'
 import { ROLE_REDIRECTS } from '@/config/auth.config'
 import { ROUTES } from '@/config/routes'
 
-/**
- * Hook quản lý Authentication cho toàn bộ ứng dụng.
- *
- * Luồng Login:
- * 1. Gọi API login → nhận `{ accessToken, refreshToken }`
- * 2. Decode JWT để lấy thông tin user (id, email, name, role)
- * 3. Kiểm tra role (nếu `expectedRole` được truyền vào)
- * 4. Lưu vào Zustand store + localStorage
- * 5. Redirect dựa trên role
- */
 export const useAuth = () => {
   const authStore = useAuthStore()
   const navigate = useNavigate()
 
   const login = useCallback(
-    async (credentials: LoginRequest, expectedRole?: string) => {
+    async (credentials: LoginRequest) => {
       try {
-        // B1: Gọi API login
-        const response = await authService.login(credentials)
-        const accessToken = response.token || response.accessToken
-        const { refreshToken } = response
+        const { accessToken, refreshToken } = await authService.login(credentials)
 
-        if (!accessToken) {
-          throw new Error('Không nhận được Access Token từ server.')
-        }
+        if (!accessToken) throw new Error('Không nhận được Access Token từ server.')
 
-        // B2: Giải mã JWT để lấy user info
-        const decodedUser = decodeUserFromToken(accessToken)
-        if (!decodedUser) {
-          throw new Error('Token không hợp lệ, không thể giải mã thông tin người dùng.')
-        }
+        // Store tokens first so the profile request is authenticated
+        localStorage.setItem('access_token', accessToken)
+        if (refreshToken) localStorage.setItem('refresh_token', refreshToken)
 
-        // B3: Kiểm tra role nếu có yêu cầu (từ Portal Page)
-        if (expectedRole && decodedUser.role !== expectedRole) {
-          throw new Error('Tài khoản của bạn không có quyền truy cập hệ thống này.')
-        }
+        const [profile, permissions] = await Promise.all([
+          authService.getProfile(),
+          authService.getPermissions(),
+        ])
 
-        // B4: Lưu vào Zustand store + localStorage
         authStore.setAuth(
           {
-            id: decodedUser.id,
-            name: decodedUser.name,
-            email: decodedUser.email,
-            role: decodedUser.role,
-            permissions: [],
-            avatar: decodedUser.avatar,
+            id: profile.id,
+            name: profile.fullName,
+            email: profile.email,
+            role: profile.role ?? '',
+            permissions: permissions ?? [],
+            avatar: undefined,
           },
           accessToken,
           refreshToken,
@@ -60,13 +41,11 @@ export const useAuth = () => {
 
         toast.success('Đăng nhập thành công')
 
-        // B5: Redirect dựa trên role
-        const redirectPath = ROLE_REDIRECTS[decodedUser.role] || ROUTES.DASHBOARD
+        const redirectPath = ROLE_REDIRECTS[profile.role ?? ''] || ROUTES.DASHBOARD
         navigate(redirectPath)
-
-        return response
       } catch (error: any) {
-        // Xử lý lỗi từ API hoặc logic
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
         const message =
           error.response?.data?.message ||
           error.message ||
@@ -87,7 +66,7 @@ export const useAuth = () => {
     } finally {
       authStore.logout()
       toast.info('Đã đăng xuất')
-      navigate(ROUTES.PORTAL)
+      navigate(ROUTES.LOGIN)
     }
   }, [authStore, navigate])
 

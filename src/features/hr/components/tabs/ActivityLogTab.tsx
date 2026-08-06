@@ -3,14 +3,14 @@ import type { ActivityEntry, ActivityType } from '../../types/employee.types'
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
 const ACTIVITY_LOG: ActivityEntry[] = [
-  { id: '1', action: 'Updated personal email address',             actor: 'Nguyễn Văn An',   timestamp: '26 May 2025, 09:45', type: 'edit'     },
-  { id: '2', action: 'Leave request approved — 13–15 May 2025',   actor: 'Tống Minh Long',   timestamp: '12 May 2025, 14:20', type: 'approved' },
-  { id: '3', action: 'Annual leave requested — 13–15 May 2025',   actor: 'Nguyễn Văn An',   timestamp: '11 May 2025, 10:30', type: 'leave'    },
-  { id: '4', action: 'Work location changed to Hybrid',            actor: 'HR Manager',       timestamp: '01 Apr 2025, 08:00', type: 'edit'     },
-  { id: '5', action: 'Salary grade updated to Grade 4',            actor: 'HR Manager',       timestamp: '15 Jan 2025, 09:00', type: 'approved' },
-  { id: '6', action: 'Late check-in recorded — 21 Mar 2025',      actor: 'System',           timestamp: '21 Mar 2025, 09:15', type: 'warning'  },
-  { id: '7', action: 'MacBook Pro 14" assigned to employee',       actor: 'IT Admin',         timestamp: '20 Jan 2022, 10:00', type: 'approved' },
-  { id: '8', action: 'Employee profile created',                   actor: 'HR Admin',         timestamp: '15 Jan 2022, 08:00', type: 'edit'     },
+  { id: '1', action: 'Cập nhật email cá nhân',                    actor: 'Nguyễn Văn An',   timestamp: '26/05/2025, 09:45', type: 'edit'     },
+  { id: '2', action: 'Đơn nghỉ phép được duyệt — 13–15/05/2025',  actor: 'Tống Minh Long',   timestamp: '12/05/2025, 14:20', type: 'approved' },
+  { id: '3', action: 'Yêu cầu nghỉ phép — 13–15/05/2025',         actor: 'Nguyễn Văn An',   timestamp: '11/05/2025, 10:30', type: 'leave'    },
+  { id: '4', action: 'Hình thức làm việc đổi sang Kết hợp',       actor: 'Quản lý HR',       timestamp: '01/04/2025, 08:00', type: 'edit'     },
+  { id: '5', action: 'Bậc lương cập nhật lên Bậc 4',              actor: 'Quản lý HR',       timestamp: '15/01/2025, 09:00', type: 'approved' },
+  { id: '6', action: 'Ghi nhận đi trễ — 21/03/2025',              actor: 'Hệ thống',         timestamp: '21/03/2025, 09:15', type: 'warning'  },
+  { id: '7', action: 'MacBook Pro 14" được cấp cho nhân viên',     actor: 'IT Admin',         timestamp: '20/01/2022, 10:00', type: 'approved' },
+  { id: '8', action: 'Hồ sơ nhân viên được tạo',                  actor: 'Admin HR',         timestamp: '15/01/2022, 08:00', type: 'edit'     },
 ]
 
 // ─── Style maps ───────────────────────────────────────────────────────────────
@@ -27,7 +27,7 @@ const DOT_COLOR: Record<ActivityType, string> = {
 export function ActivityLogTab() {
   return (
     <div className="bg-card rounded-xl shadow-sm p-6">
-      <h3 className="text-sm font-semibold text-foreground mb-6">Activity Timeline</h3>
+      <h3 className="text-sm font-semibold text-foreground mb-6">Nhật ký hoạt động</h3>
 
       <div className="relative">
         {/* Vertical connector line */}

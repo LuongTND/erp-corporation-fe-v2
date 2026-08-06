@@ -3,33 +3,33 @@ import { AxiosError } from 'axios'
 import type { ApiResponse } from '@/types/api'
 
 // ──────────────────────────────────────────────────────────────
-// API Call Utilities
+// API Call Utilities — unwraps BE ApiResponse<T> → T
 // ──────────────────────────────────────────────────────────────
 
 export const apiCall = {
-  get: async <T = unknown>(url: string, config?: any) => {
-    const response = await api.get<unknown, ApiResponse<T>>(url, config)
-    return response.data
+  get: async <T = unknown>(url: string, config?: any): Promise<T> => {
+    const response = await api.get<ApiResponse<T>>(url, config)
+    return response.data.data
   },
 
-  post: async <T = unknown>(url: string, data?: any, config?: any) => {
-    const response = await api.post<unknown, ApiResponse<T>>(url, data, config)
-    return response.data
+  post: async <T = unknown>(url: string, data?: any, config?: any): Promise<T> => {
+    const response = await api.post<ApiResponse<T>>(url, data, config)
+    return response.data.data
   },
 
-  put: async <T = unknown>(url: string, data?: any, config?: any) => {
-    const response = await api.put<unknown, ApiResponse<T>>(url, data, config)
-    return response.data
+  put: async <T = unknown>(url: string, data?: any, config?: any): Promise<T> => {
+    const response = await api.put<ApiResponse<T>>(url, data, config)
+    return response.data.data
   },
 
-  patch: async <T = unknown>(url: string, data?: any, config?: any) => {
-    const response = await api.patch<unknown, ApiResponse<T>>(url, data, config)
-    return response.data
+  patch: async <T = unknown>(url: string, data?: any, config?: any): Promise<T> => {
+    const response = await api.patch<ApiResponse<T>>(url, data, config)
+    return response.data.data
   },
 
-  delete: async <T = unknown>(url: string, config?: any) => {
-    const response = await api.delete<unknown, ApiResponse<T>>(url, config)
-    return response.data
+  delete: async <T = unknown>(url: string, config?: any): Promise<T> => {
+    const response = await api.delete<ApiResponse<T>>(url, config)
+    return response.data.data
   },
 }
 

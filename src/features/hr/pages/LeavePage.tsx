@@ -10,10 +10,10 @@ import { LeaveCalendar }      from '@/features/hr/components/leave/LeaveCalendar
 import { NewLeaveDialog }     from '@/features/hr/components/leave/NewLeaveDialog'
 
 const MONTHS = [
-  'May 2025', 'Apr 2025', 'Mar 2025', 'Jun 2025', 'Jul 2025',
+  'Th5/2025', 'Th4/2025', 'Th3/2025', 'Th6/2025', 'Th7/2025',
 ]
 
-const DEPARTMENTS = ['All Departments', 'Engineering', 'Design', 'HR', 'Product', 'Finance', 'Sales']
+const DEPARTMENTS = ['Tất cả phòng ban', 'Kỹ thuật', 'Thiết kế', 'Nhân sự', 'Sản phẩm', 'Tài chính', 'Kinh doanh']
 
 export default function LeavePage() {
   const [month,           setMonth]           = useState('May 2025')
@@ -21,14 +21,14 @@ export default function LeavePage() {
   const [showLeaveDialog, setShowLeaveDialog] = useState(false)
 
   return (
-    <div className="min-h-screen bg-card">
-      <div className="max-w-7xl mx-auto p-8 space-y-6">
+    <div className="h-full flex flex-col bg-background text-foreground">
+      <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
 
         {/* Page header */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="shrink-0 flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Leave Management</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Track, approve and manage team leave requests</p>
+            <h1 className="text-2xl font-bold text-foreground">Quản lý nghỉ phép</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">Theo dõi, phê duyệt và quản lý đơn nghỉ phép</p>
           </div>
 
           <div className="flex items-center gap-2.5 flex-wrap">
@@ -67,7 +67,7 @@ export default function LeavePage() {
               className="flex items-center gap-2 h-9 px-4 rounded-lg text-sm font-medium text-white cursor-pointer transition-opacity hover:opacity-90 bg-primary"
             >
               <Plus className="w-4 h-4" />
-              New Leave Request
+              Tạo đơn nghỉ
             </button>
 
             {/* Leave Policy */}
@@ -76,22 +76,24 @@ export default function LeavePage() {
               className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium border border-border cursor-pointer transition-colors hover:bg-muted/50 bg-card text-muted-foreground"
             >
               <BookOpen className="w-4 h-4" />
-              Leave Policy
+              Chính sách nghỉ phép
             </button>
           </div>
         </div>
 
         {/* Section 1 — Stat cards */}
-        <LeaveStatCards />
+        <div className="shrink-0"><LeaveStatCards /></div>
 
         {/* Section 2 — 60/40 layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[60fr_40fr] gap-4 items-start">
-          <LeaveRequestsTable />
+        <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-[60fr_40fr] gap-4 items-start">
+          <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
+            <LeaveRequestsTable />
+          </div>
           <LeaveBalancePanel onRequestLeave={() => setShowLeaveDialog(true)} />
         </div>
 
         {/* Section 3 — Team Calendar */}
-        <LeaveCalendar />
+        <div className="shrink-0"><LeaveCalendar /></div>
 
       </div>
 
@@ -99,7 +101,7 @@ export default function LeavePage() {
       <button
         type="button"
         onClick={() => setShowLeaveDialog(true)}
-        aria-label="Add leave request"
+        aria-label="Tạo đơn nghỉ"
         className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full shadow-lg flex items-center justify-center cursor-pointer transition-opacity hover:opacity-90 bg-primary"
       >
         <Plus className="w-6 h-6 text-white" />

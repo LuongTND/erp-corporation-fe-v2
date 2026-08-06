@@ -203,7 +203,7 @@ export function TaskCreateDialog({
   const [loading, setLoading] = useState(false)
   const [assignee, setAssignee] = useState('')
   const [templatePopoverOpen, setTemplatePopoverOpen] = useState(false)
-  const { isLoading: loadingData, priorities, statuses } = useMockTaskMeta()
+  const { isLoading: loadingData, error: metaError, priorities, statuses } = useMockTaskMeta()
 
   const form = useForm<TaskFormData>({
     resolver: zodResolver(taskFormSchema),
@@ -326,6 +326,20 @@ export function TaskCreateDialog({
                 Đang tải dữ liệu...
               </p>
             </div>
+          </div>
+        ) : metaError ? (
+          <div className="flex flex-col items-center justify-center h-56 gap-3">
+            <p className="text-[13px]" style={{ color: C.muted }}>
+              Không thể tải trạng thái & độ ưu tiên.
+            </p>
+            <button
+              type="button"
+              className="px-3 py-1.5 rounded-md text-[12px] font-medium"
+              style={{ backgroundColor: C.bgHover, color: C.text }}
+              onClick={() => window.location.reload()}
+            >
+              Thử lại
+            </button>
           </div>
         ) : (
           <form onSubmit={form.handleSubmit(handleCreateTask)}>
@@ -451,15 +465,17 @@ export function TaskCreateDialog({
                   control={form.control}
                   name="statusId"
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select value={field.value || undefined} onValueChange={field.onChange}>
                       <SelectTrigger className={SELECT_TRIGGER_CLASS}>
-                        <SelectValue>
-                          {selectedStatus ? (
-                            <StatusPill color={selectedStatus.color} label={selectedStatus.name} />
-                          ) : (
+                        <SelectValue
+                          placeholder={
                             <span className="text-[12px]" style={{ color: C.muted }}>
                               Chọn trạng thái
                             </span>
+                          }
+                        >
+                          {selectedStatus && (
+                            <StatusPill color={selectedStatus.color} label={selectedStatus.name} />
                           )}
                         </SelectValue>
                       </SelectTrigger>
@@ -505,7 +521,13 @@ export function TaskCreateDialog({
                       onValueChange={(v) => field.onChange(v === 'none' ? '' : v)}
                     >
                       <SelectTrigger className={SELECT_TRIGGER_CLASS}>
-                        <SelectValue>
+                        <SelectValue
+                          placeholder={
+                            <span className="text-[12px]" style={{ color: C.muted }}>
+                              Không có
+                            </span>
+                          }
+                        >
                           {selectedPriority ? (
                             <StatusPill color={selectedPriority.color} label={selectedPriority.name} />
                           ) : (

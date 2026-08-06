@@ -54,14 +54,14 @@ export function EmployeeListFilters({
       <div className="flex shrink-0 items-center gap-2">
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
           <SelectTrigger className="h-8 w-36 cursor-pointer border-border bg-card text-xs text-foreground">
-            <SelectValue placeholder="All Status" />
+            <SelectValue placeholder="Tất cả trạng thái" />
           </SelectTrigger>
           <SelectContent className="border-border bg-card text-foreground">
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="on-leave">On Leave</SelectItem>
-            <SelectItem value="probation">Probation</SelectItem>
-            <SelectItem value="resigned">Resigned</SelectItem>
+            <SelectItem value="all">Tất cả</SelectItem>
+            <SelectItem value="active">Đang làm</SelectItem>
+            <SelectItem value="on-leave">Đang nghỉ</SelectItem>
+            <SelectItem value="probation">Thử việc</SelectItem>
+            <SelectItem value="resigned">Đã nghỉ</SelectItem>
           </SelectContent>
         </Select>
 
@@ -69,7 +69,7 @@ export function EmployeeListFilters({
           <button
             type="button"
             onClick={() => onViewChange('table')}
-            aria-label="Table view"
+            aria-label="Dạng bảng"
             className={cn(
               'flex h-8 w-8 cursor-pointer items-center justify-center transition-colors',
               view === 'table' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50',
@@ -80,7 +80,7 @@ export function EmployeeListFilters({
           <button
             type="button"
             onClick={() => onViewChange('grid')}
-            aria-label="Grid view"
+            aria-label="Dạng lưới"
             className={cn(
               'flex h-8 w-8 cursor-pointer items-center justify-center border-l border-border transition-colors',
               view === 'grid' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50',

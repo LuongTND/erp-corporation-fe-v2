@@ -86,15 +86,20 @@ export function setMockTaskMeta(partialMeta: Partial<TaskMeta>) {
 export function useMockTaskMeta() {
   const [meta, setMeta] = useState<TaskMeta | null>(cachedTaskMeta)
   const [isLoading, setIsLoading] = useState(!cachedTaskMeta)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     let isMounted = true
 
     const loadMeta = async () => {
       try {
+        setError(null)
         const nextMeta = await loadTaskMeta()
         if (!isMounted) return
         setMeta(nextMeta)
+      } catch (err) {
+        if (!isMounted) return
+        setError(err instanceof Error ? err : new Error('Không thể tải dữ liệu'))
       } finally {
         if (isMounted) setIsLoading(false)
       }
@@ -109,6 +114,7 @@ export function useMockTaskMeta() {
 
   return {
     columns: meta?.columns ?? [],
+    error,
     isLoading,
     priorities: meta?.priorities ?? [],
     statuses: meta?.statuses ?? [],

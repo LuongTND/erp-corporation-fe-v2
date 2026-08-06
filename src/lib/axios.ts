@@ -36,7 +36,7 @@ const setTokens = (accessToken: string, refreshToken?: string): void => {
 
 const redirectToLogin = (): void => {
   useAuthStore.getState().logout()
-  window.location.href = ROUTES.PORTAL
+  window.location.href = ROUTES.LOGIN
 }
 
 const refreshAccessToken = async (): Promise<string> => {
@@ -47,7 +47,8 @@ const refreshAccessToken = async (): Promise<string> => {
     RefreshToken: refreshToken,
   })
 
-  return data.access_token
+  setTokens(data.data.accessToken, data.data.refreshToken)
+  return data.data.accessToken
 }
 
 const processPendingRequests = (token: string): void => {
@@ -66,6 +67,13 @@ const handleTokenRefresh = async (): Promise<string> => {
   try {
     const newToken = await refreshAccessToken()
     setTokens(newToken)
+    // Sync permissions after token refresh (fire-and-forget, non-blocking)
+    api
+      .get<{ data: string[] }>('/api/auth/me/permissions', {
+        headers: { Authorization: `Bearer ${newToken}` },
+      })
+      .then((res) => useAuthStore.getState().setPermissions(res.data.data))
+      .catch((err) => console.error('[auth] permission sync failed after token refresh:', err))
     processPendingRequests(newToken)
     return newToken
   } catch (error) {

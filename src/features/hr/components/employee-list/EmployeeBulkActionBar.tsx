@@ -12,7 +12,7 @@ export function EmployeeBulkActionBar({ selectedCount, onClear }: EmployeeBulkAc
 
   return (
     <div className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2">
-      <div className="flex items-center gap-3 rounded-xl border border-foreground/20 bg-[#181715] px-6 py-3 shadow-lg">
+      <div className="flex items-center gap-3 rounded-xl border border-foreground/20 bg-neutral-900 px-6 py-3 shadow-lg">
         <span className="text-sm font-medium text-card">
           {selectedCount} {selectedCount === 1 ? 'employee' : 'employees'} selected
         </span>

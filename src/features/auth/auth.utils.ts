@@ -107,18 +107,3 @@ export const getTokenExpiresIn = (token: string): number => {
   }
 }
 
-// ──────────────────────────────────────────────────────────────
-// Role Checking
-// ──────────────────────────────────────────────────────────────
-
-/**
- * Kiểm tra role từ token có khớp với role yêu cầu hay không.
- * @param token - JWT access token
- * @param requiredRole - Role cần kiểm tra
- * @returns true nếu role khớp
- */
-export const checkUserRole = (token: string, requiredRole: string): boolean => {
-  const user = decodeUserFromToken(token)
-  if (!user) return false
-  return user.role === requiredRole.toLowerCase()
-}

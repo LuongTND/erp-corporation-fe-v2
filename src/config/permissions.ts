@@ -56,6 +56,8 @@ export const PERMISSION_MAP: Record<string, RoutePermission> = {
   '/admin/accounts': { roles: ROLE_GROUPS.ADMIN_ONLY },
   '/admin/settings': { roles: ROLE_GROUPS.ADMIN_ONLY },
   '/admin/permissions': { roles: ROLE_GROUPS.ADMIN_ONLY },
+  '/admin/role-hierarchy': { roles: ROLE_GROUPS.ADMIN_ONLY },
+  '/admin/org-hierarchy': { roles: ROLE_GROUPS.MANAGEMENT },
   '/admin': { roles: ROLE_GROUPS.HIGH_LEVEL },
 }
 

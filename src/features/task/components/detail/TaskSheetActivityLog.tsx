@@ -59,11 +59,13 @@ export function TaskSheetActivityLog({ taskId }: Props) {
 
   useEffect(() => {
     if (!taskId) return
+    let isMounted = true
     setLoading(true)
-    taskActivityService.getByTaskId(taskId).then((data) => {
-      setEntries(data)
-      setLoading(false)
-    })
+    taskActivityService.getByTaskId(taskId)
+      .then((data) => { if (isMounted) setEntries(data) })
+      .catch(() => {})
+      .finally(() => { if (isMounted) setLoading(false) })
+    return () => { isMounted = false }
   }, [taskId])
 
   return (

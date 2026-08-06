@@ -50,9 +50,9 @@ const MAY_2025_CALENDAR: CalendarDay[] = [
 const ATTENDANCE_RECORDS: AttendanceRecord[] = [
   { date: '30 May 2025', checkIn: '08:03', checkOut: '17:15', hours: '9h 12m', status: 'Present', note: '' },
   { date: '29 May 2025', checkIn: '07:58', checkOut: '17:02', hours: '9h 04m', status: 'Present', note: '' },
-  { date: '28 May 2025', checkIn: '—',     checkOut: '—',     hours: '—',      status: 'Absent',  note: 'Not reported' },
+  { date: '28 May 2025', checkIn: '—',     checkOut: '—',     hours: '—',      status: 'Absent',  note: 'Chưa báo cáo' },
   { date: '27 May 2025', checkIn: '08:01', checkOut: '17:00', hours: '8h 59m', status: 'Present', note: '' },
-  { date: '26 May 2025', checkIn: '08:47', checkOut: '17:10', hours: '8h 23m', status: 'Late',    note: 'Traffic' },
+  { date: '26 May 2025', checkIn: '08:47', checkOut: '17:10', hours: '8h 23m', status: 'Late',    note: 'Kẹt xe' },
   { date: '23 May 2025', checkIn: '08:00', checkOut: '17:00', hours: '9h 00m', status: 'Present', note: '' },
   { date: '22 May 2025', checkIn: '08:02', checkOut: '17:05', hours: '9h 03m', status: 'Present', note: '' },
   { date: '21 May 2025', checkIn: '08:52', checkOut: '17:00', hours: '8h 08m', status: 'Late',    note: '' },
@@ -71,6 +71,14 @@ const DAY_BG: Record<CalendarDayStatus, string> = {
   empty:   'bg-transparent',
 }
 
+const STATUS_VI: Record<AttendanceStatus, string> = {
+  Present: 'Có mặt',
+  Late:    'Đi trễ',
+  Absent:  'Vắng mặt',
+  Leave:   'Nghỉ phép',
+  Weekend: 'Cuối tuần',
+}
+
 const STATUS_BADGE: Record<AttendanceStatus, string> = {
   Present: 'bg-green-500/12 text-green-700 dark:bg-green-500/20 dark:text-green-400',
   Late:    'bg-amber-500/15 text-amber-700 dark:text-amber-400',
@@ -79,7 +87,7 @@ const STATUS_BADGE: Record<AttendanceStatus, string> = {
   Weekend: 'bg-muted text-muted-foreground',
 }
 
-const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const WEEK_DAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -91,23 +99,23 @@ export function AttendanceTab() {
       {/* Calendar card */}
       <div className="bg-card rounded-xl shadow-sm p-6">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-sm font-semibold text-foreground">Attendance Calendar</h3>
+          <h3 className="text-sm font-semibold text-foreground">Lịch chấm công</h3>
           <div className="flex items-center gap-3">
             <Select value={month} onValueChange={setMonth}>
               <SelectTrigger className="h-8 w-36 text-xs border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="may-2025">May 2025</SelectItem>
-                <SelectItem value="apr-2025">Apr 2025</SelectItem>
-                <SelectItem value="mar-2025">Mar 2025</SelectItem>
+                <SelectItem value="may-2025">Tháng 5/2025</SelectItem>
+                <SelectItem value="apr-2025">Tháng 4/2025</SelectItem>
+                <SelectItem value="mar-2025">Tháng 3/2025</SelectItem>
               </SelectContent>
             </Select>
             <a
               href="/hr/attendance"
               className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
             >
-              Full report
+              Xem đầy đủ
               <ExternalLink className="w-3 h-3" />
             </a>
           </div>
@@ -137,10 +145,10 @@ export function AttendanceTab() {
         {/* Summary pills */}
         <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-border">
           {[
-            { label: 'Present', count: 20, bg: 'bg-primary/10 text-primary/80' },
-            { label: 'Late',    count: 2,  bg: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
-            { label: 'Absent',  count: 1,  bg: 'bg-destructive/12 text-destructive' },
-            { label: 'Leave',   count: 3,  bg: 'bg-teal-500/15 text-teal-700 dark:text-teal-400' },
+            { label: 'Có mặt',    count: 20, bg: 'bg-primary/10 text-primary/80' },
+            { label: 'Đi trễ',   count: 2,  bg: 'bg-amber-500/15 text-amber-700 dark:text-amber-400' },
+            { label: 'Vắng mặt', count: 1,  bg: 'bg-destructive/12 text-destructive' },
+            { label: 'Nghỉ phép',count: 3,  bg: 'bg-teal-500/15 text-teal-700 dark:text-teal-400' },
           ].map((stat) => (
             <span
               key={stat.label}
@@ -155,17 +163,17 @@ export function AttendanceTab() {
       {/* Recent records table */}
       <div className="bg-card rounded-xl shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-sm font-semibold text-foreground">Recent Records</h3>
+          <h3 className="text-sm font-semibold text-foreground">Lịch sử gần đây</h3>
         </div>
         <Table>
           <TableHeader>
             <TableRow className="bg-card hover:bg-card">
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Date</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Check-in</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Check-out</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Hours</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Note</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ngày</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Vào</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ra</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Số giờ</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Trạng thái</TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ghi chú</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -177,7 +185,7 @@ export function AttendanceTab() {
                 <TableCell className="text-sm text-foreground font-mono">{record.hours}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${STATUS_BADGE[record.status]}`}>
-                    {record.status}
+                    {STATUS_VI[record.status]}
                   </span>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">{record.note || '—'}</TableCell>

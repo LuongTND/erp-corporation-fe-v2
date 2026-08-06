@@ -16,7 +16,7 @@ import {
   EmployeeStatusBadge,
 } from './EmployeeListPrimitives'
 
-const tableHeaders = ['Employee', 'ID', 'Department', 'Position', 'Status', 'Join Date', 'Attendance', 'Action']
+const tableHeaders = ['Nhân viên', 'Mã NV', 'Phòng ban', 'Chức vụ', 'Trạng thái', 'Ngày vào', 'Chuyên cần', 'Thao tác']
 
 interface EmployeeListTableProps {
   employees: ReadonlyArray<EmployeeListItem>
@@ -39,7 +39,7 @@ export function EmployeeListTable({
         <TableHeader>
           <TableRow className="border-b border-border hover:bg-transparent">
             <TableHead className="w-10 pl-4">
-              <Checkbox checked={allChecked} onCheckedChange={onToggleAll} aria-label="Select all" />
+              <Checkbox checked={allChecked} onCheckedChange={onToggleAll} aria-label="Chọn tất cả" />
             </TableHead>
             {tableHeaders.map((header) => (
               <TableHead

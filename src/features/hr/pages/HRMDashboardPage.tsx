@@ -13,7 +13,7 @@ export default function HRMDashboardPage() {
       <HRPageHeader
         breadcrumbs={[
           { label: 'Modules' },
-          { label: 'HR & Payroll', isActive: true },
+          { label: 'Nhân sự & Lương', isActive: true },
         ]}
         trailingContent={(
           <div className="flex items-center gap-3">
@@ -22,7 +22,7 @@ export default function HRMDashboardPage() {
               className="flex h-8 cursor-pointer items-center gap-2 rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground bg-transparent transition-colors duration-150 hover:bg-accent hover:text-accent-foreground"
             >
               <Search className="h-3.5 w-3.5" />
-              Search employees
+              Tìm nhân viên
             </button>
             <button
               type="button"
@@ -41,10 +41,10 @@ export default function HRMDashboardPage() {
             className="text-[22px] font-semibold tracking-tight text-foreground"
             style={{ fontFamily: 'Lora, Georgia, serif', letterSpacing: '-0.3px' }}
           >
-            HR &amp; Payroll Dashboard
+            Bảng điều khiển Nhân sự &amp; Lương
           </h1>
           <p className="text-sm mt-0.5 text-muted-foreground">
-            Overview · Week of 26 May 2025
+            Tổng quan · Tuần 26 tháng 5, 2025
           </p>
         </div>
         <HRMDashboardStatCards />

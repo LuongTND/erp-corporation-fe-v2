@@ -39,13 +39,8 @@ type SectionGroup = {
   label: string
   dot: string
   titleColor: string
+  isDone?: boolean
 }
-
-const STATUS_GROUPS: SectionGroup[] = [
-  { key: 'in-progress', label: 'Đang thực hiện', dot: 'var(--t-status-progress-text)', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'todo',        label: 'Cần làm',         dot: 'oklch(var(--muted-foreground))', titleColor: 'oklch(var(--muted-foreground))' },
-  { key: 'done',        label: 'Hoàn thành',      dot: 'var(--t-status-done-text)', titleColor: 'oklch(var(--muted-foreground))' },
-]
 
 const PRIORITY_GROUPS: SectionGroup[] = [
   { key: 'urgent', label: 'Khẩn cấp',        dot: 'var(--t-priority-high-text)', titleColor: 'oklch(var(--muted-foreground))' },
@@ -54,13 +49,6 @@ const PRIORITY_GROUPS: SectionGroup[] = [
   { key: 'low',    label: 'Thấp',             dot: 'var(--t-priority-low-text)', titleColor: 'oklch(var(--muted-foreground))' },
   { key: 'none',   label: 'Không có ưu tiên', dot: 'oklch(var(--muted-foreground))', titleColor: 'oklch(var(--muted-foreground))' },
 ]
-
-function getStatusGroup(task: Task): string {
-  const s = (task.status ?? '').toLowerCase()
-  if (s.includes('progress') || s === 'in-progress') return 'in-progress'
-  if (s.includes('done') || s.includes('complete')) return 'done'
-  return 'todo'
-}
 
 function getPriorityGroup(task: Task): string {
   const p = (task.priority ?? '').toLowerCase()
@@ -120,14 +108,14 @@ function DueDateChip({ date }: { date?: string }) {
 
 // ── Draggable task row ────────────────────────────────────────────────────────
 
-function DraggableTaskRow({ task, onClick, onToggleDone }: { task: Task; onClick?: (t: Task) => void; onToggleDone?: (task: Task) => void }) {
+function DraggableTaskRow({ task, onClick, onToggleDone, isDone = false }: { task: Task; onClick?: (t: Task) => void; onToggleDone?: (task: Task) => void; isDone?: boolean }) {
   const { setNodeRef, attributes, listeners, isDragging } = useDraggable({
     id: task.id,
     data: { task },
   })
   const { onDuplicate, onArchive } = useTaskActions()
   const [hovered, setHovered] = React.useState(false)
-  const done = getStatusGroup(task) === 'done'
+  const done = isDone
 
   return (
     <TaskContextMenu task={task}>
@@ -295,6 +283,7 @@ function DroppableSection({
   onTaskClick?: (task: Task) => void
   onToggleDone?: (task: Task) => void
   isDraggingAny: boolean
+  isDone?: boolean
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: group.key })
   const [headerHovered, setHeaderHovered] = React.useState(false)
@@ -359,7 +348,7 @@ function DroppableSection({
       {expanded && (
         <div className="mt-1">
           {items.map((task) => (
-            <DraggableTaskRow key={String(task.id)} task={task} onClick={onTaskClick} onToggleDone={onToggleDone} />
+            <DraggableTaskRow key={String(task.id)} task={task} onClick={onTaskClick} onToggleDone={onToggleDone} isDone={group.isDone} />
           ))}
           <AddTaskRow />
         </div>
@@ -416,7 +405,7 @@ function StaticSection({
       {expanded && (
         <div className="mt-1">
           {items.map((task) => (
-            <DraggableTaskRow key={String(task.id)} task={task} onClick={onTaskClick} onToggleDone={onToggleDone} />
+            <DraggableTaskRow key={String(task.id)} task={task} onClick={onTaskClick} onToggleDone={onToggleDone} isDone={group.isDone} />
           ))}
           <AddTaskRow />
         </div>
@@ -450,15 +439,39 @@ function AddTaskRow() {
 
 export function TaskList({
   tasks,
-  statuses: _statuses,
+  statuses,
   onTaskClick,
   searchQuery = '',
   onTaskMove,
   groupBy = 'status',
 }: TaskListProps) {
-  const [expandedSections, setExpandedSections] = React.useState<Set<string>>(
-    new Set(['in-progress', 'todo', 'done', 'urgent', 'high', 'medium', 'low', 'none']),
+  const DONE_CODES = new Set(['Done', 'Cancelled'])
+
+  const statusGroups = React.useMemo<SectionGroup[]>(() =>
+    statuses
+      .slice()
+      .sort((a, b) => a.order - b.order)
+      .map((s) => ({
+        key: s.id,
+        label: s.name,
+        dot: s.color,
+        titleColor: 'oklch(var(--muted-foreground))',
+        isDone: DONE_CODES.has(s.code),
+      })),
+    [statuses],
   )
+
+  const [expandedSections, setExpandedSections] = React.useState<Set<string>>(
+    new Set(['urgent', 'high', 'medium', 'low', 'none']),
+  )
+
+  // expand status sections when they arrive from API
+  React.useEffect(() => {
+    if (statusGroups.length > 0) {
+      setExpandedSections((prev) => new Set([...prev, ...statusGroups.map((g) => g.key)]))
+    }
+  }, [statusGroups])
+
   const [activeTask, setActiveTask] = React.useState<Task | null>(null)
 
   const sensors = useSensors(
@@ -478,8 +491,10 @@ export function TaskList({
   }, [tasks, searchQuery])
 
   const grouped = React.useMemo(() => {
-    const groups = groupBy === 'priority' ? PRIORITY_GROUPS : STATUS_GROUPS
-    const getKey = groupBy === 'priority' ? getPriorityGroup : getStatusGroup
+    const groups = groupBy === 'priority' ? PRIORITY_GROUPS : statusGroups
+    const getKey = groupBy === 'priority'
+      ? getPriorityGroup
+      : (task: Task) => String(task.columnId)
     const map = new Map<string, Task[]>()
     groups.forEach((g) => map.set(g.key, []))
     filteredTasks.forEach((task) => {
@@ -489,7 +504,7 @@ export function TaskList({
       else map.set(key, [task])
     })
     return map
-  }, [filteredTasks, groupBy])
+  }, [filteredTasks, groupBy, statusGroups])
 
   const toggleSection = (key: string) => {
     setExpandedSections((prev) => {
@@ -509,13 +524,12 @@ export function TaskList({
     const { active, over } = event
     setActiveTask(null)
 
-    // Don't move tasks between priority groups via drag
     if (!over || !onTaskMove || groupBy === 'priority') return
 
     const task = active.data.current?.task as Task | undefined
     if (!task) return
 
-    const currentSection = getStatusGroup(task)
+    const currentSection = String(task.columnId)
     const targetSection = String(over.id)
 
     if (currentSection !== targetSection) {
@@ -525,7 +539,7 @@ export function TaskList({
   }
 
   const isDraggingAny = activeTask !== null
-  const activeGroups = groupBy === 'priority' ? PRIORITY_GROUPS : STATUS_GROUPS
+  const activeGroups = groupBy === 'priority' ? PRIORITY_GROUPS : statusGroups
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

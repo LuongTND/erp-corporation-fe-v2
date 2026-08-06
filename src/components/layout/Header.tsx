@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { useTranslation } from 'react-i18next'
 import { useTheme } from 'next-themes'
 import {
   LogOut,
@@ -9,7 +8,6 @@ import {
   Sun,
   Moon,
   Monitor,
-  Globe,
   Menu,
   Layers,
   LogIn,
@@ -40,30 +38,14 @@ import { CurrentTime } from './CurrentTime'
 import { NotificationPopover } from './NotificationPopover'
 
 export function Header() {
-  const { t, i18n } = useTranslation()
   const { theme, setTheme } = useTheme()
   const { user, isAuthenticated, logout } = useAuth()
-
-  console.log("isAuthenticated", isAuthenticated)
-
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Avoid hydration mismatch for next-themes
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  const toggleLanguage = () => {
-    const nextLang = i18n.language === 'vi' ? 'en' : 'vi'
-    i18n.changeLanguage(nextLang)
-    localStorage.setItem('i18nextLng', nextLang)
-  }
-
-  const handleLanguageChange = (lang: 'vi' | 'en') => {
-    i18n.changeLanguage(lang)
-    localStorage.setItem('i18nextLng', lang)
-  }
 
   const handleLogout = async () => {
     try {
@@ -73,9 +55,6 @@ export function Header() {
     }
   }
 
-  const isEn = i18n.language === 'en'
-
-  // User details fallback
   const displayName = user?.name || 'User'
   const displayEmail = user?.email || 'user@example.com'
   const userRole = user?.role || 'Guest'
@@ -86,25 +65,23 @@ export function Header() {
     .toUpperCase()
     .slice(0, 2)
 
-  // Theme translation list
   const themeList = [
-    { value: 'light', label: isEn ? 'Light' : 'Sáng', icon: Sun },
-    { value: 'dark', label: isEn ? 'Dark' : 'Tối', icon: Moon },
-    { value: 'system', label: isEn ? 'System' : 'Hệ thống', icon: Monitor },
+    { value: 'light', label: 'Sáng', icon: Sun },
+    { value: 'dark', label: 'Tối', icon: Moon },
+    { value: 'system', label: 'Hệ thống', icon: Monitor },
   ]
 
-  // Navigation Links
   const privateLinks = [
-    { to: ROUTES.DASHBOARD, label: isEn ? 'Dashboard' : 'Bảng điều khiển' },
-    { to: ROUTES.CHAT, label: isEn ? 'Chat' : 'Trò chuyện' },
-    { to: ROUTES.TASK, label: isEn ? 'Tasks' : 'Công việc' },
+    { to: ROUTES.DASHBOARD, label: 'Bảng điều khiển' },
+    { to: ROUTES.CHAT, label: 'Trò chuyện' },
+    { to: ROUTES.TASK, label: 'Công việc' },
   ]
 
   const publicLinks = [
-    { href: '#features', label: t('landing-page.nav.features', 'Tính năng') },
-    { href: '#solutions', label: t('landing-page.nav.solutions', 'Giải pháp') },
-    { href: '#pricing', label: t('landing-page.nav.pricing', 'Bảng giá') },
-    { href: '#about', label: t('landing-page.nav.about', 'Giới thiệu') },
+    { href: '#features', label: 'Tính năng' },
+    { href: '#solutions', label: 'Giải pháp' },
+    { href: '#pricing', label: 'Bảng giá' },
+    { href: '#about', label: 'Giới thiệu' },
   ]
 
   return (
@@ -118,8 +95,8 @@ export function Header() {
               <Layers className="h-4.5 w-4.5" />
             </div>
             <span className="text-lg font-bold tracking-tight">
-              <span className="text-primary">{t('brand.name_prefix', 'Digi')}</span>
-              <span className="text-foreground">{t('brand.name_suffix', 'ERP')}</span>
+              <span className="text-primary">Digi</span>
+              <span className="text-foreground">ERP</span>
             </span>
           </Link>
 
@@ -169,24 +146,12 @@ export function Header() {
           {/* Guest Action Quick Settings */}
           {!isAuthenticated && mounted && (
             <div className="hidden sm:flex items-center gap-1.5">
-              {/* Quick Language Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleLanguage}
-                className="h-9 w-9 text-muted-foreground hover:text-foreground"
-                title={isEn ? 'Switch to Vietnamese' : 'Chuyển sang Tiếng Anh'}
-              >
-                <Globe className="h-5 w-5" />
-              </Button>
-
-              {/* Quick Theme Toggle */}
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 className="h-9 w-9 text-muted-foreground hover:text-foreground"
-                title={isEn ? 'Toggle theme' : 'Chuyển đổi giao diện'}
+                title="Chuyển đổi giao diện"
               >
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
@@ -225,11 +190,11 @@ export function Header() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem className="cursor-pointer">
                     <UserIcon className="mr-2 h-4 w-4" />
-                    <span>{isEn ? 'My Profile' : 'Hồ sơ cá nhân'}</span>
+                    <span>Hồ sơ cá nhân</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
-                    <span>{isEn ? 'Settings' : 'Cài đặt'}</span>
+                    <span>Cài đặt</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -245,7 +210,7 @@ export function Header() {
                       ) : (
                         <Monitor className="mr-2 h-4 w-4" />
                       )}
-                      <span>{isEn ? 'Appearance' : 'Giao diện'}</span>
+                      <span>Giao diện</span>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                       {themeList.map((t) => {
@@ -265,29 +230,6 @@ export function Header() {
                   </DropdownMenuSub>
                 )}
 
-                {/* Submenu for Language Choice */}
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger className="cursor-pointer">
-                    <Globe className="mr-2 h-4 w-4" />
-                    <span>{isEn ? 'Language' : 'Ngôn ngữ'}</span>
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuItem
-                      onClick={() => handleLanguageChange('vi')}
-                      className={cn('cursor-pointer', i18n.language === 'vi' && 'bg-accent font-semibold')}
-                    >
-                      <span className="mr-2">🇻🇳</span>
-                      <span>Tiếng Việt</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleLanguageChange('en')}
-                      className={cn('cursor-pointer', i18n.language === 'en' && 'bg-accent font-semibold')}
-                    >
-                      <span className="mr-2">🇬🇧</span>
-                      <span>English</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
                 <DropdownMenuSeparator />
 
                 {/* Logout Button */}
@@ -296,22 +238,22 @@ export function Header() {
                   onClick={handleLogout}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>{isEn ? 'Logout' : 'Đăng xuất'}</span>
+                  <span>Đăng xuất</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
-                <Link to={ROUTES.PORTAL}>
+                <Link to={ROUTES.LOGIN}>
                   <LogIn className="h-4 w-4 mr-1.5" />
-                  {isEn ? 'Login' : 'Đăng nhập'}
+                  Đăng nhập
                 </Link>
               </Button>
               <Button size="sm" asChild className="shadow-sm">
                 <Link to={ROUTES.LOGIN}>
                   <UserPlus className="h-4 w-4 mr-1.5" />
-                  {isEn ? 'Sign Up' : 'Đăng ký'}
+                  Đăng ký
                 </Link>
               </Button>
             </div>
@@ -363,9 +305,7 @@ export function Header() {
                 <div className="space-y-4 border-t pt-4">
                   {mounted && (
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-muted-foreground">
-                        {isEn ? 'Theme' : 'Giao diện'}
-                      </span>
+                      <span className="text-xs font-semibold text-muted-foreground">Giao diện</span>
                       <div className="flex gap-1">
                         {themeList.map((t) => (
                           <Button
@@ -382,37 +322,13 @@ export function Header() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-muted-foreground">
-                      {isEn ? 'Language' : 'Ngôn ngữ'}
-                    </span>
-                    <div className="flex gap-1">
-                      <Button
-                        variant={i18n.language === 'vi' ? 'default' : 'ghost'}
-                        size="sm"
-                        className="h-7 px-2.5 text-xs"
-                        onClick={() => handleLanguageChange('vi')}
-                      >
-                        🇻🇳 VN
-                      </Button>
-                      <Button
-                        variant={i18n.language === 'en' ? 'default' : 'ghost'}
-                        size="sm"
-                        className="h-7 px-2.5 text-xs"
-                        onClick={() => handleLanguageChange('en')}
-                      >
-                        🇬🇧 EN
-                      </Button>
-                    </div>
-                  </div>
-
                   {!isAuthenticated && (
                     <div className="flex flex-col gap-2 pt-2">
                       <Button variant="outline" asChild onClick={() => setMobileMenuOpen(false)}>
-                        <Link to={ROUTES.PORTAL}>{isEn ? 'Login' : 'Đăng nhập'}</Link>
+                        <Link to={ROUTES.LOGIN}>Đăng nhập</Link>
                       </Button>
                       <Button asChild onClick={() => setMobileMenuOpen(false)}>
-                        <Link to={ROUTES.LOGIN}>{isEn ? 'Sign Up' : 'Đăng ký'}</Link>
+                        <Link to={ROUTES.LOGIN}>Đăng ký</Link>
                       </Button>
                     </div>
                   )}

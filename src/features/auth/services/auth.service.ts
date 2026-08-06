@@ -9,20 +9,20 @@ export interface LoginRequest {
   password: string
 }
 
-/**
- * Response trả về từ Backend .NET
- * Dựa trên pattern POS-BAHUNG: server trả về accessToken (JWT)
- * và refreshToken. Thông tin user được decode từ JWT.
- */
 export interface LoginResponse {
-  token: string
+  accessToken: string
   refreshToken: string
-  expiry: string
-  employeeCode: string
+  expiresIn: number
+}
+
+export interface UserProfileResponse {
+  id: string
   fullName: string
-  userId: string
-  // alias for compatibility
-  accessToken?: string
+  email: string
+  role: string | null
+  status: string
+  lastLoginAt: string | null
+  emailVerified: boolean
 }
 
 // ──────────────────────────────────────────────────────────────
@@ -43,10 +43,14 @@ export const authService = {
   },
 
   getProfile: async () => {
-    return apiCall.get('/api/auth/me')
+    return apiCall.get<UserProfileResponse>('/api/auth/me')
   },
 
   updateProfile: async (data: any) => {
     return apiCall.patch('/api/auth/profile', data)
+  },
+
+  getPermissions: async () => {
+    return apiCall.get<string[]>('/api/auth/me/permissions')
   },
 }

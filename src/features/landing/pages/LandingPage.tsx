@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Header } from '@/components/layout/Header'
+import { PublicHeader } from '@/components/layout/PublicHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -101,7 +101,7 @@ function ERPMockup() {
             <div className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
           </div>
           <span className="ml-2 text-[11px] text-[#8a8880] select-none font-medium">
-            DigiERP — Nền tảng quản trị tổng thể
+            Ba Hưng — Nền tảng quản trị tổng thể
           </span>
         </div>
 
@@ -161,7 +161,7 @@ function ERPMockup() {
 export default function LandingPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-200">
-      <Header />
+      <PublicHeader />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-28 bg-gradient-to-b from-secondary to-background">
@@ -304,7 +304,7 @@ export default function LandingPage() {
               <Link to={ROUTES.LOGIN}>Bắt đầu miễn phí</Link>
             </Button>
             <Button variant="link" asChild className="text-white hover:text-white/80 text-sm font-semibold cursor-pointer">
-              <Link to={ROUTES.PORTAL}>Khám phá Portal →</Link>
+              <Link to={ROUTES.LOGIN}>Đăng nhập →</Link>
             </Button>
           </div>
         </CardContent>
@@ -321,7 +321,7 @@ export default function LandingPage() {
             <Link to="#" className="hover:text-foreground transition-colors">Điều khoản sử dụng</Link>
             <Link to="#" className="hover:text-foreground transition-colors">Liên hệ</Link>
           </div>
-          <span className="text-xs text-muted-foreground">© 2026 DigiFNB. All rights reserved.</span>
+          <span className="text-xs text-muted-foreground">© 2026 Ba Hưng. All rights reserved.</span>
         </div>
       </footer>
     </div>

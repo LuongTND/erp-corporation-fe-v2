@@ -8,7 +8,6 @@ import { PageFallback } from '@/components/common/PageFallback'
 // ── Eager imports (nhẹ, cần ngay) ──
 import LandingPage from '@/features/landing/pages/LandingPage'
 import LoginPage from '@/features/auth/pages/LoginPage'
-import PortalPage from '@/features/auth/pages/PortalPage'
 import ForbiddenPage from '@/features/auth/pages/ForbiddenPage'
 import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 
@@ -51,6 +50,13 @@ const CustomerOrderDetailPage = lazy(() => import('@/features/customer-portal/pa
 const CustomerPromotionsPage = lazy(() => import('@/features/customer-portal/pages/CustomerPromotionsPage'))
 const AIChatbotPage = lazy(() => import('@/features/ai-chatbot/pages/AIChatbotPage'))
 
+// ── Admin Module ──
+const AdminRolesPage = lazy(() => import('@/features/admin/pages/RolesPage'))
+const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/DepartmentsPage'))
+const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
+const AdminEmployeesPage = lazy(() => import('@/features/admin/pages/EmployeesPage'))
+const AdminCustomFieldsPage = lazy(() => import('@/features/admin/pages/CustomFieldsPage'))
+
 export const router = createBrowserRouter([
   // ── Landing (public) ──
   {
@@ -86,7 +92,6 @@ export const router = createBrowserRouter([
           </Suspense>
         ),
         children: [
-          { path: ROUTES.PORTAL, element: <PortalPage /> },
           { path: ROUTES.LOGIN, element: <LoginPage /> },
         ],
       },
@@ -191,6 +196,67 @@ export const router = createBrowserRouter([
                   </Suspense>
                 ),
               },
+
+              // ── Admin Module ──
+              {
+                path: ROUTES.ADMIN.ACCOUNTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminRolesPage />
+                  </Suspense>
+                ),
+              },
+              // ponytail: Quyền hạn merged into Vai trò tab
+              {
+                path: ROUTES.ADMIN.DEPARTMENTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminDepartmentsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.JOB_LEVELS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminJobLevelsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.EMPLOYEES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminEmployeesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.EMPLOYEE_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <EmployeeDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.CUSTOM_FIELDS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminCustomFieldsPage />
+                  </Suspense>
+                ),
+              },
+              // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
+              // {
+              //   path: ROUTES.ADMIN.ROLE_HIERARCHY,
+              //   element: (
+              //     <Suspense fallback={<PageFallback />}>
+              //       <AdminRoleHierarchyPage />
+              //     </Suspense>
+              //   ),
+              // },
+              // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
 
               // ── LMS Module ──
               {

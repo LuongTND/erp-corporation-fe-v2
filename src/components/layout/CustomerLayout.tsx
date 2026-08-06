@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import logoBahung from '@/assets/logo/logo-bahung.png'
 import { LogOut, User, Menu, ShoppingBag, Award, Tag, MessageSquare, Home, Grid, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -43,9 +44,7 @@ export default function CustomerLayout() {
           {/* Brand/Logo */}
           <div className="flex items-center gap-6">
             <Link to={ROUTES.CUSTOMER_PORTAL.CATALOG} className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-primary">
-                DigiFNB
-              </span>
+              <img src={logoBahung} alt="Ba Hưng" className="h-8 w-auto" />
               <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
                 Portal
               </span>
@@ -135,7 +134,7 @@ export default function CustomerLayout() {
       <footer className="border-t border-border/40 py-6 bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground/80 font-medium">
-            &copy; 2026 DigiFNB. Cổng thông tin Khách hàng tự phục vụ.
+            &copy; 2026 Ba Hưng. Cổng thông tin Khách hàng tự phục vụ.
           </p>
           <div className="flex items-center gap-4 text-xs font-semibold text-muted-foreground/75">
             <Link to="#" className="hover:text-foreground">Điều khoản</Link>

@@ -60,64 +60,74 @@ export default function EmployeeListPage() {
   const allChecked = pageData.length > 0 && pageData.every((e) => checked.has(e.id))
 
   return (
-    <div className="min-h-full bg-background text-foreground">
-      <HRPageHeader
-        breadcrumbs={[
-          { label: 'Modules' },
-          { label: 'HR & Payroll', isActive: true },
-          { label: 'Employees', isActive: true },
-        ]}
-      />
-
-      <main className="max-w-7xl mx-auto p-8 space-y-5">
-        <EmployeeListToolbar
-          total={EMPLOYEE_LIST_TOTAL}
-          shown={filtered.length}
-          search={search}
-          onSearchChange={(value) => {
-            setSearch(value)
-            setPage(1)
-          }}
+    <div className="h-full flex flex-col bg-background text-foreground">
+      <div className="shrink-0">
+        <HRPageHeader
+          breadcrumbs={[
+            { label: 'Modules' },
+            { label: 'HR & Payroll', isActive: true },
+            { label: 'Employees', isActive: true },
+          ]}
         />
+      </div>
 
-        <EmployeeListFilters
-          departments={EMPLOYEE_LIST_DEPARTMENTS}
-          activeDept={activeDept}
-          onDeptChange={(department) => {
-            setActiveDept(department)
-            setPage(1)
-          }}
-          statusFilter={statusFilter}
-          onStatusFilterChange={(value) => {
-            setStatusFilter(value)
-            setPage(1)
-          }}
-          view={view}
-          onViewChange={setView}
-        />
-
-        {view === 'table' ? (
-          <EmployeeListTable
-            employees={pageData}
-            checkedIds={checked}
-            allChecked={allChecked}
-            onToggleAll={toggleAll}
-            onToggleRow={toggleRow}
+      <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
+        <div className="shrink-0">
+          <EmployeeListToolbar
+            total={EMPLOYEE_LIST_TOTAL}
+            shown={filtered.length}
+            search={search}
+            onSearchChange={(value) => {
+              setSearch(value)
+              setPage(1)
+            }}
           />
-        ) : (
-          <EmployeeListGrid employees={pageData} />
-        )}
+        </div>
 
-        <EmployeeListPagination
-          page={page}
-          totalPages={totalPages}
-          pageSize={EMPLOYEE_LIST_PAGE_SIZE}
-          shownCount={filtered.length}
-          total={EMPLOYEE_LIST_TOTAL}
-          onPageChange={setPage}
-        />
+        <div className="shrink-0">
+          <EmployeeListFilters
+            departments={EMPLOYEE_LIST_DEPARTMENTS}
+            activeDept={activeDept}
+            onDeptChange={(department) => {
+              setActiveDept(department)
+              setPage(1)
+            }}
+            statusFilter={statusFilter}
+            onStatusFilterChange={(value) => {
+              setStatusFilter(value)
+              setPage(1)
+            }}
+            view={view}
+            onViewChange={setView}
+          />
+        </div>
 
-      </main>
+        <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
+          {view === 'table' ? (
+            <EmployeeListTable
+              employees={pageData}
+              checkedIds={checked}
+              allChecked={allChecked}
+              onToggleAll={toggleAll}
+              onToggleRow={toggleRow}
+            />
+          ) : (
+            <EmployeeListGrid employees={pageData} />
+          )}
+        </div>
+
+        <div className="shrink-0">
+          <EmployeeListPagination
+            page={page}
+            totalPages={totalPages}
+            pageSize={EMPLOYEE_LIST_PAGE_SIZE}
+            shownCount={filtered.length}
+            total={EMPLOYEE_LIST_TOTAL}
+            onPageChange={setPage}
+          />
+        </div>
+
+      </div>
 
       <EmployeeBulkActionBar selectedCount={checked.size} onClear={() => setChecked(new Set())} />
     </div>
