@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { GitBranch, Minus, Network, Plus, User2, Users } from 'lucide-react'
+import { Crown, GitBranch, Minus, Network, Plus, Users } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { OrgChartTree, type RenderNodeProps } from '@/features/hr/components/orgchart/OrgChartTree'
+import { OrgChartTree, type RenderNodeProps } from '@/features/hr/components/OrgChartPage/OrgChartTree'
 import { cn } from '@/lib/utils'
-import { useDepartmentTree, useUpdateDepartment } from '../../../hooks/use-departments'
+import { useDepartmentMembers, useDepartmentTree, useUpdateDepartment } from '../../../hooks/use-departments'
 import type { DepartmentTreeResponse } from '../../../types/admin.types'
 import { MembersContent } from './MembersPanel'
 import type { JobLevelOption } from './types'
@@ -41,13 +45,25 @@ function DeptOrgCard({ node, selected, onSelect }: RenderNodeProps<DeptNode>) {
       <p className="text-[10px] font-mono text-muted-foreground mb-0.5 leading-none">{node.departmentCode}</p>
       <p className="text-xs font-semibold leading-snug line-clamp-2">{node.departmentName}</p>
       {node.managerName && (
-        <p className="text-[10px] text-muted-foreground mt-1 truncate leading-none">{node.managerName}</p>
+        <div className="flex items-center gap-1 mt-1">
+          <Avatar className="h-3.5 w-3.5 shrink-0">
+            <AvatarImage src={node.managerAvatarUrl} alt={node.managerName} />
+            <AvatarFallback className="text-[7px]">{node.managerName.split(' ').slice(-1)[0]?.[0]?.toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <p className="text-[10px] text-muted-foreground truncate leading-none">{node.managerName}</p>
+        </div>
       )}
-      <div className="flex items-center gap-1 mt-1.5">
-        <Users className="w-2.5 h-2.5 text-muted-foreground/60" />
-        <span className="text-[10px] text-muted-foreground/80">
-          {node.children.length > 0 ? `${node.children.length} phòng con` : 'Không có phòng con'}
-        </span>
+      <div className="flex items-center gap-2 mt-1.5">
+        <div className="flex items-center gap-1">
+          <Users className="w-2.5 h-2.5 text-muted-foreground/60" />
+          <span className="text-[10px] text-muted-foreground/80 tabular-nums">{node.memberCount}</span>
+        </div>
+        {node.children.length > 0 && (
+          <div className="flex items-center gap-1">
+            <GitBranch className="w-2.5 h-2.5 text-muted-foreground/60" />
+            <span className="text-[10px] text-muted-foreground/80 tabular-nums">{node.children.length}</span>
+          </div>
+        )}
       </div>
     </button>
   )
@@ -98,6 +114,7 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
   const [addOpen, setAddOpen] = useState(false)
   const { data: tree, isLoading } = useDepartmentTree()
   const updateDept = useUpdateDepartment()
+  const { data: deptMembers = [] } = useDepartmentMembers(selectedDeptId)
 
   function findNode(node: DeptNode, id: string): DeptNode | null {
     if (node.id === id) return node
@@ -117,6 +134,7 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
       departmentName: 'Cơ cấu tổ chức',
       departmentCode: '',
       isActive: true,
+      memberCount: 0,
       children: roots,
     }
   }, [tree])
@@ -248,16 +266,57 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
                     {selectedDept.departmentName}
                   </SheetTitle>
                 </SheetHeader>
-                <div className="px-3 pb-2.5 flex items-center gap-4 text-[11px] text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <User2 className="w-3 h-3 shrink-0" />
-                    <span className={cn(!selectedDept.managerName && 'italic opacity-60')}>
-                      {selectedDept.managerName ?? 'Chưa có trưởng phòng'}
-                    </span>
+                <div className="px-3 pb-2.5">
+                  {/* Manager property row */}
+                  <div className="flex items-center gap-2 min-h-[28px]">
+                    <div className="flex items-center gap-1.5 w-[88px] shrink-0">
+                      <Crown className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <span className="text-[11px] text-muted-foreground">Trưởng phòng</span>
+                    </div>
+                    <Select
+                      value={selectedDept.managerId ?? '__none__'}
+                      onValueChange={value => updateDept.mutate({
+                        id: selectedDept.id,
+                        data: {
+                          departmentName: selectedDept.departmentName,
+                          departmentCode: selectedDept.departmentCode,
+                          parentDepartmentId: selectedDept.parentDepartmentId,
+                          managerId: value === '__none__' ? undefined : value,
+                          isActive: selectedDept.isActive,
+                        },
+                      })}
+                      disabled={updateDept.isPending}
+                    >
+                      <SelectTrigger className="flex-1 h-6 text-xs border-transparent bg-transparent shadow-none px-1.5 hover:bg-muted/60 hover:border-border/50 transition-colors focus:ring-0">
+                        <SelectValue>
+                          {selectedDept.managerId && selectedDept.managerName ? (
+                            <div className="flex items-center gap-1.5">
+                              <Avatar className="h-4 w-4 shrink-0">
+                                <AvatarImage src={selectedDept.managerAvatarUrl} alt={selectedDept.managerName} />
+                                <AvatarFallback className="text-[8px]">{selectedDept.managerName.split(' ').slice(-1)[0]?.[0]?.toUpperCase()}</AvatarFallback>
+                              </Avatar>
+                              <span className="text-xs">{selectedDept.managerName}</span>
+                            </div>
+                          ) : <span className="text-muted-foreground/50 italic">Chưa có</span>}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent align="start" sideOffset={4}>
+                        <SelectItem value="__none__">— Không có —</SelectItem>
+                        {deptMembers.map(m => (
+                          <SelectItem key={m.userId} value={m.userId}>{m.fullName}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <div className="flex items-center gap-1.5 ml-auto">
-                    <GitBranch className="w-3 h-3 shrink-0" />
-                    <span>{selectedDept.children.length} phòng con</span>
+                  {/* Children property row */}
+                  <div className="flex items-center gap-2 min-h-[28px]">
+                    <div className="flex items-center gap-1.5 w-[88px] shrink-0">
+                      <GitBranch className="w-3 h-3 text-muted-foreground shrink-0" />
+                      <span className="text-[11px] text-muted-foreground">Phòng con</span>
+                    </div>
+                    <span className="text-xs font-medium px-1.5">
+                      {selectedDept.children.length > 0 ? selectedDept.children.length : <span className="text-muted-foreground/50">—</span>}
+                    </span>
                   </div>
                 </div>
               </div>

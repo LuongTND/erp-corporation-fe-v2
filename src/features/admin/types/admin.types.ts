@@ -34,19 +34,19 @@ export interface JobLevelResponse {
   levelOrder: number
   defaultScopeType: ScopeType
   description?: string
-  baseSalaryMin?: number
-  baseSalaryMax?: number
   isDeleted: boolean
+  employeeCount: number
 }
 
-export type ScopeType = 1 | 2 | 3 | 4
+// ponytail: BE uses JsonStringEnumConverter globally → enum serialized as string, not int
+export type ScopeType = 'Own' | 'Team' | 'Department' | 'All'
 
-export const SCOPE_TYPE_LABELS = {
-  1: 'Own',
-  2: 'Team',
-  3: 'Department',
-  4: 'All',
-} as const satisfies Record<ScopeType, string>
+export const SCOPE_TYPE_LABELS: Record<ScopeType, string> = {
+  Own: 'Cá nhân',
+  Team: 'Nhóm',
+  Department: 'Phòng ban',
+  All: 'Toàn bộ',
+}
 
 export interface RoleNode {
   id: string
@@ -66,7 +66,9 @@ export interface DepartmentTreeResponse {
   parentDepartmentId?: string
   managerId?: string
   managerName?: string
+  managerAvatarUrl?: string
   isActive: boolean
+  memberCount: number
   children: DepartmentTreeResponse[]
 }
 
@@ -90,6 +92,11 @@ export interface AddDepartmentMemberPayload {
   jobLevelId?: string
 }
 
+export interface AddBulkDepartmentMembersPayload {
+  userIds: string[]
+  startDate: string
+}
+
 export interface UpdateDepartmentMemberPayload {
   jobLevelId: string | null
 }
@@ -100,6 +107,8 @@ export interface UserSummaryResponse {
   employeeCode: string
   email: string
   avatarUrl?: string
+  status: string
+  joinDate: string
 }
 
 export type Gender = 'Male' | 'Female' | 'Other'
@@ -110,16 +119,14 @@ export const GENDER_LABELS: Record<Gender, string> = {
   Other: 'Khác',
 }
 
-export type ContractType = 'Probation' | 'FixedTerm' | 'Indefinite' | 'PartTime' | 'Internship' | 'Freelance' | 'Seasonal'
+export type ContractType = 'Probation' | 'FullTime' | 'PartTime' | 'Seasonal' | 'Freelance'
 
 export const CONTRACT_TYPE_LABELS: Record<ContractType, string> = {
   Probation: 'Thử việc',
-  FixedTerm: 'Có thời hạn',
-  Indefinite: 'Không thời hạn',
+  FullTime: 'Toàn thời gian',
   PartTime: 'Bán thời gian',
-  Internship: 'Thực tập',
-  Freelance: 'Cộng tác viên',
   Seasonal: 'Thời vụ',
+  Freelance: 'Cộng tác viên',
 }
 
 export interface CreateEmployeePayload {

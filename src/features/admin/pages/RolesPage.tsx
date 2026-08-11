@@ -20,7 +20,7 @@ export default function RolesPage() {
           </TabsList>
 
           <TabsContent value="roles" className="mt-0">
-            <RolesTab roles={roles} isLoading={rolesLoading} />
+            <RolesTab roles={roles} isLoading={rolesLoading} allPermissions={permissions} isPermissionsLoading={permissionsLoading} />
           </TabsContent>
 
           <TabsContent value="permissions" className="mt-0">

@@ -1,9 +1,9 @@
 import { Bell, Search } from 'lucide-react'
 import { HRPageHeader } from '../components/HRPageHeader'
-import { HRMDashboardInsightsRow } from '../components/dashboard/HRMDashboardInsightsRow'
-import { HRMDashboardKpiSnapshot } from '../components/dashboard/HRMDashboardKpiSnapshot'
-import { HRMDashboardPeopleRow } from '../components/dashboard/HRMDashboardPeopleRow'
-import { HRMDashboardStatCards } from '../components/dashboard/HRMDashboardStatCards'
+import { HRMDashboardInsightsRow } from '../components/HRMDashboardPage/HRMDashboardInsightsRow'
+import { HRMDashboardKpiSnapshot } from '../components/HRMDashboardPage/HRMDashboardKpiSnapshot'
+import { HRMDashboardPeopleRow } from '../components/HRMDashboardPage/HRMDashboardPeopleRow'
+import { HRMDashboardStatCards } from '../components/HRMDashboardPage/HRMDashboardStatCards'
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 

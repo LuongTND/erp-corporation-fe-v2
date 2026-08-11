@@ -28,6 +28,7 @@ import {
   Shield,
   SlidersHorizontal,
   Users2,
+  BarChart3,
   type LucideIcon,
 } from 'lucide-react'
 import { useLocalStorage } from '@/hooks/use-local-storage'
@@ -69,6 +70,7 @@ const MODULE_ITEMS: NavItem[] = [
       { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
       { icon: Network, label: 'Nhân sự', href: ROUTES.ADMIN.EMPLOYEES },
       { icon: SlidersHorizontal, label: 'Trường tùy chỉnh', href: ROUTES.ADMIN.CUSTOM_FIELDS },
+      { icon: BarChart3, label: 'KPI & Lương', href: ROUTES.ADMIN.KPI_ENTRIES },
       // { icon: Network, label: 'Phân cấp vai trò', href: ROUTES.ADMIN.ROLE_HIERARCHY }, // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
       // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
     ],

@@ -24,6 +24,14 @@ export interface UserEmploymentDto {
   bankBranch?: string
 }
 
+export interface UserDepartmentDto {
+  departmentId: string
+  departmentName: string
+  isPrimary: boolean
+  managerId?: string
+  managerName?: string
+}
+
 export interface CustomFieldValueDto {
   definitionId: string
   code: string
@@ -42,6 +50,7 @@ export interface UserDetailDto {
   avatarUrl?: string
   status: string
   isActive: boolean
+  isLocked: boolean
   jobLevelId: string
   jobLevelName?: string
   managerId?: string
@@ -49,12 +58,13 @@ export interface UserDetailDto {
   profile?: UserProfileDto
   identity?: UserIdentityDto
   employment?: UserEmploymentDto
+  departments: UserDepartmentDto[]
   customFields: CustomFieldValueDto[]
 }
 
 export interface UpdateEmployeePayload {
   fullName: string
-  jobLevelId: string
+  jobLevelId?: string | null
   managerId?: string
   // Profile
   gender?: string

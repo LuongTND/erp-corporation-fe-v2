@@ -1,46 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { CalendarIcon, User, FileText, Briefcase, Shield, Settings2 } from 'lucide-react'
+import { User, FileText, Briefcase, Shield, Settings2 } from 'lucide-react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
 import { useJobLevels } from '@/features/admin/hooks/use-job-levels'
 import { useCustomFields } from '@/features/admin/hooks/use-custom-fields'
 import { DynamicFormSection } from '@/features/admin/components/EmployeesPage'
-import { useUpdateEmployee, useUpsertCustomFields } from '../../hooks/use-employee-detail'
+import { DatePickerField } from './DatePickerField'
+import { editEmployeeSchema, type EditEmployeeEditEmployeeFormValues } from '../../schemas/edit-employee.schema'
 import type { UserDetailDto, UpdateEmployeePayload } from '../../types/user-detail.types'
-
-const schema = z.object({
-  fullName: z.string().min(1).max(200),
-  jobLevelId: z.string().min(1),
-  gender: z.string().optional(),
-  dateOfBirth: z.string().optional(),
-  phoneNumber: z.string().max(20).optional(),
-  permanentAddress: z.string().optional(),
-  currentAddress: z.string().optional(),
-  identityCardNumber: z.string().max(20).optional(),
-  identityCardIssuedDate: z.string().optional(),
-  identityCardIssuedPlace: z.string().optional(),
-  passportNumber: z.string().max(30).optional(),
-  passportExpiryDate: z.string().optional(),
-  dateOfJoin: z.string().optional(),
-  contractType: z.string().optional(),
-  taxCode: z.string().max(20).optional(),
-  socialInsuranceCode: z.string().max(30).optional(),
-  bankName: z.string().max(100).optional(),
-  bankAccountNumber: z.string().max(30).optional(),
-  bankBranch: z.string().max(100).optional(),
-  customFieldValues: z.record(z.string()).optional(),
-})
-
-type FormValues = z.infer<typeof schema>
 
 const CONTRACT_TYPES = [
   { value: 'Probation', label: 'Thử việc' },
@@ -60,6 +33,7 @@ interface Props {
   readonly open: boolean
   readonly employee: UserDetailDto
   readonly onOpenChange: (open: boolean) => void
+  readonly onSave: (payload: UpdateEmployeePayload, customFields: { definitionId: string; value: string }[]) => Promise<void>
 }
 
 function Field({ label, required, children }: {
@@ -78,47 +52,6 @@ function Field({ label, required, children }: {
   )
 }
 
-function DatePickerField({ value, onChange, fromYear = 1950, toYear = new Date().getFullYear() + 5 }: {
-  readonly value: string
-  readonly onChange: (v: string) => void
-  readonly fromYear?: number
-  readonly toYear?: number
-}) {
-  const [open, setOpen] = useState(false)
-  const selected = value ? new Date(value) : undefined
-  const display = selected
-    ? selected.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
-    : 'Chọn ngày'
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className={`flex h-9 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring ${!value ? 'text-muted-foreground' : 'text-foreground'}`}
-        >
-          <CalendarIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          {display}
-        </button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={selected}
-          onSelect={(date) => {
-            onChange(date ? date.toISOString().split('T')[0] : '')
-            setOpen(false)
-          }}
-          captionLayout="dropdown"
-          startMonth={new Date(fromYear, 0)}
-          endMonth={new Date(toYear, 11)}
-          defaultMonth={selected ?? new Date(2000, 0)}
-        />
-      </PopoverContent>
-    </Popover>
-  )
-}
-
 function SectionHeader({ icon: Icon, title }: {
   readonly icon: React.ElementType
   readonly title: string
@@ -131,15 +64,13 @@ function SectionHeader({ icon: Icon, title }: {
   )
 }
 
-export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
-  const update = useUpdateEmployee(employee.id)
-  const upsertCustomFields = useUpsertCustomFields(employee.id)
+export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Props) {
   const { data: jobLevelData } = useJobLevels()
   const { data: customFieldDefs = [] } = useCustomFields('Employee')
   const jobLevels = jobLevelData?.items ?? []
 
-  const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting } } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting, errors } } = useForm<EditEmployeeFormValues>({
+    resolver: zodResolver(editEmployeeSchema),
   })
 
   const gender = watch('gender')
@@ -175,7 +106,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
     })
   }, [open, employee, reset])
 
-  const onSubmit = async (values: FormValues) => {
+  const onSubmit = async (values: EditEmployeeFormValues) => {
     const payload: UpdateEmployeePayload = {
       fullName: values.fullName,
       jobLevelId: values.jobLevelId,
@@ -198,15 +129,10 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
       bankAccountNumber: values.bankAccountNumber || undefined,
       bankBranch: values.bankBranch || undefined,
     }
-    await update.mutateAsync(payload)
-
     const cfEntries = Object.entries(values.customFieldValues ?? {})
       .filter(([, v]) => v !== '')
       .map(([definitionId, value]) => ({ definitionId, value }))
-    if (cfEntries.length > 0) {
-      await upsertCustomFields.mutateAsync(cfEntries)
-    }
-
+    await onSave(payload, cfEntries)
     onOpenChange(false)
   }
 
@@ -228,17 +154,19 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
                 </AccordionTrigger>
                 <AccordionContent className="space-y-3 pb-4">
                   <Field label="Họ và tên" required>
-                    <Input {...register('fullName')} placeholder="Nguyễn Văn A" />
+                    <Input {...register('fullName')} placeholder="Nguyễn Văn A" className={errors.fullName ? 'border-destructive' : ''} />
+                    {errors.fullName && <p className="text-xs text-destructive">{errors.fullName.message}</p>}
                   </Field>
                   <Field label="Cấp bậc" required>
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
-                      <SelectTrigger><SelectValue placeholder="Chọn cấp bậc" /></SelectTrigger>
+                      <SelectTrigger className={errors.jobLevelId ? 'border-destructive' : ''}><SelectValue placeholder="Chọn cấp bậc" /></SelectTrigger>
                       <SelectContent>
                         {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                    {errors.jobLevelId && <p className="text-xs text-destructive">{errors.jobLevelId.message}</p>}
                   </Field>
                 </AccordionContent>
               </AccordionItem>
@@ -266,6 +194,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
                   </div>
                   <Field label="Số điện thoại">
                     <Input {...register('phoneNumber')} placeholder="0912 345 678" />
+                    {errors.phoneNumber && <p className="text-xs text-destructive">{errors.phoneNumber.message}</p>}
                   </Field>
                   <Field label="Địa chỉ thường trú">
                     <Input {...register('permanentAddress')} placeholder="Số nhà, đường, phường, quận, tỉnh/TP" />
@@ -285,6 +214,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Số CCCD / CMND">
                       <Input {...register('identityCardNumber')} placeholder="079xxxxxx" />
+                      {errors.identityCardNumber && <p className="text-xs text-destructive">{errors.identityCardNumber.message}</p>}
                     </Field>
                     <Field label="Ngày cấp">
                       <DatePickerField value={watch('identityCardIssuedDate') ?? ''} onChange={(v) => setValue('identityCardIssuedDate', v)} toYear={new Date().getFullYear()} />
@@ -296,6 +226,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Số hộ chiếu">
                       <Input {...register('passportNumber')} placeholder="B12345678" />
+                      {errors.passportNumber && <p className="text-xs text-destructive">{errors.passportNumber.message}</p>}
                     </Field>
                     <Field label="Ngày hết hạn HC">
                       <DatePickerField value={watch('passportExpiryDate') ?? ''} onChange={(v) => setValue('passportExpiryDate', v)} fromYear={new Date().getFullYear()} toYear={new Date().getFullYear() + 20} />
@@ -328,9 +259,11 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     <Field label="Mã số thuế">
                       <Input {...register('taxCode')} placeholder="8823456789" />
+                      {errors.taxCode && <p className="text-xs text-destructive">{errors.taxCode.message}</p>}
                     </Field>
                     <Field label="Số BHXH">
                       <Input {...register('socialInsuranceCode')} placeholder="0101xxxxxx" />
+                      {errors.socialInsuranceCode && <p className="text-xs text-destructive">{errors.socialInsuranceCode.message}</p>}
                     </Field>
                   </div>
 
@@ -346,6 +279,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
                         </Field>
                         <Field label="Số tài khoản">
                           <Input {...register('bankAccountNumber')} placeholder="1234567890" />
+                          {errors.bankAccountNumber && <p className="text-xs text-destructive">{errors.bankAccountNumber.message}</p>}
                         </Field>
                       </div>
                       <Field label="Chi nhánh">
@@ -376,8 +310,8 @@ export function EditEmployeeSheet({ open, employee, onOpenChange }: Props) {
 
           <SheetFooter className="mt-4 shrink-0 border-t border-border pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-            <Button type="submit" disabled={isSubmitting || update.isPending || upsertCustomFields.isPending}>
-              {(update.isPending || upsertCustomFields.isPending) ? 'Đang lưu...' : 'Lưu thay đổi'}
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </SheetFooter>
         </form>

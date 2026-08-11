@@ -71,6 +71,9 @@ export const ROUTES = {
     ROLE_HIERARCHY: '/admin/role-hierarchy',
     ORG_HIERARCHY: '/admin/org-hierarchy',
     CUSTOM_FIELDS: '/admin/custom-fields',
+    KPI_ENTRIES: '/admin/kpi-entries',
+    PAYROLL_RUNS: '/admin/payroll-runs',
+    PAYROLL_RUN_DETAIL: '/admin/payroll-runs/:id',
   },
 } as const
 

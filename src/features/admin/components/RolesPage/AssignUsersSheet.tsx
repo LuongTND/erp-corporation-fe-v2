@@ -18,7 +18,6 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
-import { useAllUsers, useRoleUsers, useSyncRoleUsers } from '../../hooks/use-roles'
 import type { RoleResponse, UserSummaryResponse } from '../../types/admin.types'
 import { cn } from '@/lib/utils'
 
@@ -26,6 +25,11 @@ interface AssignUsersSheetProps {
   open: boolean
   role: RoleResponse | undefined
   onOpenChange: (open: boolean) => void
+  allUsers: UserSummaryResponse[]
+  roleUsers: UserSummaryResponse[]
+  isLoading: boolean
+  onSync: (payload: { roleId: string; toAdd: string[]; toRemove: string[] }) => void
+  isSyncing: boolean
 }
 
 function userInitials(name: string) {
@@ -112,21 +116,15 @@ function DroppablePanel({
   )
 }
 
-export function AssignUsersSheet({ open, role, onOpenChange }: AssignUsersSheetProps) {
-  const { data: allUsers = [], isLoading: usersLoading } = useAllUsers()
-  const { data: roleUsers = [], isLoading: roleUsersLoading } = useRoleUsers(open ? role?.id : undefined)
-  const syncUsers = useSyncRoleUsers()
-
+export function AssignUsersSheet({ open, role, onOpenChange, allUsers, roleUsers, isLoading, onSync, isSyncing }: AssignUsersSheetProps) {
   const [assigned, setAssigned] = useState<Set<string>>(new Set())
   const [initialAssigned, setInitialAssigned] = useState<Set<string>>(new Set())
   const [searchAvail, setSearchAvail] = useState('')
   const [searchAssigned, setSearchAssigned] = useState('')
   const [activeUser, setActiveUser] = useState<UserSummaryResponse | null>(null)
 
-  const isLoading = usersLoading || roleUsersLoading
-
   useEffect(() => {
-    if (open && !roleUsersLoading) {
+    if (open && !isLoading) {
       const ids = new Set(roleUsers.map((u) => u.id))
       setAssigned(ids)
       setInitialAssigned(ids)
@@ -135,7 +133,7 @@ export function AssignUsersSheet({ open, role, onOpenChange }: AssignUsersSheetP
       setSearchAvail('')
       setSearchAssigned('')
     }
-  }, [open, roleUsers, roleUsersLoading])
+  }, [open, roleUsers, isLoading])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -172,12 +170,12 @@ export function AssignUsersSheet({ open, role, onOpenChange }: AssignUsersSheetP
     else if (from === 'assigned' && over.id === 'available') remove(userId)
   }
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!role) return
     const toAdd = [...assigned].filter((id) => !initialAssigned.has(id))
     const toRemove = [...initialAssigned].filter((id) => !assigned.has(id))
     if (toAdd.length === 0 && toRemove.length === 0) { onOpenChange(false); return }
-    await syncUsers.mutateAsync({ roleId: role.id, toAdd, toRemove })
+    onSync({ roleId: role.id, toAdd, toRemove })
     onOpenChange(false)
   }
 
@@ -284,8 +282,8 @@ export function AssignUsersSheet({ open, role, onOpenChange }: AssignUsersSheetP
           </span>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-            <Button onClick={handleSave} disabled={syncUsers.isPending}>
-              {syncUsers.isPending ? 'Đang lưu...' : 'Lưu thay đổi'}
+            <Button onClick={handleSave} disabled={isSyncing}>
+              {isSyncing ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>
           </div>
         </div>

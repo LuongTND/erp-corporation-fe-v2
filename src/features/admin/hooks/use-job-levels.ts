@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { jobLevelsService } from '../services/job-levels.service'
-import type { ListParams } from '../types/admin.types'
+import { employeesService as adminEmployeesService } from '../services/employees.service'
+import type { ListParams, UserSummaryResponse } from '../types/admin.types'
 
 const KEY = 'job-levels'
+const EMPLOYEES_KEY = 'employees'
 
 export function useJobLevels(params?: ListParams) {
   return useQuery({
@@ -37,5 +39,26 @@ export function useDeleteJobLevel() {
     mutationFn: jobLevelsService.delete,
     onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Xóa cấp bậc thành công') },
     onError: (error) => { console.error(error); toast.error('Xóa cấp bậc thất bại') },
+  })
+}
+
+export function useEmployeesByJobLevel(jobLevelId: string | null) {
+  return useQuery({
+    queryKey: [EMPLOYEES_KEY, { jobLevelId }],
+    queryFn: () => adminEmployeesService.list(undefined, jobLevelId!),
+    enabled: !!jobLevelId,
+  })
+}
+
+export function useUnassignJobLevel() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: (userId: string) => jobLevelsService.unassignJobLevel(userId),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: [KEY] })
+      client.invalidateQueries({ queryKey: [EMPLOYEES_KEY] })
+      toast.success('Đã gỡ cấp bậc')
+    },
+    onError: () => toast.error('Gỡ cấp bậc thất bại'),
   })
 }

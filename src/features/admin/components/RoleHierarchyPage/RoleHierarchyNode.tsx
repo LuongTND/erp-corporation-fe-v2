@@ -1,7 +1,7 @@
 import { ChevronDown, ChevronUp, KeyRound, Shield } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import type { RenderNodeProps } from '@/features/hr/components/orgchart/OrgChartTree'
+import type { RenderNodeProps } from '@/features/hr/components/OrgChartPage/OrgChartTree'
 import type { RoleNode } from '../../types/admin.types'
 
 const ROLE_COLORS: Record<string, { bg: string; text: string; dot: string }> = {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { List, Minus, Network, Plus, Search, Share2 } from 'lucide-react'
-import { OrgChartTree, type RenderNodeProps } from '@/features/hr/components/orgchart/OrgChartTree'
+import { OrgChartTree, type RenderNodeProps } from '@/features/hr/components/OrgChartPage/OrgChartTree'
 import { cn } from '@/lib/utils'
 import { RoleHierarchyNode } from '../components/RoleHierarchyPage/RoleHierarchyNode'
 import { RoleHierarchySheet } from '../components/RoleHierarchyPage/RoleHierarchySheet'

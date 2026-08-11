@@ -33,7 +33,7 @@ export const createEmployeeSchema = z.object({
   taxCode: z.string().max(20).optional().or(z.literal('')),
   socialInsuranceCode: z.string().max(20).optional().or(z.literal('')),
   managerId: z.string().uuid().optional().or(z.literal('')),
-  contractType: z.enum(['Probation', 'FixedTerm', 'Indefinite', 'PartTime', 'Internship', 'Freelance', 'Seasonal']).optional(),
+  contractType: z.enum(['Probation', 'FullTime', 'PartTime', 'Seasonal', 'Freelance']).optional(),
   bankName: z.string().max(200).optional().or(z.literal('')),
   bankAccountNumber: z.string().max(50).optional().or(z.literal('')),
   customFieldValues: z.record(z.string()).optional(),
@@ -41,11 +41,9 @@ export const createEmployeeSchema = z.object({
 export type CreateEmployeeFormValues = z.infer<typeof createEmployeeSchema>
 
 export const jobLevelSchema = z.object({
-  levelName: z.string().min(1, 'Level name is required').max(100),
-  levelOrder: z.coerce.number().int().min(1, 'Order must be ≥ 1'),
-  defaultScopeType: z.coerce.number().int().min(1).max(4),
+  levelName: z.string().min(1, 'Tên cấp bậc là bắt buộc').max(100),
+  levelOrder: z.coerce.number().int().min(1, 'Thứ tự phải ≥ 1'),
+  defaultScopeType: z.enum(['Own', 'Team', 'Department', 'All']),
   description: z.string().max(500).optional(),
-  baseSalaryMin: z.coerce.number().min(0).optional(),
-  baseSalaryMax: z.coerce.number().min(0).optional(),
 })
 export type JobLevelFormValues = z.infer<typeof jobLevelSchema>

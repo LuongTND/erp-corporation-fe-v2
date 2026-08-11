@@ -18,15 +18,17 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
-import { useAssignPermissions } from '../../hooks/use-roles'
-import { usePermissions } from '../../hooks/use-permissions'
-import type { RoleResponse } from '../../types/admin.types'
+import type { PermissionResponse, RoleResponse } from '../../types/admin.types'
 import { cn } from '@/lib/utils'
 
 interface PermissionsSheetProps {
   open: boolean
   role: RoleResponse | undefined
   onOpenChange: (open: boolean) => void
+  allPermissions: PermissionResponse[]
+  isPermissionsLoading: boolean
+  onAssign: (payload: { roleId: string; permissionIds: string[] }) => void
+  isAssigning: boolean
 }
 
 // ── Draggable permission chip ──────────────────────────────────────────────
@@ -111,9 +113,7 @@ function DroppablePanel({
 }
 
 // ── Main component ─────────────────────────────────────────────────────────
-export function PermissionsSheet({ open, role, onOpenChange }: PermissionsSheetProps) {
-  const { data: allPermissions, isLoading } = usePermissions()
-  const assignPermissions = useAssignPermissions()
+export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isPermissionsLoading: isLoading, onAssign, isAssigning }: PermissionsSheetProps) {
 
   const [assigned, setAssigned] = useState<Set<string>>(new Set())
   const [searchAvail, setSearchAvail] = useState('')
@@ -132,7 +132,7 @@ export function PermissionsSheet({ open, role, onOpenChange }: PermissionsSheetP
 
   // Split into available vs assigned
   const { available, assignedList } = useMemo(() => {
-    const all = allPermissions ?? []
+    const all = allPermissions
     const qAvail = searchAvail.toLowerCase()
     const qAssigned = searchAssigned.toLowerCase()
     return {
@@ -176,9 +176,9 @@ export function PermissionsSheet({ open, role, onOpenChange }: PermissionsSheetP
     else if (from === 'assigned' && to === 'available') unassign(permId)
   }
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!role) return
-    await assignPermissions.mutateAsync({ roleId: role.id, permissionIds: [...assigned] })
+    onAssign({ roleId: role.id, permissionIds: [...assigned] })
     onOpenChange(false)
   }
 
@@ -325,12 +325,12 @@ export function PermissionsSheet({ open, role, onOpenChange }: PermissionsSheetP
 
         <div className="px-6 py-4 border-t flex justify-between items-center shrink-0">
           <span className="text-xs text-muted-foreground">
-            {assigned.size} / {(allPermissions ?? []).length} quyền được gán
+            {assigned.size} / {(allPermissions).length} quyền được gán
           </span>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-            <Button onClick={handleSave} disabled={assignPermissions.isPending}>
-              {assignPermissions.isPending ? 'Đang lưu...' : 'Lưu quyền hạn'}
+            <Button onClick={handleSave} disabled={isAssigning}>
+              {isAssigning ? 'Đang lưu...' : 'Lưu quyền hạn'}
             </Button>
           </div>
         </div>

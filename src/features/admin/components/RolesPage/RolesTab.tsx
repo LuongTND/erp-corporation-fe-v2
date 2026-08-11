@@ -1,5 +1,9 @@
-import { useState } from 'react'
-import type { RoleResponse } from '../../types/admin.types'
+import { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useCreateRole, useUpdateRole, useDeleteRole, useAssignPermissions, useAllUsers, useRoleUsers, useSyncRoleUsers } from '../../hooks/use-roles'
+import { roleSchema, type RoleFormValues } from '../../schemas/admin.schemas'
+import type { PermissionResponse, RoleResponse } from '../../types/admin.types'
 import { RoleDeleteDialog } from './RoleDeleteDialog'
 import { RoleDialog } from './RoleDialog'
 import { RolesTable } from './RolesTable'
@@ -10,9 +14,11 @@ import { AssignUsersSheet } from './AssignUsersSheet'
 interface RolesTabProps {
   roles: RoleResponse[]
   isLoading: boolean
+  allPermissions: PermissionResponse[]
+  isPermissionsLoading: boolean
 }
 
-export function RolesTab({ roles, isLoading }: RolesTabProps) {
+export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoading }: RolesTabProps) {
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -20,6 +26,43 @@ export function RolesTab({ roles, isLoading }: RolesTabProps) {
   const [permSheet, setPermSheet] = useState<RoleResponse | undefined>()
   const [usersSheet, setUsersSheet] = useState<RoleResponse | undefined>()
   const [deleteTarget, setDeleteTarget] = useState<RoleResponse | null>(null)
+
+  const createRole = useCreateRole()
+  const updateRole = useUpdateRole()
+  const deleteRole = useDeleteRole()
+  const assignPerms = useAssignPermissions()
+  const { data: allUsers = [], isLoading: usersLoading } = useAllUsers()
+  const { data: roleUsers = [], isLoading: roleUsersLoading } = useRoleUsers(usersSheet?.id)
+  const syncUsers = useSyncRoleUsers()
+
+  const form = useForm<RoleFormValues>({ resolver: zodResolver(roleSchema) })
+
+  useEffect(() => {
+    if (dialogOpen) {
+      form.reset({
+        roleName: editRole?.roleName ?? '',
+        displayName: editRole?.displayName ?? '',
+        description: editRole?.description ?? '',
+      })
+    }
+  }, [dialogOpen, editRole, form])
+
+  const onRoleSubmit = (values: RoleFormValues) => {
+    if (editRole) {
+      updateRole.mutate({ id: editRole.id, data: { displayName: values.displayName, description: values.description ?? '' } }, {
+        onSuccess: () => setDialogOpen(false),
+      })
+    } else {
+      createRole.mutate({ roleName: values.roleName, displayName: values.displayName, description: values.description ?? '' }, {
+        onSuccess: () => setDialogOpen(false),
+      })
+    }
+  }
+
+  const onDelete = () => {
+    if (!deleteTarget) return
+    deleteRole.mutate(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) })
+  }
 
   const isFiltering = typeFilter !== 'all' || search.trim().length > 0
 
@@ -51,21 +94,42 @@ export function RolesTab({ roles, isLoading }: RolesTabProps) {
         onUsers={setUsersSheet}
       />
 
-      <RoleDialog open={dialogOpen} role={editRole} onOpenChange={setDialogOpen} />
+      <RoleDialog
+        open={dialogOpen}
+        isEdit={!!editRole}
+        form={form}
+        onSubmit={onRoleSubmit}
+        onOpenChange={setDialogOpen}
+        isPending={createRole.isPending || updateRole.isPending}
+      />
 
       <PermissionsSheet
         open={!!permSheet}
         role={permSheet}
         onOpenChange={(open) => { if (!open) setPermSheet(undefined) }}
+        allPermissions={allPermissions}
+        isPermissionsLoading={isPermissionsLoading}
+        onAssign={(payload) => assignPerms.mutate(payload)}
+        isAssigning={assignPerms.isPending}
       />
 
       <AssignUsersSheet
         open={!!usersSheet}
         role={usersSheet}
         onOpenChange={(open) => { if (!open) setUsersSheet(undefined) }}
+        allUsers={allUsers}
+        roleUsers={roleUsers}
+        isLoading={usersLoading || roleUsersLoading}
+        onSync={(payload) => syncUsers.mutate(payload)}
+        isSyncing={syncUsers.isPending}
       />
 
-      <RoleDeleteDialog role={deleteTarget} onClose={() => setDeleteTarget(null)} />
+      <RoleDeleteDialog
+        role={deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onDelete={onDelete}
+        isPending={deleteRole.isPending}
+      />
     </div>
   )
 }

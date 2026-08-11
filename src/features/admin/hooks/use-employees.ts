@@ -4,10 +4,12 @@ import { employeesService } from '../services/employees.service'
 
 const KEY = 'employees'
 
-export function useEmployees(search?: string) {
+export function useEmployees(search?: string, jobLevelId?: string, options?: { enabled?: boolean }, status?: string, departmentId?: string) {
   return useQuery({
-    queryKey: [KEY, search],
-    queryFn: () => employeesService.list(search),
+    queryKey: [KEY, search, jobLevelId, status, departmentId],
+    queryFn: () => employeesService.list(search, jobLevelId, status, departmentId),
+    enabled: options?.enabled ?? true,
+    staleTime: 60_000,
   })
 }
 

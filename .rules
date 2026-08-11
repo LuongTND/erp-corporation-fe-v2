@@ -50,6 +50,25 @@ Zustand stores → `src/stores/`
 - Internal imports within a `<ViewName>/` subfolder also stay relative. Siblings import each other directly (`./MembersPanel`), not through the barrel.
 - Types shared only within a `<ViewName>/` folder go in `types.ts` inside that folder, not in `features/<feature>/types/`.
 
+## Data Flow (bắt buộc)
+
+```
+Page → owns all API hooks (useQuery / useMutation) + server state
+  └── Component → display only, receives data and callbacks via props
+```
+
+- **Pages** call all React Query hooks. Pass `data`, `isLoading`, `isPending`, and callback functions (`onSubmit`, `onDelete`, `onEdit`) as props to components.
+- **Components** (dialogs, sheets, tables) must NOT import or call any React Query hooks. They are pure UI — receive props, render, call callbacks.
+- **Exception**: Orchestrator components that own a distinct sub-domain (e.g., `RolesTab` managing its own dialogs and filters) may call hooks for that sub-domain only, as long as the parent page does not also manage the same data.
+
+## Validation (Zod schemas)
+
+- All Zod schemas live in `features/<feature>/schemas/<name>.schema.ts`.
+- Schema file exports: the `z.object(...)` schema and the inferred TypeScript type (`type Foo = z.infer<typeof fooSchema>`).
+- Pages or orchestrators import the schema to wire `useForm({ resolver: zodResolver(schema) })`.
+- Components receive `form` (from `useForm`) as a prop — they do NOT call `useForm` themselves.
+- Separate schemas per BE Command (Create vs Update use different schema files when the commands differ).
+
 ## Error Handling
 - Never swallow errors silently.
 - Always: `console.error(error)` + `toast.error('...')` via Sonner.
