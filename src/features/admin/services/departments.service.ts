@@ -1,5 +1,6 @@
 import { apiCall } from '@/lib/api'
 import type {
+  AddBulkDepartmentMembersPayload,
   AddDepartmentMemberPayload,
   DepartmentMemberResponse,
   DepartmentResponse,
@@ -30,6 +31,9 @@ export const departmentsService = {
 
   addMember: (userId: string, data: AddDepartmentMemberPayload) =>
     apiCall.post<string>(`/api/users/${userId}/departments`, data),
+
+  addMembers: (departmentId: string, data: AddBulkDepartmentMembersPayload) =>
+    apiCall.post<number>(`/api/departments/${departmentId}/members/bulk`, data),
 
   updateMember: (userId: string, departmentId: string, data: UpdateDepartmentMemberPayload) =>
     apiCall.put<void>(`/api/users/${userId}/departments/${departmentId}`, data),

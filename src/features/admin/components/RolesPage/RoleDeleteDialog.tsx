@@ -2,17 +2,16 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { useDeleteRole } from '../../hooks/use-roles'
 import type { RoleResponse } from '../../types/admin.types'
 
 interface RoleDeleteDialogProps {
   role: RoleResponse | null
   onClose: () => void
+  onDelete: () => void
+  isPending: boolean
 }
 
-export function RoleDeleteDialog({ role, onClose }: RoleDeleteDialogProps) {
-  const deleteRole = useDeleteRole()
-
+export function RoleDeleteDialog({ role, onClose, onDelete, isPending }: RoleDeleteDialogProps) {
   return (
     <AlertDialog open={!!role} onOpenChange={(open) => { if (!open) onClose() }}>
       <AlertDialogContent>
@@ -27,9 +26,10 @@ export function RoleDeleteDialog({ role, onClose }: RoleDeleteDialogProps) {
           <AlertDialogCancel>Hủy</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            onClick={() => { if (role) deleteRole.mutate(role.id) }}
+            onClick={onDelete}
+            disabled={isPending}
           >
-            Xóa
+            {isPending ? 'Đang xóa...' : 'Xóa'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

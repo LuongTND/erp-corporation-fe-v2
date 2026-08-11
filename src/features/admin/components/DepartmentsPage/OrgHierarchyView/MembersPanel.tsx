@@ -1,161 +1,39 @@
-import { useState } from 'react'
-import { Plus, Trash2, UserCog } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useMemo, useState } from 'react'
+import { UserCog, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
-  useAddDepartmentMember,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
+  useAddDepartmentMembers,
   useDepartmentMembers,
   useRemoveDepartmentMember,
   useUpdateDepartmentMember,
 } from '../../../hooks/use-departments'
+import { useEmployees } from '../../../hooks/use-employees'
 import type { DepartmentMemberResponse, DepartmentTreeResponse } from '../../../types/admin.types'
 import type { JobLevelOption } from './types'
+import { MemberRow } from './MemberRow'
+import { AddMemberDialog } from './AddMemberDialog'
 
 function groupByLevel(members: DepartmentMemberResponse[]) {
   const map = new Map<string, { levelName: string; order: number; items: DepartmentMemberResponse[] }>()
-  for (const m of members) {
-    const key = m.jobLevelId ?? '__none__'
+  for (const member of members) {
+    const key = member.jobLevelId ?? '__none__'
     if (!map.has(key)) {
-      map.set(key, { levelName: m.jobLevelName ?? 'Chưa phân cấp', order: m.jobLevelOrder ?? 999, items: [] })
+      map.set(key, { levelName: member.jobLevelName ?? 'Chưa phân cấp', order: member.jobLevelOrder ?? 999, items: [] })
     }
-    map.get(key)!.items.push(m)
+    map.get(key)!.items.push(member)
   }
   return [...map.values()].sort((a, b) => a.order - b.order)
-}
-
-function initials(name: string) {
-  return name.split(' ').slice(-2).map(n => n[0]).join('').toUpperCase()
-}
-
-function MemberRow({ member, departmentId, jobLevels }: {
-  member: DepartmentMemberResponse
-  departmentId: string
-  jobLevels: JobLevelOption[]
-}) {
-  const updateMember = useUpdateDepartmentMember()
-  const removeMember = useRemoveDepartmentMember()
-
-  return (
-    <div className="flex items-center gap-2.5 px-3 py-2 hover:bg-muted/40 transition-colors group">
-      <Avatar className="h-7 w-7 shrink-0">
-        <AvatarImage src={member.avatarUrl} alt={member.fullName} />
-        <AvatarFallback className="text-[10px] font-medium">{initials(member.fullName)}</AvatarFallback>
-      </Avatar>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-medium truncate leading-none">{member.fullName}</span>
-          {member.isPrimary && (
-            <span className="text-[9px] px-1 py-px rounded border text-muted-foreground shrink-0 leading-none">chính</span>
-          )}
-        </div>
-        <span className="text-[10px] text-muted-foreground font-mono leading-none mt-0.5 block">{member.employeeCode}</span>
-      </div>
-
-      <Select
-        value={member.jobLevelId ?? '__none__'}
-        onValueChange={v => updateMember.mutate({
-          userId: member.userId, departmentId,
-          data: { jobLevelId: v === '__none__' ? null : v },
-        })}
-        disabled={updateMember.isPending}
-      >
-        <SelectTrigger className="h-6 w-32 text-[11px] border-dashed">
-          <SelectValue placeholder="Chức vụ..." />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="__none__" className="text-[11px] text-muted-foreground">— Chưa có —</SelectItem>
-          {jobLevels.map(jl => (
-            <SelectItem key={jl.id} value={jl.id} className="text-[11px]">{jl.levelName}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <button
-        type="button"
-        onClick={() => {
-          if (!confirm(`Xóa ${member.fullName} khỏi phòng ban?`)) return
-          removeMember.mutate({ userId: member.userId, departmentId })
-        }}
-        disabled={removeMember.isPending}
-        aria-label={`Xóa ${member.fullName}`}
-        className="h-6 w-6 flex items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all shrink-0 cursor-pointer disabled:opacity-40"
-      >
-        <Trash2 className="w-3 h-3" />
-      </button>
-    </div>
-  )
-}
-
-function AddMemberDialog({ open, departmentId, onOpenChange, jobLevels }: {
-  open: boolean
-  departmentId: string
-  onOpenChange: (v: boolean) => void
-  jobLevels: JobLevelOption[]
-}) {
-  const [userId, setUserId] = useState('')
-  const [jobLevelId, setJobLevelId] = useState('')
-  const [startDate, setStartDate] = useState(() => new Date().toISOString().split('T')[0])
-  const addMember = useAddDepartmentMember()
-
-  const reset = () => { setUserId(''); setJobLevelId('') }
-
-  return (
-    <Dialog open={open} onOpenChange={v => { onOpenChange(v); if (!v) reset() }}>
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="text-sm">Thêm thành viên</DialogTitle>
-        </DialogHeader>
-        <form
-          onSubmit={e => {
-            e.preventDefault()
-            if (!userId.trim()) return
-            addMember.mutate(
-              { userId: userId.trim(), data: { departmentId, startDate, jobLevelId: jobLevelId || undefined } },
-              { onSuccess: () => { onOpenChange(false); reset() } },
-            )
-          }}
-          className="space-y-3 pt-1"
-        >
-          <div className="space-y-1">
-            <Label htmlFor="uid" className="text-xs">User ID <span className="text-destructive">*</span></Label>
-            <Input id="uid" value={userId} onChange={e => setUserId(e.target.value)}
-              placeholder="UUID của user..." className="h-8 text-xs" required />
-            <p className="text-[11px] text-muted-foreground">Lấy từ trang quản lý tài khoản.</p>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="jl" className="text-xs">Chức vụ</Label>
-            <Select value={jobLevelId} onValueChange={setJobLevelId}>
-              <SelectTrigger id="jl" className="h-8 text-xs"><SelectValue placeholder="Chọn chức vụ..." /></SelectTrigger>
-              <SelectContent>
-                {jobLevels.map(jl => <SelectItem key={jl.id} value={jl.id} className="text-xs">{jl.levelName}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="sd" className="text-xs">Ngày bắt đầu <span className="text-destructive">*</span></Label>
-            <Input id="sd" type="date" value={startDate} onChange={e => setStartDate(e.target.value)}
-              className="h-8 text-xs" required />
-          </div>
-          <DialogFooter className="pt-1">
-            <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>Hủy</Button>
-            <Button type="submit" size="sm" disabled={addMember.isPending || !userId.trim()}>
-              {addMember.isPending ? 'Đang thêm...' : 'Thêm'}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
 }
 
 export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: {
@@ -165,8 +43,36 @@ export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: {
   onAddOpenChange: (v: boolean) => void
 }) {
   const { data: members, isLoading } = useDepartmentMembers(dept.id)
-  const grouped = groupByLevel(members ?? [])
+  const { data: allUsers = [], isLoading: isLoadingUsers } = useEmployees(undefined, undefined, { enabled: addOpen })
+  const addMembers = useAddDepartmentMembers()
+  const updateMember = useUpdateDepartmentMember()
+  const removeMember = useRemoveDepartmentMember()
+
+  const [pendingRemove, setPendingRemove] = useState<{ userId: string; fullName: string } | null>(null)
+
+  const grouped = useMemo(() => groupByLevel(members ?? []), [members])
   const total = members?.length ?? 0
+
+  const handleLevelChange = (userId: string, jobLevelId: string | null) => {
+    updateMember.mutate({ userId, departmentId: dept.id, data: { jobLevelId } })
+  }
+
+  const handleRemove = (userId: string, fullName: string) => {
+    setPendingRemove({ userId, fullName })
+  }
+
+  const confirmRemove = () => {
+    if (!pendingRemove) return
+    removeMember.mutate({ userId: pendingRemove.userId, departmentId: dept.id })
+    setPendingRemove(null)
+  }
+
+  const handleAdd = (userIds: string[], startDate: string) => {
+    addMembers.mutate(
+      { departmentId: dept.id, data: { userIds, startDate } },
+      { onSuccess: () => onAddOpenChange(false) },
+    )
+  }
 
   return (
     <>
@@ -195,15 +101,52 @@ export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: {
               <div className="px-3 py-1 text-[10px] font-medium text-muted-foreground uppercase tracking-wide bg-muted/30 border-b sticky top-0">
                 {group.levelName} <span className="normal-case font-normal opacity-70">({group.items.length})</span>
               </div>
-              {group.items.map(m => (
-                <MemberRow key={m.userDepartmentId} member={m} departmentId={dept.id} jobLevels={jobLevels} />
+              {group.items.map(member => (
+                <MemberRow
+                  key={member.userDepartmentId}
+                  member={member}
+                  jobLevels={jobLevels}
+                  isManager={member.userId === dept.managerId}
+                  isUpdating={updateMember.isPending}
+                  isRemoving={removeMember.isPending && pendingRemove?.userId === member.userId}
+                  onLevelChange={handleLevelChange}
+                  onRemove={handleRemove}
+                />
               ))}
             </div>
           ))
         )}
       </div>
 
-      <AddMemberDialog open={addOpen} departmentId={dept.id} onOpenChange={onAddOpenChange} jobLevels={jobLevels} />
+      <AlertDialog open={!!pendingRemove} onOpenChange={open => !open && setPendingRemove(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xóa khỏi phòng ban?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Xóa <span className="font-medium text-foreground">{pendingRemove?.fullName}</span> khỏi phòng ban này. Hành động này có thể hoàn tác bằng cách thêm lại.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmRemove}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AddMemberDialog
+        open={addOpen}
+        onOpenChange={onAddOpenChange}
+        allUsers={allUsers}
+        isLoadingUsers={isLoadingUsers}
+        currentMembers={members ?? []}
+        onAdd={handleAdd}
+        isPending={addMembers.isPending}
+      />
     </>
   )
 }

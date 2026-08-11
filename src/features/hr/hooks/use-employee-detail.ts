@@ -34,3 +34,15 @@ export function useUpdateEmployee(userId: string) {
     onError: () => toast.error('Cập nhật thất bại'),
   })
 }
+
+export function useUploadAvatar(userId: string) {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: (file: File) => employeesService.uploadAvatar(userId, file),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: employeeDetailKey(userId) })
+      toast.success('Cập nhật ảnh đại diện thành công')
+    },
+    onError: () => toast.error('Upload ảnh thất bại'),
+  })
+}

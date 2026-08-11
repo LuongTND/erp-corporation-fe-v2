@@ -3,11 +3,11 @@ import { Plus, BookOpen } from 'lucide-react'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { LeaveStatCards }     from '@/features/hr/components/leave/LeaveStatCards'
-import { LeaveRequestsTable } from '@/features/hr/components/leave/LeaveRequestsTable'
-import { LeaveBalancePanel }  from '@/features/hr/components/leave/LeaveBalancePanel'
-import { LeaveCalendar }      from '@/features/hr/components/leave/LeaveCalendar'
-import { NewLeaveDialog }     from '@/features/hr/components/leave/NewLeaveDialog'
+import { LeaveStatCards }     from '@/features/hr/components/LeavePage/LeaveStatCards'
+import { LeaveRequestsTable } from '@/features/hr/components/LeavePage/LeaveRequestsTable'
+import { LeaveBalancePanel }  from '@/features/hr/components/LeavePage/LeaveBalancePanel'
+import { LeaveCalendar }      from '@/features/hr/components/LeavePage/LeaveCalendar'
+import { NewLeaveDialog }     from '@/features/hr/components/LeavePage/NewLeaveDialog'
 
 const MONTHS = [
   'Th5/2025', 'Th4/2025', 'Th3/2025', 'Th6/2025', 'Th7/2025',

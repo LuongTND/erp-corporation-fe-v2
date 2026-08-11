@@ -1,45 +1,60 @@
-import { useMemo, useState } from 'react'
-import { EmployeeBulkActionBar } from '../components/employee-list/EmployeeBulkActionBar'
-import { EmployeeListFilters } from '../components/employee-list/EmployeeListFilters'
-import { EmployeeListGrid } from '../components/employee-list/EmployeeListGrid'
-import { EmployeeListPagination } from '../components/employee-list/EmployeeListPagination'
-import { EmployeeListTable } from '../components/employee-list/EmployeeListTable'
-import { EmployeeListToolbar } from '../components/employee-list/EmployeeListToolbar'
+import { useState } from 'react'
+import { employeesService } from '../services/employees.service'
+import type { UserSummaryResponse } from '@/features/admin/types/admin.types'
+import { useDepartments } from '@/features/admin/hooks/use-departments'
+import { EmployeeBulkActionBar } from '../components/EmployeeListPage/EmployeeBulkActionBar'
+import { EmployeeListFilters } from '../components/EmployeeListPage/EmployeeListFilters'
+import { EmployeeListGrid } from '../components/EmployeeListPage/EmployeeListGrid'
+import { EmployeeListPagination } from '../components/EmployeeListPage/EmployeeListPagination'
+import { EmployeeListTable } from '../components/EmployeeListPage/EmployeeListTable'
+import { EmployeeListToolbar } from '../components/EmployeeListPage/EmployeeListToolbar'
 import { HRPageHeader } from '../components/HRPageHeader'
-import type { EmployeeListDepartment, EmployeeListView } from '../types/employee-list.types'
-import {
-  EMPLOYEE_LIST_DEPARTMENTS,
-  EMPLOYEE_LIST_ITEMS,
-  EMPLOYEE_LIST_PAGE_SIZE,
-  EMPLOYEE_LIST_TOTAL,
-} from '../types/employee-list.types'
+import { useEmployeeList } from '../hooks/use-employee-list'
+import type { EmployeeListItem, EmployeeListView } from '../types/employee-list.types'
+import { EMPLOYEE_LIST_PAGE_SIZE } from '../types/employee-list.types'
+
+function toInitials(fullName: string): string {
+  const words = fullName.trim().split(/\s+/)
+  if (words.length >= 2) return (words[0][0] + words[words.length - 1][0]).toUpperCase()
+  return fullName.slice(0, 2).toUpperCase()
+}
+
+function toListItem(u: UserSummaryResponse): EmployeeListItem {
+  return {
+    id: u.employeeCode || u.id,
+    name: u.fullName,
+    email: u.email,
+    initials: toInitials(u.fullName),
+    dept: '',
+    position: '',
+    status: u.status,
+    joinDate: u.joinDate ? new Date(u.joinDate).toLocaleDateString('vi-VN') : '—',
+    attendance: 0,
+  }
+}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function EmployeeListPage() {
   const [view, setView] = useState<EmployeeListView>('table')
-  const [activeDept, setActiveDept] = useState<'All' | EmployeeListDepartment>('All')
+  const [activeDeptId, setActiveDeptId] = useState<string | undefined>()
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [checked, setChecked] = useState<Set<string>>(new Set())
   const [page, setPage] = useState(1)
+  const [isExporting, setIsExporting] = useState(false)
 
-  const filtered = useMemo(() => {
-    return EMPLOYEE_LIST_ITEMS.filter((employee) => {
-      const matchDept = activeDept === 'All' || employee.dept === activeDept
-      const matchStatus = statusFilter === 'all' || employee.status.toLowerCase().replace(' ', '-') === statusFilter
-      const q = search.toLowerCase()
-      const matchSearch = !q
-        || employee.name.toLowerCase().includes(q)
-        || employee.id.toLowerCase().includes(q)
-        || employee.position.toLowerCase().includes(q)
+  const { data: deptsData } = useDepartments()
+  const deptOptions = (deptsData?.items ?? []).map(d => ({ id: d.id, name: d.departmentName }))
 
-      return matchDept && matchStatus && matchSearch
-    })
-  }, [activeDept, statusFilter, search])
+  const apiStatus = statusFilter === 'all' ? undefined : statusFilter
+  const apiSearch = search.trim() || undefined
 
-  const pageData = filtered.slice((page - 1) * EMPLOYEE_LIST_PAGE_SIZE, page * EMPLOYEE_LIST_PAGE_SIZE)
-  const totalPages = Math.ceil(filtered.length / EMPLOYEE_LIST_PAGE_SIZE)
+  const { data: raw = [] } = useEmployeeList(apiSearch, apiStatus, activeDeptId)
+  const employees = raw.map(toListItem)
+
+  const pageData = employees.slice((page - 1) * EMPLOYEE_LIST_PAGE_SIZE, page * EMPLOYEE_LIST_PAGE_SIZE)
+  const totalPages = Math.ceil(employees.length / EMPLOYEE_LIST_PAGE_SIZE)
 
   const toggleRow = (id: string) => {
     setChecked((prev) => {
@@ -59,6 +74,21 @@ export default function EmployeeListPage() {
 
   const allChecked = pageData.length > 0 && pageData.every((e) => checked.has(e.id))
 
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const blob = await employeesService.exportUsers(apiSearch, apiStatus, activeDeptId)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `nhan-su-${new Date().toISOString().slice(0, 10)}.xlsx`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   return (
     <div className="h-full flex flex-col bg-background text-foreground">
       <div className="shrink-0">
@@ -74,22 +104,24 @@ export default function EmployeeListPage() {
       <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
         <div className="shrink-0">
           <EmployeeListToolbar
-            total={EMPLOYEE_LIST_TOTAL}
-            shown={filtered.length}
+            total={employees.length}
+            shown={pageData.length}
             search={search}
             onSearchChange={(value) => {
               setSearch(value)
               setPage(1)
             }}
+            onExport={handleExport}
+            isExporting={isExporting}
           />
         </div>
 
         <div className="shrink-0">
           <EmployeeListFilters
-            departments={EMPLOYEE_LIST_DEPARTMENTS}
-            activeDept={activeDept}
-            onDeptChange={(department) => {
-              setActiveDept(department)
+            departments={deptOptions}
+            activeDeptId={activeDeptId}
+            onDeptChange={(id) => {
+              setActiveDeptId(id)
               setPage(1)
             }}
             statusFilter={statusFilter}
@@ -121,8 +153,8 @@ export default function EmployeeListPage() {
             page={page}
             totalPages={totalPages}
             pageSize={EMPLOYEE_LIST_PAGE_SIZE}
-            shownCount={filtered.length}
-            total={EMPLOYEE_LIST_TOTAL}
+            shownCount={pageData.length}
+            total={employees.length}
             onPageChange={setPage}
           />
         </div>

@@ -41,6 +41,25 @@ const API_ROUTES = {
     BULK_CREATE: '/api/tasks/bulk',
     DUPLICATE: (id: string) => `/api/tasks/${id}/duplicate`,
   },
+  SALARY: {
+    CURRENT:  (userId: string) => `/api/hrm/users/${userId}/salary/current`,
+    HISTORY:  (userId: string) => `/api/hrm/users/${userId}/salary/history`,
+    SET:      (userId: string) => `/api/hrm/users/${userId}/salary`,
+  },
+
+  KPI_ENTRIES: {
+    LIST:    '/api/hrm/kpi-entries',
+    SUMMARY: '/api/hrm/kpi-entries/summary',
+    UPSERT:  '/api/hrm/kpi-entries',
+  },
+
+  PAYROLL_RUNS: {
+    LIST:          '/api/hrm/payroll-runs',
+    GET_BY_ID:     (id: string) => `/api/hrm/payroll-runs/${id}`,
+    CREATE:        '/api/hrm/payroll-runs',
+    UPDATE_ENTRY:  (entryId: string) => `/api/hrm/payroll-runs/entries/${entryId}`,
+    FINALIZE:      (id: string) => `/api/hrm/payroll-runs/${id}/finalize`,
+  },
 } as const
 
 export { API_ROUTES }

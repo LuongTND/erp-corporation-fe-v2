@@ -7,12 +7,6 @@ export type PayrollStatus = 'Paid' | 'Processing'
 export type KPIStatus = 'Achieved' | 'In Progress' | 'Missed'
 export type ActivityType = 'edit' | 'approved' | 'leave' | 'warning'
 
-export interface EmergencyContact {
-  name: string
-  relationship: string
-  phone: string
-}
-
 export interface BankAccount {
   bankName: string
   accountNumberMasked: string
@@ -37,6 +31,7 @@ export interface EmployeeDetail {
   fullName: string
   position: string
   department: string
+  departmentId?: string
   employmentType: EmploymentType
   employeeCode: string
   joinDate: string
@@ -51,7 +46,6 @@ export interface EmployeeDetail {
   idNumber: string
   idExpiry: string
   permanentAddress: string
-  emergencyContact: EmergencyContact
   bankAccount: BankAccount
   socialInsuranceNumber: string
   taxCode: string

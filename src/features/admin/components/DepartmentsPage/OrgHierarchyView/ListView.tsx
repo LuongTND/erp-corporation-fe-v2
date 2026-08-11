@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Building2, ChevronRight, Users } from 'lucide-react'
+import { Building2, ChevronRight, Plus, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useDepartmentTree } from '../../../hooks/use-departments'
@@ -87,6 +88,12 @@ export function ListView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
 
       {selectedDept ? (
         <div className="flex-1 flex flex-col bg-card border rounded-lg overflow-hidden min-w-0">
+          <div className="shrink-0 border-b flex items-center gap-2 px-3 h-9">
+            <span className="text-xs font-medium flex-1 truncate">{selectedDept.departmentName}</span>
+            <Button size="sm" className="h-6 px-2 text-[11px] gap-1 shrink-0" onClick={() => setAddOpen(true)}>
+              <Plus className="w-3 h-3" />Thêm
+            </Button>
+          </div>
           <MembersContent dept={selectedDept} jobLevels={jobLevels} addOpen={addOpen} onAddOpenChange={setAddOpen} />
         </div>
       ) : (

@@ -6,7 +6,7 @@ export type EmployeeListDepartment =
   | 'Finance'
   | 'Operations'
 
-export type EmployeeListStatus = 'Active' | 'On Leave' | 'Probation' | 'Resigned'
+export type EmployeeListStatus = string
 
 export type EmployeeListView = 'table' | 'grid'
 
@@ -15,7 +15,7 @@ export interface EmployeeListItem {
   name: string
   email: string
   initials: string
-  dept: EmployeeListDepartment
+  dept: string
   position: string
   status: EmployeeListStatus
   joinDate: string

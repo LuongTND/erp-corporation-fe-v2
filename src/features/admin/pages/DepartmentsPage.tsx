@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Building2, List, Share2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DeptListView, OrgHierarchyView } from '../components/DepartmentsPage'
 
 export default function DepartmentsPage() {
-  const [view, setView] = useState<'list' | 'org'>('list')
+  const [params, setParams] = useSearchParams()
+  const view = params.get('view') === 'org' ? 'org' : 'list'
+  const setView = (v: 'list' | 'org') => setParams(v === 'list' ? {} : { view: v })
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background text-foreground">

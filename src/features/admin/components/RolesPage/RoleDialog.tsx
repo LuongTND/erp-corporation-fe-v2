@@ -1,59 +1,33 @@
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import type { UseFormReturn } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { roleSchema, type RoleFormValues } from '../../schemas/admin.schemas'
-import { useCreateRole, useUpdateRole } from '../../hooks/use-roles'
-import type { RoleResponse } from '../../types/admin.types'
+import type { RoleFormValues } from '../../schemas/admin.schemas'
 
 interface RoleDialogProps {
   open: boolean
-  role?: RoleResponse
+  isEdit: boolean
+  form: UseFormReturn<RoleFormValues>
+  onSubmit: (values: RoleFormValues) => void
   onOpenChange: (open: boolean) => void
+  isPending: boolean
 }
 
-export function RoleDialog({ open, role, onOpenChange }: RoleDialogProps) {
-  const createRole = useCreateRole()
-  const updateRole = useUpdateRole()
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<RoleFormValues>({
-    resolver: zodResolver(roleSchema),
-  })
-
-  useEffect(() => {
-    if (open) {
-      reset({
-        roleName: role?.roleName ?? '',
-        displayName: role?.displayName ?? '',
-        description: role?.description ?? '',
-      })
-    }
-  }, [open, role, reset])
-
-  const onSubmit = async ({ roleName, displayName, description }: RoleFormValues) => {
-    if (role) {
-      await updateRole.mutateAsync({ id: role.id, data: { displayName, description: description ?? '' } })
-    } else {
-      await createRole.mutateAsync({ roleName, displayName, description: description ?? '' })
-    }
-    onOpenChange(false)
-  }
-
-  const isPending = createRole.isPending || updateRole.isPending
+export function RoleDialog({ open, isEdit, form, onSubmit, onOpenChange, isPending }: RoleDialogProps) {
+  const { register, handleSubmit, formState: { errors } } = form
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{role ? 'Chỉnh sửa vai trò' : 'Tạo vai trò'}</DialogTitle>
+          <DialogTitle>{isEdit ? 'Chỉnh sửa vai trò' : 'Tạo vai trò'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
           <div className="space-y-1.5">
             <Label htmlFor="roleName">Tên role (code) <span aria-hidden="true" className="text-destructive">*</span></Label>
-            <Input id="roleName" {...register('roleName')} placeholder="vd: hr-manager" disabled={!!role} />
+            <Input id="roleName" {...register('roleName')} placeholder="vd: hr-manager" disabled={isEdit} />
             {errors.roleName && <p className="text-xs text-destructive">{errors.roleName.message}</p>}
           </div>
           <div className="space-y-1.5">
@@ -69,7 +43,7 @@ export function RoleDialog({ open, role, onOpenChange }: RoleDialogProps) {
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? 'Đang lưu...' : role ? 'Lưu thay đổi' : 'Tạo vai trò'}
+              {isPending ? 'Đang lưu...' : isEdit ? 'Lưu thay đổi' : 'Tạo vai trò'}
             </Button>
           </div>
         </form>

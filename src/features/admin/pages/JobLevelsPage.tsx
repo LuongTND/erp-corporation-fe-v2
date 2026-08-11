@@ -1,42 +1,58 @@
-import { useState } from 'react'
-import { Edit2, Plus, Trash2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Plus } from 'lucide-react'
 import { HRPageHeader } from '@/features/hr/components/HRPageHeader'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useDeleteJobLevel, useJobLevels } from '../hooks/use-job-levels'
-import { SCOPE_TYPE_LABELS, type JobLevelResponse, type ScopeType } from '../types/admin.types'
-import { JobLevelDialog } from '../components/JobLevelsPage/JobLevelDialog'
-
-const SCOPE_BADGE_STYLE: Record<ScopeType, string> = {
-  1: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
-  2: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800',
-  3: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800',
-  4: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800',
-}
-
-function formatSalary(value: number | undefined) {
-  if (value == null) return '—'
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(value)
-}
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { useCreateJobLevel, useDeleteJobLevel, useJobLevels, useUpdateJobLevel, useEmployeesByJobLevel, useUnassignJobLevel } from '../hooks/use-job-levels'
+import { jobLevelSchema, type JobLevelFormValues } from '../schemas/admin.schemas'
+import type { JobLevelResponse } from '../types/admin.types'
+import { JobLevelDialog, EmployeesSheet, JobLevelTable } from '../components/JobLevelsPage'
 
 export default function JobLevelsPage() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editLevel, setEditLevel] = useState<JobLevelResponse | undefined>()
+  const [deleteTarget, setDeleteTarget] = useState<JobLevelResponse | null>(null)
+  const [sheetLevel, setSheetLevel] = useState<JobLevelResponse | null>(null)
 
   const { data, isLoading } = useJobLevels({ Top: 100, NeedTotalCount: true })
+  const create = useCreateJobLevel()
+  const update = useUpdateJobLevel()
   const deleteJobLevel = useDeleteJobLevel()
+  const { data: sheetEmployees = [], isLoading: isLoadingEmployees } = useEmployeesByJobLevel(sheetLevel?.id ?? null)
+  const unassign = useUnassignJobLevel()
+
+  const form = useForm<JobLevelFormValues>({ resolver: zodResolver(jobLevelSchema) })
+
+  useEffect(() => {
+    if (dialogOpen) {
+      form.reset({
+        levelName: editLevel?.levelName ?? '',
+        levelOrder: editLevel?.levelOrder ?? 1,
+        defaultScopeType: editLevel?.defaultScopeType ?? 'All',
+        description: editLevel?.description ?? '',
+      })
+    }
+  }, [dialogOpen, editLevel, form])
+
+  const onSubmit = (values: JobLevelFormValues) => {
+    if (editLevel) {
+      update.mutate({ id: editLevel.id, data: values }, { onSuccess: () => setDialogOpen(false) })
+    } else {
+      create.mutate(values, { onSuccess: () => setDialogOpen(false) })
+    }
+  }
+
+  const onUnassign = (ids: string[]) => Promise.all(ids.map(id => unassign.mutateAsync(id)))
 
   const levels = (data?.items ?? []).sort((a, b) => a.levelOrder - b.levelOrder)
 
   const openCreate = () => { setEditLevel(undefined); setDialogOpen(true) }
   const openEdit = (level: JobLevelResponse) => { setEditLevel(level); setDialogOpen(true) }
-
-  const handleDelete = (level: JobLevelResponse) => {
-    if (!confirm(`Xóa cấp bậc "${level.levelName}"?`)) return
-    deleteJobLevel.mutate(level.id)
-  }
 
   return (
     <div className="h-full flex flex-col bg-background text-foreground">
@@ -54,71 +70,53 @@ export default function JobLevelsPage() {
           </Button>
         </div>
 
-        <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
-          <Table>
-            <TableHeader className="sticky top-0 z-10 bg-card">
-              <TableRow>
-                <TableHead className="w-12">#</TableHead>
-                <TableHead>Tên</TableHead>
-                <TableHead>Phạm vi</TableHead>
-                <TableHead>Khoảng lương</TableHead>
-                <TableHead>Mô tả</TableHead>
-                <TableHead className="w-[80px] text-right">Thao tác</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    {Array.from({ length: 6 }).map((__, j) => (
-                      <TableCell key={j}><Skeleton className="h-4 w-full" /></TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : levels.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-12 text-muted-foreground text-sm">
-                    Không có cấp bậc nào
-                  </TableCell>
-                </TableRow>
-              ) : (
-                levels.map((level) => (
-                  <TableRow key={level.id}>
-                    <TableCell className="text-muted-foreground text-sm tabular-nums">{level.levelOrder}</TableCell>
-                    <TableCell className="font-medium">{level.levelName}</TableCell>
-                    <TableCell>
-                      <Badge className={SCOPE_BADGE_STYLE[level.defaultScopeType]}>
-                        {SCOPE_TYPE_LABELS[level.defaultScopeType]}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground tabular-nums">
-                      {level.baseSalaryMin != null || level.baseSalaryMax != null
-                        ? `${formatSalary(level.baseSalaryMin)} – ${formatSalary(level.baseSalaryMax)}`
-                        : '—'
-                      }
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
-                      {level.description ?? '—'}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => openEdit(level)} aria-label={`Edit ${level.levelName}`}>
-                          <Edit2 className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-destructive hover:text-destructive" onClick={() => handleDelete(level)} aria-label={`Delete ${level.levelName}`}>
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+        <JobLevelTable
+          levels={levels}
+          isLoading={isLoading}
+          onEdit={openEdit}
+          onDelete={setDeleteTarget}
+          onViewEmployees={setSheetLevel}
+        />
       </div>
 
-      <JobLevelDialog open={dialogOpen} jobLevel={editLevel} onOpenChange={setDialogOpen} />
+      <JobLevelDialog
+        open={dialogOpen}
+        isEdit={!!editLevel}
+        form={form}
+        onSubmit={onSubmit}
+        onOpenChange={setDialogOpen}
+        isPending={create.isPending || update.isPending}
+      />
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={v => { if (!v) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xóa cấp bậc?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cấp bậc <span className="font-semibold text-foreground">"{deleteTarget?.levelName}"</span> sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => { deleteJobLevel.mutate(deleteTarget!.id); setDeleteTarget(null) }}
+              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+            >
+              Xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <EmployeesSheet
+        level={sheetLevel}
+        open={!!sheetLevel}
+        onOpenChange={v => { if (!v) setSheetLevel(null) }}
+        employees={sheetEmployees}
+        isLoadingEmployees={isLoadingEmployees}
+        onUnassign={onUnassign}
+        isUnassigning={unassign.isPending}
+      />
     </div>
   )
 }

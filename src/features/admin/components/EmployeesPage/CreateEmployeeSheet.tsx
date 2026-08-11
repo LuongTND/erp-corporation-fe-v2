@@ -1,67 +1,30 @@
-import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import type { UseFormReturn } from 'react-hook-form'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { createEmployeeSchema, type CreateEmployeeFormValues } from '../../schemas/admin.schemas'
-import { useCreateEmployee } from '../../hooks/use-employees'
-import { useJobLevels } from '../../hooks/use-job-levels'
-import { useAllUsers } from '../../hooks/use-roles'
-import { CONTRACT_TYPE_LABELS, GENDER_LABELS, type ContractType, type Gender } from '../../types/admin.types'
+import { DatePickerField } from '@/features/hr/components/EmployeeDetailPage/DatePickerField'
+import type { CreateEmployeeFormValues } from '../../schemas/admin.schemas'
+import { CONTRACT_TYPE_LABELS, GENDER_LABELS, type ContractType, type Gender, type JobLevelResponse, type UserSummaryResponse } from '../../types/admin.types'
 import { DynamicFormSection } from './DynamicFormSection'
 
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
+  form: UseFormReturn<CreateEmployeeFormValues>
+  onSubmit: (values: CreateEmployeeFormValues) => void
+  isPending: boolean
+  jobLevels: JobLevelResponse[]
+  managers: UserSummaryResponse[]
 }
 
 const GENDERS = Object.entries(GENDER_LABELS) as [Gender, string][]
 const CONTRACT_TYPES = Object.entries(CONTRACT_TYPE_LABELS) as [ContractType, string][]
 
-export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
-  const create = useCreateEmployee()
-  const { data: jobLevelsData } = useJobLevels({ Top: 100, NeedTotalCount: false })
-  const { data: users } = useAllUsers()
-
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<CreateEmployeeFormValues>({
-    resolver: zodResolver(createEmployeeSchema),
-    defaultValues: { dateOfJoin: new Date().toISOString().slice(0, 10) },
-  })
-
-  useEffect(() => {
-    if (open) reset({ dateOfJoin: new Date().toISOString().slice(0, 10) })
-  }, [open, reset])
-
-  const onSubmit = async (values: CreateEmployeeFormValues) => {
-    const payload = {
-      ...values,
-      employeeCode: values.employeeCode || undefined,
-      gender: values.gender || undefined,
-      dateOfBirth: values.dateOfBirth || undefined,
-      identityCardNumber: values.identityCardNumber || undefined,
-      identityCardIssuedDate: values.identityCardIssuedDate || undefined,
-      identityCardIssuedPlace: values.identityCardIssuedPlace || undefined,
-      phoneNumber: values.phoneNumber || undefined,
-      permanentAddress: values.permanentAddress || undefined,
-      currentAddress: values.currentAddress || undefined,
-      taxCode: values.taxCode || undefined,
-      socialInsuranceCode: values.socialInsuranceCode || undefined,
-      managerId: values.managerId || undefined,
-      contractType: values.contractType || undefined,
-      bankName: values.bankName || undefined,
-      bankAccountNumber: values.bankAccountNumber || undefined,
-      customFieldValues:
-        values.customFieldValues && Object.keys(values.customFieldValues).length > 0
-          ? values.customFieldValues
-          : undefined,
-    }
-    await create.mutateAsync(payload)
-    onOpenChange(false)
-  }
+export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPending, jobLevels, managers }: Props) {
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = form
 
   const gender = watch('gender')
   const jobLevelId = watch('jobLevelId')
@@ -117,8 +80,8 @@ export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
                     </Select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="dateOfBirth">Ngày sinh</Label>
-                    <Input id="dateOfBirth" type="date" {...register('dateOfBirth')} />
+                    <Label>Ngày sinh</Label>
+                    <DatePickerField value={watch('dateOfBirth') ?? ''} onChange={(v) => setValue('dateOfBirth', v)} toYear={new Date().getFullYear()} />
                   </div>
                 </div>
               </AccordionContent>
@@ -134,7 +97,7 @@ export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
                       <SelectTrigger><SelectValue placeholder="Chọn cấp bậc" /></SelectTrigger>
                       <SelectContent>
-                        {(jobLevelsData?.items ?? []).map((jl) => (
+                        {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>
                         ))}
                       </SelectContent>
@@ -142,8 +105,8 @@ export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
                     {errors.jobLevelId && <p className="text-xs text-destructive">{errors.jobLevelId.message}</p>}
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="dateOfJoin">Ngày vào làm <span className="text-destructive">*</span></Label>
-                    <Input id="dateOfJoin" type="date" {...register('dateOfJoin')} />
+                    <Label>Ngày vào làm <span className="text-destructive">*</span></Label>
+                    <DatePickerField value={watch('dateOfJoin') ?? ''} onChange={(v) => setValue('dateOfJoin', v)} toYear={new Date().getFullYear() + 1} />
                     {errors.dateOfJoin && <p className="text-xs text-destructive">{errors.dateOfJoin.message}</p>}
                   </div>
                 </div>
@@ -153,7 +116,7 @@ export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
                   <Select value={managerId ?? ''} onValueChange={(v) => setValue('managerId', v || undefined)}>
                     <SelectTrigger><SelectValue placeholder="Không có" /></SelectTrigger>
                     <SelectContent>
-                      {(users ?? []).map((u) => (
+                      {managers.map((u) => (
                         <SelectItem key={u.id} value={u.id}>{u.fullName} ({u.employeeCode})</SelectItem>
                       ))}
                     </SelectContent>
@@ -172,8 +135,8 @@ export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
                     <Input id="identityCardNumber" {...register('identityCardNumber')} placeholder="012345678901" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label htmlFor="identityCardIssuedDate">Ngày cấp</Label>
-                    <Input id="identityCardIssuedDate" type="date" {...register('identityCardIssuedDate')} />
+                    <Label>Ngày cấp</Label>
+                    <DatePickerField value={watch('identityCardIssuedDate') ?? ''} onChange={(v) => setValue('identityCardIssuedDate', v)} fromYear={1990} toYear={new Date().getFullYear()} />
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -254,8 +217,8 @@ export function CreateEmployeeSheet({ open, onOpenChange }: Props) {
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
-            <Button type="submit" disabled={create.isPending}>
-              {create.isPending ? 'Đang tạo...' : 'Tạo nhân sự'}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? 'Đang tạo...' : 'Tạo nhân sự'}
             </Button>
           </div>
         </form>

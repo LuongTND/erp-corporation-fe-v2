@@ -12,27 +12,12 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { OrgChartTree, type RenderNodeProps } from '@/features/hr/components/orgchart/OrgChartTree'
-import { OrgChartNode } from '@/features/hr/components/orgchart/OrgChartNode'
-import { OrgChartSheet } from '@/features/hr/components/orgchart/OrgChartSheet'
-import { DEPT_NAMES, ORG_TREE } from '@/features/hr/components/orgchart/orgchart.data'
-import type { OrgPerson } from '@/features/hr/components/orgchart/orgchart.types'
+import { OrgChartTree } from '@/features/hr/components/OrgChartPage/OrgChartTree'
+import { OrgChartNode } from '@/features/hr/components/OrgChartPage/OrgChartNode'
+import { OrgChartSheet } from '@/features/hr/components/OrgChartPage/OrgChartSheet'
+import { DEPT_NAMES, ORG_TREE } from '@/features/hr/data/orgchart.data'
+import type { OrgPerson } from '@/features/hr/types/orgchart.types'
 import { cn } from '@/lib/utils'
-
-function renderOrgNode(props: RenderNodeProps<OrgPerson>) {
-  return (
-    <OrgChartNode
-      node={props.node}
-      isRoot={props.isRoot}
-      selected={props.selected}
-      onSelect={props.onSelect}
-      isExpanded={props.isExpanded}
-      hasChildren={props.hasChildren}
-      onToggle={props.onToggle}
-      editMode={props.editMode}
-    />
-  )
-}
 
 const DEFAULT_EXPANDED = new Set([
   'ceo',
@@ -211,7 +196,7 @@ export default function OrgChartPage() {
         <div className="flex-1 bg-card rounded-xl shadow-sm overflow-hidden relative border border-border">
           <OrgChartTree
             tree={ORG_TREE}
-            renderNode={renderOrgNode}
+            renderNode={(props) => <OrgChartNode node={props.node} isRoot={props.isRoot} selected={props.selected} onSelect={props.onSelect} isExpanded={props.isExpanded} hasChildren={props.hasChildren} onToggle={props.onToggle} editMode={props.editMode} />}
             selectedId={selectedNode?.id ?? null}
             expandedIds={expandedIds}
             onSelect={handleSelect}

@@ -3,10 +3,10 @@ import { Play, Download } from 'lucide-react'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { PayrollStatCards }       from '../components/payroll/PayrollStatCards'
-import { PayrollBreakdownChart }  from '../components/payroll/PayrollBreakdownChart'
-import { PayrollTable }           from '../components/payroll/PayrollTable'
-import { PayrollHistory }         from '../components/payroll/PayrollHistory'
+import { PayrollStatCards }       from '../components/PayrollPage/PayrollStatCards'
+import { PayrollBreakdownChart }  from '../components/PayrollPage/PayrollBreakdownChart'
+import { PayrollTable }           from '../components/PayrollPage/PayrollTable'
+import { PayrollHistory }         from '../components/PayrollPage/PayrollHistory'
 import type { PayrollStatus }     from '../types/payroll.types'
 
 const STATUS_BADGE: Record<PayrollStatus, string> = {

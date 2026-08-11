@@ -5,11 +5,11 @@ import { Calendar } from '@/components/ui/calendar'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-import { AttendanceStatCards } from '../components/attendance/AttendanceStatCards'
-import { AttendanceTable } from '../components/attendance/AttendanceTable'
-import { AttendanceCalendarHeatmap } from '../components/attendance/AttendanceCalendarHeatmap'
-import { LateOvertimeCharts } from '../components/attendance/LateOvertimeCharts'
-import { ManualCorrectionTable } from '../components/attendance/ManualCorrectionTable'
+import { AttendanceStatCards } from '../components/AttendancePage/AttendanceStatCards'
+import { AttendanceTable } from '../components/AttendancePage/AttendanceTable'
+import { AttendanceCalendarHeatmap } from '../components/AttendancePage/AttendanceCalendarHeatmap'
+import { LateOvertimeCharts } from '../components/AttendancePage/LateOvertimeCharts'
+import { ManualCorrectionTable } from '../components/AttendancePage/ManualCorrectionTable'
 
 export default function AttendancePage() {
   const [calOpen, setCalOpen] = useState(false)

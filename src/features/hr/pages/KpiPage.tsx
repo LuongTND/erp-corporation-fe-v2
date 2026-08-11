@@ -7,10 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { KpiStatCards } from '@/features/hr/components/kpi/KpiStatCards'
-import { KpiScoreDistribution } from '@/features/hr/components/kpi/KpiScoreDistribution'
-import { KpiDeptPerformance } from '@/features/hr/components/kpi/KpiDeptPerformance'
-import { KpiReviewTable } from '@/features/hr/components/kpi/KpiReviewTable'
+import { KpiStatCards } from '@/features/hr/components/KpiPage/KpiStatCards'
+import { KpiScoreDistribution } from '@/features/hr/components/KpiPage/KpiScoreDistribution'
+import { KpiDeptPerformance } from '@/features/hr/components/KpiPage/KpiDeptPerformance'
+import { KpiReviewTable } from '@/features/hr/components/KpiPage/KpiReviewTable'
 
 const CYCLES = ['Q2 2025', 'Q1 2025', 'Q4 2024', 'Q3 2024']
 

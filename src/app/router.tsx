@@ -56,6 +56,8 @@ const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/Departmen
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
 const AdminEmployeesPage = lazy(() => import('@/features/admin/pages/EmployeesPage'))
 const AdminCustomFieldsPage = lazy(() => import('@/features/admin/pages/CustomFieldsPage'))
+const AdminKpiPayrollPage = lazy(() => import('@/features/admin/pages/KpiPayrollPage'))
+const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/PayrollRunDetailPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -244,6 +246,30 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminCustomFieldsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.KPI_ENTRIES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminKpiPayrollPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.PAYROLL_RUNS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminKpiPayrollPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.PAYROLL_RUN_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminPayrollRunDetailPage />
                   </Suspense>
                 ),
               },
