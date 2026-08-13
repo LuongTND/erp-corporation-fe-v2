@@ -80,3 +80,23 @@ export function useDeleteStore() {
     },
   })
 }
+
+export function useAssignStoreManager() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ storeId, managerId }: { storeId: string; managerId: string | null }) =>
+      storesService.assignManager(storeId, managerId),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ['stores'] })
+      toast.success('Đã cập nhật quản lý cửa hàng')
+    },
+    onError: () => toast.error('Cập nhật quản lý thất bại'),
+  })
+}
+
+export function useMyStore() {
+  return useQuery({
+    queryKey: ['my-store'],
+    queryFn: () => storesService.getMyStore(),
+  })
+}

@@ -58,6 +58,9 @@ export const ROUTES = {
     AI_CHATBOT: '/customer/chatbot',
   },
 
+  // ── Store Manager Portal ──
+  STORE_MANAGER: '/store-manager',
+
   // ── Admin ──
   ADMIN: {
     ROOT: '/admin',

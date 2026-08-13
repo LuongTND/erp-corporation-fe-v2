@@ -5,13 +5,15 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
-import { useStores, useSyncStores, useStoreHours, useUpsertStoreHours, useDeleteStore, useToggleStoreActive } from '../hooks/use-stores'
-import { StoreHoursDialog, StoreTable } from '../components/StoresPage'
+import { useStores, useSyncStores, useStoreHours, useUpsertStoreHours, useDeleteStore, useToggleStoreActive, useAssignStoreManager } from '../hooks/use-stores'
+import { AssignManagerDialog, StoreHoursDialog, StoreTable } from '../components/StoresPage'
 import type { StoreResponse } from '../types/admin.types'
+import { useEmployees } from '../hooks/use-employees'
 
 export default function StoresPage() {
   const [search, setSearch] = useState('')
   const [hoursStore, setHoursStore] = useState<StoreResponse | null>(null)
+  const [managerStore, setManagerStore] = useState<StoreResponse | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const debouncedSearch = useDebounce(search, 300)
@@ -20,7 +22,9 @@ export default function StoresPage() {
   const sync = useSyncStores()
   const deleteStore = useDeleteStore()
   const toggleActive = useToggleStoreActive()
+  const assignManager = useAssignStoreManager()
   const { data: storeHours = [], isLoading: isHoursLoading } = useStoreHours(hoursStore?.id ?? null)
+  const { data: employees = [] } = useEmployees()
   const upsert = useUpsertStoreHours()
 
   const stores = data?.items ?? []
@@ -36,6 +40,12 @@ export default function StoresPage() {
     if (!hoursStore) return
     await upsert.mutateAsync({ storeId: hoursStore.id, hours })
     setHoursStore(null)
+  }
+
+  const handleAssignManager = (storeId: string, managerId: string | null) => {
+    assignManager.mutate({ storeId, managerId }, {
+      onSuccess: () => setManagerStore(null),
+    })
   }
 
   return (
@@ -75,6 +85,7 @@ export default function StoresPage() {
           totalPages={totalPages}
           start={start}
           onStoreHours={setHoursStore}
+          onAssignManager={setManagerStore}
           onToggleActive={storeId => toggleActive.mutate(storeId)}
           onDelete={storeId => deleteStore.mutate(storeId)}
           onPageChange={setPage}
@@ -90,6 +101,14 @@ export default function StoresPage() {
         isSaving={upsert.isPending}
         onOpenChange={open => { if (!open) setHoursStore(null) }}
         onSave={handleSaveHours}
+      />
+
+      <AssignManagerDialog
+        store={managerStore}
+        users={employees}
+        isSaving={assignManager.isPending}
+        onOpenChange={open => { if (!open) setManagerStore(null) }}
+        onAssign={handleAssignManager}
       />
     </div>
   )

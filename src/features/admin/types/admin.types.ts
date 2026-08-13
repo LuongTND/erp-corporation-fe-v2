@@ -27,8 +27,27 @@ export interface StoreResponse {
   address?: string
   phone?: string
   regionId?: string | null
+  managerId?: string | null
+  managerName?: string | null
   isActive: boolean
   todayIsClosed: boolean | null // null = chưa cấu hình giờ
+}
+
+export interface StorePortalResponse {
+  id: string
+  name: string
+  code: string
+  address?: string
+  phone?: string
+  regionName?: string
+  isActive: boolean
+  todayHours?: {
+    dayOfWeek: string
+    openTime: string
+    closeTime: string
+    isClosed: boolean
+  } | null
+  counters: CounterResponse[]
 }
 
 export interface StoreHoursResponse {

@@ -1,4 +1,4 @@
-import { Clock, Power, Trash2 } from 'lucide-react'
+import { Clock, Power, Trash2, UserCog } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,6 +38,7 @@ interface StoreTableProps {
   readonly totalPages: number
   readonly start: number
   readonly onStoreHours: (store: StoreResponse) => void
+  readonly onAssignManager: (store: StoreResponse) => void
   readonly onToggleActive: (storeId: string) => void
   readonly onDelete: (storeId: string) => void
   readonly onPageChange: (page: number) => void
@@ -47,7 +48,7 @@ interface StoreTableProps {
 export function StoreTable({
   stores, isLoading, isDeleting, isToggling,
   pageSize, totalCount, currentPage, totalPages, start,
-  onStoreHours, onToggleActive, onDelete, onPageChange, onPageSizeChange,
+  onStoreHours, onAssignManager, onToggleActive, onDelete, onPageChange, onPageSizeChange,
 }: StoreTableProps) {
   return (
     <div className="rounded-lg border bg-card flex flex-col overflow-hidden [&>[data-slot=table-container]]:overflow-y-auto [&>[data-slot=table-container]]:max-h-[calc(100vh-280px)]">
@@ -59,8 +60,9 @@ export function StoreTable({
               <TableHead className="sticky top-0 z-10 bg-card w-36">Mã</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card">Địa chỉ</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card w-36">SĐT</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-40">Quản lý</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card w-28">Trạng thái</TableHead>
-              <TableHead className="sticky top-0 z-10 bg-card w-24" />
+              <TableHead className="sticky top-0 z-10 bg-card w-28" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -71,8 +73,9 @@ export function StoreTable({
                   <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-48" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-28" /></TableCell>
                   <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
-                  <TableCell><Skeleton className="h-7 w-16" /></TableCell>
+                  <TableCell><Skeleton className="h-7 w-20" /></TableCell>
                 </TableRow>
               ))
             ) : stores.length === 0 ? (
@@ -88,6 +91,11 @@ export function StoreTable({
                   <TableCell className="text-sm text-muted-foreground font-mono">{store.code}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{store.address ?? '—'}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{store.phone ?? '—'}</TableCell>
+                  <TableCell className="text-sm">
+                    {store.managerName
+                      ? <span className="text-foreground">{store.managerName}</span>
+                      : <span className="text-muted-foreground italic">Chưa có</span>}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <Badge
@@ -105,6 +113,13 @@ export function StoreTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost" size="icon"
+                        onClick={() => onAssignManager(store)}
+                        title="Gán quản lý"
+                      >
+                        <UserCog className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost" size="icon"
                         onClick={() => onStoreHours(store)}

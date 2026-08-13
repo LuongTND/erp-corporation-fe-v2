@@ -28,6 +28,7 @@ import {
   ScrollText,
   ShoppingBag,
   SlidersHorizontal,
+  Store,
   UserCog,
   Users2,
   type LucideIcon,
@@ -69,6 +70,12 @@ const ADMIN_SECTIONS: NavSection[] = [
       { icon: ScrollText, label: 'Nhật ký phân quyền', href: ROUTES.ADMIN.AUDIT_LOGS },
       { icon: BarChart3, label: 'KPI & Lương', href: ROUTES.ADMIN.KPI_ENTRIES },
       // ponytail: Phân cấp vai trò hidden — re-enable when backend supports parentRoleId
+    ],
+  },
+  {
+    label: 'Quản lý cửa hàng',
+    items: [
+      { icon: Store, label: 'Cửa hàng của tôi', href: ROUTES.STORE_MANAGER },
     ],
   },
 ]

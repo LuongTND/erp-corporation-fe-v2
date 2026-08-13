@@ -1,5 +1,5 @@
 import { apiCall } from '@/lib/api'
-import type { QueryResult, StoreHoursPayload, StoreHoursResponse, StoreResponse } from '../types/admin.types'
+import type { QueryResult, StoreHoursPayload, StoreHoursResponse, StorePortalResponse, StoreResponse } from '../types/admin.types'
 
 export const storesService = {
   getStores: (params?: { searchText?: string; top?: number; skip?: number }) =>
@@ -22,4 +22,10 @@ export const storesService = {
 
   deleteStore: (storeId: string) =>
     apiCall.delete<void>(`/api/stores/${storeId}`),
+
+  assignManager: (storeId: string, managerId: string | null) =>
+    apiCall.patch<void>(`/api/stores/${storeId}/manager`, { managerId }),
+
+  getMyStore: () =>
+    apiCall.get<StorePortalResponse | null>('/api/store-manager/my-store'),
 }

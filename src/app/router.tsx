@@ -63,6 +63,7 @@ const AdminCountersPage = lazy(() => import('@/features/admin/pages/CountersPage
 const AdminKpiPayrollPage = lazy(() => import('@/features/admin/pages/KpiPayrollPage'))
 const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/PayrollRunDetailPage'))
 const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AuditLogsPage'))
+const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -328,6 +329,16 @@ export const router = createBrowserRouter([
               //   ),
               // },
               // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
+
+              // ── Store Manager Portal ──
+              {
+                path: ROUTES.STORE_MANAGER,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <StoreManagerPortalPage />
+                  </Suspense>
+                ),
+              },
 
               // ── LMS Module ──
               {
