@@ -8,13 +8,22 @@ export const roleSchema = z.object({
 export type RoleFormValues = z.infer<typeof roleSchema>
 
 export const departmentSchema = z.object({
-  departmentName: z.string().min(1, 'Department name is required').max(255),
-  departmentCode: z.string().min(1, 'Department code is required').max(50),
+  departmentName: z.string().min(1, 'Tên phòng ban là bắt buộc').max(255),
+  departmentCode: z.string().min(1, 'Mã phòng ban là bắt buộc').max(50),
   parentDepartmentId: z.string().uuid().optional().or(z.literal('')),
   managerId: z.string().uuid().optional().or(z.literal('')),
   isActive: z.boolean(),
 })
 export type DepartmentFormValues = z.infer<typeof departmentSchema>
+
+export const storeSchema = z.object({
+  name: z.string().min(1).max(255),
+  code: z.string().min(1).max(50),
+  address: z.string().max(500).optional(),
+  phone: z.string().max(20).optional(),
+  isActive: z.boolean().default(true),
+})
+export type StoreFormValues = z.infer<typeof storeSchema>
 
 export const createEmployeeSchema = z.object({
   fullName: z.string().min(1, 'Họ tên là bắt buộc').max(255),
@@ -47,3 +56,11 @@ export const jobLevelSchema = z.object({
   description: z.string().max(500).optional(),
 })
 export type JobLevelFormValues = z.infer<typeof jobLevelSchema>
+
+export const employeeTypeSchema = z.object({
+  name: z.string().min(1, 'Tên loại nhân sự là bắt buộc').max(100),
+  code: z.string().min(1, 'Mã là bắt buộc').max(50).regex(/^[A-Z0-9_-]+$/, 'Mã chỉ gồm chữ hoa, số, gạch dưới, gạch ngang'),
+  description: z.string().max(500).optional(),
+  isActive: z.boolean().default(true),
+})
+export type EmployeeTypeFormValues = z.infer<typeof employeeTypeSchema>

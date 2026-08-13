@@ -48,9 +48,9 @@ export function QuizTable({ results }: QuizTableProps) {
     <div>
       <h2 className="mb-4 text-base font-semibold text-foreground">Quiz Performance</h2>
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="overflow-auto max-h-full min-h-0 rounded-2xl border border-border bg-card shadow-sm">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-xs font-semibold text-muted-foreground">Course</TableHead>
               <TableHead className="text-xs font-semibold text-muted-foreground">Quiz Name</TableHead>

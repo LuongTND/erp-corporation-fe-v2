@@ -36,7 +36,7 @@ export function VideoTable({ videos, onEdit, onDelete }: VideoTableProps) {
   return (
     <div className="rounded-lg border border-border bg-card">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow>
             <TableHead>Tên video</TableHead>
             <TableHead>Khoá học</TableHead>

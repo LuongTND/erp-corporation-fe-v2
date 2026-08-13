@@ -440,7 +440,7 @@ export function KpiReviewTable() {
 
   return (
     <>
-      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
 
         {/* Filter row */}
         <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border flex-wrap">
@@ -496,7 +496,7 @@ export function KpiReviewTable() {
 
         {/* Table */}
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="border-border">
               <TableHead className="text-xs font-medium text-muted-foreground pl-5">Employee</TableHead>
               <TableHead className="text-xs font-medium text-muted-foreground">Manager</TableHead>

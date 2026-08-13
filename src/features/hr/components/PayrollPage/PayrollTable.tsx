@@ -267,7 +267,7 @@ export function PayrollTable() {
 
   return (
     <>
-      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
         {/* Filter row */}
         <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border">
           <div className="relative flex-1 max-w-xs">
@@ -309,7 +309,7 @@ export function PayrollTable() {
 
         {/* Table */}
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="border-border">
               <TableHead className="w-10 pl-5">
                 <input

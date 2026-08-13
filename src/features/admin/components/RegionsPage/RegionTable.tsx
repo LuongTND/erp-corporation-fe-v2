@@ -1,18 +1,18 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Clock } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '@/components/ui/table'
+import {
+  PaginationContent, PaginationEllipsis, PaginationItem,
+  PaginationLink, PaginationNext, PaginationPrevious,
 } from '@/components/ui/pagination'
-import type { UserSummaryResponse } from '../../types/admin.types'
+import type { RegionResponse } from '../../types/admin.types'
 
-const PAGE_SIZE_OPTIONS = [15, 50, 100] as const
+const PAGE_SIZE_OPTIONS = [10, 25, 50] as const
 
 function buildPageNumbers(current: number, total: number): (number | 'ellipsis')[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
@@ -21,82 +21,76 @@ function buildPageNumbers(current: number, total: number): (number | 'ellipsis')
   return [1, 'ellipsis', current - 1, current, current + 1, 'ellipsis', total]
 }
 
-interface EmployeeTableProps {
-  employees: UserSummaryResponse[]
-  isLoading: boolean
-  pageSize: number
-  totalCount: number
-  currentPage: number
-  totalPages: number
-  start: number
-  onRowClick: (id: string) => void
-  onPageChange: (page: number) => void
-  onPageSizeChange: (size: number) => void
+interface RegionTableProps {
+  readonly regions: RegionResponse[]
+  readonly isLoading: boolean
+  readonly pageSize: number
+  readonly totalCount: number
+  readonly currentPage: number
+  readonly totalPages: number
+  readonly start: number
+  readonly onRegionHours: (region: RegionResponse) => void
+  readonly onPageChange: (page: number) => void
+  readonly onPageSizeChange: (size: number) => void
 }
 
-export function EmployeeTable({
-  employees,
-  isLoading,
-  pageSize,
-  totalCount,
-  currentPage,
-  totalPages,
-  start,
-  onRowClick,
-  onPageChange,
-  onPageSizeChange,
-}: EmployeeTableProps) {
+export function RegionTable({
+  regions, isLoading,
+  pageSize, totalCount, currentPage, totalPages, start,
+  onRegionHours, onPageChange, onPageSizeChange,
+}: RegionTableProps) {
   return (
     <div className="rounded-lg border bg-card flex flex-col overflow-hidden [&>[data-slot=table-container]]:overflow-y-auto [&>[data-slot=table-container]]:max-h-[calc(100vh-280px)]">
       <div className="contents">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="sticky top-0 z-10 bg-card">Nhân viên</TableHead>
-              <TableHead className="sticky top-0 z-10 bg-card">Mã NV</TableHead>
-              <TableHead className="sticky top-0 z-10 bg-card">Email</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card">Tên khu vực</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-36">Mã</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-28">Trạng thái</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-24" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: pageSize > 15 ? 15 : pageSize }).map((_, i) => (
+              Array.from({ length: pageSize > 10 ? 10 : pageSize }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell>
-                    <div className="flex items-center gap-2.5">
-                      <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-                      <Skeleton className="h-4 w-32" />
-                    </div>
-                  </TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
+                  <TableCell><Skeleton className="h-7 w-8" /></TableCell>
                 </TableRow>
               ))
-            ) : employees.length === 0 ? (
+            ) : regions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-12 text-muted-foreground text-sm">
-                  Chưa có nhân viên nào
+                <TableCell colSpan={4} className="text-center py-12 text-muted-foreground text-sm">
+                  Chưa có khu vực nào được đồng bộ
                 </TableCell>
               </TableRow>
             ) : (
-              employees.map((emp) => (
-                <TableRow
-                  key={emp.id}
-                  className="cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => onRowClick(emp.id)}
-                >
+              regions.map(region => (
+                <TableRow key={region.id}>
+                  <TableCell className="font-medium">{region.name}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground font-mono">{region.code}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2.5">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={emp.avatarUrl} alt={emp.fullName} />
-                        <AvatarFallback className="text-xs">
-                          {emp.fullName.split(' ').map(w => w[0]).slice(-2).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="font-medium text-sm">{emp.fullName}</span>
-                    </div>
+                    <Badge
+                      variant={region.isActive ? 'secondary' : 'secondary'}
+                      className={region.isActive
+                        ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                        : 'text-muted-foreground'}
+                    >
+                      {region.isActive ? 'Hoạt động' : 'Tạm ngưng'}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground tabular-nums">{emp.employeeCode}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{emp.email}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost" size="icon"
+                      onClick={() => onRegionHours(region)}
+                      title="Giờ mở cửa mặc định"
+                    >
+                      <Clock className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             )}
@@ -109,19 +103,19 @@ export function EmployeeTable({
           {isLoading ? (
             <Skeleton className="h-3.5 w-44 inline-block" />
           ) : (
-            `Hiển thị ${totalCount === 0 ? 0 : Math.min(start + 1, totalCount)}–${Math.min(start + pageSize, totalCount)} trong ${totalCount} nhân viên`
+            `Hiển thị ${totalCount === 0 ? 0 : Math.min(start + 1, totalCount)}–${Math.min(start + pageSize, totalCount)} trong ${totalCount} khu vực`
           )}
         </p>
 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground whitespace-nowrap">
             <span>Hiển thị</span>
-            <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange(Number(v))}>
+            <Select value={String(pageSize)} onValueChange={v => onPageSizeChange(Number(v))}>
               <SelectTrigger className="h-7 w-16 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {PAGE_SIZE_OPTIONS.map((n) => (
+                {PAGE_SIZE_OPTIONS.map(n => (
                   <SelectItem key={n} value={String(n)} className="text-xs">{n}</SelectItem>
                 ))}
               </SelectContent>
@@ -138,7 +132,6 @@ export function EmployeeTable({
                   className={`h-7 text-xs cursor-pointer ${currentPage === 1 ? 'pointer-events-none opacity-40' : ''}`}
                 />
               </PaginationItem>
-
               {buildPageNumbers(currentPage, totalPages).map((item, idx) =>
                 item === 'ellipsis' ? (
                   <PaginationItem key={`e-${idx}`}>
@@ -156,7 +149,6 @@ export function EmployeeTable({
                   </PaginationItem>
                 )
               )}
-
               <PaginationItem>
                 <PaginationNext
                   text="Sau"

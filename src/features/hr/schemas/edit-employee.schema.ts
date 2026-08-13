@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const editEmployeeSchema = z.object({
   fullName:               z.string().min(1, 'Họ và tên là bắt buộc').max(200, 'Tối đa 200 ký tự'),
   jobLevelId:             z.string().min(1, 'Cấp bậc là bắt buộc'),
+  employeeTypeId:         z.string().optional(),
   gender:                 z.string().optional(),
   dateOfBirth:            z.string().optional(),
   phoneNumber:            z.string().max(20, 'Tối đa 20 ký tự').optional(),

@@ -4,14 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
@@ -31,9 +24,7 @@ export function DepartmentDialog({ open, department, allDepartments, onOpenChang
   const create = useCreateDepartment()
   const update = useUpdateDepartment()
 
-  const form = useForm<DepartmentFormValues>({
-    resolver: zodResolver(departmentSchema),
-  })
+  const form = useForm<DepartmentFormValues>({ resolver: zodResolver(departmentSchema) })
 
   useEffect(() => {
     if (open) {
@@ -86,71 +77,49 @@ export function DepartmentDialog({ open, department, allDepartments, onOpenChang
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="px-6 py-5 space-y-4">
+            <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-3">
-                <FormField
-                  control={form.control}
-                  name="departmentName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">Tên phòng ban <span className="text-destructive">*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="vd: Phòng Nhân sự" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="departmentCode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-xs">Mã phòng ban <span className="text-destructive">*</span></FormLabel>
-                      <FormControl>
-                        <Input placeholder="vd: HR-01" className="font-mono" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="parentDepartmentId"
-                render={({ field }) => (
+                <FormField control={form.control} name="departmentName" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs">Phòng ban cấp trên</FormLabel>
-                    <Select value={field.value ?? ''} onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Không có (gốc)" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="">Không có (gốc)</SelectItem>
-                        {parents.map(d => (
-                          <SelectItem key={d.id} value={d.id}>
-                            <span className="flex items-center gap-2">
-                              <span>{d.departmentName}</span>
-                              <span className="text-xs text-muted-foreground font-mono">({d.departmentCode})</span>
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel className="text-xs">Tên <span className="text-destructive">*</span></FormLabel>
+                    <FormControl><Input placeholder="vd: Phòng Kế toán" {...field} /></FormControl>
                     <FormMessage className="text-xs" />
                   </FormItem>
-                )}
-              />
+                )} />
+                <FormField control={form.control} name="departmentCode" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs">Mã <span className="text-destructive">*</span></FormLabel>
+                    <FormControl><Input placeholder="vd: ACC-001" className="font-mono" {...field} /></FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )} />
+              </div>
+
+              <FormField control={form.control} name="parentDepartmentId" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs">Phòng ban cấp trên</FormLabel>
+                  <Select value={field.value ?? ''} onValueChange={field.onChange}>
+                    <FormControl><SelectTrigger><SelectValue placeholder="Không có (gốc)" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem value="">Không có (gốc)</SelectItem>
+                      {parents.map(d => (
+                        <SelectItem key={d.id} value={d.id}>
+                          <span className="flex items-center gap-2">
+                            <span>{d.departmentName}</span>
+                            <span className="text-xs text-muted-foreground font-mono">({d.departmentCode})</span>
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )} />
 
               {department && (
                 <div className={cn(
                   'flex items-center justify-between rounded-lg border px-4 py-3 transition-colors duration-200',
-                  isActive
-                    ? 'border-green-500/30 bg-green-500/5'
-                    : 'border-border bg-muted/20',
+                  isActive ? 'border-green-500/30 bg-green-500/5' : 'border-border bg-muted/20',
                 )}>
                   <div>
                     <p className="text-sm font-medium">Trạng thái hoạt động</p>
@@ -158,18 +127,13 @@ export function DepartmentDialog({ open, department, allDepartments, onOpenChang
                       {isActive ? 'Đang hoạt động' : 'Vô hiệu hóa'}
                     </p>
                   </div>
-                  <Switch
-                    checked={isActive ?? true}
-                    onCheckedChange={val => form.setValue('isActive', val)}
-                  />
+                  <Switch checked={isActive ?? true} onCheckedChange={val => form.setValue('isActive', val)} />
                 </div>
               )}
             </div>
 
             <DialogFooter className="px-6 py-4 border-t bg-muted/20">
-              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                Hủy
-              </Button>
+              <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Hủy</Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? 'Đang lưu...' : department ? 'Lưu thay đổi' : 'Tạo phòng ban'}
               </Button>

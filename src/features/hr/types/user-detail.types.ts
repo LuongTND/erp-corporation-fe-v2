@@ -53,6 +53,8 @@ export interface UserDetailDto {
   isLocked: boolean
   jobLevelId: string
   jobLevelName?: string
+  employeeTypeId?: string
+  employeeTypeName?: string
   managerId?: string
   managerName?: string
   profile?: UserProfileDto

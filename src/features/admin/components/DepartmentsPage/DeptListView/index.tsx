@@ -76,7 +76,6 @@ export function DeptListView() {
     return result
   }, [rows, search, statusFilter])
 
-  // ponytail: convert flat rows to DepartmentResponse for DepartmentDialog compat
   const allDepts = useMemo((): DepartmentResponse[] =>
     rows.map(r => ({
       id: r.node.id,
@@ -156,9 +155,10 @@ export function DeptListView() {
     >
       <div className="h-full overflow-auto">
         <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-4">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
             <p className="text-sm text-muted-foreground">{rows.length} phòng ban</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {/* Status filter */}
               <div className="flex items-center rounded-md border overflow-hidden text-xs">
                 {(['all', 'active', 'inactive'] as const).map(v => (
                   <button
@@ -167,9 +167,7 @@ export function DeptListView() {
                     onClick={() => setStatusFilter(v)}
                     className={cn(
                       'px-3 py-1.5 transition-colors cursor-pointer',
-                      statusFilter === v
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:bg-muted/50',
+                      statusFilter === v ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted/50',
                       v !== 'all' && 'border-l',
                     )}
                   >
@@ -181,7 +179,7 @@ export function DeptListView() {
                 placeholder="Tìm phòng ban..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="w-56"
+                className="w-48"
               />
               <Button onClick={() => { setEditDept(undefined); setDialogOpen(true) }} size="sm" className="gap-1.5">
                 <Plus className="h-3.5 w-3.5" />

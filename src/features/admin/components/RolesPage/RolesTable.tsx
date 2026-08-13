@@ -75,7 +75,7 @@ export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, on
   }
 
   return (
-    <div className="rounded-lg border bg-card overflow-hidden">
+    <div className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -84,7 +84,7 @@ export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, on
         onDragEnd={handleDragEnd}
       >
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow>
               <TableHead className="w-8" />
               <TableHead>

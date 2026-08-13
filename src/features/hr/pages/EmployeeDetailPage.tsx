@@ -10,6 +10,7 @@ import { useEmployeeDocuments, useUploadDocument, useDeleteDocument } from '../h
 import { useUserStatusHistory, useUpdateUserStatus } from '../hooks/use-user-status'
 import { useWorkHistory, useLockEmployee } from '../hooks/use-work-history'
 import { useCustomFields } from '@/features/admin/hooks/use-custom-fields'
+import { useAssignEmployeeType } from '@/features/admin/hooks/use-employee-types'
 import type { UpdateEmployeePayload } from '../types/user-detail.types'
 import type { SetSalaryPayload } from '../types/salary.types'
 import type { UploadDocumentPayload } from '../types/employee-document.types'
@@ -63,6 +64,7 @@ export default function EmployeeDetailPage() {
   const { mutate: lockEmployee } = useLockEmployee(id ?? '')
   const updateEmployee = useUpdateEmployee(id ?? '')
   const upsertCustomFields = useUpsertCustomFields(id ?? '')
+  const assignEmployeeType = useAssignEmployeeType()
 
   const handleUploadAvatar = (file: File, callbacks: { onSettled: () => void }) =>
     uploadAvatar(file, { onSettled: callbacks.onSettled })
@@ -72,9 +74,10 @@ export default function EmployeeDetailPage() {
     updateStatus(values, { onSuccess: callbacks.onSuccess })
   const handleSetSalary = (payload: SetSalaryPayload, callbacks: { onSuccess: () => void }) =>
     setSalary(payload, { onSuccess: callbacks.onSuccess })
-  const handleSaveEmployee = async (payload: UpdateEmployeePayload, customFields: { definitionId: string; value: string }[]) => {
+  const handleSaveEmployee = async (payload: UpdateEmployeePayload, customFields: { definitionId: string; value: string }[], employeeTypeId?: string | null) => {
     await updateEmployee.mutateAsync(payload)
     if (customFields.length > 0) await upsertCustomFields.mutateAsync(customFields)
+    if (employeeTypeId !== undefined) await assignEmployeeType.mutateAsync({ userId: id!, employeeTypeId })
   }
 
   const [editOpen, setEditOpen] = useState(false)
@@ -140,7 +143,7 @@ export default function EmployeeDetailPage() {
               <PersonalInfoTab employee={employee} customFields={dto.customFields} customFieldDefinitions={customFieldDefinitions} />
             </TabsContent>
             <TabsContent value="work">
-              <WorkInfoTab employee={employee} />
+              <WorkInfoTab employee={employee} employeeTypeName={dto.employeeTypeName} />
             </TabsContent>
             <TabsContent value="attendance">{visited.has('attendance') && <AttendanceTab />}</TabsContent>
             <TabsContent value="payroll">{visited.has('payroll') && <PayrollTab current={currentSalary} loadingCurrent={loadingCurrentSalary} history={salaryHistory} onSetSalary={handleSetSalary} isPendingSalary={isPendingSalary} />}</TabsContent>

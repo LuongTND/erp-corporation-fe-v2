@@ -5,6 +5,7 @@ import type { EmployeeDetail, WorkLocation } from '../../types/employee.types'
 
 interface WorkInfoTabProps {
   readonly employee: EmployeeDetail
+  readonly employeeTypeName?: string
 }
 
 const LOCATION_STYLE: Record<WorkLocation, string> = {
@@ -31,7 +32,7 @@ function FieldRow({ label, children }: {
   )
 }
 
-export function WorkInfoTab({ employee }: WorkInfoTabProps) {
+export function WorkInfoTab({ employee, employeeTypeName }: WorkInfoTabProps) {
   const isExpiringSoon =
     employee.daysUntilContractExpiry !== undefined &&
     employee.daysUntilContractExpiry <= 30
@@ -55,6 +56,9 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
         </FieldRow>
         <FieldRow label="Chức danh">
           <p className="text-sm text-foreground">{employee.position}</p>
+        </FieldRow>
+        <FieldRow label="Loại nhân sự">
+          <p className="text-sm text-foreground">{employeeTypeName ?? '—'}</p>
         </FieldRow>
         <FieldRow label="Quản lý trực tiếp">
           <div className="flex items-center gap-2">
