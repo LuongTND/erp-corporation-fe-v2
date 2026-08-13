@@ -56,8 +56,13 @@ const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/Departmen
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
 const AdminEmployeesPage = lazy(() => import('@/features/admin/pages/EmployeesPage'))
 const AdminCustomFieldsPage = lazy(() => import('@/features/admin/pages/CustomFieldsPage'))
+const AdminEmployeeTypesPage = lazy(() => import('@/features/admin/pages/EmployeeTypesPage'))
+const AdminStoresPage = lazy(() => import('@/features/admin/pages/StoresPage'))
+const AdminRegionsPage = lazy(() => import('@/features/admin/pages/RegionsPage'))
+const AdminCountersPage = lazy(() => import('@/features/admin/pages/CountersPage'))
 const AdminKpiPayrollPage = lazy(() => import('@/features/admin/pages/KpiPayrollPage'))
 const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/PayrollRunDetailPage'))
+const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AuditLogsPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -222,6 +227,46 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminJobLevelsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.EMPLOYEE_TYPES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminEmployeeTypesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.STORES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminStoresPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.REGIONS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminRegionsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.COUNTERS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminCountersPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.AUDIT_LOGS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminAuditLogsPage />
                   </Suspense>
                 ),
               },

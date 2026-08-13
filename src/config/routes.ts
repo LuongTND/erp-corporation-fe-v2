@@ -74,6 +74,11 @@ export const ROUTES = {
     KPI_ENTRIES: '/admin/kpi-entries',
     PAYROLL_RUNS: '/admin/payroll-runs',
     PAYROLL_RUN_DETAIL: '/admin/payroll-runs/:id',
+    EMPLOYEE_TYPES: '/admin/employee-types',
+    STORES: '/admin/stores',
+    REGIONS: '/admin/regions',
+    COUNTERS: '/admin/counters',
+    AUDIT_LOGS: '/admin/audit-logs',
   },
 } as const
 

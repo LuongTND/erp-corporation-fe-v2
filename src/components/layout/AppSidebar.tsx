@@ -9,26 +9,27 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar'
 import { ROUTES } from '@/config/routes'
 import {
+  BarChart3,
   Building2,
   ChevronRight,
   KeyRound,
+  LayoutGrid,
+  MapPin,
   Network,
-  Shield,
+  ScrollText,
+  ShoppingBag,
   SlidersHorizontal,
+  UserCog,
   Users2,
-  BarChart3,
   type LucideIcon,
 } from 'lucide-react'
 import { useLocalStorage } from '@/hooks/use-local-storage'
@@ -37,100 +38,120 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type SubItem = { icon: LucideIcon; label: string; href: string }
-type NavItem = {
-  icon: LucideIcon
-  label: string
-  href: string
-  badge?: number
-  subItems?: SubItem[]
-}
+type NavItem = { icon: LucideIcon; label: string; href: string }
+type NavSection = { label: string; items: NavItem[] }
 
 // ── Nav config ────────────────────────────────────────────────────────────────
 
-const CORE_ITEMS: NavItem[] = [
-  // ponytail: all core items hidden while focusing on admin module
-  // { icon: LayoutDashboard, label: 'Bảng điều khiển', href: ROUTES.DASHBOARD },
-  // { icon: CheckSquare, label: 'Công việc', href: ROUTES.TASK, badge: 9 },
-]
-
-const MODULE_ITEMS: NavItem[] = [
-  // ponytail: non-admin modules hidden while admin API is in development
-  // { icon: MessageSquare, label: 'Trò chuyện', href: ROUTES.CHAT },
-  // { icon: Users, label: 'Nhân sự & Lương', href: ROUTES.HR.DASHBOARD, subItems: [...] },
-  // { icon: GraduationCap, label: 'Đào tạo', href: ROUTES.LMS.DASHBOARD, subItems: [...] },
+const ADMIN_SECTIONS: NavSection[] = [
   {
-    icon: Shield,
-    label: 'Quản trị',
-    href: ROUTES.ADMIN.ACCOUNTS,
-    subItems: [
-      { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS },
-      // ponytail: Quyền hạn merged into Vai trò tab
+    label: 'Tổ chức',
+    items: [
       { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS },
-      { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
+      { icon: ShoppingBag, label: 'Cửa hàng', href: ROUTES.ADMIN.STORES },
+      { icon: MapPin, label: 'Khu vực', href: ROUTES.ADMIN.REGIONS },
+      { icon: LayoutGrid, label: 'Quầy', href: ROUTES.ADMIN.COUNTERS },
+    ],
+  },
+  {
+    label: 'Nhân sự',
+    items: [
       { icon: Network, label: 'Nhân sự', href: ROUTES.ADMIN.EMPLOYEES },
+      { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
+      { icon: UserCog, label: 'Loại nhân sự', href: ROUTES.ADMIN.EMPLOYEE_TYPES },
       { icon: SlidersHorizontal, label: 'Trường tùy chỉnh', href: ROUTES.ADMIN.CUSTOM_FIELDS },
+    ],
+  },
+  {
+    label: 'Hệ thống',
+    items: [
+      { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS },
+      { icon: ScrollText, label: 'Nhật ký phân quyền', href: ROUTES.ADMIN.AUDIT_LOGS },
       { icon: BarChart3, label: 'KPI & Lương', href: ROUTES.ADMIN.KPI_ENTRIES },
-      // { icon: Network, label: 'Phân cấp vai trò', href: ROUTES.ADMIN.ROLE_HIERARCHY }, // ponytail: hidden — hardcoded data, re-enable when backend supports parentRoleId
-      // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
+      // ponytail: Phân cấp vai trò hidden — re-enable when backend supports parentRoleId
     ],
   },
 ]
 
-// ── Collapsible nav item ───────────────────────────────────────────────────────
+// ── Collapsible section ───────────────────────────────────────────────────────
 
-function CollapsibleNavItem({ item }: { item: NavItem }) {
+function NavSectionGroup({ section }: { section: NavSection }) {
   const location = useLocation()
   const navigate = useNavigate()
-  const { isMobile, setOpenMobile } = useSidebar()
-  const isActive = location.pathname.startsWith(item.href)
-  const [open, setOpen] = useLocalStorage(`sidebar-group-${item.href}`, isActive)
+  const { isMobile, setOpenMobile, state } = useSidebar()
+  const hasActive = section.items.some(i => location.pathname.startsWith(i.href))
+  const [open, setOpen] = useLocalStorage(`sidebar-section-${section.label}`, true)
 
   const handleNavigate = (href: string) => {
     navigate(href)
     if (isMobile) setOpenMobile(false)
   }
 
-  return (
-    <Collapsible open={open} onOpenChange={setOpen} className="group/collapsible">
-      <SidebarMenuItem>
-        <CollapsibleTrigger asChild>
-          <SidebarMenuButton
-            isActive={isActive}
-            tooltip={item.label}
-            aria-current={isActive ? 'page' : undefined}
-            className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-          >
-            <item.icon aria-hidden="true" />
-            <span>{item.label}</span>
-            <ChevronRight
-              aria-hidden="true"
-              className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
-            />
-          </SidebarMenuButton>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent>
-          <SidebarMenuSub>
-            {item.subItems!.map((sub) => {
-              const subActive = location.pathname === sub.href
+  // collapsed icon mode — no accordion, just flat icons
+  if (state === 'collapsed') {
+    return (
+      <SidebarGroup className="py-1">
+        <SidebarGroupContent>
+          <SidebarMenu>
+            {section.items.map((item) => {
+              const isActive = location.pathname.startsWith(item.href)
               return (
-                <SidebarMenuSubItem key={sub.href}>
-                  <SidebarMenuSubButton
-                    isActive={subActive}
-                    onClick={() => handleNavigate(sub.href)}
-                    aria-current={subActive ? 'page' : undefined}
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    isActive={isActive}
+                    onClick={() => handleNavigate(item.href)}
+                    tooltip={item.label}
+                    aria-current={isActive ? 'page' : undefined}
                     className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                   >
-                    <sub.icon aria-hidden="true" />
-                    <span>{sub.label}</span>
-                  </SidebarMenuSubButton>
-                </SidebarMenuSubItem>
+                    <item.icon aria-hidden="true" />
+                    <span>{item.label}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               )
             })}
-          </SidebarMenuSub>
+          </SidebarMenu>
+        </SidebarGroupContent>
+      </SidebarGroup>
+    )
+  }
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="group/section">
+      <SidebarGroup className="py-1">
+        <SidebarGroupLabel asChild>
+          <CollapsibleTrigger className="flex w-full items-center justify-between cursor-pointer hover:text-foreground transition-colors [&>svg:last-child]:ml-auto">
+            <span className={hasActive ? 'text-primary' : ''}>{section.label}</span>
+            <ChevronRight
+              aria-hidden="true"
+              className="h-3 w-3 transition-transform duration-200 group-data-[state=open]/section:rotate-90 shrink-0"
+            />
+          </CollapsibleTrigger>
+        </SidebarGroupLabel>
+        <CollapsibleContent>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {section.items.map((item) => {
+                const isActive = location.pathname.startsWith(item.href)
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      onClick={() => handleNavigate(item.href)}
+                      tooltip={item.label}
+                      aria-current={isActive ? 'page' : undefined}
+                      className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                    >
+                      <item.icon aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
         </CollapsibleContent>
-      </SidebarMenuItem>
+      </SidebarGroup>
     </Collapsible>
   )
 }
@@ -139,22 +160,14 @@ function CollapsibleNavItem({ item }: { item: NavItem }) {
 
 export function AppSidebar() {
   const location = useLocation()
-  const navigate = useNavigate()
   const { isMobile, setOpenMobile } = useSidebar()
 
-  // Close mobile drawer on route change
   useEffect(() => {
     if (isMobile) setOpenMobile(false)
   }, [location.pathname, isMobile, setOpenMobile])
 
-  const handleNavigate = (href: string) => {
-    navigate(href)
-    if (isMobile) setOpenMobile(false)
-  }
-
   return (
     <Sidebar collapsible="icon">
-      {/* Workspace header */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -174,61 +187,9 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {/* Core */}
-        {CORE_ITEMS.length > 0 && (
-          <SidebarGroup>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {CORE_ITEMS.map((item) => {
-                  const isActive = location.pathname === item.href
-                  return (
-                    <SidebarMenuItem key={item.href}>
-                      <SidebarMenuButton
-                        isActive={isActive}
-                        onClick={() => handleNavigate(item.href)}
-                        tooltip={item.label}
-                        aria-current={isActive ? 'page' : undefined}
-                        className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                      >
-                        <item.icon aria-hidden="true" />
-                        <span>{item.label}</span>
-                      </SidebarMenuButton>
-                      {item.badge != null && (
-                        <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-                      )}
-                    </SidebarMenuItem>
-                  )
-                })}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-
-        {/* Modules */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {MODULE_ITEMS.map((item) =>
-                item.subItems ? (
-                  <CollapsibleNavItem key={item.href} item={item} />
-                ) : (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      isActive={location.pathname === item.href}
-                      onClick={() => handleNavigate(item.href)}
-                      tooltip={item.label}
-                      aria-current={location.pathname === item.href ? 'page' : undefined}
-                      className="cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
-                    >
-                      <item.icon aria-hidden="true" />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {ADMIN_SECTIONS.map((section) => (
+          <NavSectionGroup key={section.label} section={section} />
+        ))}
       </SidebarContent>
     </Sidebar>
   )
