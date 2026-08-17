@@ -124,7 +124,7 @@ export default function EmployeeDetailPage() {
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-col">
           <div className="sticky top-0 z-10 bg-card space-y-4 pb-2">
-            <EmployeeProfileCard employee={employee} isLocked={dto.isLocked} onEditClick={() => setEditOpen(true)} onUploadAvatar={handleUploadAvatar} isUploadingAvatar={isUploadingAvatar} onLockEmployee={lockEmployee} />
+            <EmployeeProfileCard employee={employee} isLocked={dto.isLocked} status={dto.status} onEditClick={() => setEditOpen(true)} onUploadAvatar={handleUploadAvatar} isUploadingAvatar={isUploadingAvatar} onLockEmployee={lockEmployee} />
             <TabsList className="w-full justify-start h-auto p-1 rounded-lg gap-0.5 overflow-x-auto bg-muted/50">
               {TABS.map(tab => (
                 <TabsTrigger

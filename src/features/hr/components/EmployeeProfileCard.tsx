@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Building2, Calendar, Camera, Lock, MapPin, MoreHorizontal, Pencil, Unlock, User } from 'lucide-react'
+import { AlertTriangle, Building2, Calendar, Camera, Lock, MapPin, MoreHorizontal, Pencil, Unlock, User } from 'lucide-react'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -8,11 +8,13 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import type { EmployeeDetail } from '../types/employee.types'
+import { USER_STATUS } from '../types/user-status.types'
 import { AvatarCropDialog } from './AvatarCropDialog'
 
 interface EmployeeProfileCardProps {
   readonly employee: EmployeeDetail
   readonly isLocked: boolean
+  readonly status?: string
   readonly onEditClick?: () => void
   readonly onUploadAvatar: (file: File, callbacks: { onSettled: () => void }) => void
   readonly isUploadingAvatar: boolean
@@ -28,10 +30,21 @@ const EMPLOYMENT_BADGE: Record<string, string> = {
 }
 const DEFAULT_BADGE = 'bg-muted text-muted-foreground'
 
-export function EmployeeProfileCard({ employee, isLocked, onEditClick, onUploadAvatar, isUploadingAvatar, onLockEmployee }: EmployeeProfileCardProps) {
+const LOCKED_STATUSES = [USER_STATUS.Resigned, USER_STATUS.Terminated] as const
+
+const LOCK_BANNER: Record<string, { label: string; message: string }> = {
+  [USER_STATUS.Resigned]:   { label: 'Đã nghỉ việc',  message: 'Hồ sơ nhân viên đã nghỉ việc. Không thể chỉnh sửa thông tin.' },
+  [USER_STATUS.Terminated]: { label: 'Đã chấm dứt',  message: 'Hồ sơ nhân viên đã bị chấm dứt hợp đồng. Không thể chỉnh sửa thông tin.' },
+}
+
+export function EmployeeProfileCard({ employee, isLocked, status, onEditClick, onUploadAvatar, isUploadingAvatar, onLockEmployee }: EmployeeProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [lockConfirmOpen, setLockConfirmOpen] = useState(false)
+
+  const isStatusLocked = LOCKED_STATUSES.includes(status as typeof LOCKED_STATUSES[number])
+  const isEffectivelyLocked = isLocked || isStatusLocked
+  const lockBanner = status ? LOCK_BANNER[status] : undefined
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -96,8 +109,10 @@ export function EmployeeProfileCard({ employee, isLocked, onEditClick, onUploadA
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <button
                     type="button"
-                    onClick={onEditClick}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-primary/60 text-primary rounded-md hover:bg-primary/5 transition-colors cursor-pointer"
+                    onClick={isEffectivelyLocked ? undefined : onEditClick}
+                    disabled={isEffectivelyLocked}
+                    title={isEffectivelyLocked ? 'Hồ sơ đã bị khóa, không thể chỉnh sửa' : undefined}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-primary/60 text-primary rounded-md hover:bg-primary/5 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                   >
                     <Pencil className="w-3 h-3" />
                     Chỉnh sửa
@@ -150,6 +165,12 @@ export function EmployeeProfileCard({ employee, isLocked, onEditClick, onUploadA
                 <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${EMPLOYMENT_BADGE[employee.contractType] ?? DEFAULT_BADGE}`}>
                   {employee.contractType}
                 </span>
+                {isStatusLocked && lockBanner && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 dark:text-amber-400">
+                    <AlertTriangle className="w-3 h-3" />
+                    {lockBanner.label}
+                  </span>
+                )}
                 {isLocked && (
                   <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
                     <Lock className="w-3 h-3" />
@@ -182,6 +203,18 @@ export function EmployeeProfileCard({ employee, isLocked, onEditClick, onUploadA
 
         </div>
       </div>
+
+      {isEffectivelyLocked && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-lg border border-amber-500/30 bg-amber-500/8 dark:bg-amber-500/10">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Hồ sơ bị khóa — chỉ xem</p>
+            <p className="text-xs text-amber-600/80 dark:text-amber-400/70 mt-0.5">
+              {lockBanner?.message ?? 'Tài khoản đã bị khóa bởi quản trị viên. Liên hệ HR để được hỗ trợ.'}
+            </p>
+          </div>
+        </div>
+      )}
 
       {cropSrc && (
         <AvatarCropDialog

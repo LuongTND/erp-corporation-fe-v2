@@ -14,6 +14,12 @@ const LOCATION_STYLE: Record<WorkLocation, string> = {
   Hybrid: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
 }
 
+const PROBATION_LABEL: Record<string, string> = {
+  'In Progress':    'Đang thử việc',
+  'Completed':      'Đã hoàn thành',
+  'Not Applicable': 'Không áp dụng',
+}
+
 const LOCATION_LABEL: Record<WorkLocation, string> = {
   HQ:     'Văn phòng',
   Remote: 'Từ xa',
@@ -112,7 +118,7 @@ export function WorkInfoTab({ employee, employeeTypeName }: WorkInfoTabProps) {
           </p>
         </FieldRow>
         <FieldRow label="Trạng thái thử việc">
-          <p className="text-sm text-foreground">{employee.probationStatus}</p>
+          <p className="text-sm text-foreground">{PROBATION_LABEL[employee.probationStatus] ?? employee.probationStatus}</p>
         </FieldRow>
         {employee.probationEndDate && (
           <FieldRow label="Ngày kết thúc thử việc">
