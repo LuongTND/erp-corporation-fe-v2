@@ -62,83 +62,83 @@ export default function PermissionsPage() {
         </div>
 
         <div className="overflow-auto flex-1 min-h-0">
-        {isLoading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-32 w-full rounded-lg" />
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([resource, permissions]) => (
-              <div key={resource} className="rounded-lg border bg-card overflow-hidden">
-                <div className="px-4 py-3 border-b bg-muted/30 flex items-center gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{resource}</span>
-                  <Badge variant="secondary" className="text-[10px]">{permissions.length}</Badge>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Mã quyền</TableHead>
-                      <TableHead>Hành động</TableHead>
-                      <TableHead>Mô tả</TableHead>
-                      <TableHead className="w-12" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {permissions.map((permission) => {
-                      const action = permission.permissionCode.split(':')[1] ?? ''
-                      return (
-                        <TableRow key={permission.id}>
-                          <TableCell className="font-mono text-sm">{permission.permissionCode}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{action}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">{permission.description ?? '—'}</TableCell>
-                          <TableCell>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  disabled={isDeleting}
-                                  className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Xóa quyền hạn</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Xóa quyền <span className="font-mono font-medium text-foreground">{permission.permissionCode}</span>?
-                                    Hành động này không thể hoàn tác.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Hủy</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => deletePermission(permission.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          {isLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-32 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([resource, permissions]) => (
+                <div key={resource} className="rounded-lg border bg-card overflow-hidden">
+                  <div className="px-4 py-3 border-b bg-muted/30 flex items-center gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{resource}</span>
+                    <Badge variant="secondary" className="text-[10px]">{permissions.length}</Badge>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Mã quyền</TableHead>
+                        <TableHead>Hành động</TableHead>
+                        <TableHead>Mô tả</TableHead>
+                        <TableHead className="w-12" />
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {permissions.map((permission) => {
+                        const action = permission.permissionCode.split(':')[1] ?? ''
+                        return (
+                          <TableRow key={permission.id}>
+                            <TableCell className="font-mono text-sm">{permission.permissionCode}</TableCell>
+                            <TableCell className="text-muted-foreground text-sm">{action}</TableCell>
+                            <TableCell className="text-muted-foreground text-sm">{permission.description ?? '—'}</TableCell>
+                            <TableCell>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    disabled={isDeleting}
+                                    className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                                   >
-                                    Xóa
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </TableCell>
-                        </TableRow>
-                      )
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            ))}
-            {Object.keys(grouped).length === 0 && (
-              <div className="rounded-lg border bg-card py-12 text-center text-sm text-muted-foreground">
-                Không có quyền nào. Khởi động API để tự động tạo quyền.
-              </div>
-            )}
-          </div>
-        }
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Xóa quyền hạn</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Xóa quyền <span className="font-mono font-medium text-foreground">{permission.permissionCode}</span>?
+                                      Hành động này không thể hoàn tác.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Hủy</AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() => deletePermission(permission.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Xóa
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              ))}
+              {Object.keys(grouped).length === 0 && (
+                <div className="rounded-lg border bg-card py-12 text-center text-sm text-muted-foreground">
+                  Không có quyền nào. Khởi động API để tự động tạo quyền.
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
