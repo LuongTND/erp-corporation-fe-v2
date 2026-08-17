@@ -164,9 +164,9 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                     <Input {...register('fullName')} placeholder="Nguyễn Văn A" className={errors.fullName ? 'border-destructive' : ''} />
                     {errors.fullName && <p className="text-xs text-destructive">{errors.fullName.message}</p>}
                   </Field>
-                  <Field label="Cấp bậc" required>
+                  <Field label="Chức danh" required>
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
-                      <SelectTrigger className={errors.jobLevelId ? 'border-destructive' : ''}><SelectValue placeholder="Chọn cấp bậc" /></SelectTrigger>
+                      <SelectTrigger className={errors.jobLevelId ? 'border-destructive' : ''}><SelectValue placeholder="Chọn chức danh" /></SelectTrigger>
                       <SelectContent>
                         {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>

@@ -93,9 +93,9 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
               <AccordionContent className="space-y-3 pt-2">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>Cấp bậc <span className="text-destructive">*</span></Label>
+                    <Label>Chức danh <span className="text-destructive">*</span></Label>
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
-                      <SelectTrigger><SelectValue placeholder="Chọn cấp bậc" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder="Chọn chức danh" /></SelectTrigger>
                       <SelectContent>
                         {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>

@@ -98,7 +98,7 @@ export function PersonalInfoTab({ employee, customFields = [], customFieldDefini
     { label: 'Mã nhân viên',   value: employee.employeeCode },
     { label: 'Phòng ban',      value: employee.department },
     { label: 'Quản lý',        value: employee.manager?.name ?? '—' },
-    { label: 'Cấp bậc',        value: employee.position },
+    { label: 'Chức danh',      value: employee.position },
     { label: 'Loại hợp đồng',  value: employee.contractType },
     { label: 'Địa điểm',       value: employee.workLocation },
     { label: 'Lịch làm việc',  value: employee.workSchedule },

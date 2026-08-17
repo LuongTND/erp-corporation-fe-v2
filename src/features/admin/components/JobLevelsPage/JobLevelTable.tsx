@@ -46,7 +46,7 @@ export function JobLevelTable({ levels, isLoading, onEdit, onDelete, onViewEmplo
           ) : levels.length === 0 ? (
             <TableRow>
               <TableCell colSpan={6} className="text-center py-12 text-muted-foreground text-sm">
-                Không có cấp bậc nào
+                Không có chức danh nào
               </TableCell>
             </TableRow>
           ) : (

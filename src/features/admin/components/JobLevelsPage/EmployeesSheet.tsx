@@ -73,7 +73,7 @@ export function EmployeesSheet({ level, open, onOpenChange, employees, isLoading
                 disabled={isUnassigning}
               >
                 <X className="w-3 h-3" />
-                Gỡ cấp bậc ({selected.size})
+                Gỡ chức danh ({selected.size})
               </Button>
             </div>
           )}
@@ -133,7 +133,7 @@ export function EmployeesSheet({ level, open, onOpenChange, employees, isLoading
                       type="button"
                       onClick={() => setUnassignTarget(emp)}
                       disabled={isUnassigning}
-                      aria-label={`Gỡ cấp bậc ${emp.fullName}`}
+                      aria-label={`Gỡ chức danh ${emp.fullName}`}
                       className="h-6 w-6 flex items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all shrink-0 cursor-pointer disabled:opacity-40"
                     >
                       <X className="w-3 h-3" />
@@ -149,11 +149,11 @@ export function EmployeesSheet({ level, open, onOpenChange, employees, isLoading
       <AlertDialog open={!!unassignTarget} onOpenChange={v => { if (!v) setUnassignTarget(null) }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Gỡ cấp bậc?</AlertDialogTitle>
+            <AlertDialogTitle>Gỡ chức danh?</AlertDialogTitle>
             <AlertDialogDescription>
               {unassignTarget === 'bulk'
-                ? `${selected.size} nhân sự sẽ bị gỡ khỏi cấp bậc "${level?.levelName}".`
-                : `"${(unassignTarget as UserSummaryResponse)?.fullName}" sẽ bị gỡ khỏi cấp bậc "${level?.levelName}".`
+                ? `${selected.size} nhân sự sẽ bị gỡ khỏi chức danh "${level?.levelName}".`
+                : `"${(unassignTarget as UserSummaryResponse)?.fullName}" sẽ bị gỡ khỏi chức danh "${level?.levelName}".`
               }
               {' '}Có thể gán lại sau.
             </AlertDialogDescription>
@@ -164,7 +164,7 @@ export function EmployeesSheet({ level, open, onOpenChange, employees, isLoading
               onClick={handleUnassignConfirm}
               className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             >
-              Gỡ cấp bậc
+              Gỡ chức danh
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

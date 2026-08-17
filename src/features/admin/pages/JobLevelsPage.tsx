@@ -30,14 +30,17 @@ export default function JobLevelsPage() {
 
   useEffect(() => {
     if (dialogOpen) {
+      const nextOrder = editLevel
+        ? editLevel.levelOrder
+        : Math.max(0, ...(data?.items ?? []).map(l => l.levelOrder)) + 1
       form.reset({
         levelName: editLevel?.levelName ?? '',
-        levelOrder: editLevel?.levelOrder ?? 1,
+        levelOrder: nextOrder,
         defaultScopeType: editLevel?.defaultScopeType ?? 'All',
         description: editLevel?.description ?? '',
       })
     }
-  }, [dialogOpen, editLevel, form])
+  }, [dialogOpen, editLevel, form, data?.items])
 
   const onSubmit = (values: JobLevelFormValues) => {
     if (editLevel) {
@@ -56,17 +59,17 @@ export default function JobLevelsPage() {
 
   return (
     <div className="h-full flex flex-col bg-background text-foreground">
-      <HRPageHeader breadcrumbs={[{ label: 'Admin' }, { label: 'Job Levels', isActive: true }]} />
+      <HRPageHeader breadcrumbs={[{ label: 'Admin' }, { label: 'Chức danh', isActive: true }]} />
 
       <div className="flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 md:px-8 py-5 gap-4">
         <div className="flex items-center justify-between gap-4 shrink-0">
           <div>
-            <h1 className="text-xl font-semibold">Cấp bậc</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">{data?.totalCount ?? 0} cấp bậc</p>
+            <h1 className="text-xl font-semibold">Chức danh</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">{data?.totalCount ?? 0} chức danh</p>
           </div>
           <Button onClick={openCreate} size="sm" className="gap-1.5">
             <Plus className="h-3.5 w-3.5" />
-            Thêm cấp bậc
+            Thêm chức danh
           </Button>
         </div>
 
@@ -91,9 +94,9 @@ export default function JobLevelsPage() {
       <AlertDialog open={!!deleteTarget} onOpenChange={v => { if (!v) setDeleteTarget(null) }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Xóa cấp bậc?</AlertDialogTitle>
+            <AlertDialogTitle>Xóa chức danh?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cấp bậc <span className="font-semibold text-foreground">"{deleteTarget?.levelName}"</span> sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
+              Chức danh <span className="font-semibold text-foreground">"{deleteTarget?.levelName}"</span> sẽ bị xóa vĩnh viễn. Hành động này không thể hoàn tác.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
