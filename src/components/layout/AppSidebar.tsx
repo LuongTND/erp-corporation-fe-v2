@@ -16,69 +16,12 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { ROUTES } from '@/config/routes'
-import {
-  BarChart3,
-  Building2,
-  ChevronRight,
-  KeyRound,
-  LayoutGrid,
-  MapPin,
-  Network,
-  ScrollText,
-  ShoppingBag,
-  SlidersHorizontal,
-  Store,
-  UserCog,
-  Users2,
-  type LucideIcon,
-} from 'lucide-react'
+import { useAuthStore } from '@/stores/auth.store'
+import { NAV_SECTIONS, type NavSection } from '@/config/nav'
+import { ChevronRight } from 'lucide-react'
 import { useLocalStorage } from '@/hooks/use-local-storage'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-type NavItem = { icon: LucideIcon; label: string; href: string }
-type NavSection = { label: string; items: NavItem[] }
-
-// ── Nav config ────────────────────────────────────────────────────────────────
-
-const ADMIN_SECTIONS: NavSection[] = [
-  {
-    label: 'Tổ chức',
-    items: [
-      { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS },
-      { icon: ShoppingBag, label: 'Cửa hàng', href: ROUTES.ADMIN.STORES },
-      { icon: MapPin, label: 'Khu vực', href: ROUTES.ADMIN.REGIONS },
-      { icon: LayoutGrid, label: 'Quầy', href: ROUTES.ADMIN.COUNTERS },
-    ],
-  },
-  {
-    label: 'Nhân sự',
-    items: [
-      { icon: Network, label: 'Nhân sự', href: ROUTES.ADMIN.EMPLOYEES },
-      { icon: Users2, label: 'Cấp bậc', href: ROUTES.ADMIN.JOB_LEVELS },
-      { icon: UserCog, label: 'Loại nhân sự', href: ROUTES.ADMIN.EMPLOYEE_TYPES },
-      { icon: SlidersHorizontal, label: 'Trường tùy chỉnh', href: ROUTES.ADMIN.CUSTOM_FIELDS },
-    ],
-  },
-  {
-    label: 'Hệ thống',
-    items: [
-      { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS },
-      { icon: ScrollText, label: 'Nhật ký phân quyền', href: ROUTES.ADMIN.AUDIT_LOGS },
-      { icon: BarChart3, label: 'KPI & Lương', href: ROUTES.ADMIN.KPI_ENTRIES },
-      // ponytail: Phân cấp vai trò hidden — re-enable when backend supports parentRoleId
-    ],
-  },
-  {
-    label: 'Quản lý cửa hàng',
-    items: [
-      { icon: Store, label: 'Cửa hàng của tôi', href: ROUTES.STORE_MANAGER },
-    ],
-  },
-]
 
 // ── Collapsible section ───────────────────────────────────────────────────────
 
@@ -88,6 +31,16 @@ function NavSectionGroup({ section }: { section: NavSection }) {
   const { isMobile, setOpenMobile, state } = useSidebar()
   const hasActive = section.items.some(i => location.pathname.startsWith(i.href))
   const [open, setOpen] = useLocalStorage(`sidebar-section-${section.label}`, true)
+  const didAutoOpen = useRef(false)
+
+  // Auto-open section when navigating into it (e.g. direct URL, link from another page)
+  useEffect(() => {
+    if (hasActive && !open && !didAutoOpen.current) {
+      setOpen(true)
+      didAutoOpen.current = true
+    }
+    if (!hasActive) didAutoOpen.current = false
+  }, [hasActive, open, setOpen])
 
   const handleNavigate = (href: string) => {
     navigate(href)
@@ -168,10 +121,21 @@ function NavSectionGroup({ section }: { section: NavSection }) {
 export function AppSidebar() {
   const location = useLocation()
   const { isMobile, setOpenMobile } = useSidebar()
+  const hasPermission = useAuthStore((s) => s.hasPermission)
 
   useEffect(() => {
     if (isMobile) setOpenMobile(false)
   }, [location.pathname, isMobile, setOpenMobile])
+
+  const visibleSections = useMemo(() =>
+    NAV_SECTIONS
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => !item.permission || hasPermission(item.permission)),
+      }))
+      .filter((section) => section.items.length > 0),
+    [hasPermission]
+  )
 
   return (
     <Sidebar collapsible="icon">
@@ -194,7 +158,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        {ADMIN_SECTIONS.map((section) => (
+        {visibleSections.map((section) => (
           <NavSectionGroup key={section.label} section={section} />
         ))}
       </SidebarContent>
