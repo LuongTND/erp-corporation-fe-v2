@@ -41,7 +41,7 @@ export const adminNav: NavSection[] = [
     label: 'Hệ thống',
     items: [
       { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS, permission: P.ROLES_VIEW },
-      { icon: ScrollText, label: 'Nhật ký phân quyền', href: ROUTES.ADMIN.AUDIT_LOGS, permission: P.ROLES_VIEW },
+      { icon: ScrollText, label: 'Nhật ký phân quyền', href: ROUTES.ADMIN.AUDIT_LOGS, permission: P.AUDIT_LOGS_VIEW },
       { icon: BarChart3, label: 'KPI & Lương', href: ROUTES.ADMIN.KPI_ENTRIES, permission: P.KPI_ENTRIES_VIEW },
       // ponytail: Phân cấp vai trò hidden — re-enable when backend supports parentRoleId
     ],
