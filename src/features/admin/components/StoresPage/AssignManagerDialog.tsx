@@ -1,12 +1,18 @@
-import { useState } from 'react'
-import { Search } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
+  Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
+} from '@/components/ui/command'
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
-import { useDebounce } from '@/hooks/use-debounce'
+import { cn } from '@/lib/utils'
 import type { StoreResponse, UserSummaryResponse } from '../../types/admin.types'
+
+function userInitials(name: string) {
+  return name.split(' ').slice(-2).map(n => n[0]).join('').toUpperCase()
+}
 
 interface AssignManagerDialogProps {
   readonly store: StoreResponse | null
@@ -17,62 +23,60 @@ interface AssignManagerDialogProps {
 }
 
 export function AssignManagerDialog({ store, users, isSaving, onOpenChange, onAssign }: AssignManagerDialogProps) {
-  const [search, setSearch] = useState('')
-  const debouncedSearch = useDebounce(search, 200)
-
-  const filtered = debouncedSearch
-    ? users.filter(u =>
-        u.fullName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        u.employeeCode.toLowerCase().includes(debouncedSearch.toLowerCase()))
-    : users
-
   return (
     <Dialog open={store !== null} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Gán quản lý — {store?.name}</DialogTitle>
+      <DialogContent className="sm:max-w-sm p-0 gap-0">
+        <DialogHeader className="px-4 pt-4 pb-3 border-b">
+          <DialogTitle className="text-sm">Gán quản lý — {store?.name}</DialogTitle>
         </DialogHeader>
 
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-          <Input
-            placeholder="Tìm nhân sự..."
-            className="pl-8 h-8 text-sm"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
+        <Command className="rounded-none border-0">
+          <CommandInput placeholder="Tìm nhân sự..." />
+          <CommandList className="max-h-64">
+            <CommandEmpty className="py-8 text-xs text-muted-foreground">Không tìm thấy nhân sự</CommandEmpty>
+            <CommandGroup>
+              {users.map(u => {
+                const isManager = store?.managerId === u.id
+                return (
+                  <CommandItem
+                    key={u.id}
+                    value={`${u.fullName} ${u.employeeCode}`}
+                    onSelect={() => { if (store && !isManager) onAssign(store.id, u.id) }}
+                    disabled={isSaving || isManager}
+                    className={cn(
+                      'flex items-center gap-2.5 px-3 py-2 rounded-none',
+                      isManager ? 'cursor-default opacity-100' : 'cursor-pointer',
+                    )}
+                  >
+                    <Avatar className="h-8 w-8 shrink-0">
+                      <AvatarImage src={u.avatarUrl} />
+                      <AvatarFallback className="text-[10px] font-medium">{userInitials(u.fullName)}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium truncate leading-none">{u.fullName}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono mt-0.5">{u.employeeCode}</p>
+                    </div>
+                    {isManager && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded border border-primary/40 text-primary shrink-0 leading-none">
+                        Quản lý
+                      </span>
+                    )}
+                  </CommandItem>
+                )
+              })}
+            </CommandGroup>
+          </CommandList>
+        </Command>
 
-        <div className="max-h-64 overflow-y-auto flex flex-col gap-0.5">
-          {filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">Không tìm thấy nhân sự</p>
-          ) : filtered.map(u => (
-            <button
-              key={u.id}
-              type="button"
-              className={`flex items-center gap-3 px-3 py-2 rounded-md text-left text-sm cursor-pointer transition-colors hover:bg-accent ${store?.managerId === u.id ? 'bg-primary/10 text-primary font-medium' : ''}`}
-              onClick={() => { if (store) onAssign(store.id, u.id) }}
-              disabled={isSaving}
-            >
-              <span className="font-medium">{u.fullName}</span>
-              <span className="text-muted-foreground text-xs">{u.employeeCode}</span>
-            </button>
-          ))}
-        </div>
-
-        <DialogFooter className="flex gap-2">
-          {store?.managerId && (
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={isSaving}
-              onClick={() => { if (store) onAssign(store.id, null) }}
-            >
-              Gỡ quản lý
+        <div className="flex items-center justify-between gap-2 px-4 py-3 border-t">
+          {store?.managerId ? (
+            <Button variant="outline" size="sm" disabled={isSaving}
+              onClick={() => { if (store) onAssign(store.id, null) }}>
+              {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Gỡ quản lý'}
             </Button>
-          )}
+          ) : <span />}
           <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>Đóng</Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   )

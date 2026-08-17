@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
-import { useStores, useSyncStores, useStoreHours, useUpsertStoreHours, useDeleteStore, useToggleStoreActive, useAssignStoreManager } from '../hooks/use-stores'
-import { AssignManagerDialog, StoreHoursDialog, StoreTable } from '../components/StoresPage'
+import { useStores, useSyncStores, useStoreHours, useUpsertStoreHours, useDeleteStore, useToggleStoreActive, useAssignStoreManager, useStoreMembers, useAddStoreMember, useRemoveStoreMember } from '../hooks/use-stores'
+import { AssignManagerDialog, StoreHoursDialog, StoreMembersDialog, StoreTable } from '../components/StoresPage'
 import type { StoreResponse } from '../types/admin.types'
 import { useEmployees } from '../hooks/use-employees'
 
@@ -14,6 +14,7 @@ export default function StoresPage() {
   const [search, setSearch] = useState('')
   const [hoursStore, setHoursStore] = useState<StoreResponse | null>(null)
   const [managerStore, setManagerStore] = useState<StoreResponse | null>(null)
+  const [membersStore, setMembersStore] = useState<StoreResponse | null>(null)
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const debouncedSearch = useDebounce(search, 300)
@@ -23,7 +24,10 @@ export default function StoresPage() {
   const deleteStore = useDeleteStore()
   const toggleActive = useToggleStoreActive()
   const assignManager = useAssignStoreManager()
+  const addMember = useAddStoreMember()
+  const removeMember = useRemoveStoreMember()
   const { data: storeHours = [], isLoading: isHoursLoading } = useStoreHours(hoursStore?.id ?? null)
+  const { data: storeMembers = [], isLoading: isMembersLoading } = useStoreMembers(membersStore?.id ?? null)
   const { data: employees = [] } = useEmployees()
   const upsert = useUpsertStoreHours()
 
@@ -86,6 +90,7 @@ export default function StoresPage() {
           start={start}
           onStoreHours={setHoursStore}
           onAssignManager={setManagerStore}
+          onManageMembers={setMembersStore}
           onToggleActive={storeId => toggleActive.mutate(storeId)}
           onDelete={storeId => deleteStore.mutate(storeId)}
           onPageChange={setPage}
@@ -109,6 +114,20 @@ export default function StoresPage() {
         isSaving={assignManager.isPending}
         onOpenChange={open => { if (!open) setManagerStore(null) }}
         onAssign={handleAssignManager}
+      />
+
+      <StoreMembersDialog
+        store={membersStore}
+        members={storeMembers}
+        allUsers={employees}
+        isLoading={isMembersLoading}
+        isAdding={addMember.isPending}
+        isRemoving={removeMember.isPending}
+        onOpenChange={open => { if (!open) setMembersStore(null) }}
+        onAdd={(storeId, userId, isHomeStore) =>
+          addMember.mutate({ storeId, payload: { userId, startDate: new Date().toISOString().slice(0, 10), isHomeStore } })
+        }
+        onRemove={(storeId, userId) => removeMember.mutate({ storeId, userId })}
       />
     </div>
   )

@@ -316,6 +316,24 @@ export interface ListParams {
   NeedTotalCount?: boolean
 }
 
+export interface StoreMemberResponse {
+  userStoreId: string
+  userId: string
+  fullName: string
+  employeeCode: string
+  email: string
+  avatarUrl?: string
+  jobLevelName?: string
+  isHomeStore: boolean
+  startDate: string
+}
+
+export interface AddStoreMemberPayload {
+  userId: string
+  startDate: string
+  isHomeStore: boolean
+}
+
 export interface PermissionAuditLogResponse {
   id: number
   action: 'AssignRole' | 'RevokeRole' | 'AssignPermissions'

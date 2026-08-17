@@ -1,5 +1,5 @@
 import { apiCall } from '@/lib/api'
-import type { QueryResult, StoreHoursPayload, StoreHoursResponse, StorePortalResponse, StoreResponse } from '../types/admin.types'
+import type { AddStoreMemberPayload, QueryResult, StoreHoursPayload, StoreHoursResponse, StoreMemberResponse, StorePortalResponse, StoreResponse } from '../types/admin.types'
 
 export const storesService = {
   getStores: (params?: { searchText?: string; top?: number; skip?: number }) =>
@@ -28,4 +28,16 @@ export const storesService = {
 
   getMyStore: () =>
     apiCall.get<StorePortalResponse | null>('/api/store-manager/my-store'),
+
+  getStoreMembers: (storeId: string) =>
+    apiCall.get<StoreMemberResponse[]>(`/api/stores/${storeId}/members`),
+
+  addStoreMember: (storeId: string, payload: AddStoreMemberPayload) =>
+    apiCall.post<string>(`/api/stores/${storeId}/members`, payload),
+
+  removeStoreMember: (storeId: string, userId: string) =>
+    apiCall.delete<void>(`/api/stores/${storeId}/members/${userId}`),
+
+  getMyStoreMembers: () =>
+    apiCall.get<StoreMemberResponse[]>('/api/store-manager/my-store/members'),
 }

@@ -1,4 +1,4 @@
-import { Clock, Power, Trash2, UserCog } from 'lucide-react'
+import { Clock, Power, Trash2, UserCog, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -39,6 +39,7 @@ interface StoreTableProps {
   readonly start: number
   readonly onStoreHours: (store: StoreResponse) => void
   readonly onAssignManager: (store: StoreResponse) => void
+  readonly onManageMembers: (store: StoreResponse) => void
   readonly onToggleActive: (storeId: string) => void
   readonly onDelete: (storeId: string) => void
   readonly onPageChange: (page: number) => void
@@ -48,7 +49,7 @@ interface StoreTableProps {
 export function StoreTable({
   stores, isLoading, isDeleting, isToggling,
   pageSize, totalCount, currentPage, totalPages, start,
-  onStoreHours, onAssignManager, onToggleActive, onDelete, onPageChange, onPageSizeChange,
+  onStoreHours, onAssignManager, onManageMembers, onToggleActive, onDelete, onPageChange, onPageSizeChange,
 }: StoreTableProps) {
   return (
     <div className="rounded-lg border bg-card flex flex-col overflow-hidden [&>[data-slot=table-container]]:overflow-y-auto [&>[data-slot=table-container]]:max-h-[calc(100vh-280px)]">
@@ -113,6 +114,13 @@ export function StoreTable({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost" size="icon"
+                        onClick={() => onManageMembers(store)}
+                        title="Nhân sự biên chế"
+                      >
+                        <Users className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost" size="icon"
                         onClick={() => onAssignManager(store)}

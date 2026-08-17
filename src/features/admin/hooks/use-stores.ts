@@ -100,3 +100,46 @@ export function useMyStore() {
     queryFn: () => storesService.getMyStore(),
   })
 }
+
+export function useStoreMembers(storeId: string | null) {
+  return useQuery({
+    queryKey: ['store-members', storeId],
+    queryFn: () => storesService.getStoreMembers(storeId!),
+    enabled: !!storeId,
+  })
+}
+
+export function useAddStoreMember() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ storeId, payload }: { storeId: string; payload: import('../types/admin.types').AddStoreMemberPayload }) =>
+      storesService.addStoreMember(storeId, payload),
+    onSuccess: (_, { storeId }) => {
+      client.invalidateQueries({ queryKey: ['store-members', storeId] })
+      client.invalidateQueries({ queryKey: ['my-store-members'] })
+      toast.success('Đã thêm nhân sự vào cửa hàng')
+    },
+    onError: () => toast.error('Thêm nhân sự thất bại'),
+  })
+}
+
+export function useRemoveStoreMember() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ storeId, userId }: { storeId: string; userId: string }) =>
+      storesService.removeStoreMember(storeId, userId),
+    onSuccess: (_, { storeId }) => {
+      client.invalidateQueries({ queryKey: ['store-members', storeId] })
+      client.invalidateQueries({ queryKey: ['my-store-members'] })
+      toast.success('Đã gỡ nhân sự khỏi cửa hàng')
+    },
+    onError: () => toast.error('Gỡ nhân sự thất bại'),
+  })
+}
+
+export function useMyStoreMembers() {
+  return useQuery({
+    queryKey: ['my-store-members'],
+    queryFn: () => storesService.getMyStoreMembers(),
+  })
+}
