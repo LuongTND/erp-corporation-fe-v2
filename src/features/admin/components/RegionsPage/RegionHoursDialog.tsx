@@ -1,9 +1,8 @@
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Toggle } from '@/components/ui/toggle'
+import { Switch } from '@/components/ui/switch'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
@@ -107,66 +106,44 @@ export function RegionHoursDialog({ open, regionName, regionHours, isLoading, is
               ))}
             </ul>
           ) : (
-            <ul className="space-y-1.5">
-              <li className="grid grid-cols-[52px_1fr_auto] items-center gap-3 px-3 pb-1" aria-hidden>
-                <Label className="text-xs text-muted-foreground">Ngày</Label>
-                <div className="flex items-center gap-2">
-                  <Label className="flex-1 text-center text-xs text-muted-foreground">Mở cửa</Label>
-                  <span className="w-4" />
-                  <Label className="flex-1 text-center text-xs text-muted-foreground">Đóng cửa</Label>
-                </div>
-                <Label className="text-xs text-muted-foreground">Nghỉ</Label>
-              </li>
-
+            <ul className="space-y-1">
               {rows.map((row, i) => (
                 <li
                   key={i}
                   className={cn(
-                    'grid grid-cols-[52px_1fr_auto] items-center gap-3 rounded-lg border px-3 py-2 transition-colors',
-                    row.isClosed ? 'border-destructive/20 bg-destructive/5' : 'border-transparent bg-muted/30',
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all',
+                    row.isClosed ? 'opacity-50' : 'bg-muted/30',
                   )}
                 >
-                  <Label className={cn('text-sm font-medium', row.isClosed && 'text-muted-foreground line-through')}>
+                  <Switch
+                    checked={!row.isClosed}
+                    onCheckedChange={v => setRow(i, { isClosed: !v })}
+                    aria-label={`${DAYS[row.dayOfWeek]} ${row.isClosed ? 'đóng cửa' : 'mở cửa'}`}
+                  />
+
+                  <Label className="w-10 shrink-0 text-sm font-medium">
                     {DAYS[row.dayOfWeek]}
                   </Label>
 
-                  <div className="flex min-w-0 items-center gap-2">
-                    {row.isClosed ? (
-                      <Badge variant="destructive" className="text-xs">Nghỉ</Badge>
-                    ) : (
-                      <>
-                        <Input
-                          type="time"
-                          value={row.openTime}
-                          onChange={e => setRow(i, { openTime: e.target.value })}
-                          className="h-8 min-w-0 flex-1 px-2 text-xs tabular-nums"
-                          aria-label={`Giờ mở cửa ${DAYS[row.dayOfWeek]}`}
-                        />
-                        <span className="shrink-0 text-xs text-muted-foreground" aria-hidden>→</span>
-                        <Input
-                          type="time"
-                          value={row.closeTime}
-                          onChange={e => setRow(i, { closeTime: e.target.value })}
-                          className="h-8 min-w-0 flex-1 px-2 text-xs tabular-nums"
-                          aria-label={`Giờ đóng cửa ${DAYS[row.dayOfWeek]}`}
-                        />
-                      </>
-                    )}
+                  <div className="flex min-w-0 flex-1 items-center gap-2">
+                    <Input
+                      type="time"
+                      value={row.openTime}
+                      onChange={e => setRow(i, { openTime: e.target.value })}
+                      disabled={row.isClosed}
+                      className="h-8 min-w-0 flex-1 px-2 text-xs tabular-nums"
+                      aria-label={`Giờ mở cửa ${DAYS[row.dayOfWeek]}`}
+                    />
+                    <span className="shrink-0 text-xs text-muted-foreground" aria-hidden>–</span>
+                    <Input
+                      type="time"
+                      value={row.closeTime}
+                      onChange={e => setRow(i, { closeTime: e.target.value })}
+                      disabled={row.isClosed}
+                      className="h-8 min-w-0 flex-1 px-2 text-xs tabular-nums"
+                      aria-label={`Giờ đóng cửa ${DAYS[row.dayOfWeek]}`}
+                    />
                   </div>
-
-                  <Toggle
-                    pressed={row.isClosed}
-                    onPressedChange={v => setRow(i, { isClosed: v })}
-                    size="sm"
-                    variant="outline"
-                    aria-label={`${DAYS[row.dayOfWeek]} nghỉ`}
-                    className={cn(
-                      'text-xs',
-                      row.isClosed && 'border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20 data-[state=on]:bg-destructive/10 data-[state=on]:text-destructive',
-                    )}
-                  >
-                    Nghỉ
-                  </Toggle>
                 </li>
               ))}
             </ul>
