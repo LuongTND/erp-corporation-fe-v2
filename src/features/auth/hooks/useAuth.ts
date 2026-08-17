@@ -59,8 +59,7 @@ export const useAuth = () => {
 
   const logout = useCallback(async () => {
     try {
-      const token = localStorage.getItem('access_token')
-      await authService.logout(token || undefined)
+      await authService.logout()
     } catch (error) {
       console.error('Logout API error:', error)
     } finally {
