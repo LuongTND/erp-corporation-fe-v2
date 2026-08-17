@@ -2,7 +2,12 @@ import { useDroppable } from '@dnd-kit/core'
 import { cn } from '@/lib/utils'
 import { ROOT_ID } from './utils'
 
-export function RootZone({ isOver, active }: { isOver: boolean; active: boolean }) {
+interface RootZoneProps {
+  readonly isOver: boolean
+  readonly active: boolean
+}
+
+export function RootZone({ isOver, active }: RootZoneProps) {
   const { setNodeRef } = useDroppable({ id: ROOT_ID })
   return (
     <div ref={setNodeRef} className={cn(

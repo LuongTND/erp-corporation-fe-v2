@@ -10,120 +10,45 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
-import { OrgChartTree, type RenderNodeProps } from '@/features/hr/components/OrgChartPage/OrgChartTree'
+import { OrgChartTree } from '@/features/hr/components/OrgChartPage/OrgChartTree'
 import { cn } from '@/lib/utils'
-import { useDepartmentMembers, useDepartmentTree, useUpdateDepartment } from '../../../hooks/use-departments'
+import { useDepartmentMembers, useUpdateDepartment } from '../../../hooks/use-departments'
 import type { DepartmentTreeResponse } from '../../../types/admin.types'
 import { MembersContent } from './MembersPanel'
-import type { JobLevelOption } from './types'
+import { DeptOrgCard } from './DeptOrgCard'
+import { ChildrenList } from './ChildrenList'
+import type { DeptNode, JobLevelOption } from './types'
 
-type DeptNode = DepartmentTreeResponse & { children: readonly DeptNode[] }
-
-function DeptOrgCard({ node, selected, onSelect }: RenderNodeProps<DeptNode>) {
-  if (node.id === '__root__') {
-    return (
-      <button
-        type="button" onClick={onSelect}
-        className="w-36 rounded-lg border-2 border-primary/30 bg-primary/5 px-3 py-2 text-center cursor-pointer hover:border-primary/60 transition-colors"
-      >
-        <Network className="w-4 h-4 text-primary mx-auto mb-1" />
-        <p className="text-xs font-semibold text-primary leading-tight">{node.departmentName}</p>
-      </button>
-    )
-  }
-
-  return (
-    <button
-      type="button" onClick={onSelect}
-      className={cn(
-        'w-44 text-left rounded-lg border bg-card px-3 py-2.5 cursor-pointer',
-        'hover:border-primary/50 hover:bg-muted/30 transition-all duration-150',
-        selected && 'border-primary ring-1 ring-primary/20 bg-primary/5',
-        !node.isActive && 'opacity-50 grayscale border-dashed',
-      )}
-    >
-      <p className="text-[10px] font-mono text-muted-foreground mb-0.5 leading-none">{node.departmentCode}</p>
-      <p className="text-xs font-semibold leading-snug line-clamp-2">{node.departmentName}</p>
-      {node.managerName && (
-        <div className="flex items-center gap-1 mt-1">
-          <Avatar className="h-3.5 w-3.5 shrink-0">
-            <AvatarImage src={node.managerAvatarUrl} alt={node.managerName} />
-            <AvatarFallback className="text-[7px]">{node.managerName.split(' ').slice(-1)[0]?.[0]?.toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <p className="text-[10px] text-muted-foreground truncate leading-none">{node.managerName}</p>
-        </div>
-      )}
-      <div className="flex items-center gap-2 mt-1.5">
-        <div className="flex items-center gap-1">
-          <Users className="w-2.5 h-2.5 text-muted-foreground/60" />
-          <span className="text-[10px] text-muted-foreground/80 tabular-nums">{node.memberCount}</span>
-        </div>
-        {node.children.length > 0 && (
-          <div className="flex items-center gap-1">
-            <GitBranch className="w-2.5 h-2.5 text-muted-foreground/60" />
-            <span className="text-[10px] text-muted-foreground/80 tabular-nums">{node.children.length}</span>
-          </div>
-        )}
-      </div>
-    </button>
-  )
+interface TreeViewProps {
+  readonly jobLevels: JobLevelOption[]
+  readonly tree: DepartmentTreeResponse[] | undefined
+  readonly isLoading: boolean
 }
 
-function renderDeptCard(props: RenderNodeProps<DeptNode>) {
+function findNode(node: DeptNode, id: string): DeptNode | null {
+  if (node.id === id) return node
+  for (const child of node.children) {
+    const found = findNode(child as DeptNode, id)
+    if (found) return found
+  }
+  return null
+}
+
+function renderDeptCard(props: Parameters<typeof DeptOrgCard>[0]) {
   return <DeptOrgCard {...props} />
 }
 
-function ChildrenList({ children }: { children: DeptNode[] }) {
-  if (children.length === 0) return (
-    <div className="flex flex-col items-center justify-center h-full py-12 gap-2 text-center">
-      <GitBranch className="w-7 h-7 text-muted-foreground/30" />
-      <p className="text-xs text-muted-foreground">Không có phòng con</p>
-    </div>
-  )
-  return (
-    <div className="flex-1 overflow-y-auto">
-      {children.map(child => (
-        <div key={child.id} className="flex items-center gap-3 px-3 py-2.5 border-b hover:bg-muted/30 transition-colors">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="text-[10px] font-mono text-muted-foreground bg-muted/50 px-1 rounded">
-                {child.departmentCode}
-              </span>
-            </div>
-            <p className="text-xs font-medium leading-snug">{child.departmentName}</p>
-            {child.managerName && (
-              <p className="text-[10px] text-muted-foreground mt-0.5">{child.managerName}</p>
-            )}
-          </div>
-          {child.children.length > 0 && (
-            <Badge variant="secondary" className="text-[10px] px-1.5 h-4 shrink-0 gap-0.5">
-              <GitBranch className="w-2.5 h-2.5" />{child.children.length}
-            </Badge>
-          )}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
+// ponytail: orchestrator — owns useUpdateDepartment + useDepartmentMembers for the selected dept
+// in the tree sheet; DepartmentsPage does not manage these
+export function TreeView({ jobLevels, tree, isLoading }: TreeViewProps) {
   const [scale, setScale] = useState(1)
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'members' | 'children'>('members')
   const [addOpen, setAddOpen] = useState(false)
-  const { data: tree, isLoading } = useDepartmentTree()
+
   const updateDept = useUpdateDepartment()
   const { data: deptMembers = [] } = useDepartmentMembers(selectedDeptId)
-
-  function findNode(node: DeptNode, id: string): DeptNode | null {
-    if (node.id === id) return node
-    for (const child of node.children) {
-      const found = findNode(child as DeptNode, id)
-      if (found) return found
-    }
-    return null
-  }
 
   const root = useMemo((): DeptNode | null => {
     const roots = (tree ?? []) as DeptNode[]
@@ -144,7 +69,6 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
     [root, selectedDeptId], // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  // Auto-expand tất cả nodes khi data load xong
   useEffect(() => {
     if (!root) return
     const ids = new Set<string>()
@@ -222,7 +146,6 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
         <SheetContent side="right" className="w-[420px] p-0 flex flex-col gap-0">
           {selectedDept && (
             <>
-              {/* Dept info header */}
               <div className="shrink-0 border-b">
                 <SheetHeader className="px-3 pt-3 pb-2">
                   <div className="flex items-center gap-2 mb-1">
@@ -267,7 +190,6 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
                   </SheetTitle>
                 </SheetHeader>
                 <div className="px-3 pb-2.5">
-                  {/* Manager property row */}
                   <div className="flex items-center gap-2 min-h-[28px]">
                     <div className="flex items-center gap-1.5 w-[88px] shrink-0">
                       <Crown className="w-3 h-3 text-muted-foreground shrink-0" />
@@ -308,7 +230,6 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
                       </SelectContent>
                     </Select>
                   </div>
-                  {/* Children property row */}
                   <div className="flex items-center gap-2 min-h-[28px]">
                     <div className="flex items-center gap-1.5 w-[88px] shrink-0">
                       <GitBranch className="w-3 h-3 text-muted-foreground shrink-0" />
@@ -321,7 +242,6 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
                 </div>
               </div>
 
-              {/* Tab bar */}
               <div className="shrink-0 border-b flex items-center">
                 <button
                   type="button"
@@ -365,7 +285,6 @@ export function TreeView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
                 )}
               </div>
 
-              {/* Tab content */}
               <div className="flex-1 flex flex-col overflow-hidden">
                 {activeTab === 'members' ? (
                   <MembersContent dept={selectedDept} jobLevels={jobLevels} addOpen={addOpen} onAddOpenChange={setAddOpen} />

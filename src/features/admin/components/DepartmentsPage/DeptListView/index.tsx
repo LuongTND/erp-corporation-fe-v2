@@ -24,12 +24,13 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import {
+  useCreateDepartment,
   useDeleteDepartment,
   useDepartmentTree,
   useUpdateDepartment,
 } from '../../../hooks/use-departments'
 import type { DepartmentResponse, DepartmentTreeResponse } from '../../../types/admin.types'
-import { DepartmentDialog } from '../DepartmentDialog'
+import { DepartmentDialog, type DepartmentSubmitPayload } from '../DepartmentDialog'
 import { DeptRow } from './DeptRow'
 import { RootZone } from './RootZone'
 import {
@@ -43,6 +44,8 @@ import {
 
 const TREE_KEY = ['departments', 'tree']
 
+// ponytail: orchestrator — owns useDepartmentTree + useCreateDepartment + useUpdateDepartment + useDeleteDepartment
+// for the flat list + drag-and-drop view; DepartmentsPage does not manage department CRUD
 export function DeptListView() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
@@ -55,8 +58,9 @@ export function DeptListView() {
 
   const queryClient = useQueryClient()
   const { data: tree, isLoading } = useDepartmentTree()
+  const create = useCreateDepartment()
   const update = useUpdateDepartment()
-  const del = useDeleteDepartment()
+  const deleteDepartment = useDeleteDepartment()
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }))
 
@@ -134,6 +138,14 @@ export function DeptListView() {
     )
   }, [tree, rows, queryClient, update])
 
+  const handleDialogSubmit = async (payload: DepartmentSubmitPayload) => {
+    if (editDept) {
+      await update.mutateAsync({ id: editDept.id, data: payload })
+    } else {
+      await create.mutateAsync(payload)
+    }
+  }
+
   const openEdit = (row: ReturnType<typeof flatten>[number]) => {
     setEditDept({
       id: row.node.id,
@@ -158,7 +170,6 @@ export function DeptListView() {
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <p className="text-sm text-muted-foreground">{rows.length} phòng ban</p>
             <div className="flex items-center gap-2 flex-wrap">
-              {/* Status filter */}
               <div className="flex items-center rounded-md border overflow-hidden text-xs">
                 {(['all', 'active', 'inactive'] as const).map(v => (
                   <button
@@ -259,7 +270,7 @@ export function DeptListView() {
             <AlertDialogCancel>Hủy</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
-              onClick={() => { if (deleteDept) del.mutate(deleteDept.id); setDeleteDept(null) }}
+              onClick={() => { if (deleteDept) deleteDepartment.mutate(deleteDept.id); setDeleteDept(null) }}
             >
               Xóa
             </AlertDialogAction>
@@ -271,7 +282,9 @@ export function DeptListView() {
         open={dialogOpen}
         department={editDept}
         allDepartments={allDepts}
+        isPending={create.isPending || update.isPending}
         onOpenChange={setDialogOpen}
+        onSubmit={handleDialogSubmit}
       />
     </DndContext>
   )

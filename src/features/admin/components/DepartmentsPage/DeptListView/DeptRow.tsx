@@ -6,11 +6,11 @@ import { cn } from '@/lib/utils'
 import type { FlatRow } from './utils'
 
 interface DeptRowProps {
-  row: FlatRow
-  isOver: boolean
-  isPending: boolean
-  onEdit: () => void
-  onDelete: () => void
+  readonly row: FlatRow
+  readonly isOver: boolean
+  readonly isPending: boolean
+  readonly onEdit: () => void
+  readonly onDelete: () => void
 }
 
 export function DeptRow({ row, isOver, isPending, onEdit, onDelete }: DeptRowProps) {
