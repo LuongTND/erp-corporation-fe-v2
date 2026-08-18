@@ -36,6 +36,26 @@ const LOCK_BANNER: Record<string, { label: string; message: string }> = {
   [USER_STATUS.Resigned]:   { label: 'Đã nghỉ việc',  message: 'Hồ sơ nhân viên đã nghỉ việc. Không thể chỉnh sửa thông tin.' },
   [USER_STATUS.Terminated]: { label: 'Đã chấm dứt',  message: 'Hồ sơ nhân viên đã bị chấm dứt hợp đồng. Không thể chỉnh sửa thông tin.' },
 }
+const DEFAULT_BADGE = 'bg-muted text-muted-foreground'
+
+export function EmployeeProfileCard({ employee, isLocked, onEditClick, onUploadAvatar, isUploadingAvatar, onLockEmployee }: EmployeeProfileCardProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
+  const [lockConfirmOpen, setLockConfirmOpen] = useState(false)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => setCropSrc(reader.result as string)
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
+
+  const handleCropConfirm = (blob: Blob) => {
+    const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' })
+    onUploadAvatar(file, { onSettled: () => setCropSrc(null) })
+  }
 
 export function EmployeeProfileCard({ employee, isLocked, status, onEditClick, onUploadAvatar, isUploadingAvatar, onLockEmployee }: EmployeeProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)

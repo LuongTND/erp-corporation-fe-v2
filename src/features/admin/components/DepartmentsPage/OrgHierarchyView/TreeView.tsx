@@ -46,7 +46,6 @@ export function TreeView({ jobLevels, tree, isLoading }: TreeViewProps) {
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'members' | 'children'>('members')
   const [addOpen, setAddOpen] = useState(false)
-
   const updateDept = useUpdateDepartment()
   const { data: deptMembers = [] } = useDepartmentMembers(selectedDeptId)
 

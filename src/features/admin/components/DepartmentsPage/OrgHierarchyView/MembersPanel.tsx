@@ -43,8 +43,6 @@ interface MembersContentProps {
   readonly onAddOpenChange: (open: boolean) => void
 }
 
-// ponytail: orchestrator — owns member CRUD for a single dept; neither ListView nor TreeView
-// duplicate this hook set, and DepartmentsPage does not manage members
 export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: MembersContentProps) {
   const { data: members, isLoading } = useDepartmentMembers(dept.id)
   const { data: allUsers = [], isLoading: isLoadingUsers } = useEmployees(undefined, undefined, { enabled: addOpen })
