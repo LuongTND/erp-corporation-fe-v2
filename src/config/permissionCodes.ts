@@ -20,7 +20,7 @@ export const P = {
   PERMISSIONS_DELETE: 'permissions:delete',
 
   // Users
-  USERS_VIEW: 'users:view-list',
+  USERS_VIEW: 'users:view',
   USERS_VIEW_HISTORY: 'users:view-history',
   USERS_EXPORT: 'users:export',
   USERS_CREATE: 'users:create',
@@ -134,6 +134,20 @@ export const P = {
   KPI_ENTRIES_VIEW: 'kpi-entries:view-list',
   KPI_ENTRIES_VIEW_SUMMARY: 'kpi-entries:view-summary',
   KPI_ENTRIES_UPSERT: 'kpi-entries:upsert',
+
+  // Contracts
+  CONTRACT_VIEW: 'contract:view',
+  CONTRACT_CREATE: 'contract:create',
+  CONTRACT_RENEW: 'contract:renew',
+  CONTRACT_TERMINATE: 'contract:terminate',
+  CONTRACT_GENERATE_FILE: 'contract:generate-file',
+  CONTRACT_UPLOAD_SCAN: 'contract:upload-scan',
+
+  // Contract Templates
+  CONTRACT_TEMPLATES_VIEW: 'contract-templates:view',
+  CONTRACT_TEMPLATES_UPLOAD: 'contract-templates:upload',
+  CONTRACT_TEMPLATES_UPDATE_SCHEMA: 'contract-templates:update-schema',
+  CONTRACT_TEMPLATES_DELETE: 'contract-templates:delete',
 } as const
 
 export type PermissionCode = (typeof P)[keyof typeof P]

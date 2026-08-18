@@ -7,4 +7,13 @@ export const employeesService = {
 
   create: (data: CreateEmployeePayload) =>
     apiCall.post<string>('/api/users', data),
+
+  updateStatus: (userId: string, newStatus: string, note?: string) =>
+    apiCall.patch<void>(`/api/users/${userId}/status`, { userId, newStatus, note }),
+
+  lock: (userId: string, lock: boolean) =>
+    apiCall.patch<void>(`/api/users/${userId}/lock`, { userId, lock }),
+
+  exportUsers: (search?: string, status?: string, departmentId?: string) =>
+    apiCall.get<Blob>('/api/users/export', { params: { ...(search ? { search } : {}), ...(status ? { status } : {}), ...(departmentId ? { departmentId } : {}) }, responseType: 'blob' }),
 }

@@ -1,7 +1,18 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import { MoreHorizontal } from 'lucide-react'
 import {
   PaginationContent,
   PaginationEllipsis,
@@ -13,6 +24,30 @@ import {
 import type { UserSummaryResponse } from '../../types/admin.types'
 
 const PAGE_SIZE_OPTIONS = [15, 50, 100] as const
+
+const STATUS_LABELS: Record<string, string> = {
+  Active: 'Đang làm',
+  Official: 'Chính thức',
+  Probation: 'Thử việc',
+  Apprentice: 'Học việc',
+  Suspended: 'Tạm nghỉ',
+  MaternityLeave: 'Thai sản',
+  Resigned: 'Đã nghỉ',
+  Terminated: 'Chấm dứt HĐ',
+}
+
+const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
+  Active: 'default',
+  Official: 'default',
+  Probation: 'secondary',
+  Apprentice: 'secondary',
+  Suspended: 'outline',
+  MaternityLeave: 'outline',
+  Resigned: 'outline',
+  Terminated: 'destructive',
+}
+
+const STATUS_OPTIONS = Object.entries(STATUS_LABELS).map(([value, label]) => ({ value, label }))
 
 function buildPageNumbers(current: number, total: number): (number | 'ellipsis')[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
@@ -32,6 +67,8 @@ interface EmployeeTableProps {
   onRowClick: (id: string) => void
   onPageChange: (page: number) => void
   onPageSizeChange: (size: number) => void
+  onStatusChange: (userId: string, newStatus: string) => void
+  isUpdatingStatus: boolean
 }
 
 export function EmployeeTable({
@@ -45,6 +82,8 @@ export function EmployeeTable({
   onRowClick,
   onPageChange,
   onPageSizeChange,
+  onStatusChange,
+  isUpdatingStatus,
 }: EmployeeTableProps) {
   return (
     <div className="rounded-lg border bg-card flex flex-col overflow-hidden [&>[data-slot=table-container]]:overflow-y-auto [&>[data-slot=table-container]]:max-h-[calc(100vh-280px)]">
@@ -55,6 +94,8 @@ export function EmployeeTable({
               <TableHead className="sticky top-0 z-10 bg-card">Nhân viên</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card">Mã NV</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card">Email</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card">Trạng thái</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-10" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -69,22 +110,20 @@ export function EmployeeTable({
                   </TableCell>
                   <TableCell><Skeleton className="h-4 w-20" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-40" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-20" /></TableCell>
+                  <TableCell />
                 </TableRow>
               ))
             ) : employees.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-12 text-muted-foreground text-sm">
+                <TableCell colSpan={5} className="text-center py-12 text-muted-foreground text-sm">
                   Chưa có nhân viên nào
                 </TableCell>
               </TableRow>
             ) : (
               employees.map((emp) => (
-                <TableRow
-                  key={emp.id}
-                  className="cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => onRowClick(emp.id)}
-                >
-                  <TableCell>
+                <TableRow key={emp.id} className="hover:bg-muted/50 transition-colors">
+                  <TableCell className="cursor-pointer" onClick={() => onRowClick(emp.id)}>
                     <div className="flex items-center gap-2.5">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={emp.avatarUrl} alt={emp.fullName} />
@@ -95,8 +134,47 @@ export function EmployeeTable({
                       <span className="font-medium text-sm">{emp.fullName}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground tabular-nums">{emp.employeeCode}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{emp.email}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground tabular-nums cursor-pointer" onClick={() => onRowClick(emp.id)}>
+                    {emp.employeeCode}
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground cursor-pointer" onClick={() => onRowClick(emp.id)}>
+                    {emp.email}
+                  </TableCell>
+                  <TableCell className="cursor-pointer" onClick={() => onRowClick(emp.id)}>
+                    <Badge variant={STATUS_VARIANT[emp.status] ?? 'outline'} className="text-xs">
+                      {STATUS_LABELS[emp.status] ?? emp.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 cursor-pointer"
+                          disabled={isUpdatingStatus}
+                          aria-label="Tuỳ chọn"
+                        >
+                          <MoreHorizontal className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" sideOffset={4}>
+                        <DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+                          Đổi trạng thái
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {STATUS_OPTIONS.filter(o => o.value !== emp.status).map(o => (
+                          <DropdownMenuItem
+                            key={o.value}
+                            className="cursor-pointer text-sm"
+                            onClick={() => onStatusChange(emp.id, o.value)}
+                          >
+                            {o.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))
             )}

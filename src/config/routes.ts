@@ -82,6 +82,13 @@ export const ROUTES = {
     REGIONS: '/admin/regions',
     COUNTERS: '/admin/counters',
     AUDIT_LOGS: '/admin/audit-logs',
+    CONTRACTS: '/admin/contracts',
+    CONTRACT_TEMPLATES: '/admin/contract-templates',
+  },
+
+  // ── HR Manager ──
+  HR_MANAGER: {
+    CONTRACTS: '/hr-manager/contracts',
   },
 } as const
 

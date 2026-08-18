@@ -357,3 +357,71 @@ export interface PermissionAuditLogFilter {
   top?: number
   skip?: number
 }
+
+export interface EmploymentContractResponse {
+  id: string
+  userId: string
+  contractNumber: string
+  type: string
+  status: string
+  startDate: string
+  endDate?: string
+  salary: number
+  salaryForSocialInsurance?: number
+  positionTitle?: string
+  fileUrl?: string
+  signedDate?: string
+  terminationReason?: string
+  renewedFromContractId?: string
+  templateId?: string
+  createdAt: string
+  isActive: boolean
+}
+
+export interface ContractTemplateResponse {
+  id: string
+  name: string
+  description?: string
+  originalFileName: string
+  isActive: boolean
+  createdAt: string
+  fileUrl?: string
+}
+
+export interface ContractSalaryComparisonResponse {
+  userId: string
+  contractId?: string
+  contractNumber?: string
+  contractSalary?: number
+  actualHourlyRate?: number
+  hasActiveContract: boolean
+  hasSalaryRecord: boolean
+}
+
+export interface CreateContractPayload {
+  userId: string
+  type: string
+  startDate: string
+  endDate?: string
+  salary: number
+  salaryForSocialInsurance?: number
+  positionTitle?: string
+  signedDate?: string
+  templateId?: string
+  file: File
+}
+
+export interface RenewContractPayload {
+  type: string
+  startDate: string
+  endDate?: string
+  salary: number
+  salaryForSocialInsurance?: number
+  positionTitle?: string
+  signedDate?: string
+  file: File
+}
+
+export interface TerminateContractPayload {
+  terminationReason: string
+}

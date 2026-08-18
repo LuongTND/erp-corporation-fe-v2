@@ -63,6 +63,9 @@ const AdminCountersPage = lazy(() => import('@/features/admin/pages/CountersPage
 const AdminKpiPayrollPage = lazy(() => import('@/features/admin/pages/KpiPayrollPage'))
 const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/PayrollRunDetailPage'))
 const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AuditLogsPage'))
+const AdminContractsPage = lazy(() => import('@/features/admin/pages/ContractsPage'))
+const AdminContractTemplatesPage = lazy(() => import('@/features/admin/pages/ContractTemplatesPage'))
+const HRManagerContractsPage = lazy(() => import('@/features/admin/pages/HRManagerContractsPage'))
 const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
 
 export const router = createBrowserRouter([
@@ -205,6 +208,16 @@ export const router = createBrowserRouter([
                 ),
               },
 
+              // ── HR Manager Module ──
+              {
+                path: ROUTES.HR_MANAGER.CONTRACTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <HRManagerContractsPage />
+                  </Suspense>
+                ),
+              },
+
               // ── Admin Module ──
               {
                 path: ROUTES.ADMIN.ACCOUNTS,
@@ -268,6 +281,22 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminAuditLogsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.CONTRACTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminContractsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.CONTRACT_TEMPLATES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminContractTemplatesPage />
                   </Suspense>
                 ),
               },
