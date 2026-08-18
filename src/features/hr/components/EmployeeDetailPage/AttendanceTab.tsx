@@ -161,12 +161,12 @@ export function AttendanceTab() {
       </div>
 
       {/* Recent records table */}
-      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
         <div className="px-6 py-4 border-b border-border">
           <h3 className="text-sm font-semibold text-foreground">Lịch sử gần đây</h3>
         </div>
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="bg-card hover:bg-card">
               <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Ngày</TableHead>
               <TableHead className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Vào</TableHead>

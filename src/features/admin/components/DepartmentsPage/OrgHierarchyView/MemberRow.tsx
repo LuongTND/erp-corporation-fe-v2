@@ -10,13 +10,13 @@ function initials(name: string) {
 }
 
 interface MemberRowProps {
-  member: DepartmentMemberResponse
-  jobLevels: JobLevelOption[]
-  isManager?: boolean
-  isUpdating: boolean
-  isRemoving: boolean
-  onLevelChange: (userId: string, jobLevelId: string | null) => void
-  onRemove: (userId: string, fullName: string) => void
+  readonly member: DepartmentMemberResponse
+  readonly jobLevels: JobLevelOption[]
+  readonly isManager?: boolean
+  readonly isUpdating: boolean
+  readonly isRemoving: boolean
+  readonly onLevelChange: (userId: string, jobLevelId: string | null) => void
+  readonly onRemove: (userId: string, fullName: string) => void
 }
 
 export function MemberRow({ member, jobLevels, isManager, isUpdating, isRemoving, onLevelChange, onRemove }: MemberRowProps) {

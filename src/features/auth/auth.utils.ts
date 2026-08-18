@@ -1,5 +1,6 @@
 import { jwtDecode, type JwtPayload } from 'jwt-decode'
-import { MICROSOFT_ROLE_CLAIM } from '@/config/roles'
+
+const MICROSOFT_ROLE_CLAIM = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
 
 // ──────────────────────────────────────────────────────────────
 // JWT Payload mở rộng (hỗ trợ cả .NET Identity và custom claims)

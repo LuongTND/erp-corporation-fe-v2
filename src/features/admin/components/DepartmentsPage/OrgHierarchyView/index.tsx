@@ -1,13 +1,17 @@
 import { useMemo, useState } from 'react'
 import { List, Network, Share2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useDepartmentTree } from '../../../hooks/use-departments'
 import { useJobLevels } from '../../../hooks/use-job-levels'
 import { ListView } from './ListView'
 import { TreeView } from './TreeView'
 import type { JobLevelOption } from './types'
 
+// ponytail: orchestrator — owns jobLevels + tree shared by both sub-views; DepartmentsPage does not manage these
 export function OrgHierarchyView() {
   const [view, setView] = useState<'list' | 'tree'>('list')
+
+  const { data: tree, isLoading: isTreeLoading } = useDepartmentTree()
 
   const { data: jobLevelsData } = useJobLevels({ Top: 100, NeedTotalCount: false })
   const jobLevels: JobLevelOption[] = useMemo(() =>
@@ -50,8 +54,8 @@ export function OrgHierarchyView() {
 
       <div className="flex flex-1 p-2 overflow-hidden">
         {view === 'list'
-          ? <ListView jobLevels={jobLevels} />
-          : <TreeView jobLevels={jobLevels} />
+          ? <ListView jobLevels={jobLevels} tree={tree} isLoading={isTreeLoading} />
+          : <TreeView jobLevels={jobLevels} tree={tree} isLoading={isTreeLoading} />
         }
       </div>
     </div>

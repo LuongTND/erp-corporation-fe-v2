@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>()(
       hasPermission: (permission) => {
         const { user } = get()
         if (!user) return false
-        return user.permissions.includes(permission) || user.role === 'ROLE_SUPER_ADMIN'
+        return user.permissions.includes(permission)
       },
     }),
     {

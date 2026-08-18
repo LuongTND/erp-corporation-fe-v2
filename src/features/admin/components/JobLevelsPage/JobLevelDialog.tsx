@@ -25,12 +25,12 @@ export function JobLevelDialog({ open, isEdit, form, onSubmit, onOpenChange, isP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Chỉnh sửa cấp bậc' : 'Tạo cấp bậc'}</DialogTitle>
+          <DialogTitle>{isEdit ? 'Chỉnh sửa chức danh' : 'Tạo chức danh'}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label htmlFor="levelName">Tên cấp bậc <span aria-hidden="true" className="text-destructive">*</span></Label>
+              <Label htmlFor="levelName">Tên chức danh <span aria-hidden="true" className="text-destructive">*</span></Label>
               <Input id="levelName" {...register('levelName')} placeholder="vd: Manager" />
               {errors.levelName && <p className="text-xs text-destructive">{errors.levelName.message}</p>}
             </div>

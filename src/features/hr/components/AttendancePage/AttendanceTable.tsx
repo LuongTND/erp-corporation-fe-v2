@@ -83,7 +83,7 @@ export function AttendanceTable() {
   const paged = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   return (
-    <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
       {/* Filter tabs */}
       <div className="flex items-center gap-1.5 px-5 pt-4 pb-3 border-b border-border flex-wrap">
         {FILTER_TABS.map((tab) => (
@@ -104,7 +104,7 @@ export function AttendanceTable() {
 
       {/* Table */}
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow className="border-border">
             <TableHead className="text-xs font-medium text-muted-foreground pl-5">Nhân viên</TableHead>
             <TableHead className="text-xs font-medium text-muted-foreground">Phòng ban</TableHead>

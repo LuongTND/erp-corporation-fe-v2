@@ -46,7 +46,7 @@ export function LearnerTable({ learners, onViewDetail, onDelete }: LearnerTableP
   return (
     <div className="rounded-lg border border-border bg-card">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow>
             <TableHead>Học viên</TableHead>
             <TableHead>Phòng ban</TableHead>

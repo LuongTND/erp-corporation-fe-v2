@@ -58,6 +58,9 @@ export const ROUTES = {
     AI_CHATBOT: '/customer/chatbot',
   },
 
+  // ── Store Manager Portal ──
+  STORE_MANAGER: '/store-manager',
+
   // ── Admin ──
   ADMIN: {
     ROOT: '/admin',
@@ -74,6 +77,18 @@ export const ROUTES = {
     KPI_ENTRIES: '/admin/kpi-entries',
     PAYROLL_RUNS: '/admin/payroll-runs',
     PAYROLL_RUN_DETAIL: '/admin/payroll-runs/:id',
+    EMPLOYEE_TYPES: '/admin/employee-types',
+    STORES: '/admin/stores',
+    REGIONS: '/admin/regions',
+    COUNTERS: '/admin/counters',
+    AUDIT_LOGS: '/admin/audit-logs',
+    CONTRACTS: '/admin/contracts',
+    CONTRACT_TEMPLATES: '/admin/contract-templates',
+  },
+
+  // ── HR Manager ──
+  HR_MANAGER: {
+    CONTRACTS: '/hr-manager/contracts',
   },
 } as const
 

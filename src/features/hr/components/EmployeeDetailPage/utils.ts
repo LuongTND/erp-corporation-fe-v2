@@ -10,6 +10,12 @@ const CONTRACT_TYPE_LABELS: Record<string, string> = {
   Freelance: 'Cộng tác viên',
 }
 
+function deriveProbationStatus(status: string, contractType?: string): EmployeeDetail['probationStatus'] {
+  if (status === 'Probation' || contractType === 'Probation') return 'In Progress'
+  if (status === 'Active' || status === 'Official') return 'Completed'
+  return 'Not Applicable'
+}
+
 export function mapToEmployeeDetail(dto: UserDetailDto): EmployeeDetail {
   const initials = dto.fullName
     .split(' ')
@@ -72,7 +78,7 @@ export function mapToEmployeeDetail(dto: UserDetailDto): EmployeeDetail {
     contractEndDate: '—',
     salaryGrade: '—',
     salaryRange: '—',
-    probationStatus: 'Completed',
+    probationStatus: deriveProbationStatus(dto.status, dto.employment?.contractType),
     itEquipment: [],
     systemRoles: [],
   }

@@ -7,4 +7,7 @@ export const permissionsService = {
 
   getByRole: (roleId: string) =>
     apiCall.get<PermissionResponse[]>(`/api/roles/${roleId}/permissions`),
+
+  delete: (id: string) =>
+    apiCall.delete(`/api/permissions/${id}`),
 }

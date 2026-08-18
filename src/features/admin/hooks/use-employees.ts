@@ -21,3 +21,23 @@ export function useCreateEmployee() {
     onError: (error) => { console.error(error); toast.error('Tạo nhân sự thất bại') },
   })
 }
+
+export function useUpdateUserStatus() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, newStatus, note }: { userId: string; newStatus: string; note?: string }) =>
+      employeesService.updateStatus(userId, newStatus, note),
+    onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Cập nhật trạng thái thành công') },
+    onError: (error) => { console.error(error); toast.error('Cập nhật trạng thái thất bại') },
+  })
+}
+
+export function useLockEmployee() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, lock }: { userId: string; lock: boolean }) =>
+      employeesService.lock(userId, lock),
+    onSuccess: (_, { lock }) => { client.invalidateQueries({ queryKey: [KEY] }); toast.success(lock ? 'Đã khoá tài khoản' : 'Đã mở khoá tài khoản') },
+    onError: (error) => { console.error(error); toast.error('Thao tác thất bại') },
+  })
+}

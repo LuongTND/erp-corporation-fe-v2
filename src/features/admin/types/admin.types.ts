@@ -19,6 +19,89 @@ export interface PermissionResponse {
   description?: string
 }
 
+export interface StoreResponse {
+  id: string
+  name: string
+  code: string
+  posStoreId: string
+  address?: string
+  phone?: string
+  regionId?: string | null
+  managerId?: string | null
+  managerName?: string | null
+  isActive: boolean
+  todayIsClosed: boolean | null // null = chưa cấu hình giờ
+}
+
+export interface StorePortalResponse {
+  id: string
+  name: string
+  code: string
+  address?: string
+  phone?: string
+  regionName?: string
+  isActive: boolean
+  todayHours?: {
+    dayOfWeek: string
+    openTime: string
+    closeTime: string
+    isClosed: boolean
+  } | null
+  counters: CounterResponse[]
+}
+
+export interface StoreHoursResponse {
+  id: string
+  storeId: string
+  dayOfWeek: number | string
+  openTime: string
+  closeTime: string
+  isClosed: boolean
+}
+
+export interface StoreHoursPayload {
+  storeId: string
+  hours: { dayOfWeek: number; openTime: string; closeTime: string; isClosed: boolean }[]
+}
+
+export interface RegionResponse {
+  id: string
+  name: string
+  code: string
+  posRegionId: string
+  isActive: boolean
+  storeCount: number
+}
+
+export interface RegionHoursResponse {
+  id: string
+  regionId: string
+  dayOfWeek: number | string
+  openTime: string
+  closeTime: string
+  isClosed: boolean
+}
+
+export interface RegionHoursPayload {
+  regionId: string
+  hours: { dayOfWeek: number; openTime: string; closeTime: string; isClosed: boolean }[]
+}
+
+export interface CounterResponse {
+  id: string
+  storeId: string
+  storeName: string
+  name: string
+  code: string
+  isActive: boolean
+}
+
+export interface CounterPayload {
+  storeId: string
+  name: string
+  code: string
+}
+
 export interface DepartmentResponse {
   id: string
   departmentName: string
@@ -216,6 +299,14 @@ export interface UpdateCustomFieldPayload {
   options?: { id?: string; value: string; label: string; sortOrder: number; isActive: boolean }[]
 }
 
+export interface EmployeeTypeResponse {
+  id: string
+  name: string
+  code: string
+  description?: string
+  isActive: boolean
+}
+
 // PascalCase to match BE QueryInfo model
 export interface ListParams {
   Top?: number
@@ -223,4 +314,114 @@ export interface ListParams {
   SearchText?: string
   IsActive?: boolean
   NeedTotalCount?: boolean
+}
+
+export interface StoreMemberResponse {
+  userStoreId: string
+  userId: string
+  fullName: string
+  employeeCode: string
+  email: string
+  avatarUrl?: string
+  jobLevelName?: string
+  isHomeStore: boolean
+  startDate: string
+}
+
+export interface AddStoreMemberPayload {
+  userId: string
+  startDate: string
+  isHomeStore: boolean
+}
+
+export interface PermissionAuditLogResponse {
+  id: number
+  action: 'AssignRole' | 'RevokeRole' | 'AssignPermissions'
+  actorId: string
+  actorName: string
+  targetUserId?: string
+  targetUserName?: string
+  roleId: string
+  roleName: string
+  permissionCodes?: string
+  detail?: string
+  occurredAt: string
+}
+
+export interface PermissionAuditLogFilter {
+  action?: string
+  actorId?: string
+  roleId?: string
+  from?: string
+  to?: string
+  top?: number
+  skip?: number
+}
+
+export interface EmploymentContractResponse {
+  id: string
+  userId: string
+  contractNumber: string
+  type: string
+  status: string
+  startDate: string
+  endDate?: string
+  salary: number
+  salaryForSocialInsurance?: number
+  positionTitle?: string
+  fileUrl?: string
+  signedDate?: string
+  terminationReason?: string
+  renewedFromContractId?: string
+  templateId?: string
+  createdAt: string
+  isActive: boolean
+}
+
+export interface ContractTemplateResponse {
+  id: string
+  name: string
+  description?: string
+  originalFileName: string
+  isActive: boolean
+  createdAt: string
+  fileUrl?: string
+}
+
+export interface ContractSalaryComparisonResponse {
+  userId: string
+  contractId?: string
+  contractNumber?: string
+  contractSalary?: number
+  actualHourlyRate?: number
+  hasActiveContract: boolean
+  hasSalaryRecord: boolean
+}
+
+export interface CreateContractPayload {
+  userId: string
+  type: string
+  startDate: string
+  endDate?: string
+  salary: number
+  salaryForSocialInsurance?: number
+  positionTitle?: string
+  signedDate?: string
+  templateId?: string
+  file: File
+}
+
+export interface RenewContractPayload {
+  type: string
+  startDate: string
+  endDate?: string
+  salary: number
+  salaryForSocialInsurance?: number
+  positionTitle?: string
+  signedDate?: string
+  file: File
+}
+
+export interface TerminateContractPayload {
+  terminationReason: string
 }

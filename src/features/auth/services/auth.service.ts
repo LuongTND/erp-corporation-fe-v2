@@ -38,8 +38,8 @@ export const authService = {
     return apiCall.post<LoginResponse>('/api/auth/refresh', { token })
   },
 
-  logout: async (token?: string) => {
-    return apiCall.post('/api/auth/revoke', { token })
+  logout: async () => {
+    return apiCall.post('/api/auth/logout')
   },
 
   getProfile: async () => {

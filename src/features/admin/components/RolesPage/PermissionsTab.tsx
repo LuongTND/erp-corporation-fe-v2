@@ -1,8 +1,22 @@
 import { useState } from 'react'
+import { Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { useDeletePermission } from '../../hooks/use-permissions'
 import type { PermissionResponse } from '../../types/admin.types'
 
 interface PermissionsTabProps {
@@ -12,6 +26,7 @@ interface PermissionsTabProps {
 
 export function PermissionsTab({ permissions, isLoading }: PermissionsTabProps) {
   const [search, setSearch] = useState('')
+  const { mutate: deletePermission, isPending: isDeleting } = useDeletePermission()
 
   // ponytail: BE has no search param — filter client-side
   const filtered = permissions.filter(
@@ -52,17 +67,18 @@ export function PermissionsTab({ permissions, isLoading }: PermissionsTabProps) 
       ) : (
         <div className="space-y-6">
           {Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)).map(([resource, perms]) => (
-            <div key={resource} className="rounded-lg border bg-card overflow-hidden">
+            <div key={resource} className="rounded-lg border bg-card overflow-auto max-h-full min-h-0">
               <div className="px-4 py-3 border-b bg-muted/30 flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{resource}</span>
                 <Badge variant="secondary" className="text-[10px]">{perms.length}</Badge>
               </div>
               <Table>
-                <TableHeader>
+                <TableHeader className="sticky top-0 z-10 bg-card">
                   <TableRow>
                     <TableHead>Mã quyền</TableHead>
                     <TableHead>Hành động</TableHead>
                     <TableHead>Mô tả</TableHead>
+                    <TableHead className="w-12" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -71,6 +87,38 @@ export function PermissionsTab({ permissions, isLoading }: PermissionsTabProps) 
                       <TableCell className="font-mono text-sm">{p.permissionCode}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">{p.permissionCode.split(':')[1] ?? ''}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">{p.description ?? '—'}</TableCell>
+                      <TableCell>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              disabled={isDeleting}
+                              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Xóa quyền hạn</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Xóa quyền <span className="font-mono font-medium text-foreground">{p.permissionCode}</span>?
+                                Hành động này không thể hoàn tác.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Hủy</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deletePermission(p.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Xóa
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

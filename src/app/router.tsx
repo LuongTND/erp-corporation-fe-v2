@@ -56,8 +56,17 @@ const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/Departmen
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
 const AdminEmployeesPage = lazy(() => import('@/features/admin/pages/EmployeesPage'))
 const AdminCustomFieldsPage = lazy(() => import('@/features/admin/pages/CustomFieldsPage'))
+const AdminEmployeeTypesPage = lazy(() => import('@/features/admin/pages/EmployeeTypesPage'))
+const AdminStoresPage = lazy(() => import('@/features/admin/pages/StoresPage'))
+const AdminRegionsPage = lazy(() => import('@/features/admin/pages/RegionsPage'))
+const AdminCountersPage = lazy(() => import('@/features/admin/pages/CountersPage'))
 const AdminKpiPayrollPage = lazy(() => import('@/features/admin/pages/KpiPayrollPage'))
 const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/PayrollRunDetailPage'))
+const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AuditLogsPage'))
+const AdminContractsPage = lazy(() => import('@/features/admin/pages/ContractsPage'))
+const AdminContractTemplatesPage = lazy(() => import('@/features/admin/pages/ContractTemplatesPage'))
+const HRManagerContractsPage = lazy(() => import('@/features/admin/pages/HRManagerContractsPage'))
+const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -199,6 +208,16 @@ export const router = createBrowserRouter([
                 ),
               },
 
+              // ── HR Manager Module ──
+              {
+                path: ROUTES.HR_MANAGER.CONTRACTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <HRManagerContractsPage />
+                  </Suspense>
+                ),
+              },
+
               // ── Admin Module ──
               {
                 path: ROUTES.ADMIN.ACCOUNTS,
@@ -222,6 +241,62 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminJobLevelsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.EMPLOYEE_TYPES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminEmployeeTypesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.STORES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminStoresPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.REGIONS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminRegionsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.COUNTERS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminCountersPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.AUDIT_LOGS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminAuditLogsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.CONTRACTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminContractsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.CONTRACT_TEMPLATES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminContractTemplatesPage />
                   </Suspense>
                 ),
               },
@@ -283,6 +358,16 @@ export const router = createBrowserRouter([
               //   ),
               // },
               // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
+
+              // ── Store Manager Portal ──
+              {
+                path: ROUTES.STORE_MANAGER,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <StoreManagerPortalPage />
+                  </Suspense>
+                ),
+              },
 
               // ── LMS Module ──
               {

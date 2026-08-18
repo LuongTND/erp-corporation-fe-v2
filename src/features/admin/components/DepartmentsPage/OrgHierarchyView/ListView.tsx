@@ -1,59 +1,22 @@
 import { useMemo, useState } from 'react'
-import { Building2, ChevronRight, Plus, Users } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn } from '@/lib/utils'
-import { useDepartmentTree } from '../../../hooks/use-departments'
 import type { DepartmentTreeResponse } from '../../../types/admin.types'
 import { MembersContent } from './MembersPanel'
+import { DeptTreeNode } from './DeptTreeNode'
 import type { JobLevelOption } from './types'
 
-function DeptTreeNode({ dept, selectedId, onSelect, depth = 0 }: {
-  dept: DepartmentTreeResponse
-  selectedId: string | null
-  onSelect: (d: DepartmentTreeResponse) => void
-  depth?: number
-}) {
-  const [expanded, setExpanded] = useState(depth === 0)
-  const hasChildren = dept.children.length > 0
-
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={() => onSelect(dept)}
-        style={{ paddingLeft: `${depth * 12 + 8}px` }}
-        className={cn(
-          'w-full flex items-center gap-1 py-1.5 pr-2 text-xs text-left rounded-sm cursor-pointer',
-          'hover:bg-muted/50 transition-colors',
-          selectedId === dept.id && 'bg-primary/10 text-primary font-medium',
-        )}
-      >
-        {hasChildren ? (
-          <span
-            role="button" tabIndex={-1}
-            onClick={e => { e.stopPropagation(); setExpanded(v => !v) }}
-            className="shrink-0 p-0.5 hover:bg-muted rounded cursor-pointer"
-          >
-            <ChevronRight className={cn('w-3 h-3 text-muted-foreground transition-transform duration-150', expanded && 'rotate-90')} />
-          </span>
-        ) : <span className="w-4 shrink-0" />}
-        <Building2 className="w-3 h-3 shrink-0 text-muted-foreground" />
-        <span className="truncate flex-1">{dept.departmentName}</span>
-        {hasChildren && <span className="text-[9px] text-muted-foreground tabular-nums">{dept.children.length}</span>}
-      </button>
-      {expanded && hasChildren && dept.children.map(c => (
-        <DeptTreeNode key={c.id} dept={c} selectedId={selectedId} onSelect={onSelect} depth={depth + 1} />
-      ))}
-    </div>
-  )
+interface ListViewProps {
+  readonly jobLevels: JobLevelOption[]
+  readonly tree: DepartmentTreeResponse[] | undefined
+  readonly isLoading: boolean
 }
 
-export function ListView({ jobLevels }: { jobLevels: JobLevelOption[] }) {
+export function ListView({ jobLevels, tree, isLoading }: ListViewProps) {
   const [selectedDept, setSelectedDept] = useState<DepartmentTreeResponse | null>(null)
   const [search, setSearch] = useState('')
   const [addOpen, setAddOpen] = useState(false)
-  const { data: tree, isLoading } = useDepartmentTree()
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase()

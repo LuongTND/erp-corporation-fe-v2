@@ -187,6 +187,38 @@ Mọi page có bảng dữ liệu phải dùng cấu trúc sau — không để 
 - `overflow-auto` phải đặt trực tiếp trên card (không nested div) — `sticky` chỉ work khi scroll container là direct ancestor
 - `max-h-full` (không phải `flex-1`) trên card: ít row → shrink to content; nhiều row → cap tại viewport và scroll
 - `TableHeader` luôn có `sticky top-0 z-10 bg-card`
+- **KHÔNG dùng `overflow-hidden`** trên table card — phá vỡ sticky header và không cho scroll
+
+### Bảng có pagination (Pattern C)
+
+Khi bảng có pagination footer bên dưới, dùng `[data-slot=table-container]` thay vì `overflow-auto` trực tiếp:
+
+```tsx
+<div className="rounded-lg border bg-card flex flex-col overflow-hidden
+  [&>[data-slot=table-container]]:overflow-y-auto
+  [&>[data-slot=table-container]]:max-h-[calc(100vh-280px)]">
+  <div className="contents">
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="sticky top-0 z-10 bg-card">…</TableHead>
+          {/* sticky per-cell, không phải trên <TableHeader> */}
+        </TableRow>
+      </TableHeader>
+      <TableBody>…</TableBody>
+    </Table>
+  </div>
+
+  {/* Pagination footer */}
+  <div className="shrink-0 border-t px-4 py-2.5 flex items-center justify-between">
+    …
+  </div>
+</div>
+```
+
+- `max-h-[calc(100vh-280px)]` — điều chỉnh `280px` theo chiều cao thực tế của header + toolbar
+- Sticky dùng per-cell (`<TableHead className="sticky top-0 z-10 bg-card">`) — không đặt trên `<TableHeader>`
+- Pagination state (`page`, `pageSize`) luôn nằm ở Page, truyền xuống component qua props
 
 ## TypeScript
 - No `any`. Use `unknown` and narrow the type, or define a proper type.

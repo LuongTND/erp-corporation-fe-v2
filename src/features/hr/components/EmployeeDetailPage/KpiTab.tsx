@@ -121,12 +121,12 @@ export function KpiTab() {
       </div>
 
       {/* KPI items table */}
-      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
         <div className="px-6 py-4 border-b border-border">
           <h3 className="text-sm font-semibold text-foreground">Chi tiết KPI — Q2 2025</h3>
         </div>
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="bg-card hover:bg-card">
               {['Chỉ số', 'Mục tiêu', 'Thực tế', 'Trọng số', 'Điểm', 'Trạng thái'].map((h) => (
                 <TableHead key={h} className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

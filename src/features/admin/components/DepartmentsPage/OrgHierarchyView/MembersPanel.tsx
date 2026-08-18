@@ -29,19 +29,21 @@ function groupByLevel(members: DepartmentMemberResponse[]) {
   for (const member of members) {
     const key = member.jobLevelId ?? '__none__'
     if (!map.has(key)) {
-      map.set(key, { levelName: member.jobLevelName ?? 'Chưa phân cấp', order: member.jobLevelOrder ?? 999, items: [] })
+      map.set(key, { levelName: member.jobLevelName ?? 'Chưa có chức danh', order: member.jobLevelOrder ?? 999, items: [] })
     }
     map.get(key)!.items.push(member)
   }
   return [...map.values()].sort((a, b) => a.order - b.order)
 }
 
-export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: {
-  dept: DepartmentTreeResponse
-  jobLevels: JobLevelOption[]
-  addOpen: boolean
-  onAddOpenChange: (v: boolean) => void
-}) {
+interface MembersContentProps {
+  readonly dept: DepartmentTreeResponse
+  readonly jobLevels: JobLevelOption[]
+  readonly addOpen: boolean
+  readonly onAddOpenChange: (open: boolean) => void
+}
+
+export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: MembersContentProps) {
   const { data: members, isLoading } = useDepartmentMembers(dept.id)
   const { data: allUsers = [], isLoading: isLoadingUsers } = useEmployees(undefined, undefined, { enabled: addOpen })
   const addMembers = useAddDepartmentMembers()

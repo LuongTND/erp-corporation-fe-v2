@@ -65,7 +65,7 @@ export function ManualCorrectionTable() {
 
   return (
     <>
-      <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
         {/* Header */}
         <div className="flex items-center gap-2.5 px-5 py-4 border-b border-border">
           <h3 className="text-sm font-semibold text-foreground">Manual Correction Requests</h3>
@@ -77,7 +77,7 @@ export function ManualCorrectionTable() {
         </div>
 
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="border-border">
               <TableHead className="text-xs font-medium text-muted-foreground pl-5">Employee</TableHead>
               <TableHead className="text-xs font-medium text-muted-foreground">Date</TableHead>

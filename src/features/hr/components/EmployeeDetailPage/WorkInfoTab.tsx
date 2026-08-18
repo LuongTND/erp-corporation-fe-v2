@@ -5,12 +5,19 @@ import type { EmployeeDetail, WorkLocation } from '../../types/employee.types'
 
 interface WorkInfoTabProps {
   readonly employee: EmployeeDetail
+  readonly employeeTypeName?: string
 }
 
 const LOCATION_STYLE: Record<WorkLocation, string> = {
   HQ:     'bg-primary/10 text-primary/80',
   Remote: 'bg-teal-500/15 text-teal-700 dark:text-teal-400',
   Hybrid: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+}
+
+const PROBATION_LABEL: Record<string, string> = {
+  'In Progress':    'Đang thử việc',
+  'Completed':      'Đã hoàn thành',
+  'Not Applicable': 'Không áp dụng',
 }
 
 const LOCATION_LABEL: Record<WorkLocation, string> = {
@@ -31,7 +38,7 @@ function FieldRow({ label, children }: {
   )
 }
 
-export function WorkInfoTab({ employee }: WorkInfoTabProps) {
+export function WorkInfoTab({ employee, employeeTypeName }: WorkInfoTabProps) {
   const isExpiringSoon =
     employee.daysUntilContractExpiry !== undefined &&
     employee.daysUntilContractExpiry <= 30
@@ -55,6 +62,9 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
         </FieldRow>
         <FieldRow label="Chức danh">
           <p className="text-sm text-foreground">{employee.position}</p>
+        </FieldRow>
+        <FieldRow label="Loại nhân sự">
+          <p className="text-sm text-foreground">{employeeTypeName ?? '—'}</p>
         </FieldRow>
         <FieldRow label="Quản lý trực tiếp">
           <div className="flex items-center gap-2">
@@ -108,7 +118,7 @@ export function WorkInfoTab({ employee }: WorkInfoTabProps) {
           </p>
         </FieldRow>
         <FieldRow label="Trạng thái thử việc">
-          <p className="text-sm text-foreground">{employee.probationStatus}</p>
+          <p className="text-sm text-foreground">{PROBATION_LABEL[employee.probationStatus] ?? employee.probationStatus}</p>
         </FieldRow>
         {employee.probationEndDate && (
           <FieldRow label="Ngày kết thúc thử việc">

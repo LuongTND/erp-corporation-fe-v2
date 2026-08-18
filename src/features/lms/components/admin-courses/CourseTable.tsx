@@ -72,7 +72,7 @@ export function CourseTable({ courses, onEdit, onDelete }: CourseTableProps) {
       )}
 
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow>
             <TableHead className="w-10">
               <Checkbox

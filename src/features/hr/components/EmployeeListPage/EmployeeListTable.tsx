@@ -34,9 +34,9 @@ export function EmployeeListTable({
   onToggleRow,
 }: EmployeeListTableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+    <div className="overflow-auto max-h-full min-h-0 rounded-xl border border-border bg-card shadow-sm">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow className="border-b border-border hover:bg-transparent">
             <TableHead className="w-10 pl-4">
               <Checkbox checked={allChecked} onCheckedChange={onToggleAll} aria-label="Chọn tất cả" />

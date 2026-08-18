@@ -90,7 +90,7 @@ export function OrderTable({ orders }: OrderTableProps) {
       {/* Table */}
       <div className="rounded-lg border border-border bg-card">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow>
               <TableHead>Mã đơn</TableHead>
               <TableHead>Ngày tạo</TableHead>

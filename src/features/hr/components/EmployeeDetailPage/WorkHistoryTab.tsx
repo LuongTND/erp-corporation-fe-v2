@@ -14,7 +14,7 @@ interface WorkHistoryTabProps {
 const CHANGE_TYPE_OPTIONS: { value: WorkHistoryChangeType | 'all'; label: string }[] = [
   { value: 'all',          label: 'Tất cả' },
   { value: 'Status',       label: 'Trạng thái' },
-  { value: 'JobLevel',     label: 'Cấp bậc' },
+  { value: 'JobLevel',     label: 'Chức danh' },
   { value: 'Department',   label: 'Phòng ban' },
   { value: 'Salary',       label: 'Lương' },
   { value: 'ContractType', label: 'Loại hợp đồng' },

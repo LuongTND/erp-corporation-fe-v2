@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useJobLevels } from '@/features/admin/hooks/use-job-levels'
+import { useEmployeeTypes } from '@/features/admin/hooks/use-employee-types'
 import { useCustomFields } from '@/features/admin/hooks/use-custom-fields'
 import { DynamicFormSection } from '@/features/admin/components/EmployeesPage'
 import { DatePickerField } from './DatePickerField'
@@ -33,7 +34,7 @@ interface Props {
   readonly open: boolean
   readonly employee: UserDetailDto
   readonly onOpenChange: (open: boolean) => void
-  readonly onSave: (payload: UpdateEmployeePayload, customFields: { definitionId: string; value: string }[]) => Promise<void>
+  readonly onSave: (payload: UpdateEmployeePayload, customFields: { definitionId: string; value: string }[], employeeTypeId?: string | null) => Promise<void>
 }
 
 function Field({ label, required, children }: {
@@ -66,8 +67,10 @@ function SectionHeader({ icon: Icon, title }: {
 
 export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Props) {
   const { data: jobLevelData } = useJobLevels()
+  const { data: employeeTypeData } = useEmployeeTypes({ IsActive: true })
   const { data: customFieldDefs = [] } = useCustomFields('Employee')
   const jobLevels = jobLevelData?.items ?? []
+  const employeeTypes = employeeTypeData?.items ?? []
 
   const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting, errors } } = useForm<EditEmployeeFormValues>({
     resolver: zodResolver(editEmployeeSchema),
@@ -75,6 +78,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
 
   const gender = watch('gender')
   const jobLevelId = watch('jobLevelId')
+  const employeeTypeId = watch('employeeTypeId')
   const contractType = watch('contractType')
   const customFieldValues = watch('customFieldValues') ?? {}
 
@@ -83,6 +87,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
     reset({
       fullName: employee.fullName,
       jobLevelId: employee.jobLevelId,
+      employeeTypeId: employee.employeeTypeId ?? '',
       gender: employee.profile?.gender ?? '',
       dateOfBirth: employee.profile?.dateOfBirth ?? '',
       phoneNumber: employee.profile?.phoneNumber ?? '',
@@ -132,7 +137,9 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
     const cfEntries = Object.entries(values.customFieldValues ?? {})
       .filter(([, v]) => v !== '')
       .map(([definitionId, value]) => ({ definitionId, value }))
-    await onSave(payload, cfEntries)
+    const newEmployeeTypeId = values.employeeTypeId || null
+    const employeeTypeChanged = newEmployeeTypeId !== (employee.employeeTypeId ?? null)
+    await onSave(payload, cfEntries, employeeTypeChanged ? newEmployeeTypeId : undefined)
     onOpenChange(false)
   }
 
@@ -157,9 +164,9 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                     <Input {...register('fullName')} placeholder="Nguyễn Văn A" className={errors.fullName ? 'border-destructive' : ''} />
                     {errors.fullName && <p className="text-xs text-destructive">{errors.fullName.message}</p>}
                   </Field>
-                  <Field label="Cấp bậc" required>
+                  <Field label="Chức danh" required>
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
-                      <SelectTrigger className={errors.jobLevelId ? 'border-destructive' : ''}><SelectValue placeholder="Chọn cấp bậc" /></SelectTrigger>
+                      <SelectTrigger className={errors.jobLevelId ? 'border-destructive' : ''}><SelectValue placeholder="Chọn chức danh" /></SelectTrigger>
                       <SelectContent>
                         {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>
@@ -167,6 +174,17 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                       </SelectContent>
                     </Select>
                     {errors.jobLevelId && <p className="text-xs text-destructive">{errors.jobLevelId.message}</p>}
+                  </Field>
+                  <Field label="Loại nhân sự">
+                    <Select value={employeeTypeId ?? ''} onValueChange={(v) => setValue('employeeTypeId', v || undefined)}>
+                      <SelectTrigger><SelectValue placeholder="Chọn loại nhân sự" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">— Không có —</SelectItem>
+                        {employeeTypes.map((et) => (
+                          <SelectItem key={et.id} value={et.id}>{et.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </Field>
                 </AccordionContent>
               </AccordionItem>

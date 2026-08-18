@@ -126,7 +126,7 @@ export function LeaveRequestsTable() {
   const pendingCount = requests.filter((r) => r.status === 'Pending').length
 
   return (
-    <div className="bg-card rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-card rounded-xl shadow-sm overflow-auto max-h-full min-h-0">
 
       {/* Tabs */}
       <div className="flex items-center gap-0.5 px-4 pt-4 border-b border-border">
@@ -159,7 +159,7 @@ export function LeaveRequestsTable() {
       {/* Table */}
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader>
+          <TableHeader className="sticky top-0 z-10 bg-card">
             <TableRow className="border-border">
               <TableHead className="text-[11px] font-medium text-muted-foreground pl-5">Employee</TableHead>
               <TableHead className="text-[11px] font-medium text-muted-foreground">Leave Type</TableHead>

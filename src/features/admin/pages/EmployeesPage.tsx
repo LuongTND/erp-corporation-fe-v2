@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useCreateEmployee, useEmployees } from '../hooks/use-employees'
+import { useCreateEmployee, useEmployees, useUpdateUserStatus } from '../hooks/use-employees'
 import { useDepartments } from '../hooks/use-departments'
 import { useJobLevels } from '../hooks/use-job-levels'
 import { useAllUsers } from '../hooks/use-roles'
@@ -37,6 +37,7 @@ export default function EmployeesPage() {
   const deptOptions = (deptsData?.items ?? []).map(d => ({ id: d.id, name: d.departmentName }))
 
   const create = useCreateEmployee()
+  const updateStatus = useUpdateUserStatus()
   const { data: jobLevelsData } = useJobLevels({ Top: 100, NeedTotalCount: false })
   const { data: allUsers } = useAllUsers()
 
@@ -200,6 +201,8 @@ export default function EmployeesPage() {
           onRowClick={(id) => navigate(ROUTES.ADMIN.EMPLOYEE_DETAIL.replace(':id', id))}
           onPageChange={setPage}
           onPageSizeChange={(size) => { setPageSize(size); setPage(1) }}
+          onStatusChange={(userId, newStatus) => updateStatus.mutate({ userId, newStatus })}
+          isUpdatingStatus={updateStatus.isPending}
         />
       </div>
 
