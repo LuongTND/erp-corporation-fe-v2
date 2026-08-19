@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import type { RoleResponse } from '../../types/admin.types'
 import { cn } from '@/lib/utils'
 
@@ -30,46 +29,6 @@ function DescriptionCell({ text }: { text?: string }) {
       </TooltipTrigger>
       <TooltipContent className="max-w-xs">{text}</TooltipContent>
     </Tooltip>
-  )
-}
-
-function PermissionsPreview({ role, onOpen }: { role: RoleResponse; onOpen: () => void }) {
-  const grouped = role.permissions.reduce<Record<string, string[]>>((acc, p) => {
-    ;(acc[p.module] ??= []).push(p.permissionCode)
-    return acc
-  }, {})
-
-  return (
-    <HoverCard openDelay={300} closeDelay={100}>
-      <HoverCardTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={onOpen}>
-          <Shield className="h-3.5 w-3.5 mr-1" />
-          Quyền
-        </Button>
-      </HoverCardTrigger>
-      {role.permissions.length > 0 && (
-        <HoverCardContent side="left" align="end" className="w-64 p-3">
-          <p className="text-xs font-semibold mb-2 text-foreground">
-            {role.permissions.length} quyền — {role.displayName ?? role.roleName}
-          </p>
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {Object.entries(grouped).map(([module, codes]) => (
-              <div key={module}>
-                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground mb-1">{module}</p>
-                <div className="flex flex-wrap gap-1">
-                  {codes.map((code) => (
-                    <Badge key={code} variant="secondary" className="text-[10px] px-1.5 py-0 font-normal">
-                      {code}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t">Click để quản lý chi tiết</p>
-        </HoverCardContent>
-      )}
-    </HoverCard>
   )
 }
 
@@ -102,11 +61,11 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
       </TableCell>
 
       <TableCell className="font-medium">{role.roleName}</TableCell>
-      <TableCell className="text-sm">{role.displayName ?? <span className="text-muted-foreground/40">—</span>}</TableCell>
-      <TableCell className="text-muted-foreground text-sm max-w-[180px]">
+      <TableCell className="hidden md:table-cell text-sm">{role.displayName ?? <span className="text-muted-foreground/40">—</span>}</TableCell>
+      <TableCell className="hidden lg:table-cell text-muted-foreground text-sm max-w-[180px]">
         <DescriptionCell text={role.description} />
       </TableCell>
-      <TableCell>
+      <TableCell className="hidden sm:table-cell">
         {role.isSystemRole
           ? <Badge variant="secondary">Hệ thống</Badge>
           : <Badge variant="outline">Tùy chỉnh</Badge>}
@@ -114,31 +73,63 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
       <TableCell className="text-sm text-muted-foreground">{role.permissions.length}</TableCell>
       <TableCell>
         <div className="flex items-center justify-end gap-1">
-          <PermissionsPreview role={role} onOpen={() => onPermissions(role)} />
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs"
-                onClick={() => onUsers(role)}
-                aria-label={`Gán người dùng vào ${role.roleName}`}
-              >
-                <Users className="h-3.5 w-3.5 mr-1" />
-                Users
-              </Button>
+              <span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => onPermissions(role)}
+                  disabled={role.isSystemRole}
+                  aria-label={`Phân quyền cho ${role.roleName}`}
+                >
+                  <Shield className="h-3.5 w-3.5 mr-1" />
+                  Quyền
+                </Button>
+              </span>
             </TooltipTrigger>
-            <TooltipContent>Gán người dùng vào vai trò</TooltipContent>
+            <TooltipContent>
+              {role.isSystemRole ? 'Role hệ thống không thể chỉnh sửa quyền' : 'Phân quyền cho vai trò'}
+            </TooltipContent>
           </Tooltip>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 w-7 p-0"
-            onClick={() => onEdit(role)}
-            aria-label={`Chỉnh sửa ${role.roleName}`}
-          >
-            <Edit2 className="h-3.5 w-3.5" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-xs"
+                  onClick={() => onUsers(role)}
+                  disabled={role.isSystemRole}
+                  aria-label={`Gán người dùng vào ${role.roleName}`}
+                >
+                  <Users className="h-3.5 w-3.5 mr-1" />
+                  Users
+                </Button>
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              {role.isSystemRole ? 'Role hệ thống không thể chỉnh sửa' : 'Gán người dùng vào vai trò'}
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  onClick={() => onEdit(role)}
+                  disabled={role.isSystemRole}
+                  aria-label={`Chỉnh sửa ${role.roleName}`}
+                >
+                  <Edit2 className="h-3.5 w-3.5" />
+                </Button>
+              </span>
+            </TooltipTrigger>
+            {role.isSystemRole && <TooltipContent>Role hệ thống không thể chỉnh sửa</TooltipContent>}
+          </Tooltip>
           <Button
             variant="ghost"
             size="sm"

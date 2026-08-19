@@ -176,7 +176,7 @@ export function AssignUsersSheet({ open, role, onOpenChange, allUsers, roleUsers
     const toRemove = [...initialAssigned].filter((id) => !assigned.has(id))
     if (toAdd.length === 0 && toRemove.length === 0) { onOpenChange(false); return }
     onSync({ roleId: role.id, toAdd, toRemove })
-    onOpenChange(false)
+    // parent closes sheet after onSuccess
   }
 
   return (

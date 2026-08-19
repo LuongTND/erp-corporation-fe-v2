@@ -65,6 +65,7 @@ const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/Payr
 const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AuditLogsPage'))
 const AdminContractsPage = lazy(() => import('@/features/admin/pages/ContractsPage'))
 const AdminContractTemplatesPage = lazy(() => import('@/features/admin/pages/ContractTemplatesPage'))
+const AdminProfileComponentsPage = lazy(() => import('@/features/admin/pages/ProfileComponentsPage'))
 const HRManagerContractsPage = lazy(() => import('@/features/admin/pages/HRManagerContractsPage'))
 const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
 
@@ -220,7 +221,7 @@ export const router = createBrowserRouter([
 
               // ── Admin Module ──
               {
-                path: ROUTES.ADMIN.ACCOUNTS,
+                path: ROUTES.ADMIN.ROLES,
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminRolesPage />
@@ -321,6 +322,14 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminCustomFieldsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.PROFILE_COMPONENTS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminProfileComponentsPage />
                   </Suspense>
                 ),
               },

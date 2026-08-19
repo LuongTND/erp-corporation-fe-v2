@@ -64,7 +64,7 @@ export const ROUTES = {
   // ── Admin ──
   ADMIN: {
     ROOT: '/admin',
-    ACCOUNTS: '/admin/accounts',
+    ROLES: '/admin/roles',
     SETTINGS: '/admin/settings',
     PERMISSIONS: '/admin/permissions',
     DEPARTMENTS: '/admin/departments',
@@ -74,6 +74,7 @@ export const ROUTES = {
     ROLE_HIERARCHY: '/admin/role-hierarchy',
     ORG_HIERARCHY: '/admin/org-hierarchy',
     CUSTOM_FIELDS: '/admin/custom-fields',
+    PROFILE_COMPONENTS: '/admin/profile-components',
     KPI_ENTRIES: '/admin/kpi-entries',
     PAYROLL_RUNS: '/admin/payroll-runs',
     PAYROLL_RUN_DETAIL: '/admin/payroll-runs/:id',

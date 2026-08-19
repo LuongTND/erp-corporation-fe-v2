@@ -17,8 +17,8 @@ export const rolesService = {
   delete: (id: string) =>
     apiCall.delete<void>(`/api/roles/${id}`),
 
-  assignPermissions: (id: string, permissionIds: string[]) =>
-    apiCall.put<void>(`/api/roles/${id}/permissions`, { permissionIds }),
+  assignPermissions: (id: string, toAdd: string[], toRemove: string[]) =>
+    apiCall.put<void>(`/api/roles/${id}/permissions`, { toAdd, toRemove }),
 
   getUsersByRole: (roleId: string) =>
     apiCall.get<UserSummaryResponse[]>(`/api/roles/${roleId}/users`),

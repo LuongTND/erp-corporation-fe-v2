@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Shield, X, GripVertical, ArrowRight } from 'lucide-react'
 import {
   DndContext,
@@ -27,7 +27,7 @@ interface PermissionsSheetProps {
   onOpenChange: (open: boolean) => void
   allPermissions: PermissionResponse[]
   isPermissionsLoading: boolean
-  onAssign: (payload: { roleId: string; permissionIds: string[] }) => void
+  onAssign: (payload: { roleId: string; toAdd: string[]; toRemove: string[] }) => void
   isAssigning: boolean
 }
 
@@ -52,7 +52,7 @@ function DraggableChip({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex items-center gap-1.5 px-2 py-1 rounded-md border bg-card text-xs font-mono',
+        'flex items-center gap-1.5 px-2 py-1 rounded-md border bg-card text-xs',
         'cursor-grab active:cursor-grabbing select-none transition-all',
         isDragging ? 'opacity-0' : 'hover:border-primary/50 hover:bg-accent',
       )}
@@ -116,14 +116,19 @@ function DroppablePanel({
 export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isPermissionsLoading: isLoading, onAssign, isAssigning }: PermissionsSheetProps) {
 
   const [assigned, setAssigned] = useState<Set<string>>(new Set())
+  const originalRef = useRef<Set<string>>(new Set())
   const [searchAvail, setSearchAvail] = useState('')
   const [searchAssigned, setSearchAssigned] = useState('')
   const [activeChip, setActiveChip] = useState<{ id: string; label: string } | null>(null)
 
   useEffect(() => {
-    if (open && role) setAssigned(new Set(role.permissions.map((p) => p.id)))
+    if (open && role) {
+      const ids = new Set(role.permissions.map((p) => p.id))
+      originalRef.current = ids
+      setAssigned(new Set(ids))
+    }
     if (!open) { setSearchAvail(''); setSearchAssigned('') }
-  }, [open, role])
+  }, [open])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -136,8 +141,8 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
     const qAvail = searchAvail.toLowerCase()
     const qAssigned = searchAssigned.toLowerCase()
     return {
-      available: all.filter((p) => !assigned.has(p.id) && (!qAvail || p.permissionCode.toLowerCase().includes(qAvail))),
-      assignedList: all.filter((p) => assigned.has(p.id) && (!qAssigned || p.permissionCode.toLowerCase().includes(qAssigned))),
+      available: all.filter((p) => !assigned.has(p.id) && (!qAvail || p.permissionCode.toLowerCase().includes(qAvail) || p.permissionName.toLowerCase().includes(qAvail))),
+      assignedList: all.filter((p) => assigned.has(p.id) && (!qAssigned || p.permissionCode.toLowerCase().includes(qAssigned) || p.permissionName.toLowerCase().includes(qAssigned))),
     }
   }, [allPermissions, assigned, searchAvail, searchAssigned])
 
@@ -158,12 +163,7 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
   const handleDragStart = (event: DragStartEvent) => {
     const { permId, from } = event.active.data.current as { permId: string; from: string }
     const perm = allPermissions?.find((p) => p.id === permId)
-    if (perm) {
-      const action = from === 'available'
-        ? perm.permissionCode
-        : perm.permissionCode.split(':')[1] ?? perm.permissionCode
-      setActiveChip({ id: permId, label: action })
-    }
+    if (perm) setActiveChip({ id: permId, label: perm.permissionName })
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -176,14 +176,24 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
     else if (from === 'assigned' && to === 'available') unassign(permId)
   }
 
+  const toAdd = [...assigned].filter((id) => !originalRef.current.has(id))
+  const toRemove = [...originalRef.current].filter((id) => !assigned.has(id))
+  const isDirty = toAdd.length > 0 || toRemove.length > 0
+
   const handleSave = () => {
     if (!role) return
-    onAssign({ roleId: role.id, permissionIds: [...assigned] })
-    onOpenChange(false)
+    if (!isDirty) { onOpenChange(false); return }
+    onAssign({ roleId: role.id, toAdd, toRemove })
+    // parent closes sheet after onSuccess — ensures role data is fresh when user reopens
+  }
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && isDirty && !window.confirm('Bạn có thay đổi chưa lưu. Đóng sheet?')) return
+    onOpenChange(open)
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="w-[min(800px,95vw)] sm:max-w-none flex flex-col gap-0 p-0">
         <SheetHeader className="px-6 py-4 border-b shrink-0">
           <SheetTitle className="flex items-center gap-2">
@@ -238,20 +248,17 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
                             {resource}
                           </div>
                           <div className="flex flex-wrap gap-1">
-                            {perms.map((p) => {
-                              const action = p.permissionCode.split(':')[1] ?? p.permissionCode
-                              return (
+                            {perms.map((p) => (
                                 <button
                                   key={p.id}
                                   onClick={() => assign(p.id)}
                                   className="group relative"
-                                  title={`Gán: ${p.permissionCode}`}
+                                  title={p.permissionCode}
                                 >
-                                  <DraggableChip id={p.id} label={action} containerId="available" />
+                                  <DraggableChip id={p.id} label={p.permissionName} containerId="available" />
                                   <ArrowRight className="absolute -right-1 -top-1 h-3 w-3 bg-primary text-primary-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                                 </button>
-                              )
-                            })}
+                              ))}
                           </div>
                         </div>
                       ))}
@@ -291,18 +298,15 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
                             {resource}
                           </div>
                           <div className="flex flex-wrap gap-1">
-                            {perms.map((p) => {
-                              const action = p.permissionCode.split(':')[1] ?? p.permissionCode
-                              return (
+                            {perms.map((p) => (
                                 <DraggableChip
                                   key={p.id}
                                   id={p.id}
-                                  label={action}
+                                  label={p.permissionName}
                                   containerId="assigned"
                                   onRemove={() => unassign(p.id)}
                                 />
-                              )
-                            })}
+                              ))}
                           </div>
                         </div>
                       ))}
@@ -314,7 +318,7 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
 
             <DragOverlay modifiers={[restrictToWindowEdges]}>
               {activeChip && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary bg-card shadow-xl text-xs font-mono opacity-95 cursor-grabbing pointer-events-none">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-primary bg-card shadow-xl text-xs opacity-95 cursor-grabbing pointer-events-none">
                   <GripVertical className="h-3 w-3 text-muted-foreground/50 shrink-0" />
                   <span>{activeChip.label}</span>
                 </div>
@@ -323,12 +327,19 @@ export function PermissionsSheet({ open, role, onOpenChange, allPermissions, isP
           </DndContext>
         </div>
 
-        <div className="px-6 py-4 border-t flex justify-between items-center shrink-0">
-          <span className="text-xs text-muted-foreground">
-            {assigned.size} / {(allPermissions).length} quyền được gán
-          </span>
+        <div className="px-6 py-4 border-t flex justify-between items-center shrink-0 gap-3">
+          <div className="text-xs text-muted-foreground space-y-0.5">
+            <p>{assigned.size} quyền được gán</p>
+            {isDirty && (
+              <p className="text-amber-600 dark:text-amber-400">
+                {toAdd.length > 0 && `+${toAdd.length} thêm`}
+                {toAdd.length > 0 && toRemove.length > 0 && ', '}
+                {toRemove.length > 0 && `−${toRemove.length} gỡ`}
+              </p>
+            )}
+          </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+            <Button variant="outline" onClick={() => handleOpenChange(false)}>Hủy</Button>
             <Button onClick={handleSave} disabled={isAssigning}>
               {isAssigning ? 'Đang lưu...' : 'Lưu quyền hạn'}
             </Button>

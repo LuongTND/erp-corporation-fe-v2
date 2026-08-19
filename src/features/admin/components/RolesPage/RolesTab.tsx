@@ -67,7 +67,13 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
   const isFiltering = typeFilter !== 'all' || search.trim().length > 0
 
   const filtered = roles.filter((r) => {
-    if (search && !r.roleName.toLowerCase().includes(search.toLowerCase())) return false
+    if (search) {
+      const q = search.toLowerCase()
+      const match = r.roleName.toLowerCase().includes(q)
+        || (r.displayName ?? '').toLowerCase().includes(q)
+        || (r.description ?? '').toLowerCase().includes(q)
+      if (!match) return false
+    }
     if (typeFilter === 'system' && !r.isSystemRole) return false
     if (typeFilter === 'custom' && r.isSystemRole) return false
     return true
@@ -105,11 +111,13 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
 
       <PermissionsSheet
         open={!!permSheet}
-        role={permSheet}
+        role={roles.find((r) => r.id === permSheet?.id)}
         onOpenChange={(open) => { if (!open) setPermSheet(undefined) }}
         allPermissions={allPermissions}
         isPermissionsLoading={isPermissionsLoading}
-        onAssign={(payload) => assignPerms.mutate(payload)}
+        onAssign={(payload) => assignPerms.mutate(payload, {
+          onSuccess: () => setPermSheet(undefined),
+        })}
         isAssigning={assignPerms.isPending}
       />
 
@@ -120,7 +128,7 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
         allUsers={allUsers}
         roleUsers={roleUsers}
         isLoading={usersLoading || roleUsersLoading}
-        onSync={(payload) => syncUsers.mutate(payload)}
+        onSync={(payload) => syncUsers.mutate(payload, { onSuccess: () => setUsersSheet(undefined) })}
         isSyncing={syncUsers.isPending}
       />
 

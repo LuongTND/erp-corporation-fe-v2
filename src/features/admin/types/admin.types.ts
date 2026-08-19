@@ -15,8 +15,9 @@ export interface RoleResponse {
 export interface PermissionResponse {
   id: string
   permissionCode: string
-  module: string
+  permissionName: string
   description?: string
+  roleCount: number
 }
 
 export interface StoreResponse {
