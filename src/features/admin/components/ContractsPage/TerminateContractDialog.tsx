@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
@@ -54,6 +55,7 @@ export function TerminateContractDialog({ open, onOpenChange, contract, onConfir
               Hủy
             </Button>
             <Button type="submit" variant="destructive" disabled={isPending || !reason.trim()}>
+              {isPending && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
               {isPending ? 'Đang xử lý...' : 'Chấm dứt hợp đồng'}
             </Button>
           </div>

@@ -64,16 +64,18 @@ export const ROUTES = {
   // ── Admin ──
   ADMIN: {
     ROOT: '/admin',
-    ACCOUNTS: '/admin/accounts',
+    ROLES: '/admin/roles',
     SETTINGS: '/admin/settings',
     PERMISSIONS: '/admin/permissions',
     DEPARTMENTS: '/admin/departments',
     JOB_LEVELS: '/admin/job-levels',
+    DEPARTMENT_JOB_LEVELS: '/admin/department-job-levels',
     EMPLOYEES: '/admin/employees',
     EMPLOYEE_DETAIL: '/admin/employees/:id',
     ROLE_HIERARCHY: '/admin/role-hierarchy',
     ORG_HIERARCHY: '/admin/org-hierarchy',
     CUSTOM_FIELDS: '/admin/custom-fields',
+    PROFILE_COMPONENTS: '/admin/profile-components',
     KPI_ENTRIES: '/admin/kpi-entries',
     PAYROLL_RUNS: '/admin/payroll-runs',
     PAYROLL_RUN_DETAIL: '/admin/payroll-runs/:id',
@@ -84,6 +86,8 @@ export const ROUTES = {
     AUDIT_LOGS: '/admin/audit-logs',
     CONTRACTS: '/admin/contracts',
     CONTRACT_TEMPLATES: '/admin/contract-templates',
+    LABELS: '/admin/labels',
+    RECRUITMENT_APPROVER_CONFIGS: '/admin/recruitment-approver-configs',
   },
 
   // ── HR Manager ──

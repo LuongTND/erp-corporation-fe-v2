@@ -73,12 +73,12 @@ export function WorkInfoTab({ employee, employeeTypeName }: WorkInfoTabProps) {
             </div>
             <span className="text-sm text-foreground">{employee.manager.name}</span>
             {employee.manager.id && (
-              <a
-                href={`/hr/employees/${employee.manager.id}`}
+              <Link
+                to={ROUTES.HR.EMPLOYEE_DETAIL.replace(':id', employee.manager.id)}
                 className="text-xs text-primary hover:text-primary/80 transition-colors ml-1"
               >
                 Xem hồ sơ
-              </a>
+              </Link>
             )}
           </div>
         </FieldRow>

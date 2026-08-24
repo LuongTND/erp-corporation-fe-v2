@@ -1,16 +1,8 @@
 import { Edit2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Skeleton } from '@/components/ui/skeleton'
-import { SCOPE_TYPE_LABELS, type JobLevelResponse, type ScopeType } from '../../types/admin.types'
-
-const SCOPE_BADGE_STYLE: Record<ScopeType, string> = {
-  Own: 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
-  Team: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800',
-  Department: 'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800',
-  All: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950 dark:text-orange-300 dark:border-orange-800',
-}
+import type { JobLevelResponse } from '../../types/admin.types'
 
 interface JobLevelTableProps {
   levels: JobLevelResponse[]
@@ -28,7 +20,6 @@ export function JobLevelTable({ levels, isLoading, onEdit, onDelete, onViewEmplo
           <TableRow>
             <TableHead className="w-12">#</TableHead>
             <TableHead>Tên</TableHead>
-            <TableHead>Phạm vi</TableHead>
             <TableHead className="w-[100px]">Nhân sự</TableHead>
             <TableHead>Mô tả</TableHead>
             <TableHead className="w-[80px] text-right">Thao tác</TableHead>
@@ -45,7 +36,7 @@ export function JobLevelTable({ levels, isLoading, onEdit, onDelete, onViewEmplo
             ))
           ) : levels.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-muted-foreground text-sm">
+              <TableCell colSpan={5} className="text-center py-12 text-muted-foreground text-sm">
                 Không có chức danh nào
               </TableCell>
             </TableRow>
@@ -54,11 +45,6 @@ export function JobLevelTable({ levels, isLoading, onEdit, onDelete, onViewEmplo
               <TableRow key={level.id}>
                 <TableCell className="text-muted-foreground text-sm tabular-nums">{level.levelOrder}</TableCell>
                 <TableCell className="font-medium">{level.levelName}</TableCell>
-                <TableCell>
-                  <Badge className={SCOPE_BADGE_STYLE[level.defaultScopeType]}>
-                    {SCOPE_TYPE_LABELS[level.defaultScopeType]}
-                  </Badge>
-                </TableCell>
                 <TableCell>
                   <button
                     type="button"

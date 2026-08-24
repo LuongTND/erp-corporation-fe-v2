@@ -26,7 +26,10 @@ export default function PermissionsPage() {
 
   // ponytail: BE GetPermissions has no server-side search — filter client-side
   const filtered = (data ?? []).filter(
-    (permission) => !search || permission.permissionCode.toLowerCase().includes(search.toLowerCase()),
+    (permission) =>
+      !search ||
+      permission.permissionCode.toLowerCase().includes(search.toLowerCase()) ||
+      permission.permissionName.toLowerCase().includes(search.toLowerCase()),
   )
 
   const grouped = filtered.reduce<Record<string, typeof filtered>>((acc, p) => {
@@ -80,18 +83,16 @@ export default function PermissionsPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Mã quyền</TableHead>
-                        <TableHead>Hành động</TableHead>
+                        <TableHead>Tên quyền</TableHead>
                         <TableHead>Mô tả</TableHead>
                         <TableHead className="w-12" />
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {permissions.map((permission) => {
-                        const action = permission.permissionCode.split(':')[1] ?? ''
-                        return (
+                      {permissions.map((permission) => (
                           <TableRow key={permission.id}>
-                            <TableCell className="font-mono text-sm">{permission.permissionCode}</TableCell>
-                            <TableCell className="text-muted-foreground text-sm">{action}</TableCell>
+                            <TableCell className="font-mono text-sm text-muted-foreground">{permission.permissionCode}</TableCell>
+                            <TableCell className="text-sm font-medium">{permission.permissionName}</TableCell>
                             <TableCell className="text-muted-foreground text-sm">{permission.description ?? '—'}</TableCell>
                             <TableCell>
                               <AlertDialog>
@@ -127,7 +128,7 @@ export default function PermissionsPage() {
                             </TableCell>
                           </TableRow>
                         )
-                      })}
+                      )}
                     </TableBody>
                   </Table>
                 </div>

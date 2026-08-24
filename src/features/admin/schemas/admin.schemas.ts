@@ -4,6 +4,7 @@ export const roleSchema = z.object({
   roleName: z.string().min(1, 'Tên role là bắt buộc').max(100, 'Tối đa 100 ký tự'),
   displayName: z.string().min(1, 'Tên hiển thị là bắt buộc').max(100, 'Tối đa 100 ký tự'),
   description: z.string().max(500, 'Tối đa 500 ký tự').optional(),
+  defaultDataScope: z.enum(['Own', 'Team', 'Department', 'Store', 'Region', 'All']),
 })
 export type RoleFormValues = z.infer<typeof roleSchema>
 
@@ -49,10 +50,15 @@ export const createEmployeeSchema = z.object({
 })
 export type CreateEmployeeFormValues = z.infer<typeof createEmployeeSchema>
 
+export const departmentJobLevelSchema = z.object({
+  departmentId: z.string().uuid('Phòng ban là bắt buộc'),
+  jobLevelId: z.string().uuid('Cấp bậc là bắt buộc'),
+})
+export type DepartmentJobLevelFormValues = z.infer<typeof departmentJobLevelSchema>
+
 export const jobLevelSchema = z.object({
   levelName: z.string().min(1, 'Tên cấp bậc là bắt buộc').max(100),
   levelOrder: z.coerce.number().int().min(1, 'Thứ tự phải ≥ 1'),
-  defaultScopeType: z.enum(['Own', 'Team', 'Department', 'All']),
   description: z.string().max(500).optional(),
 })
 export type JobLevelFormValues = z.infer<typeof jobLevelSchema>
@@ -61,6 +67,6 @@ export const employeeTypeSchema = z.object({
   name: z.string().min(1, 'Tên loại nhân sự là bắt buộc').max(100),
   code: z.string().min(1, 'Mã là bắt buộc').max(50).regex(/^[A-Z0-9_-]+$/, 'Mã chỉ gồm chữ hoa, số, gạch dưới, gạch ngang'),
   description: z.string().max(500).optional(),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 })
 export type EmployeeTypeFormValues = z.infer<typeof employeeTypeSchema>

@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowRight, Clock } from 'lucide-react'
+import { ArrowRight, Clock, Loader2 } from 'lucide-react'
 import { fmtDateTime } from '@/lib/date'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -42,7 +41,7 @@ export function StatusTab({ currentStatus, history, isLoadingHistory, onUpdateSt
 
   const form = useForm<UpdateUserStatusFormValues>({
     resolver: zodResolver(updateUserStatusSchema),
-    defaultValues: { newStatus: currentStatus, note: '' },
+    defaultValues: { note: '' },
   })
 
   function onSubmit(values: UpdateUserStatusFormValues) {
@@ -65,7 +64,10 @@ export function StatusTab({ currentStatus, history, isLoadingHistory, onUpdateSt
             variant="ghost"
             size="sm"
             className="h-7 px-2 text-xs"
-            onClick={() => setFormOpen(v => !v)}
+            onClick={() => {
+              if (!formOpen) form.reset({ note: '' })
+              setFormOpen(v => !v)
+            }}
           >
             {formOpen ? 'Hủy' : 'Thay đổi'}
           </Button>
@@ -92,11 +94,11 @@ export function StatusTab({ currentStatus, history, isLoadingHistory, onUpdateSt
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger className="h-8 text-sm">
-                            <SelectValue />
+                            <SelectValue placeholder="Chọn trạng thái mới" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
-                          {Object.values(USER_STATUS).map(status => (
+                        <SelectContent align="start" sideOffset={4}>
+                          {Object.values(USER_STATUS).filter(s => s !== currentStatus).map(status => (
                             <SelectItem key={status} value={status} className="text-sm">
                               {USER_STATUS_LABEL[status]}
                             </SelectItem>
@@ -127,6 +129,7 @@ export function StatusTab({ currentStatus, history, isLoadingHistory, onUpdateSt
                 <div className="flex justify-end gap-2 pt-1">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setFormOpen(false)}>Hủy</Button>
                   <Button type="submit" size="sm" disabled={isPendingUpdate}>
+                    {isPendingUpdate && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
                     {isPendingUpdate ? 'Đang lưu...' : 'Lưu'}
                   </Button>
                 </div>
@@ -171,7 +174,7 @@ export function StatusTab({ currentStatus, history, isLoadingHistory, onUpdateSt
                       {USER_STATUS_LABEL[item.newStatus]}
                     </Badge>
                     {item.note && (
-                      <span className="truncate text-xs text-muted-foreground">· {item.note}</span>
+                      <span className="truncate text-xs text-muted-foreground" title={item.note}>· {item.note}</span>
                     )}
                   </div>
                   <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
@@ -181,7 +184,6 @@ export function StatusTab({ currentStatus, history, isLoadingHistory, onUpdateSt
               ))}
             </div>
           )}
-          <Separator />
         </CardContent>
       </Card>
 

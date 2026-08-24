@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
-import { UserCog, Plus } from 'lucide-react'
+import { AlertCircle, Plus, RefreshCw, UserCog } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { logger } from '@/lib/logger'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,7 +46,7 @@ interface MembersContentProps {
 }
 
 export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: MembersContentProps) {
-  const { data: members, isLoading } = useDepartmentMembers(dept.id)
+  const { data: members, isLoading, isError: isMembersError, refetch: refetchMembers } = useDepartmentMembers(dept.id)
   const { data: allUsers = [], isLoading: isLoadingUsers } = useEmployees(undefined, undefined, { enabled: addOpen })
   const addMembers = useAddDepartmentMembers()
   const updateMember = useUpdateDepartmentMember()
@@ -56,7 +58,13 @@ export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: Me
   const total = members?.length ?? 0
 
   const handleLevelChange = (userId: string, jobLevelId: string | null) => {
-    updateMember.mutate({ userId, departmentId: dept.id, data: { jobLevelId } })
+    updateMember.mutate(
+      { userId, departmentId: dept.id, data: { jobLevelId } },
+      {
+        onSuccess: () => toast.success('Đã cập nhật chức danh'),
+        onError: (error) => { logger.error(error); toast.error('Không thể cập nhật chức danh') },
+      },
+    )
   }
 
   const handleRemove = (userId: string, fullName: string) => {
@@ -65,14 +73,24 @@ export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: Me
 
   const confirmRemove = () => {
     if (!pendingRemove) return
-    removeMember.mutate({ userId: pendingRemove.userId, departmentId: dept.id })
+    const { userId, fullName } = pendingRemove
+    removeMember.mutate(
+      { userId, departmentId: dept.id },
+      {
+        onSuccess: () => toast.success(`Đã xóa ${fullName} khỏi phòng ban`),
+        onError: (error) => { logger.error(error); toast.error('Không thể xóa thành viên') },
+      },
+    )
     setPendingRemove(null)
   }
 
   const handleAdd = (userIds: string[], startDate: string) => {
     addMembers.mutate(
       { departmentId: dept.id, data: { userIds, startDate } },
-      { onSuccess: () => onAddOpenChange(false) },
+      {
+        onSuccess: () => { toast.success(`Đã thêm ${userIds.length} thành viên`); onAddOpenChange(false) },
+        onError: (error) => { logger.error(error); toast.error('Không thể thêm thành viên') },
+      },
     )
   }
 
@@ -88,6 +106,14 @@ export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: Me
                 <Skeleton className="h-6 w-32" />
               </div>
             ))}
+          </div>
+        ) : isMembersError ? (
+          <div className="flex flex-col items-center justify-center h-full py-12 gap-2 text-center">
+            <AlertCircle className="w-7 h-7 text-destructive/50" />
+            <p className="text-xs text-muted-foreground">Không tải được danh sách thành viên</p>
+            <Button variant="outline" size="sm" className="h-7 text-xs gap-1 mt-1" onClick={() => refetchMembers()}>
+              <RefreshCw className="w-3 h-3" />Thử lại
+            </Button>
           </div>
         ) : total === 0 ? (
           <div className="flex flex-col items-center justify-center h-full py-12 gap-2 text-center">
@@ -146,6 +172,7 @@ export function MembersContent({ dept, jobLevels, addOpen, onAddOpenChange }: Me
         allUsers={allUsers}
         isLoadingUsers={isLoadingUsers}
         currentMembers={members ?? []}
+        departmentName={dept.departmentName}
         onAdd={handleAdd}
         isPending={addMembers.isPending}
       />

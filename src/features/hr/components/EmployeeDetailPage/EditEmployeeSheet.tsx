@@ -13,7 +13,7 @@ import { useEmployeeTypes } from '@/features/admin/hooks/use-employee-types'
 import { useCustomFields } from '@/features/admin/hooks/use-custom-fields'
 import { DynamicFormSection } from '@/features/admin/components/EmployeesPage'
 import { DatePickerField } from './DatePickerField'
-import { editEmployeeSchema, type EditEmployeeEditEmployeeFormValues } from '../../schemas/edit-employee.schema'
+import { editEmployeeSchema, type EditEmployeeFormValues } from '../../schemas/edit-employee.schema'
 import type { UserDetailDto, UpdateEmployeePayload } from '../../types/user-detail.types'
 
 const CONTRACT_TYPES = [
@@ -66,15 +66,20 @@ function SectionHeader({ icon: Icon, title }: {
 }
 
 export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Props) {
-  const { data: jobLevelData } = useJobLevels()
+  const { data: jobLevelData } = useJobLevels({ Top: 200 })
   const { data: employeeTypeData } = useEmployeeTypes({ IsActive: true })
   const { data: customFieldDefs = [] } = useCustomFields('Employee')
   const jobLevels = jobLevelData?.items ?? []
   const employeeTypes = employeeTypeData?.items ?? []
 
-  const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting, errors } } = useForm<EditEmployeeFormValues>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { isSubmitting, errors, isDirty } } = useForm<EditEmployeeFormValues>({
     resolver: zodResolver(editEmployeeSchema),
   })
+
+  const handleOpenChange = (next: boolean) => {
+    if (!next && isDirty && !window.confirm('Bạn có thay đổi chưa lưu. Đóng sheet?')) return
+    onOpenChange(next)
+  }
 
   const gender = watch('gender')
   const jobLevelId = watch('jobLevelId')
@@ -144,7 +149,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="flex w-full flex-col overflow-hidden sm:max-w-xl">
         <SheetHeader className="shrink-0 pb-4">
           <SheetTitle>Chỉnh sửa hồ sơ — {employee.fullName}</SheetTitle>
@@ -167,7 +172,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                   <Field label="Chức danh" required>
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
                       <SelectTrigger className={errors.jobLevelId ? 'border-destructive' : ''}><SelectValue placeholder="Chọn chức danh" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectContent align="start" sideOffset={4}>
                         {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>
                         ))}
@@ -178,7 +183,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                   <Field label="Loại nhân sự">
                     <Select value={employeeTypeId ?? ''} onValueChange={(v) => setValue('employeeTypeId', v || undefined)}>
                       <SelectTrigger><SelectValue placeholder="Chọn loại nhân sự" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectContent align="start" sideOffset={4}>
                         <SelectItem value="">— Không có —</SelectItem>
                         {employeeTypes.map((et) => (
                           <SelectItem key={et.id} value={et.id}>{et.name}</SelectItem>
@@ -199,7 +204,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                     <Field label="Giới tính">
                       <Select value={gender ?? ''} onValueChange={(v) => setValue('gender', v)}>
                         <SelectTrigger><SelectValue placeholder="Chọn..." /></SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start" sideOffset={4}>
                           {GENDERS.map((g) => (
                             <SelectItem key={g.value} value={g.value}>{g.label}</SelectItem>
                           ))}
@@ -266,7 +271,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
                     <Field label="Loại hợp đồng">
                       <Select value={contractType ?? ''} onValueChange={(v) => setValue('contractType', v)}>
                         <SelectTrigger><SelectValue placeholder="Chọn..." /></SelectTrigger>
-                        <SelectContent>
+                        <SelectContent align="start" sideOffset={4}>
                           {CONTRACT_TYPES.map((t) => (
                             <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                           ))}
@@ -327,7 +332,7 @@ export function EditEmployeeSheet({ open, employee, onOpenChange, onSave }: Prop
           </div>
 
           <SheetFooter className="mt-4 shrink-0 border-t border-border pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>Hủy</Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
             </Button>

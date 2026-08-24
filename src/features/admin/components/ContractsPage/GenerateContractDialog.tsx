@@ -17,7 +17,7 @@ interface Props {
 export function GenerateContractDialog({ contract, templates, onOpenChange, onGenerate, isPending }: Props) {
   const template = templates.find((t) => t.id === contract?.templateId)
   const fields: FormSchemaField[] = template
-    ? (() => { try { return JSON.parse(template.formSchema) } catch { return [] } })()
+    ? (() => { try { return JSON.parse(template.formSchema ?? '[]') } catch { return [] } })()
     : []
 
   const [values, setValues] = useState<Record<string, string>>({})

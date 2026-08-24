@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from 'react-router-dom'
-import { Download, Plus, Search } from 'lucide-react'
+import { Download, Plus, Search, X } from 'lucide-react'
+import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { employeesService } from '@/features/hr/services/employees.service'
 import { HRPageHeader } from '@/features/hr/components/HRPageHeader'
@@ -12,8 +13,11 @@ import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useCreateEmployee, useEmployees, useUpdateUserStatus } from '../hooks/use-employees'
+import { useLabels } from '../hooks/use-labels'
 import { useDepartments } from '../hooks/use-departments'
 import { useJobLevels } from '../hooks/use-job-levels'
+import { useRegions } from '../hooks/use-regions'
+import { useStores } from '../hooks/use-stores'
 import { useAllUsers } from '../hooks/use-roles'
 import { createEmployeeSchema, type CreateEmployeeFormValues } from '../schemas/admin.schemas'
 import { CreateEmployeeSheet, EmployeeTable } from '../components/EmployeesPage'
@@ -28,11 +32,19 @@ export default function EmployeesPage() {
   const [isExporting, setIsExporting] = useState(false)
   const [statusFilter, setStatusFilter] = useState('all')
   const [activeDeptId, setActiveDeptId] = useState<string | undefined>()
+  const [activeLabelId, setActiveLabelId] = useState<string | undefined>()
+  const [activeRegionId, setActiveRegionId] = useState<string | undefined>()
+  const [activeStoreId, setActiveStoreId] = useState<string | undefined>()
   const debouncedSearch = useDebounce(search, 300)
 
   const apiStatus = statusFilter === 'all' ? undefined : statusFilter
 
-  const { data: employees = [], isLoading } = useEmployees(debouncedSearch || undefined, undefined, undefined, apiStatus, activeDeptId)
+  const { data: employees = [], isLoading } = useEmployees(debouncedSearch || undefined, undefined, undefined, apiStatus, activeDeptId, activeLabelId, activeStoreId, activeRegionId)
+  const { data: regionsData } = useRegions()
+  const regionOptions = (regionsData?.items ?? []).map(r => ({ id: r.id, name: r.name }))
+  const { data: storesData } = useStores(activeRegionId ? { regionId: activeRegionId } : undefined)
+  const storeOptions = (storesData?.items ?? []).map(s => ({ id: s.id, name: s.name }))
+  const { data: allLabels = [] } = useLabels({ isActive: true })
   const { data: deptsData } = useDepartments()
   const deptOptions = (deptsData?.items ?? []).map(d => ({ id: d.id, name: d.departmentName }))
 
@@ -86,17 +98,32 @@ export default function EmployeesPage() {
   function handleSearch(value: string) { setSearch(value); setPage(1) }
   function handleDeptChange(id: string | undefined) { setActiveDeptId(id); setPage(1) }
   function handleStatusChange(value: string) { setStatusFilter(value); setPage(1) }
+  function handleLabelChange(id: string | undefined) { setActiveLabelId(id); setPage(1) }
+
+  const isFiltering = !!debouncedSearch || statusFilter !== 'all' || !!activeDeptId || !!activeLabelId || !!activeRegionId || !!activeStoreId
+
+  function handleResetFilters() {
+    setSearch('')
+    setStatusFilter('all')
+    setActiveDeptId(undefined)
+    setActiveLabelId(undefined)
+    setActiveRegionId(undefined)
+    setActiveStoreId(undefined)
+    setPage(1)
+  }
 
   async function handleExport() {
     setIsExporting(true)
     try {
-      const blob = await employeesService.exportUsers(debouncedSearch || undefined, apiStatus, activeDeptId)
+      const blob = await employeesService.exportUsers(debouncedSearch || undefined, apiStatus, activeDeptId, activeLabelId, activeStoreId, activeRegionId)
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = `nhan-su-${new Date().toISOString().slice(0, 10)}.xlsx`
       a.click()
       URL.revokeObjectURL(url)
+    } catch {
+      toast.error('Xuất file thất bại')
     } finally {
       setIsExporting(false)
     }
@@ -143,7 +170,7 @@ export default function EmployeesPage() {
             <SelectTrigger className="h-9 w-40 text-sm">
               <SelectValue placeholder="Trạng thái" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent align="start" sideOffset={4}>
               <SelectItem value="all">Tất cả</SelectItem>
               <SelectItem value="Active">Đang làm</SelectItem>
               <SelectItem value="Official">Chính thức</SelectItem>
@@ -155,7 +182,51 @@ export default function EmployeesPage() {
               <SelectItem value="Terminated">Chấm dứt HĐ</SelectItem>
             </SelectContent>
           </Select>
+          {isFiltering && (
+            <Button variant="ghost" size="sm" className="h-9 gap-1.5 text-muted-foreground hover:text-foreground" onClick={handleResetFilters}>
+              <X className="h-3.5 w-3.5" />
+              Xóa bộ lọc
+            </Button>
+          )}
         </div>
+
+        {/* Region + Store filter */}
+        {regionOptions.length > 0 && (
+          <div className="flex items-center gap-3 shrink-0">
+            <Select
+              value={activeRegionId ?? 'all'}
+              onValueChange={(v) => {
+                setActiveRegionId(v === 'all' ? undefined : v)
+                setActiveStoreId(undefined)
+                setPage(1)
+              }}
+            >
+              <SelectTrigger className="h-9 w-44 text-sm">
+                <SelectValue placeholder="Khu vực" />
+              </SelectTrigger>
+              <SelectContent align="start" sideOffset={4}>
+                <SelectItem value="all">Tất cả khu vực</SelectItem>
+                {regionOptions.map(r => (
+                  <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={activeStoreId ?? 'all'}
+              onValueChange={(v) => { setActiveStoreId(v === 'all' ? undefined : v); setPage(1) }}
+            >
+              <SelectTrigger className="h-9 w-44 text-sm">
+                <SelectValue placeholder="Cửa hàng" />
+              </SelectTrigger>
+              <SelectContent align="start" sideOffset={4}>
+                <SelectItem value="all">Tất cả cửa hàng</SelectItem>
+                {storeOptions.map(s => (
+                  <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* Dept filter tabs */}
         {deptOptions.length > 0 && (
@@ -190,9 +261,47 @@ export default function EmployeesPage() {
           </div>
         )}
 
+        {/* Label filter chips */}
+        {allLabels.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => handleLabelChange(undefined)}
+              className={cn(
+                'h-7 cursor-pointer rounded-full border px-3 text-xs font-medium transition-colors',
+                activeLabelId === undefined
+                  ? 'border-border bg-muted text-foreground'
+                  : 'border-transparent text-muted-foreground hover:bg-muted/50 hover:text-foreground',
+              )}
+            >
+              Tất cả nhãn
+            </button>
+            {allLabels.map(label => (
+              <button
+                key={label.id}
+                type="button"
+                onClick={() => handleLabelChange(activeLabelId === label.id ? undefined : label.id)}
+                className={cn(
+                  'h-7 cursor-pointer rounded-full border px-3 text-xs font-medium transition-colors',
+                  activeLabelId === label.id
+                    ? 'border-current'
+                    : 'border-transparent text-muted-foreground hover:bg-muted/50',
+                )}
+                style={activeLabelId === label.id
+                  ? { backgroundColor: `${label.color}22`, color: label.color, borderColor: `${label.color}44` }
+                  : undefined
+                }
+              >
+                {label.name}
+              </button>
+            ))}
+          </div>
+        )}
+
         <EmployeeTable
           employees={paginated}
           isLoading={isLoading}
+          isFiltering={isFiltering}
           pageSize={pageSize}
           totalCount={totalCount}
           currentPage={safePage}

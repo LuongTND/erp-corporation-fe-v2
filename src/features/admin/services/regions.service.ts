@@ -13,4 +13,7 @@ export const regionsService = {
 
   upsertRegionHours: (payload: RegionHoursPayload) =>
     apiCall.put<void>(`/api/regions/${payload.regionId}/region-hours`, { hours: payload.hours }),
+
+  assignManager: (regionId: string, managerId: string | null) =>
+    apiCall.patch<void>(`/api/regions/${regionId}/manager`, { managerId }),
 }

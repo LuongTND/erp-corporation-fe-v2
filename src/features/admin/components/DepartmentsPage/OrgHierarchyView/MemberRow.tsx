@@ -53,13 +53,13 @@ export function MemberRow({ member, jobLevels, isManager, isUpdating, isRemoving
         onValueChange={v => onLevelChange(member.userId, v === '__none__' ? null : v)}
         disabled={isUpdating}
       >
-        <SelectTrigger className="h-6 w-32 text-[11px] border-dashed">
+        <SelectTrigger className="h-8 w-40 text-xs border-dashed">
           <SelectValue placeholder="Chức vụ..." />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="__none__" className="text-[11px] text-muted-foreground">— Chưa có —</SelectItem>
+          <SelectItem value="__none__" className="text-xs text-muted-foreground">— Chưa có —</SelectItem>
           {jobLevels.map(jl => (
-            <SelectItem key={jl.id} value={jl.id} className="text-[11px]">{jl.levelName}</SelectItem>
+            <SelectItem key={jl.id} value={jl.id} className="text-xs">{jl.levelName}</SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -68,10 +68,11 @@ export function MemberRow({ member, jobLevels, isManager, isUpdating, isRemoving
         type="button"
         onClick={() => onRemove(member.userId, member.fullName)}
         disabled={isRemoving}
-        aria-label={`Xóa ${member.fullName}`}
-        className="h-6 w-6 flex items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-all shrink-0 cursor-pointer disabled:opacity-40"
+        title={`Xóa ${member.fullName} khỏi phòng ban`}
+        aria-label={`Xóa ${member.fullName} khỏi phòng ban`}
+        className="h-8 w-8 flex items-center justify-center rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 opacity-30 sm:opacity-0 group-hover:opacity-100 transition-all shrink-0 cursor-pointer disabled:opacity-40"
       >
-        <Trash2 className="w-3 h-3" />
+        <Trash2 className="w-3.5 h-3.5" />
       </button>
     </div>
   )

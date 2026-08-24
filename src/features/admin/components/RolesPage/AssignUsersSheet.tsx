@@ -176,11 +176,22 @@ export function AssignUsersSheet({ open, role, onOpenChange, allUsers, roleUsers
     const toRemove = [...initialAssigned].filter((id) => !assigned.has(id))
     if (toAdd.length === 0 && toRemove.length === 0) { onOpenChange(false); return }
     onSync({ roleId: role.id, toAdd, toRemove })
-    onOpenChange(false)
+    // parent closes sheet after onSuccess
+  }
+
+  const isDirty = (() => {
+    if (assigned.size !== initialAssigned.size) return true
+    for (const id of assigned) if (!initialAssigned.has(id)) return true
+    return false
+  })()
+
+  const handleOpenChange = (next: boolean) => {
+    if (!next && isDirty && !window.confirm('Bạn có thay đổi chưa lưu. Đóng sheet?')) return
+    onOpenChange(next)
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="w-[min(800px,95vw)] sm:max-w-none flex flex-col gap-0 p-0">
         <SheetHeader className="px-6 py-4 border-b shrink-0">
           <SheetTitle className="flex items-center gap-2">

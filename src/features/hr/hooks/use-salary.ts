@@ -8,19 +8,19 @@ export const salaryKeys = {
   history: (id: string) => ['salary-history', id],
 }
 
-export function useCurrentSalary(userId: string) {
+export function useCurrentSalary(userId: string, enabled = true) {
   return useQuery({
     queryKey: salaryKeys.current(userId),
     queryFn: () => salaryService.getCurrent(userId),
-    enabled: !!userId,
+    enabled: !!userId && enabled,
   })
 }
 
-export function useSalaryHistory(userId: string) {
+export function useSalaryHistory(userId: string, enabled = true) {
   return useQuery({
     queryKey: salaryKeys.history(userId),
     queryFn: () => salaryService.getHistory(userId),
-    enabled: !!userId,
+    enabled: !!userId && enabled,
   })
 }
 

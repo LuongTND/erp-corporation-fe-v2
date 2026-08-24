@@ -35,7 +35,7 @@ function fmtValue(changeType: WorkHistoryChangeType, value: string | null): stri
   if (!value) return null
   if (changeType === 'Salary') {
     const n = parseFloat(value)
-    return isNaN(n) ? value : n.toLocaleString('vi-VN') + ' ₫/h'
+    return isNaN(n) ? value : n.toLocaleString('vi-VN') + ' ₫'
   }
   return value
 }
@@ -58,7 +58,7 @@ export function WorkHistoryTab({ items, isLoading, changeType, onChangeTypeFilte
           <SelectTrigger className="h-8 w-44 text-xs">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent align="end">
+          <SelectContent align="end" sideOffset={4}>
             {CHANGE_TYPE_OPTIONS.map(o => (
               <SelectItem key={o.value} value={o.value} className="text-xs">{o.label}</SelectItem>
             ))}

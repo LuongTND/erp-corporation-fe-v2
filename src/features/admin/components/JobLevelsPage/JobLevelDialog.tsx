@@ -3,10 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import type { JobLevelFormValues } from '../../schemas/admin.schemas'
-import { SCOPE_TYPE_LABELS, type ScopeType } from '../../types/admin.types'
 
 interface JobLevelDialogProps {
   open: boolean
@@ -18,8 +16,7 @@ interface JobLevelDialogProps {
 }
 
 export function JobLevelDialog({ open, isEdit, form, onSubmit, onOpenChange, isPending }: JobLevelDialogProps) {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = form
-  const scopeType = watch('defaultScopeType')
+  const { register, handleSubmit, formState: { errors } } = form
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -39,23 +36,6 @@ export function JobLevelDialog({ open, isEdit, form, onSubmit, onOpenChange, isP
               <Input id="levelOrder" type="number" {...register('levelOrder')} min={1} />
               {errors.levelOrder && <p className="text-xs text-destructive">{errors.levelOrder.message}</p>}
             </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Phạm vi mặc định <span aria-hidden="true" className="text-destructive">*</span></Label>
-            <Select
-              value={scopeType ?? 'All'}
-              onValueChange={(value) => setValue('defaultScopeType', value as ScopeType)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {(Object.entries(SCOPE_TYPE_LABELS) as [string, string][]).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="space-y-1.5">

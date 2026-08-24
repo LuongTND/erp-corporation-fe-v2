@@ -47,24 +47,34 @@ const TABS = [
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>()
+
+  // ── tab state first — used as enabled guards below ──
+  const [editOpen, setEditOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState('personal')
+  const [visited, setVisited] = useState<Set<string>>(new Set(['personal']))
+  const handleTabChange = (v: string) => { setActiveTab(v); setVisited(p => new Set(p).add(v)) }
+  const seen = (tab: string) => visited.has(tab)
+  const [workHistoryFilter, setWorkHistoryFilter] = useState<WorkHistoryChangeType | undefined>()
+
+  // ── always-needed ──
   const { data: dto, isLoading, isError } = useEmployeeDetail(id ?? '')
   const { data: customFieldDefinitions = [] } = useCustomFields('Employee')
-
   const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar(id ?? '')
-  const { data: docs = [], isLoading: isLoadingDocs } = useEmployeeDocuments(id ?? '')
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(id ?? '')
   const { mutate: deleteDocument } = useDeleteDocument(id ?? '')
-  const { data: currentSalary, isLoading: loadingCurrentSalary } = useCurrentSalary(id ?? '')
-  const { data: salaryHistory } = useSalaryHistory(id ?? '')
   const { mutate: setSalary, isPending: isPendingSalary } = useSetSalary(id ?? '')
-  const { data: statusHistory, isLoading: isLoadingStatusHistory } = useUserStatusHistory(id ?? '')
   const { mutate: updateStatus, isPending: isPendingStatusUpdate } = useUpdateUserStatus(id ?? '')
-  const [workHistoryFilter, setWorkHistoryFilter] = useState<WorkHistoryChangeType | undefined>()
-  const { data: workHistory = [], isLoading: isLoadingWorkHistory } = useWorkHistory(id ?? '', workHistoryFilter)
   const { mutate: lockEmployee } = useLockEmployee(id ?? '')
   const updateEmployee = useUpdateEmployee(id ?? '')
   const upsertCustomFields = useUpsertCustomFields(id ?? '')
   const assignEmployeeType = useAssignEmployeeType()
+
+  // ── lazy — only fetch when tab first visited ──
+  const { data: docs = [], isLoading: isLoadingDocs } = useEmployeeDocuments(id ?? '', seen('documents'))
+  const { data: currentSalary, isLoading: loadingCurrentSalary } = useCurrentSalary(id ?? '', seen('payroll'))
+  const { data: salaryHistory } = useSalaryHistory(id ?? '', seen('payroll'))
+  const { data: statusHistory, isLoading: isLoadingStatusHistory } = useUserStatusHistory(id ?? '', seen('status'))
+  const { data: workHistory = [], isLoading: isLoadingWorkHistory } = useWorkHistory(id ?? '', workHistoryFilter, seen('workhistory'))
 
   const handleUploadAvatar = (file: File, callbacks: { onSettled: () => void }) =>
     uploadAvatar(file, { onSettled: callbacks.onSettled })
@@ -80,10 +90,6 @@ export default function EmployeeDetailPage() {
     if (employeeTypeId !== undefined) await assignEmployeeType.mutateAsync({ userId: id!, employeeTypeId })
   }
 
-  const [editOpen, setEditOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState('personal')
-  const [visited, setVisited] = useState<Set<string>>(new Set(['personal']))
-  const handleTabChange = (v: string) => { setActiveTab(v); setVisited(p => new Set(p).add(v)) }
   const location = useLocation()
   const backRoute = location.pathname.startsWith('/admin')
     ? ROUTES.ADMIN.EMPLOYEES
@@ -146,7 +152,7 @@ export default function EmployeeDetailPage() {
               <WorkInfoTab employee={employee} employeeTypeName={dto.employeeTypeName} />
             </TabsContent>
             <TabsContent value="attendance">{visited.has('attendance') && <AttendanceTab />}</TabsContent>
-            <TabsContent value="payroll">{visited.has('payroll') && <PayrollTab current={currentSalary} loadingCurrent={loadingCurrentSalary} history={salaryHistory} onSetSalary={handleSetSalary} isPendingSalary={isPendingSalary} />}</TabsContent>
+            <TabsContent value="payroll">{visited.has('payroll') && <PayrollTab current={currentSalary ?? undefined} loadingCurrent={loadingCurrentSalary} history={salaryHistory} onSetSalary={handleSetSalary} isPendingSalary={isPendingSalary} />}</TabsContent>
             <TabsContent value="kpi">{visited.has('kpi') && <KpiTab />}</TabsContent>
             <TabsContent value="documents">{visited.has('documents') && <DocumentsTab docs={docs} isLoading={isLoadingDocs} onUpload={handleUploadDocument} onDelete={deleteDocument} isUploading={isUploading} />}</TabsContent>
             <TabsContent value="status">

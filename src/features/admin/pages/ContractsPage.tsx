@@ -14,10 +14,12 @@ import {
   useTerminateContract,
   useContracts,
   useContractTemplates,
+  useGenerateContract,
+  useSalaryComparison,
 } from '../hooks/use-contracts'
 import { useJobLevels } from '../hooks/use-job-levels'
 import { createContractSchema, renewContractSchema, type CreateContractFormValues, type RenewContractFormValues } from '../schemas/contract.schema'
-import { ContractTable, CreateContractSheet, RenewContractDialog, TerminateContractDialog } from '../components/ContractsPage'
+import { ContractTable, CreateContractSheet, RenewContractDialog, TerminateContractDialog, GenerateContractDialog } from '../components/ContractsPage'
 import type { EmploymentContractResponse } from '../types/admin.types'
 import { useEmployees } from '../hooks/use-employees'
 
@@ -32,17 +34,20 @@ export default function ContractsPage() {
   const [createOpen, setCreateOpen] = useState(false)
   const [renewTarget, setRenewTarget] = useState<EmploymentContractResponse | null>(null)
   const [terminateTarget, setTerminateTarget] = useState<EmploymentContractResponse | null>(null)
+  const [generateTarget, setGenerateTarget] = useState<EmploymentContractResponse | null>(null)
 
   const { data: employees = [], isLoading: loadingEmployees } = useEmployees()
   const { data: contracts = [], isLoading: loadingContracts } = useContracts(selectedUserId)
   const { data: expiring = [] } = useExpiringContracts(30)
   const { data: templates = [] } = useContractTemplates()
-  const { data: jobLevelsData } = useJobLevels({ take: 200 })
+  const { data: jobLevelsData } = useJobLevels({ Top: 200 })
   const jobLevels = jobLevelsData?.items ?? []
 
   const createContract = useCreateContract()
   const renewContract = useRenewContract(selectedUserId)
   const terminateContract = useTerminateContract(selectedUserId)
+  const generateContract = useGenerateContract(selectedUserId)
+  const { data: salaryComparison } = useSalaryComparison(selectedUserId)
 
   const createForm = useForm<CreateContractFormValues>({
     resolver: zodResolver(createContractSchema),
@@ -156,6 +161,26 @@ export default function ContractsPage() {
           )}
         </div>
 
+        {salaryComparison && selectedUserId && salaryComparison.hasActiveContract && (
+          <div className="flex items-center gap-4 rounded-lg border border-border bg-muted/30 px-4 py-2.5 text-sm shrink-0">
+            <span className="text-muted-foreground">So sánh lương:</span>
+            <span>
+              HĐ <span className="font-medium tabular-nums">{salaryComparison.contractSalary?.toLocaleString('vi-VN') ?? '—'} ₫/giờ</span>
+            </span>
+            {salaryComparison.hasSalaryRecord && (
+              <>
+                <span className="text-muted-foreground/50">·</span>
+                <span>
+                  Thực tế <span className="font-medium tabular-nums">{salaryComparison.actualHourlyRate?.toLocaleString('vi-VN') ?? '—'} ₫/giờ</span>
+                </span>
+                {salaryComparison.contractSalary != null && salaryComparison.actualHourlyRate != null && salaryComparison.contractSalary !== salaryComparison.actualHourlyRate && (
+                  <Badge variant="outline" className="text-xs text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30">Lệch lương</Badge>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
         {expiring.length > 0 && !selectedUserId && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950/30 px-4 py-3 shrink-0">
             <p className="text-sm font-medium text-amber-800 dark:text-amber-300 mb-2">
@@ -190,6 +215,7 @@ export default function ContractsPage() {
               renewForm.reset({ type: contract.type, startDate: new Date().toISOString().slice(0, 10), salary: contract.salary })
             }}
             onTerminate={setTerminateTarget}
+            onGenerate={setGenerateTarget}
           />
         ) : (
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
@@ -224,6 +250,14 @@ export default function ContractsPage() {
         contract={terminateTarget}
         onConfirm={handleTerminate}
         isPending={terminateContract.isPending}
+      />
+
+      <GenerateContractDialog
+        contract={generateTarget}
+        templates={templates}
+        onOpenChange={(open) => { if (!open) setGenerateTarget(null) }}
+        onGenerate={(contractId, dynamicData) => generateContract.mutateAsync({ contractId, dynamicData })}
+        isPending={generateContract.isPending}
       />
     </div>
   )

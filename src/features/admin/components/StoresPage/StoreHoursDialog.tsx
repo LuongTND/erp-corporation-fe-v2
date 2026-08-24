@@ -43,13 +43,13 @@ export interface StoreHoursItem {
 }
 
 interface Props {
-  open: boolean
-  storeName: string
-  storeHours: StoreHoursResponse[]
-  isLoading: boolean
-  isSaving: boolean
-  onOpenChange: (open: boolean) => void
-  onSave: (hours: StoreHoursItem[]) => void
+  readonly open: boolean
+  readonly storeName: string
+  readonly storeHours: StoreHoursResponse[]
+  readonly isLoading: boolean
+  readonly isSaving: boolean
+  readonly onOpenChange: (open: boolean) => void
+  readonly onSave: (hours: StoreHoursItem[]) => void
 }
 
 export function StoreHoursDialog({ open, storeName, storeHours, isLoading, isSaving, onOpenChange, onSave }: Props) {

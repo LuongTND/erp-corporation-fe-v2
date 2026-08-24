@@ -89,8 +89,9 @@ export function PersonalInfoTab({ employee, customFields = [], customFieldDefini
     { label: 'Quốc tịch',                    value: employee.nationality },
     { label: 'Email',                         value: employee.personalEmail },
     { label: 'Số điện thoại',                value: employee.personalPhone },
-    { label: 'Số CCCD / Hộ chiếu',           value: employee.idNumber },
-    { label: 'Ngày hết hạn CCCD',            value: employee.idExpiry },
+    { label: 'Số CCCD / CMND',               value: employee.idNumber },
+    { label: 'Số hộ chiếu',                  value: employee.passportNumber },
+    { label: 'Ngày cấp CCCD',               value: employee.idExpiry },
     { label: 'Địa chỉ thường trú',           value: employee.permanentAddress, type: 'multiline' },
   ]
 

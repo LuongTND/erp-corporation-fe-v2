@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { AlertTriangle, Building2, Calendar, Camera, Lock, MapPin, MoreHorizontal, Pencil, Unlock, User } from 'lucide-react'
+import { AlertTriangle, Building2, Calendar, Camera, Check, Loader2, Lock, MapPin, MoreHorizontal, Pencil, Tag, Unlock, User, X } from 'lucide-react'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -7,6 +7,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useLabels, useAssignLabel, useRemoveLabel } from '@/features/admin/hooks/use-labels'
 import type { EmployeeDetail } from '../types/employee.types'
 import { USER_STATUS } from '../types/user-status.types'
 import { AvatarCropDialog } from './AvatarCropDialog'
@@ -36,31 +38,27 @@ const LOCK_BANNER: Record<string, { label: string; message: string }> = {
   [USER_STATUS.Resigned]:   { label: 'Đã nghỉ việc',  message: 'Hồ sơ nhân viên đã nghỉ việc. Không thể chỉnh sửa thông tin.' },
   [USER_STATUS.Terminated]: { label: 'Đã chấm dứt',  message: 'Hồ sơ nhân viên đã bị chấm dứt hợp đồng. Không thể chỉnh sửa thông tin.' },
 }
-const DEFAULT_BADGE = 'bg-muted text-muted-foreground'
-
-export function EmployeeProfileCard({ employee, isLocked, onEditClick, onUploadAvatar, isUploadingAvatar, onLockEmployee }: EmployeeProfileCardProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [cropSrc, setCropSrc] = useState<string | null>(null)
-  const [lockConfirmOpen, setLockConfirmOpen] = useState(false)
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => setCropSrc(reader.result as string)
-    reader.readAsDataURL(file)
-    e.target.value = ''
-  }
-
-  const handleCropConfirm = (blob: Blob) => {
-    const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' })
-    onUploadAvatar(file, { onSettled: () => setCropSrc(null) })
-  }
 
 export function EmployeeProfileCard({ employee, isLocked, status, onEditClick, onUploadAvatar, isUploadingAvatar, onLockEmployee }: EmployeeProfileCardProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [lockConfirmOpen, setLockConfirmOpen] = useState(false)
+  const [labelPopoverOpen, setLabelPopoverOpen] = useState(false)
+  const [pendingLabelId, setPendingLabelId] = useState<string | null>(null)
+
+  const { data: allLabels = [] } = useLabels({ isActive: true })
+  const assignLabel = useAssignLabel(employee.id)
+  const removeLabel = useRemoveLabel(employee.id)
+  const assignedIds = new Set(employee.labels.map(l => l.id))
+
+  const handleToggleLabel = (labelId: string, assigned: boolean) => {
+    setPendingLabelId(labelId)
+    if (assigned) {
+      removeLabel.mutate(labelId, { onSettled: () => setPendingLabelId(null) })
+    } else {
+      assignLabel.mutate(labelId, { onSettled: () => setPendingLabelId(null) })
+    }
+  }
 
   const isStatusLocked = LOCKED_STATUSES.includes(status as typeof LOCKED_STATUSES[number])
   const isEffectivelyLocked = isLocked || isStatusLocked
@@ -100,15 +98,17 @@ export function EmployeeProfileCard({ employee, isLocked, status, onEditClick, o
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingAvatar}
-                className="absolute inset-0 rounded-full flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-wait"
+                className="absolute inset-0 rounded-full flex flex-col items-center justify-center gap-0.5 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-wait"
                 aria-label="Đổi ảnh đại diện"
+                title="Đổi ảnh đại diện — PNG, WEBP, GIF, JPG"
               >
-                <Camera className="w-5 h-5 text-white" />
+                <Camera className="w-4 h-4 text-white" />
+                <span className="text-[9px] text-white/80 leading-none">PNG · WEBP · GIF · JPG</span>
               </button>
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 className="hidden"
                 onChange={handleFileChange}
               />
@@ -196,6 +196,82 @@ export function EmployeeProfileCard({ employee, isLocked, status, onEditClick, o
                     <Lock className="w-3 h-3" />
                     Đã khóa
                   </span>
+                )}
+              </div>
+
+              {/* Label chips */}
+              <div className="flex flex-wrap items-center gap-1 mt-1">
+                {employee.labels.map(label => {
+                  const isRemoving = pendingLabelId === label.id
+                  return (
+                    <span
+                      key={label.id}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border transition-opacity"
+                      style={{ backgroundColor: `${label.color}22`, color: label.color, borderColor: `${label.color}44`, opacity: isRemoving ? 0.5 : 1 }}
+                    >
+                      {label.name}
+                      {!isEffectivelyLocked && (
+                        <button
+                          type="button"
+                          disabled={pendingLabelId !== null}
+                          className="hover:opacity-70 cursor-pointer leading-none disabled:cursor-wait"
+                          onClick={() => handleToggleLabel(label.id, true)}
+                          aria-label={`Gỡ nhãn ${label.name}`}
+                        >
+                          {isRemoving
+                            ? <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                            : <X className="w-2.5 h-2.5" />
+                          }
+                        </button>
+                      )}
+                    </span>
+                  )
+                })}
+
+                {!isEffectivelyLocked && (
+                  <Popover open={labelPopoverOpen} onOpenChange={setLabelPopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border border-dashed border-border text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors cursor-pointer"
+                      >
+                        <Tag className="w-2.5 h-2.5" />
+                        Thêm nhãn
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" sideOffset={4} className="w-48 p-1.5">
+                      {allLabels.length === 0 ? (
+                        <p className="text-xs text-muted-foreground px-2 py-1">Chưa có nhãn nào</p>
+                      ) : (
+                        <div className="space-y-0.5">
+                          {allLabels.map(label => {
+                            const assigned = assignedIds.has(label.id)
+                            const isThisPending = pendingLabelId === label.id
+                            const anyPending = pendingLabelId !== null
+                            return (
+                              <button
+                                key={label.id}
+                                type="button"
+                                disabled={anyPending}
+                                className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs hover:bg-muted/60 transition-colors cursor-pointer text-left disabled:cursor-wait disabled:opacity-50"
+                                onClick={() => handleToggleLabel(label.id, assigned)}
+                              >
+                                <span
+                                  className="w-3 h-3 rounded-full flex-shrink-0"
+                                  style={{ backgroundColor: label.color }}
+                                />
+                                <span className="flex-1 truncate">{label.name}</span>
+                                {isThisPending
+                                  ? <Loader2 className="w-3 h-3 flex-shrink-0 animate-spin text-muted-foreground" />
+                                  : assigned && <Check className="w-3 h-3 text-primary flex-shrink-0" />
+                                }
+                              </button>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
                 )}
               </div>
 

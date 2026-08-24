@@ -8,11 +8,13 @@ import {
   KeyRound,
   LayoutGrid,
   MapPin,
-  Network,
   ScrollText,
   ShoppingBag,
-  SlidersHorizontal,
-  UserCog,
+  Sliders,
+  Tag,
+  TrendingUp,
+  UserCheck,
+  Users,
   Users2,
   type LucideIcon,
 } from 'lucide-react'
@@ -22,42 +24,38 @@ export type NavSection = { label: string; items: NavItem[] }
 
 export const adminNav: NavSection[] = [
   {
-    label: 'Tổ chức',
+    label: 'Mạng lưới & Tổ chức',
     items: [
-      { icon: Building2, label: 'Phòng ban', href: ROUTES.ADMIN.DEPARTMENTS, permission: P.DEPARTMENTS_VIEW },
-      { icon: ShoppingBag, label: 'Cửa hàng', href: ROUTES.ADMIN.STORES, permission: P.STORES_VIEW },
+      { icon: Building2, label: 'Sơ đồ phòng ban', href: ROUTES.ADMIN.DEPARTMENTS, permission: P.DEPARTMENTS_VIEW },
       { icon: MapPin, label: 'Khu vực', href: ROUTES.ADMIN.REGIONS, permission: P.REGIONS_VIEW },
-      { icon: LayoutGrid, label: 'Quầy', href: ROUTES.ADMIN.COUNTERS, permission: P.COUNTERS_VIEW },
+      { icon: ShoppingBag, label: 'Cửa hàng', href: ROUTES.ADMIN.STORES, permission: P.STORES_VIEW },
+      { icon: LayoutGrid, label: 'Quầy hàng', href: ROUTES.ADMIN.COUNTERS, permission: P.COUNTERS_VIEW },
     ],
   },
   {
-    label: 'Nhân sự',
+    label: 'Quản trị Nhân sự',
     items: [
-      { icon: Network, label: 'Nhân sự', href: ROUTES.ADMIN.EMPLOYEES, permission: P.USERS_VIEW },
-      { icon: Users2, label: 'Chức danh', href: ROUTES.ADMIN.JOB_LEVELS, permission: P.JOB_LEVELS_VIEW },
-      { icon: UserCog, label: 'Loại nhân sự', href: ROUTES.ADMIN.EMPLOYEE_TYPES, permission: P.EMPLOYEE_TYPES_VIEW },
-      { icon: SlidersHorizontal, label: 'Trường tùy chỉnh', href: ROUTES.ADMIN.CUSTOM_FIELDS, permission: P.CUSTOM_FIELDS_READ },
-    ],
-  },
-  {
-    label: 'Hợp đồng',
-    items: [
-      { icon: FileText, label: 'Hợp đồng', href: ROUTES.ADMIN.CONTRACTS, permission: P.CONTRACT_VIEW },
+      { icon: Users, label: 'Hồ sơ nhân sự', href: ROUTES.ADMIN.EMPLOYEES, permission: P.USERS_VIEW },
+      { icon: Users2, label: 'Chức danh & Vị trí', href: ROUTES.ADMIN.JOB_LEVELS, permission: P.JOB_LEVELS_VIEW },
+      { icon: FileText, label: 'Hợp đồng lao động', href: ROUTES.ADMIN.CONTRACTS, permission: P.CONTRACT_VIEW },
       { icon: FilePlus2, label: 'Mẫu hợp đồng', href: ROUTES.ADMIN.CONTRACT_TEMPLATES, permission: P.CONTRACT_TEMPLATES_VIEW },
+      { icon: Tag,       label: 'Nhãn nhân viên',          href: ROUTES.ADMIN.LABELS },
+      { icon: UserCheck, label: 'Người duyệt tuyển dụng', href: ROUTES.ADMIN.RECRUITMENT_APPROVER_CONFIGS, permission: P.RECRUITMENT_APPROVER_VIEW },
+      { icon: Sliders, label: 'Thành phần hồ sơ', href: ROUTES.ADMIN.PROFILE_COMPONENTS, permission: P.EMPLOYEE_TYPES_VIEW },
     ],
   },
   {
-    label: 'Lương & KPI',
+    label: 'Hiệu suất & Lương',
     items: [
-      { icon: BarChart3, label: 'KPI & Lương', href: ROUTES.ADMIN.KPI_ENTRIES, permission: P.KPI_ENTRIES_VIEW },
+      { icon: TrendingUp, label: 'Quản lý KPI', href: ROUTES.ADMIN.KPI_ENTRIES, permission: P.KPI_ENTRIES_VIEW },
+      { icon: BarChart3, label: 'Bảng lương & Đãi ngộ', href: ROUTES.ADMIN.PAYROLL_RUNS, permission: P.KPI_ENTRIES_VIEW },
     ],
   },
   {
-    label: 'Hệ thống',
+    label: 'Hệ thống & Phân quyền',
     items: [
-      { icon: KeyRound, label: 'Vai trò', href: ROUTES.ADMIN.ACCOUNTS, permission: P.ROLES_VIEW },
-      { icon: ScrollText, label: 'Nhật ký phân quyền', href: ROUTES.ADMIN.AUDIT_LOGS, permission: P.AUDIT_LOGS_VIEW },
-      // ponytail: Phân cấp vai trò hidden — re-enable when backend supports parentRoleId
+      { icon: KeyRound, label: 'Vai trò & Phân quyền', href: ROUTES.ADMIN.ROLES, permission: P.ROLES_VIEW },
+      { icon: ScrollText, label: 'Nhật ký thao tác', href: ROUTES.ADMIN.AUDIT_LOGS, permission: P.AUDIT_LOGS_VIEW },
     ],
   },
 ]

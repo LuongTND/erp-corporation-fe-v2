@@ -67,9 +67,9 @@ export const employeesService = {
   lockEmployee: (userId: string, lock: boolean) =>
     apiCall.patch<void>(`/api/users/${userId}/lock`, { userId, lock }),
 
-  exportUsers: async (search?: string, status?: string, departmentId?: string): Promise<Blob> => {
+  exportUsers: async (search?: string, status?: string, departmentId?: string, labelId?: string, storeId?: string, regionId?: string): Promise<Blob> => {
     const res = await api.get('/api/users/export', {
-      params: { ...(search ? { search } : {}), ...(status ? { status } : {}), ...(departmentId ? { departmentId } : {}) },
+      params: { ...(search ? { search } : {}), ...(status ? { status } : {}), ...(departmentId ? { departmentId } : {}), ...(labelId ? { labelId } : {}), ...(storeId ? { storeId } : {}), ...(regionId && !storeId ? { regionId } : {}) },
       responseType: 'blob',
     })
     return res.data

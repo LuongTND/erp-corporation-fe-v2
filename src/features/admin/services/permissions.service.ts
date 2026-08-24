@@ -1,9 +1,15 @@
 import { apiCall } from '@/lib/api'
-import type { PermissionResponse } from '../types/admin.types'
+import type { PermissionResponse, QueryResult } from '../types/admin.types'
+
+export interface PermissionsListParams {
+  search?: string
+  skip?: number
+  top?: number
+}
 
 export const permissionsService = {
-  list: () =>
-    apiCall.get<PermissionResponse[]>('/api/permissions'),
+  list: (params?: PermissionsListParams) =>
+    apiCall.get<QueryResult<PermissionResponse>>('/api/permissions', { params }),
 
   getByRole: (roleId: string) =>
     apiCall.get<PermissionResponse[]>(`/api/roles/${roleId}/permissions`),

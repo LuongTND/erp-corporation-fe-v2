@@ -2,7 +2,7 @@ import { apiCall } from '@/lib/api'
 import type { AddStoreMemberPayload, QueryResult, StoreHoursPayload, StoreHoursResponse, StoreMemberResponse, StorePortalResponse, StoreResponse } from '../types/admin.types'
 
 export const storesService = {
-  getStores: (params?: { searchText?: string; top?: number; skip?: number }) =>
+  getStores: (params?: { searchText?: string; regionId?: string; top?: number; skip?: number }) =>
     apiCall.get<QueryResult<StoreResponse>>('/api/stores', { params }),
 
   getStoresByRegion: (regionId: string) =>

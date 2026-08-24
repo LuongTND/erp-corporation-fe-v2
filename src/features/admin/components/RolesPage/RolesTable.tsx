@@ -96,9 +96,9 @@ export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, on
                   <SortIcon col="roleName" sortKey={sortKey} sortDir={sortDir} />
                 </button>
               </TableHead>
-              <TableHead>Tên hiển thị</TableHead>
-              <TableHead>Mô tả</TableHead>
-              <TableHead>Loại</TableHead>
+              <TableHead className="hidden md:table-cell">Tên hiển thị</TableHead>
+              <TableHead className="hidden lg:table-cell">Mô tả</TableHead>
+              <TableHead className="hidden sm:table-cell">Loại</TableHead>
               <TableHead>
                 <button
                   className="flex items-center text-xs font-medium hover:text-foreground transition-colors"
@@ -153,12 +153,14 @@ export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, on
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></svg>
                   </td>
                   <td className="flex-1 p-2 font-medium text-sm">{activeRole.roleName}</td>
-                  <td className="p-2 text-sm hidden sm:table-cell">{activeRole.displayName ?? '—'}</td>
-                  <td className="p-2 text-muted-foreground text-sm hidden sm:table-cell">{activeRole.description ?? '—'}</td>
-                  <td className="p-2">
-                    {activeRole.isSystemRole
-                      ? <Badge variant="secondary">Hệ thống</Badge>
-                      : <Badge variant="outline">Tùy chỉnh</Badge>}
+                  <td className="p-2 text-sm hidden md:table-cell">{activeRole.displayName ?? '—'}</td>
+                  <td className="p-2 text-muted-foreground text-sm hidden lg:table-cell">{activeRole.description ?? '—'}</td>
+                  <td className="p-2 hidden sm:table-cell">
+                    <div className="flex flex-wrap gap-1">
+                      {activeRole.isSystemRole
+                        ? <Badge variant="secondary">Hệ thống</Badge>
+                        : <Badge variant="outline">Tùy chỉnh</Badge>}
+                    </div>
                   </td>
                   <td className="p-2 text-sm text-muted-foreground">{activeRole.permissions.length}</td>
                 </tr>

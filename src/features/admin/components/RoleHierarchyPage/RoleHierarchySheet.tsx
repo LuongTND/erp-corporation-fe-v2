@@ -70,7 +70,7 @@ export function RoleHierarchySheet({ role, open, onClose, onFocusNode }: Props) 
                 {role.permissions.map((permission) => (
                   <div key={permission.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/40">
                     <span className="text-xs font-mono text-foreground">{permission.permissionCode}</span>
-                    <span className="text-[10px] text-muted-foreground">{permission.module}</span>
+                    <span className="text-[10px] text-muted-foreground">{permission.permissionName}</span>
                   </div>
                 ))}
               </div>

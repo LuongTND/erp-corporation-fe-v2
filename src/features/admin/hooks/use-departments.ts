@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { logger } from '@/lib/logger'
 import { departmentsService } from '../services/departments.service'
 import type { AddBulkDepartmentMembersPayload, AddDepartmentMemberPayload, ListParams, UpdateDepartmentMemberPayload } from '../types/admin.types'
 
@@ -18,7 +19,7 @@ export function useCreateDepartment() {
   return useMutation({
     mutationFn: departmentsService.create,
     onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Tạo phòng ban thành công') },
-    onError: (error) => { console.error(error); toast.error('Tạo phòng ban thất bại') },
+    onError: (error) => { logger.error(error); toast.error('Tạo phòng ban thất bại') },
   })
 }
 
@@ -28,7 +29,7 @@ export function useUpdateDepartment() {
     mutationFn: ({ id, data }: { id: string; data: Parameters<typeof departmentsService.update>[1] }) =>
       departmentsService.update(id, data),
     onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Cập nhật phòng ban thành công') },
-    onError: (error) => { console.error(error); toast.error('Cập nhật phòng ban thất bại') },
+    onError: (error) => { logger.error(error); toast.error('Cập nhật phòng ban thất bại') },
   })
 }
 
@@ -37,7 +38,7 @@ export function useDeleteDepartment() {
   return useMutation({
     mutationFn: departmentsService.delete,
     onSuccess: () => { client.invalidateQueries({ queryKey: [KEY] }); toast.success('Xóa phòng ban thành công') },
-    onError: (error) => { console.error(error); toast.error('Xóa phòng ban thất bại') },
+    onError: (error) => { logger.error(error); toast.error('Xóa phòng ban thất bại') },
   })
 }
 
@@ -68,7 +69,7 @@ export function useAddDepartmentMember() {
       client.invalidateQueries({ queryKey: ['work-history', userId] })
       toast.success('Thêm thành viên thành công')
     },
-    onError: (error) => { console.error(error); toast.error('Thêm thành viên thất bại') },
+    onError: (error) => { logger.error(error); toast.error('Thêm thành viên thất bại') },
   })
 }
 
@@ -82,7 +83,7 @@ export function useAddDepartmentMembers() {
       client.invalidateQueries({ queryKey: ['work-history'] })
       toast.success(`Đã thêm ${count} thành viên`)
     },
-    onError: (error) => { console.error(error); toast.error('Thêm thành viên thất bại') },
+    onError: (error) => { logger.error(error); toast.error('Thêm thành viên thất bại') },
   })
 }
 
@@ -95,7 +96,7 @@ export function useUpdateDepartmentMember() {
       client.invalidateQueries({ queryKey: [MEMBERS_KEY, departmentId] })
       toast.success('Cập nhật chức vụ thành công')
     },
-    onError: (error) => { console.error(error); toast.error('Cập nhật thất bại') },
+    onError: (error) => { logger.error(error); toast.error('Cập nhật thất bại') },
   })
 }
 
@@ -119,7 +120,7 @@ export function useRemoveDepartmentMember() {
     },
     onError: (error, _, ctx) => {
       if (ctx) client.setQueryData(ctx.key, ctx.previous)
-      console.error(error)
+      logger.error(error)
       toast.error('Xóa thất bại')
     },
   })

@@ -62,6 +62,7 @@ export interface UserDetailDto {
   employment?: UserEmploymentDto
   departments: UserDepartmentDto[]
   customFields: CustomFieldValueDto[]
+  labels?: import('@/features/admin/types/admin.types').LabelResponse[]
 }
 
 export interface UpdateEmployeePayload {

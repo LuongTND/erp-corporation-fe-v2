@@ -8,17 +8,17 @@ export const rolesService = {
   getById: (id: string) =>
     apiCall.get<RoleResponse>(`/api/roles/${id}`),
 
-  create: (data: { roleName: string; displayName: string; description: string }) =>
+  create: (data: { roleName: string; displayName: string; description: string; defaultDataScope: string }) =>
     apiCall.post<string>('/api/roles', data),
 
-  update: (id: string, data: { displayName: string; description: string }) =>
+  update: (id: string, data: { displayName: string; description: string; defaultDataScope: string }) =>
     apiCall.put<void>(`/api/roles/${id}`, data),
 
   delete: (id: string) =>
     apiCall.delete<void>(`/api/roles/${id}`),
 
-  assignPermissions: (id: string, permissionIds: string[]) =>
-    apiCall.put<void>(`/api/roles/${id}/permissions`, { permissionIds }),
+  assignPermissions: (id: string, toAdd: string[], toRemove: string[]) =>
+    apiCall.put<void>(`/api/roles/${id}/permissions`, { toAdd, toRemove }),
 
   getUsersByRole: (roleId: string) =>
     apiCall.get<UserSummaryResponse[]>(`/api/roles/${roleId}/users`),

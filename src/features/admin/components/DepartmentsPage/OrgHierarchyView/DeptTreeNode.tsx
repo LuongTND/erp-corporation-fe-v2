@@ -22,8 +22,10 @@ export function DeptTreeNode({ dept, selectedId, onSelect, depth = 0 }: DeptTree
         style={{ paddingLeft: `${depth * 12 + 8}px` }}
         className={cn(
           'w-full flex items-center gap-1 py-1.5 pr-2 text-xs text-left rounded-sm cursor-pointer',
-          'hover:bg-muted/50 transition-colors',
-          selectedId === dept.id && 'bg-primary/10 text-primary font-medium',
+          'hover:bg-muted/50 transition-colors border-l-2',
+          selectedId === dept.id
+            ? 'bg-primary/10 text-primary font-medium border-primary'
+            : 'border-transparent',
         )}
       >
         {hasChildren ? (

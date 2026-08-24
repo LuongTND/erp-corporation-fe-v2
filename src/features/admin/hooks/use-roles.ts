@@ -3,6 +3,9 @@ import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 import { rolesService } from '../services/roles.service'
 import { usersService } from '../services/users.service'
+import type { PermissionResponse, RoleResponse } from '../types/admin.types'
+import { authService } from '@/features/auth/services/auth.service'
+import { useAuthStore } from '@/stores/auth.store'
 
 const KEY = 'roles'
 const USERS_KEY = 'users'
@@ -46,7 +49,7 @@ export function useCreateRole() {
 export function useUpdateRole() {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { displayName: string; description: string } }) =>
+    mutationFn: ({ id, data }: { id: string; data: { displayName: string; description: string; defaultDataScope: string } }) =>
       rolesService.update(id, data),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: [KEY] })
@@ -75,14 +78,35 @@ export function useDeleteRole() {
 export function useAssignPermissions() {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: ({ roleId, permissionIds }: { roleId: string; permissionIds: string[] }) =>
-      rolesService.assignPermissions(roleId, permissionIds),
+    mutationFn: ({ roleId, toAdd, toRemove }: { roleId: string; toAdd: string[]; toRemove: string[] }) =>
+      rolesService.assignPermissions(roleId, toAdd, toRemove),
+    onMutate: async ({ roleId, toAdd, toRemove }) => {
+      await client.cancelQueries({ queryKey: [KEY] })
+      const prev = client.getQueryData<RoleResponse[]>([KEY])
+      const allPerms = client.getQueryData<PermissionResponse[]>(['permissions']) ?? []
+      const permMap = new Map(allPerms.map((p) => [p.id, p]))
+      client.setQueryData<RoleResponse[]>([KEY], (old) => {
+        if (!old) return old
+        return old.map((role) => {
+          if (role.id !== roleId) return role
+          const kept = role.permissions.filter((p) => !toRemove.includes(p.id))
+          const added = toAdd.map((id) => permMap.get(id)).filter(Boolean) as PermissionResponse[]
+          return { ...role, permissions: [...kept, ...added] }
+        })
+      })
+      return { prev }
+    },
+    onError: (error, _, ctx) => {
+      if (ctx?.prev) client.setQueryData([KEY], ctx.prev)
+      toast.error(beError(error, 'Cập nhật quyền hạn thất bại'))
+    },
     onSuccess: () => {
       client.invalidateQueries({ queryKey: [KEY] })
       toast.success('Cập nhật quyền hạn thành công')
-    },
-    onError: (error) => {
-      toast.error(beError(error, 'Cập nhật quyền hạn thất bại'))
+      // sync current user's permissions in case their own role was changed
+      authService.getPermissions().then((perms) => {
+        useAuthStore.getState().setPermissions(perms)
+      }).catch(() => {/* non-critical */})
     },
   })
 }
