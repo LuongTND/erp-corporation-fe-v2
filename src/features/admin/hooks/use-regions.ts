@@ -30,6 +30,19 @@ export function useRegionHours(regionId: string | null) {
   })
 }
 
+export function useAssignRegionManager() {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ regionId, managerId }: { regionId: string; managerId: string | null }) =>
+      regionsService.assignManager(regionId, managerId),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: ['regions'] })
+      toast.success('Đã cập nhật quản lý khu vực')
+    },
+    onError: () => toast.error('Cập nhật quản lý thất bại'),
+  })
+}
+
 export function useUpsertRegionHours() {
   const client = useQueryClient()
   return useMutation({

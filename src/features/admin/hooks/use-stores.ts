@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { storesService } from '../services/stores.service'
 import type { StoreHoursPayload } from '../types/admin.types'
 
-export function useStores(params?: { searchText?: string }) {
+export function useStores(params?: { searchText?: string; regionId?: string }) {
   return useQuery({
     queryKey: ['stores', params],
     queryFn: () => storesService.getStores({ ...params, top: 200 }),
@@ -18,10 +18,7 @@ export function useSyncStores() {
       queryClient.invalidateQueries({ queryKey: ['stores'] })
       toast.success(count === 0 ? 'Không có cửa hàng mới, đã đồng bộ hết' : `Đã thêm ${count} cửa hàng mới`)
     },
-    onError: (error) => {
-      console.error(error)
-      toast.error('Đồng bộ cửa hàng thất bại')
-    },
+    onError: () => toast.error('Đồng bộ cửa hàng thất bại'),
   })
 }
 
@@ -48,6 +45,7 @@ export function useUpsertStoreHours() {
     onSuccess: (_, { storeId }) => {
       client.invalidateQueries({ queryKey: ['store-hours', storeId] })
       client.invalidateQueries({ queryKey: ['stores'] })
+      client.invalidateQueries({ queryKey: ['stores-by-region'] })
       toast.success('Cập nhật giờ mở cửa thành công')
     },
     onError: () => toast.error('Cập nhật giờ mở cửa thất bại'),
@@ -58,8 +56,9 @@ export function useToggleStoreActive() {
   const client = useQueryClient()
   return useMutation({
     mutationFn: (storeId: string) => storesService.toggleStoreActive(storeId),
-    onSuccess: (isActive, storeId) => {
+    onSuccess: (isActive) => {
       client.invalidateQueries({ queryKey: ['stores'] })
+      client.invalidateQueries({ queryKey: ['stores-by-region'] })
       toast.success(isActive ? 'Đã kích hoạt cửa hàng' : 'Đã ngưng hoạt động cửa hàng')
     },
     onError: () => toast.error('Cập nhật trạng thái cửa hàng thất bại'),
@@ -72,12 +71,10 @@ export function useDeleteStore() {
     mutationFn: (storeId: string) => storesService.deleteStore(storeId),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ['stores'] })
+      client.invalidateQueries({ queryKey: ['stores-by-region'] })
       toast.success('Đã xóa cửa hàng')
     },
-    onError: (error) => {
-      console.error(error)
-      toast.error('Xóa cửa hàng thất bại')
-    },
+    onError: () => toast.error('Xóa cửa hàng thất bại'),
   })
 }
 
@@ -88,6 +85,7 @@ export function useAssignStoreManager() {
       storesService.assignManager(storeId, managerId),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: ['stores'] })
+      client.invalidateQueries({ queryKey: ['stores-by-region'] })
       toast.success('Đã cập nhật quản lý cửa hàng')
     },
     onError: () => toast.error('Cập nhật quản lý thất bại'),

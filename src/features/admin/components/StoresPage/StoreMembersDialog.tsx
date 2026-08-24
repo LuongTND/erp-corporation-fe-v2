@@ -45,7 +45,7 @@ export function StoreMembersDialog({
 
   return (
     <Sheet open={store !== null} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0 gap-0">
+      <SheetContent side="right" className="w-full sm:max-w-md flex flex-col p-0 gap-0 data-[state=open]:animate-in data-[state=open]:slide-in-from-right data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right animation-duration-300">
         {/* Header */}
         <SheetHeader className="px-5 pt-5 pb-4 shrink-0">
           <SheetTitle className="text-base font-semibold">{store?.name}</SheetTitle>
@@ -175,7 +175,7 @@ function MemberRow({ member, storeName, isRemoving, onRemove }: MemberRowProps) 
             <UserMinus className="h-4 w-4" />
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent>
+        <AlertDialogContent className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 animation-duration-250">
           <AlertDialogHeader>
             <AlertDialogTitle>Gỡ nhân sự</AlertDialogTitle>
             <AlertDialogDescription>

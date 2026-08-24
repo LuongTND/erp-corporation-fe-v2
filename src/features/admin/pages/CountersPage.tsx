@@ -4,10 +4,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useStores } from '../hooks/use-stores'
 import { useCounters, useCreateCounter, useUpdateCounter, useToggleCounterActive, useDeleteCounter } from '../hooks/use-counters'
@@ -19,7 +15,6 @@ export default function CountersPage() {
   const [selectedStoreId, setSelectedStoreId] = useState<string>('')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editCounter, setEditCounter] = useState<CounterResponse | undefined>()
-  const [deleteTarget, setDeleteTarget] = useState<CounterResponse | null>(null)
 
   const debouncedSearch = useDebounce(search, 300)
   const { data: storesData, isLoading: isLoadingStores } = useStores()
@@ -55,7 +50,11 @@ export default function CountersPage() {
           <div>
             <h1 className="text-xl font-semibold">Quầy</h1>
             <p className="text-sm text-muted-foreground mt-0.5">
-              {isLoading ? <Skeleton className="h-4 w-32 inline-block" /> : `${counters.length} quầy`}
+              {isLoading
+                ? <Skeleton className="h-4 w-32 inline-block" />
+                : selectedStoreId
+                  ? `${counters.length} quầy trong ${stores.find(s => s.id === selectedStoreId)?.name ?? 'cửa hàng'}`
+                  : `${counters.length} quầy`}
             </p>
           </div>
           <Button onClick={openCreate} size="sm" className="gap-1.5">
@@ -69,7 +68,7 @@ export default function CountersPage() {
             <SelectTrigger className="h-8 w-52 text-sm">
               <SelectValue placeholder="Tất cả cửa hàng" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent align="start" sideOffset={4}>
               <SelectItem value="">Tất cả cửa hàng</SelectItem>
               {stores.map(s => (
                 <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
@@ -83,7 +82,7 @@ export default function CountersPage() {
               placeholder="Tìm tên hoặc mã quầy..."
               className="pl-8 h-8 text-sm"
               value={search}
-              onChange={e => { setSearch(e.target.value) }}
+              onChange={e => setSearch(e.target.value)}
             />
           </div>
         </div>
@@ -93,9 +92,10 @@ export default function CountersPage() {
           isLoading={isLoading}
           isToggling={toggle.isPending}
           isDeleting={del.isPending}
+          filterStoreName={selectedStoreId ? stores.find(s => s.id === selectedStoreId)?.name : undefined}
           onEdit={openEdit}
           onToggleActive={id => toggle.mutate(id)}
-          onDelete={setDeleteTarget}
+          onDelete={id => del.mutate(id)}
         />
       </div>
 
@@ -109,25 +109,6 @@ export default function CountersPage() {
         onOpenChange={setDialogOpen}
       />
 
-      <AlertDialog open={!!deleteTarget} onOpenChange={v => { if (!v) setDeleteTarget(null) }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Xóa quầy?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Quầy <span className="font-semibold text-foreground">"{deleteTarget?.name}"</span> sẽ bị xóa vĩnh viễn.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Hủy</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              onClick={() => { del.mutate(deleteTarget!.id); setDeleteTarget(null) }}
-            >
-              Xóa
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   )
 }

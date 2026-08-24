@@ -43,13 +43,13 @@ export interface RegionHoursItem {
 }
 
 interface Props {
-  open: boolean
-  regionName: string
-  regionHours: RegionHoursResponse[]
-  isLoading: boolean
-  isSaving: boolean
-  onOpenChange: (open: boolean) => void
-  onSave: (hours: RegionHoursItem[]) => void
+  readonly open: boolean
+  readonly regionName: string
+  readonly regionHours: RegionHoursResponse[]
+  readonly isLoading: boolean
+  readonly isSaving: boolean
+  readonly onOpenChange: (open: boolean) => void
+  readonly onSave: (hours: RegionHoursItem[]) => void
 }
 
 export function RegionHoursDialog({ open, regionName, regionHours, isLoading, isSaving, onOpenChange, onSave }: Props) {

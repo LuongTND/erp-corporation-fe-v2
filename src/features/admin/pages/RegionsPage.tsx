@@ -7,9 +7,10 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useDebounce } from '@/hooks/use-debounce'
-import { useRegions, useSyncRegions, useRegionHours, useUpsertRegionHours } from '../hooks/use-regions'
+import { useRegions, useSyncRegions, useRegionHours, useUpsertRegionHours, useAssignRegionManager } from '../hooks/use-regions'
 import { useStoresByRegion, useStoreHours, useUpsertStoreHours } from '../hooks/use-stores'
-import { RegionHoursDialog } from '../components/RegionsPage'
+import { useEmployees } from '../hooks/use-employees'
+import { RegionHoursDialog, AssignManagerDialog } from '../components/RegionsPage'
 import { StoreHoursDialog } from '../components/StoresPage'
 import type { RegionResponse, StoreResponse } from '../types/admin.types'
 
@@ -18,6 +19,7 @@ export default function RegionsPage() {
   const [selectedRegion, setSelectedRegion] = useState<RegionResponse | null>(null)
   const [hoursRegion, setHoursRegion] = useState<RegionResponse | null>(null)
   const [hoursStore, setHoursStore] = useState<StoreResponse | null>(null)
+  const [managerRegion, setManagerRegion] = useState<RegionResponse | null>(null)
   const debouncedSearch = useDebounce(search, 300)
 
   const { data, isLoading } = useRegions({ searchText: debouncedSearch || undefined })
@@ -29,6 +31,8 @@ export default function RegionsPage() {
 
   const upsertRegionHours = useUpsertRegionHours()
   const upsertStoreHours = useUpsertStoreHours()
+  const assignManager = useAssignRegionManager()
+  const { data: employees = [] } = useEmployees()
 
   const regions = data?.items ?? []
   const stores = storesData?.items ?? []
@@ -121,6 +125,12 @@ export default function RegionsPage() {
                         <p className={cn('text-xs mt-0.5', isSelected ? 'text-primary/70' : 'text-muted-foreground')}>
                           {region.storeCount} cửa hàng · {region.code}
                         </p>
+                        {region.managerName
+                          ? <p className={cn('text-[10px] mt-0.5 font-medium truncate', isSelected ? 'text-primary/60' : 'text-muted-foreground')}>
+                              {region.managerName}
+                            </p>
+                          : <p className="text-[10px] mt-0.5 text-amber-600 dark:text-amber-400">Chưa có quản lý</p>
+                        }
                       </div>
                       {isSelected && <ChevronRight className="h-3.5 w-3.5 shrink-0 text-primary" />}
                     </button>
@@ -162,17 +172,28 @@ export default function RegionsPage() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Mã: <span className="font-mono">{selectedRegion.code}</span> · {selectedRegion.storeCount} cửa hàng
+                      {selectedRegion.managerName && <> · Quản lý: <span className="font-medium text-foreground">{selectedRegion.managerName}</span></>}
                     </p>
                   </div>
                 </div>
-                <Button
-                  variant="outline" size="sm"
-                  className="gap-1.5 text-xs"
-                  onClick={() => setHoursRegion(selectedRegion)}
-                >
-                  <Clock className="h-3.5 w-3.5" />
-                  Giờ mặc định
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline" size="sm"
+                    className="gap-1.5 text-xs"
+                    disabled={assignManager.isPending}
+                    onClick={() => setManagerRegion(selectedRegion)}
+                  >
+                    Gán quản lý
+                  </Button>
+                  <Button
+                    variant="outline" size="sm"
+                    className="gap-1.5 text-xs"
+                    onClick={() => setHoursRegion(selectedRegion)}
+                  >
+                    <Clock className="h-3.5 w-3.5" />
+                    Giờ mặc định
+                  </Button>
+                </div>
               </div>
 
               {/* Store list */}
@@ -224,11 +245,12 @@ export default function RegionsPage() {
                           <Button
                             variant="ghost" size="icon"
                             className={cn(
-                              'h-7 w-7 shrink-0',
+                              'h-7 w-7 shrink-0 cursor-pointer',
                               store.todayIsClosed === true && 'text-destructive hover:text-destructive',
                             )}
                             onClick={() => setHoursStore(store)}
                             title="Xem giờ mở cửa"
+                            aria-label={`Xem giờ mở cửa ${store.name}`}
                           >
                             <Clock className="h-3.5 w-3.5" />
                           </Button>
@@ -269,6 +291,18 @@ export default function RegionsPage() {
           if (!hoursStore) return
           await upsertStoreHours.mutateAsync({ storeId: hoursStore.id, hours })
           setHoursStore(null)
+        }}
+      />
+
+      <AssignManagerDialog
+        region={managerRegion}
+        users={employees}
+        isSaving={assignManager.isPending}
+        onOpenChange={open => { if (!open) setManagerRegion(null) }}
+        onAssign={(regionId, managerId) => {
+          assignManager.mutate({ regionId, managerId }, {
+            onSuccess: () => setManagerRegion(null),
+          })
         }}
       />
     </div>

@@ -1,4 +1,5 @@
-import { Clock, Power, Trash2, UserCog, Users } from 'lucide-react'
+import { useState } from 'react'
+import { Clock, MoreHorizontal, Power, Trash2, UserCog, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,9 +9,13 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+  AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import {
   PaginationContent, PaginationEllipsis, PaginationItem,
@@ -32,6 +37,7 @@ interface StoreTableProps {
   readonly isLoading: boolean
   readonly isDeleting: boolean
   readonly isToggling: boolean
+  readonly filterRegionName?: string
   readonly pageSize: number
   readonly totalCount: number
   readonly currentPage: number
@@ -47,7 +53,7 @@ interface StoreTableProps {
 }
 
 export function StoreTable({
-  stores, isLoading, isDeleting, isToggling,
+  stores, isLoading, isDeleting, isToggling, filterRegionName,
   pageSize, totalCount, currentPage, totalPages, start,
   onStoreHours, onAssignManager, onManageMembers, onToggleActive, onDelete, onPageChange, onPageSizeChange,
 }: StoreTableProps) {
@@ -61,9 +67,9 @@ export function StoreTable({
               <TableHead className="sticky top-0 z-10 bg-card w-36">Mã</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card">Địa chỉ</TableHead>
               <TableHead className="sticky top-0 z-10 bg-card w-36">SĐT</TableHead>
-              <TableHead className="sticky top-0 z-10 bg-card w-40">Quản lý</TableHead>
-              <TableHead className="sticky top-0 z-10 bg-card w-28">Trạng thái</TableHead>
-              <TableHead className="sticky top-0 z-10 bg-card w-28" />
+              <TableHead className="sticky top-0 z-10 bg-card w-44">Quản lý</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-40">Trạng thái</TableHead>
+              <TableHead className="sticky top-0 z-10 bg-card w-12" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,14 +81,14 @@ export function StoreTable({
                   <TableCell><Skeleton className="h-4 w-48" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                  <TableCell><Skeleton className="h-5 w-20 rounded-full" /></TableCell>
-                  <TableCell><Skeleton className="h-7 w-20" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-32 rounded-full" /></TableCell>
+                  <TableCell><Skeleton className="h-7 w-7" /></TableCell>
                 </TableRow>
               ))
             ) : stores.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12 text-muted-foreground text-sm">
-                  Chưa có cửa hàng nào được đồng bộ
+                <TableCell colSpan={7} className="text-center py-12 text-muted-foreground text-sm">
+                  {filterRegionName ? `Không tìm thấy cửa hàng trong ${filterRegionName}` : 'Chưa có cửa hàng nào được đồng bộ'}
                 </TableCell>
               </TableRow>
             ) : (
@@ -95,112 +101,38 @@ export function StoreTable({
                   <TableCell className="text-sm">
                     {store.managerName
                       ? <span className="text-foreground">{store.managerName}</span>
-                      : <span className="text-muted-foreground italic">Chưa có</span>}
+                      : (
+                        <Badge variant="outline" className="text-[10px] border-amber-400 text-amber-600 dark:text-amber-400">
+                          Chưa gán
+                        </Badge>
+                      )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
                       <Badge
                         variant={store.isActive ? 'secondary' : 'destructive'}
-                        className={cn('text-[10px] w-fit', store.isActive && 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400')}
+                        className={cn('text-[10px]', store.isActive && 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400')}
                       >
                         {store.isActive ? 'Hoạt động' : 'Ngưng'}
                       </Badge>
                       {store.todayIsClosed !== null && (
-                        <Badge variant="outline" className="text-[10px] w-fit">
+                        <Badge variant="outline" className="text-[10px]">
                           {store.todayIsClosed ? 'Hôm nay: Nghỉ' : 'Hôm nay: Mở'}
                         </Badge>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost" size="icon"
-                        onClick={() => onManageMembers(store)}
-                        title="Nhân sự biên chế"
-                      >
-                        <Users className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost" size="icon"
-                        onClick={() => onAssignManager(store)}
-                        title="Gán quản lý"
-                      >
-                        <UserCog className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost" size="icon"
-                        onClick={() => onStoreHours(store)}
-                        title="Giờ mở cửa"
-                        className={cn(store.todayIsClosed === true && 'text-destructive hover:text-destructive')}
-                      >
-                        <Clock className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost" size="icon"
-                            title={store.isActive ? 'Ngưng hoạt động' : 'Kích hoạt'}
-                            className={cn(store.isActive
-                              ? 'text-amber-600 hover:text-amber-600 hover:bg-amber-500/10'
-                              : 'text-emerald-600 hover:text-emerald-600 hover:bg-emerald-500/10')}
-                            disabled={isToggling}
-                          >
-                            <Power className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>{store.isActive ? 'Ngưng hoạt động cửa hàng' : 'Kích hoạt cửa hàng'}</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              {store.isActive
-                                ? <>Bạn có chắc muốn ngưng hoạt động <span className="font-medium text-foreground">{store.name}</span>? Nhân viên sẽ không thể chấm công tại cửa hàng này.</>
-                                : <>Bạn có chắc muốn kích hoạt lại <span className="font-medium text-foreground">{store.name}</span>?</>}
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Hủy</AlertDialogCancel>
-                            <AlertDialogAction
-                              className={store.isActive
-                                ? 'bg-amber-600 text-white hover:bg-amber-700'
-                                : 'bg-emerald-600 text-white hover:bg-emerald-700'}
-                              onClick={() => onToggleActive(store.id)}
-                            >
-                              {store.isActive ? 'Ngưng' : 'Kích hoạt'}
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost" size="icon"
-                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            disabled={isDeleting}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Xóa cửa hàng</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Bạn có chắc muốn xóa <span className="font-medium text-foreground">{store.name}</span>?
-                              Hành động này không thể hoàn tác.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Hủy</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              onClick={() => onDelete(store.id)}
-                            >
-                              Xóa
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                    <StoreActions
+                      store={store}
+                      isDeleting={isDeleting}
+                      isToggling={isToggling}
+                      onStoreHours={onStoreHours}
+                      onAssignManager={onAssignManager}
+                      onManageMembers={onManageMembers}
+                      onToggleActive={onToggleActive}
+                      onDelete={onDelete}
+                    />
                   </TableCell>
                 </TableRow>
               ))
@@ -225,7 +157,7 @@ export function StoreTable({
               <SelectTrigger className="h-7 w-16 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent align="start" sideOffset={4}>
                 {PAGE_SIZE_OPTIONS.map(n => (
                   <SelectItem key={n} value={String(n)} className="text-xs">{n}</SelectItem>
                 ))}
@@ -272,5 +204,106 @@ export function StoreTable({
         </div>
       </div>
     </div>
+  )
+}
+
+interface StoreActionsProps {
+  readonly store: StoreResponse
+  readonly isDeleting: boolean
+  readonly isToggling: boolean
+  readonly onStoreHours: (store: StoreResponse) => void
+  readonly onAssignManager: (store: StoreResponse) => void
+  readonly onManageMembers: (store: StoreResponse) => void
+  readonly onToggleActive: (storeId: string) => void
+  readonly onDelete: (storeId: string) => void
+}
+
+function StoreActions({ store, isDeleting, isToggling, onStoreHours, onAssignManager, onManageMembers, onToggleActive, onDelete }: StoreActionsProps) {
+  const [confirm, setConfirm] = useState<'toggle' | 'delete' | null>(null)
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" sideOffset={4} className="w-44 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 animation-duration-200">
+          <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => onStoreHours(store)}>
+            <Clock className="h-3.5 w-3.5" />
+            Giờ mở cửa
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => onManageMembers(store)}>
+            <Users className="h-3.5 w-3.5" />
+            Nhân sự biên chế
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer gap-2" onClick={() => onAssignManager(store)}>
+            <UserCog className="h-3.5 w-3.5" />
+            Gán quản lý
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className={cn('cursor-pointer gap-2', store.isActive ? 'text-amber-600 focus:text-amber-600' : 'text-emerald-600 focus:text-emerald-600')}
+            disabled={isToggling}
+            onClick={() => setConfirm('toggle')}
+          >
+            <Power className="h-3.5 w-3.5" />
+            {store.isActive ? 'Ngưng hoạt động' : 'Kích hoạt'}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer gap-2 text-destructive focus:text-destructive"
+            disabled={isDeleting}
+            onClick={() => setConfirm('delete')}
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            Xóa cửa hàng
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog open={confirm === 'toggle'} onOpenChange={open => { if (!open) setConfirm(null) }}>
+        <AlertDialogContent className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 animation-duration-250">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{store.isActive ? 'Ngưng hoạt động cửa hàng?' : 'Kích hoạt cửa hàng?'}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {store.isActive
+                ? <>Cửa hàng <span className="font-medium text-foreground">{store.name}</span> sẽ ngưng hoạt động.</>
+                : <>Cửa hàng <span className="font-medium text-foreground">{store.name}</span> sẽ được kích hoạt lại.</>}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              className={store.isActive ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'}
+              onClick={() => { onToggleActive(store.id); setConfirm(null) }}
+            >
+              {store.isActive ? 'Ngưng' : 'Kích hoạt'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={confirm === 'delete'} onOpenChange={open => { if (!open) setConfirm(null) }}>
+        <AlertDialogContent className="data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 animation-duration-250">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Xóa cửa hàng</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bạn có chắc muốn xóa <span className="font-medium text-foreground">{store.name}</span>?
+              Hành động này không thể hoàn tác.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Hủy</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => { onDelete(store.id); setConfirm(null) }}
+            >
+              Xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
