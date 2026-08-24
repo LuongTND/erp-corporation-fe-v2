@@ -57,6 +57,7 @@ export function mapToEmployeeDetail(dto: UserDetailDto): EmployeeDetail {
     personalEmail: dto.email,
     personalPhone: dto.profile?.phoneNumber ?? '—',
     idNumber: dto.identity?.identityCardNumber ?? '—',
+    passportNumber: dto.identity?.passportNumber ?? '—',
     idExpiry: fmtDate(dto.identity?.identityCardIssuedDate),
     permanentAddress: dto.profile?.permanentAddress ?? '—',
     bankAccount: {
@@ -81,5 +82,6 @@ export function mapToEmployeeDetail(dto: UserDetailDto): EmployeeDetail {
     probationStatus: deriveProbationStatus(dto.status, dto.employment?.contractType),
     itEquipment: [],
     systemRoles: [],
+    labels: dto.labels ?? [],
   }
 }

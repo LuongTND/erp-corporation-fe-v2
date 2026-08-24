@@ -7,11 +7,11 @@ export const userStatusKeys = {
   history: (userId: string) => ['user-status-history', userId] as const,
 }
 
-export function useUserStatusHistory(userId: string) {
+export function useUserStatusHistory(userId: string, enabled = true) {
   return useQuery({
     queryKey: userStatusKeys.history(userId),
     queryFn: () => employeesService.getStatusHistory(userId),
-    enabled: !!userId,
+    enabled: !!userId && enabled,
   })
 }
 

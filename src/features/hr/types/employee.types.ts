@@ -44,6 +44,7 @@ export interface EmployeeDetail {
   personalEmail: string
   personalPhone: string
   idNumber: string
+  passportNumber: string
   idExpiry: string
   permanentAddress: string
   bankAccount: BankAccount
@@ -61,6 +62,7 @@ export interface EmployeeDetail {
   probationEndDate?: string
   itEquipment: ITEquipment[]
   systemRoles: SystemRole[]
+  labels: import('@/features/admin/types/admin.types').LabelResponse[]
 }
 
 export interface AttendanceRecord {

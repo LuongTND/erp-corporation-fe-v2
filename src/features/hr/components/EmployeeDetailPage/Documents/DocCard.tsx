@@ -11,6 +11,9 @@ interface Props {
 }
 
 export function DocCard({ doc, onDelete }: Props) {
+  const handleDelete = () => {
+    if (window.confirm(`Xóa "${doc.displayName}"? Thao tác không thể khôi phục.`)) onDelete()
+  }
   return (
     <div className="flex flex-col rounded-xl border border-border bg-card p-4 gap-3">
       <div className="flex items-start gap-3">
@@ -48,7 +51,7 @@ export function DocCard({ doc, onDelete }: Props) {
             Tải về
           </a>
         </Button>
-        <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" onClick={onDelete}>
+        <Button variant="outline" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" onClick={handleDelete}>
           <Trash2 className="h-3 w-3" />
         </Button>
       </div>

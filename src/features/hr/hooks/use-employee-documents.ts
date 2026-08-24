@@ -5,11 +5,11 @@ import type { UploadDocumentPayload } from '../types/employee-document.types'
 
 const docsKey = (userId: string) => ['employee-documents', userId]
 
-export function useEmployeeDocuments(userId: string) {
+export function useEmployeeDocuments(userId: string, enabled = true) {
   return useQuery({
     queryKey: docsKey(userId),
     queryFn: () => employeesService.getDocuments(userId),
-    enabled: !!userId,
+    enabled: !!userId && enabled,
   })
 }
 

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Upload } from 'lucide-react'
+import { Loader2, Upload } from 'lucide-react'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog'
@@ -26,6 +26,7 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
   const [issuedDate, setIssuedDate] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [notes, setNotes] = useState('')
+  const [errors, setErrors] = useState<{ file?: string; category?: string }>({})
   const fileRef = useRef<HTMLInputElement>(null)
 
   const reset = () => {
@@ -35,13 +36,17 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
     setIssuedDate('')
     setExpiryDate('')
     setNotes('')
+    setErrors({})
     if (fileRef.current) fileRef.current.value = ''
   }
 
   const handleClose = () => { reset(); onClose() }
 
   const handleSubmit = () => {
-    if (!file || !category) return
+    const errs: { file?: string; category?: string } = {}
+    if (!category) errs.category = 'Vui lòng chọn loại tài liệu'
+    if (!file) errs.file = 'Vui lòng chọn tệp'
+    if (errs.category || errs.file || !file) { setErrors(errs); return }
     onUpload(
       { file, category, customName: customName || undefined, issuedDate: issuedDate || undefined, expiryDate: expiryDate || undefined, notes: notes || undefined },
       { onSuccess: handleClose },
@@ -60,14 +65,15 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
         <div className="space-y-3 py-2">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Loại tài liệu *</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger><SelectValue placeholder="Chọn loại..." /></SelectTrigger>
-              <SelectContent>
+            <Select value={category} onValueChange={(v) => { setCategory(v); setErrors((e) => ({ ...e, category: undefined })) }}>
+              <SelectTrigger className={errors.category ? 'border-destructive' : ''}><SelectValue placeholder="Chọn loại..." /></SelectTrigger>
+              <SelectContent align="start" sideOffset={4}>
                 {DOCUMENT_CATEGORIES.map((c) => (
                   <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            {errors.category && <p className="text-xs text-destructive">{errors.category}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -105,15 +111,16 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
               ) : (
                 <p className="text-sm text-muted-foreground">Nhấn để chọn tệp</p>
               )}
-              <input ref={fileRef} type="file" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+              <input ref={fileRef} type="file" className="hidden" onChange={(e) => { setFile(e.target.files?.[0] ?? null); setErrors((err) => ({ ...err, file: undefined })) }} />
             </div>
+            {errors.file && <p className="text-xs text-destructive">{errors.file}</p>}
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isUploading}>Hủy</Button>
-          <Button onClick={handleSubmit} disabled={!file || !category || isUploading}>
-            {isUploading ? 'Đang tải...' : 'Tải lên'}
+          <Button onClick={handleSubmit} disabled={isUploading}>
+            {isUploading ? <><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />Đang tải...</> : 'Tải lên'}
           </Button>
         </DialogFooter>
       </DialogContent>
