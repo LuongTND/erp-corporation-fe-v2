@@ -43,17 +43,18 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
         roleName: editRole?.roleName ?? '',
         displayName: editRole?.displayName ?? '',
         description: editRole?.description ?? '',
+        defaultDataScope: editRole?.defaultDataScope ?? 'Own',
       })
     }
   }, [dialogOpen, editRole, form])
 
   const onRoleSubmit = (values: RoleFormValues) => {
     if (editRole) {
-      updateRole.mutate({ id: editRole.id, data: { displayName: values.displayName, description: values.description ?? '' } }, {
+      updateRole.mutate({ id: editRole.id, data: { displayName: values.displayName, description: values.description ?? '', defaultDataScope: values.defaultDataScope } }, {
         onSuccess: () => setDialogOpen(false),
       })
     } else {
-      createRole.mutate({ roleName: values.roleName, displayName: values.displayName, description: values.description ?? '' }, {
+      createRole.mutate({ roleName: values.roleName, displayName: values.displayName, description: values.description ?? '', defaultDataScope: values.defaultDataScope }, {
         onSuccess: () => setDialogOpen(false),
       })
     }

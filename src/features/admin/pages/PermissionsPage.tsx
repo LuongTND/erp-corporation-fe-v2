@@ -128,7 +128,7 @@ export default function PermissionsPage() {
                             </TableCell>
                           </TableRow>
                         )
-                      })}
+                      )}
                     </TableBody>
                   </Table>
                 </div>

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import type { RoleResponse } from '../../types/admin.types'
+import { SCOPE_TYPE_LABELS } from '../../types/admin.types'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -66,9 +67,14 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
         <DescriptionCell text={role.description} />
       </TableCell>
       <TableCell className="hidden sm:table-cell">
-        {role.isSystemRole
-          ? <Badge variant="secondary">Hệ thống</Badge>
-          : <Badge variant="outline">Tùy chỉnh</Badge>}
+        <div className="flex flex-wrap gap-1">
+          {role.isSystemRole
+            ? <Badge variant="secondary">Hệ thống</Badge>
+            : <Badge variant="outline">Tùy chỉnh</Badge>}
+          <Badge variant="outline" className="text-[10px] text-muted-foreground font-normal">
+            {SCOPE_TYPE_LABELS[role.defaultDataScope]}
+          </Badge>
+        </div>
       </TableCell>
       <TableCell className="text-sm text-muted-foreground">{role.permissions.length}</TableCell>
       <TableCell>

@@ -156,9 +156,11 @@ export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, on
                   <td className="p-2 text-sm hidden md:table-cell">{activeRole.displayName ?? '—'}</td>
                   <td className="p-2 text-muted-foreground text-sm hidden lg:table-cell">{activeRole.description ?? '—'}</td>
                   <td className="p-2 hidden sm:table-cell">
-                    {activeRole.isSystemRole
-                      ? <Badge variant="secondary">Hệ thống</Badge>
-                      : <Badge variant="outline">Tùy chỉnh</Badge>}
+                    <div className="flex flex-wrap gap-1">
+                      {activeRole.isSystemRole
+                        ? <Badge variant="secondary">Hệ thống</Badge>
+                        : <Badge variant="outline">Tùy chỉnh</Badge>}
+                    </div>
                   </td>
                   <td className="p-2 text-sm text-muted-foreground">{activeRole.permissions.length}</td>
                 </tr>

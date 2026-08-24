@@ -49,7 +49,7 @@ export function useCreateRole() {
 export function useUpdateRole() {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { displayName: string; description: string } }) =>
+    mutationFn: ({ id, data }: { id: string; data: { displayName: string; description: string; defaultDataScope: string } }) =>
       rolesService.update(id, data),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: [KEY] })

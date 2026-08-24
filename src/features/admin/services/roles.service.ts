@@ -8,10 +8,10 @@ export const rolesService = {
   getById: (id: string) =>
     apiCall.get<RoleResponse>(`/api/roles/${id}`),
 
-  create: (data: { roleName: string; displayName: string; description: string }) =>
+  create: (data: { roleName: string; displayName: string; description: string; defaultDataScope: string }) =>
     apiCall.post<string>('/api/roles', data),
 
-  update: (id: string, data: { displayName: string; description: string }) =>
+  update: (id: string, data: { displayName: string; description: string; defaultDataScope: string }) =>
     apiCall.put<void>(`/api/roles/${id}`, data),
 
   delete: (id: string) =>
