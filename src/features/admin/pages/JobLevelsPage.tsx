@@ -36,7 +36,6 @@ export default function JobLevelsPage() {
       form.reset({
         levelName: editLevel?.levelName ?? '',
         levelOrder: nextOrder,
-        defaultScopeType: editLevel?.defaultScopeType ?? 'All',
         description: editLevel?.description ?? '',
       })
     }

@@ -9,6 +9,7 @@ export interface RoleResponse {
   displayName?: string
   description?: string
   isSystemRole: boolean
+  defaultDataScope: ScopeType
   permissions: PermissionResponse[]
 }
 
@@ -72,6 +73,8 @@ export interface RegionResponse {
   posRegionId: string
   isActive: boolean
   storeCount: number
+  managerId?: string | null
+  managerName?: string | null
 }
 
 export interface RegionHoursResponse {
@@ -112,23 +115,36 @@ export interface DepartmentResponse {
   isActive: boolean
 }
 
+export interface DepartmentJobLevelResponse {
+  id: string
+  departmentId: string
+  departmentName: string
+  jobLevelId: string
+  jobLevelName: string
+  bonusPolicyId?: string | null
+  bonusPolicyName?: string | null
+  kpiTemplateId?: string | null
+  kpiTemplateName?: string | null
+}
+
 export interface JobLevelResponse {
   id: string
   levelName: string
   levelOrder: number
-  defaultScopeType: ScopeType
   description?: string
   isDeleted: boolean
   employeeCount: number
 }
 
 // ponytail: BE uses JsonStringEnumConverter globally → enum serialized as string, not int
-export type ScopeType = 'Own' | 'Team' | 'Department' | 'All'
+export type ScopeType = 'Own' | 'Team' | 'Department' | 'Store' | 'Region' | 'All'
 
 export const SCOPE_TYPE_LABELS: Record<ScopeType, string> = {
   Own: 'Cá nhân',
   Team: 'Nhóm',
   Department: 'Phòng ban',
+  Store: 'Cửa hàng',
+  Region: 'Khu vực',
   All: 'Toàn bộ',
 }
 
@@ -185,6 +201,13 @@ export interface UpdateDepartmentMemberPayload {
   jobLevelId: string | null
 }
 
+export interface LabelResponse {
+  id: string
+  name: string
+  color: string
+  isActive: boolean
+}
+
 export interface UserSummaryResponse {
   id: string
   fullName: string
@@ -193,6 +216,7 @@ export interface UserSummaryResponse {
   avatarUrl?: string
   status: string
   joinDate: string
+  labels?: LabelResponse[]
 }
 
 export type Gender = 'Male' | 'Female' | 'Other'
@@ -379,6 +403,13 @@ export interface EmploymentContractResponse {
   isActive: boolean
 }
 
+export interface FormSchemaField {
+  field: string
+  label: string
+  type: 'text' | 'date' | 'number'
+  required?: boolean
+}
+
 export interface ContractTemplateResponse {
   id: string
   name: string
@@ -387,6 +418,22 @@ export interface ContractTemplateResponse {
   isActive: boolean
   createdAt: string
   fileUrl?: string
+  formSchema?: string
+}
+
+export interface RecruitmentApproverConfigResponse {
+  id: string
+  approverId: string
+  approverName: string
+  departmentId?: string
+  departmentName?: string
+  note?: string
+}
+
+export interface SetRecruitmentApproverPayload {
+  approverId: string
+  departmentId?: string
+  note?: string
 }
 
 export interface ContractSalaryComparisonResponse {

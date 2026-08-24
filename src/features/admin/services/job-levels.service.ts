@@ -5,10 +5,10 @@ export const jobLevelsService = {
   list: (params?: ListParams) =>
     apiCall.get<QueryResult<JobLevelResponse>>('/api/job-levels', { params }),
 
-  create: (data: { levelName: string; levelOrder: number; defaultScopeType: number; description?: string }) =>
+  create: (data: { levelName: string; levelOrder: number; description?: string }) =>
     apiCall.post<string>('/api/job-levels', data),
 
-  update: (id: string, data: { levelName: string; levelOrder: number; defaultScopeType: number; description?: string }) =>
+  update: (id: string, data: { levelName: string; levelOrder: number; description?: string }) =>
     apiCall.put<void>(`/api/job-levels/${id}`, data),
 
   delete: (id: string) =>

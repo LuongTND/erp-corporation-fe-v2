@@ -59,6 +59,7 @@ function buildPageNumbers(current: number, total: number): (number | 'ellipsis')
 interface EmployeeTableProps {
   employees: UserSummaryResponse[]
   isLoading: boolean
+  isFiltering?: boolean
   pageSize: number
   totalCount: number
   currentPage: number
@@ -74,6 +75,7 @@ interface EmployeeTableProps {
 export function EmployeeTable({
   employees,
   isLoading,
+  isFiltering,
   pageSize,
   totalCount,
   currentPage,
@@ -117,7 +119,7 @@ export function EmployeeTable({
             ) : employees.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-12 text-muted-foreground text-sm">
-                  Chưa có nhân viên nào
+                  {isFiltering ? 'Không tìm thấy nhân viên phù hợp' : 'Chưa có nhân viên nào'}
                 </TableCell>
               </TableRow>
             ) : (
@@ -198,7 +200,7 @@ export function EmployeeTable({
               <SelectTrigger className="h-7 w-16 text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent align="start" sideOffset={4}>
                 {PAGE_SIZE_OPTIONS.map((n) => (
                   <SelectItem key={n} value={String(n)} className="text-xs">{n}</SelectItem>
                 ))}

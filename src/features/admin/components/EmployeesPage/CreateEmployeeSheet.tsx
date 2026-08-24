@@ -24,7 +24,12 @@ const GENDERS = Object.entries(GENDER_LABELS) as [Gender, string][]
 const CONTRACT_TYPES = Object.entries(CONTRACT_TYPE_LABELS) as [ContractType, string][]
 
 export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPending, jobLevels, managers }: Props) {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = form
+  const { register, handleSubmit, setValue, watch, formState: { errors, isDirty } } = form
+
+  const handleOpenChange = (next: boolean) => {
+    if (!next && isDirty && !window.confirm('Bạn có thay đổi chưa lưu. Đóng sheet?')) return
+    onOpenChange(next)
+  }
 
   const gender = watch('gender')
   const jobLevelId = watch('jobLevelId')
@@ -33,7 +38,7 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
   const customFieldValues = watch('customFieldValues') ?? {}
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
         <SheetHeader className="mb-4">
           <SheetTitle>Tạo nhân sự mới</SheetTitle>
@@ -74,7 +79,7 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
                     <Label>Giới tính</Label>
                     <Select value={gender ?? ''} onValueChange={(v) => setValue('gender', v as Gender || undefined)}>
                       <SelectTrigger><SelectValue placeholder="Chọn..." /></SelectTrigger>
-                      <SelectContent>
+                      <SelectContent align="start" sideOffset={4}>
                         {GENDERS.map(([v, label]) => <SelectItem key={v} value={v}>{label}</SelectItem>)}
                       </SelectContent>
                     </Select>
@@ -96,7 +101,7 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
                     <Label>Chức danh <span className="text-destructive">*</span></Label>
                     <Select value={jobLevelId ?? ''} onValueChange={(v) => setValue('jobLevelId', v)}>
                       <SelectTrigger><SelectValue placeholder="Chọn chức danh" /></SelectTrigger>
-                      <SelectContent>
+                      <SelectContent align="start" sideOffset={4}>
                         {jobLevels.map((jl) => (
                           <SelectItem key={jl.id} value={jl.id}>{jl.levelName}</SelectItem>
                         ))}
@@ -115,7 +120,7 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
                   <Label>Quản lý trực tiếp</Label>
                   <Select value={managerId ?? ''} onValueChange={(v) => setValue('managerId', v || undefined)}>
                     <SelectTrigger><SelectValue placeholder="Không có" /></SelectTrigger>
-                    <SelectContent>
+                    <SelectContent align="start" sideOffset={4}>
                       {managers.map((u) => (
                         <SelectItem key={u.id} value={u.id}>{u.fullName} ({u.employeeCode})</SelectItem>
                       ))}
@@ -182,7 +187,7 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
                     onValueChange={(v) => setValue('contractType', (v as ContractType) || undefined)}
                   >
                     <SelectTrigger><SelectValue placeholder="Chọn loại hợp đồng" /></SelectTrigger>
-                    <SelectContent>
+                    <SelectContent align="start" sideOffset={4}>
                       {CONTRACT_TYPES.map(([v, label]) => (
                         <SelectItem key={v} value={v}>{label}</SelectItem>
                       ))}
@@ -216,7 +221,7 @@ export function CreateEmployeeSheet({ open, onOpenChange, form, onSubmit, isPend
           </Accordion>
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+            <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>Hủy</Button>
             <Button type="submit" disabled={isPending}>
               {isPending ? 'Đang tạo...' : 'Tạo nhân sự'}
             </Button>
