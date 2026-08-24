@@ -117,7 +117,7 @@ export function DepartmentDialog({ open, department, allDepartments, isPending, 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
             <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <FormField control={form.control} name="departmentName" render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs">Tên <span className="text-destructive">*</span></FormLabel>
@@ -136,6 +136,7 @@ export function DepartmentDialog({ open, department, allDepartments, isPending, 
                         onChange={e => { codeManuallyEdited.current = true; field.onChange(e) }}
                       />
                     </FormControl>
+                    <p className="text-[11px] text-muted-foreground">Tự tạo từ tên, có thể chỉnh sửa</p>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )} />
@@ -161,6 +162,10 @@ export function DepartmentDialog({ open, department, allDepartments, isPending, 
                   <FormMessage className="text-xs" />
                 </FormItem>
               )} />
+
+              <p className="text-[11px] text-muted-foreground bg-muted/40 rounded-md px-3 py-2">
+                Để gán trưởng phòng, hãy thêm thành viên vào phòng ban trước trong tab <strong>Cơ cấu · Danh sách</strong>.
+              </p>
 
               {department && (
                 <div className={cn(

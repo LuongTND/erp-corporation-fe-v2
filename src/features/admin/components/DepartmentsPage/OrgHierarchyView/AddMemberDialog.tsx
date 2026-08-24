@@ -20,13 +20,15 @@ interface AddMemberDialogProps {
   allUsers: UserSummaryResponse[]
   isLoadingUsers: boolean
   currentMembers: DepartmentMemberResponse[]
+  departmentName?: string
   onAdd: (userIds: string[], startDate: string) => void
   isPending: boolean
 }
 
-export function AddMemberDialog({ open, onOpenChange, allUsers, isLoadingUsers, currentMembers, onAdd, isPending }: AddMemberDialogProps) {
+export function AddMemberDialog({ open, onOpenChange, allUsers, isLoadingUsers, currentMembers, departmentName, onAdd, isPending }: AddMemberDialogProps) {
   const [selectedUsers, setSelectedUsers] = useState<UserSummaryResponse[]>([])
   const [search, setSearch] = useState('')
+  const [startDate, setStartDate] = useState(() => new Date().toISOString().split('T')[0])
 
   const assignedIds = useMemo(
     () => new Set(currentMembers.map(m => m.userId)),
@@ -50,11 +52,10 @@ export function AddMemberDialog({ open, onOpenChange, allUsers, isLoadingUsers, 
     )
   }
 
-  const reset = () => { setSelectedUsers([]); setSearch('') }
+  const reset = () => { setSelectedUsers([]); setSearch(''); setStartDate(new Date().toISOString().split('T')[0]) }
 
   function handleSubmit() {
     if (selectedUsers.length === 0) return
-    const startDate = new Date().toISOString().split('T')[0]
     onAdd(selectedUsers.map(u => u.id), startDate)
   }
 
@@ -62,7 +63,9 @@ export function AddMemberDialog({ open, onOpenChange, allUsers, isLoadingUsers, 
     <Dialog open={open} onOpenChange={v => { onOpenChange(v); if (!v) reset() }}>
       <DialogContent className="sm:max-w-sm p-0 gap-0">
         <DialogHeader className="px-4 pt-4 pb-3 border-b">
-          <DialogTitle className="text-sm">Thêm thành viên</DialogTitle>
+          <DialogTitle className="text-sm">
+            {departmentName ? `Thêm thành viên vào ${departmentName}` : 'Thêm thành viên'}
+          </DialogTitle>
         </DialogHeader>
 
         <Command shouldFilter={false} className="rounded-none border-0">
@@ -151,6 +154,15 @@ export function AddMemberDialog({ open, onOpenChange, allUsers, isLoadingUsers, 
           </div>
         )}
 
+        <div className="px-4 py-2.5 border-t flex items-center gap-3">
+          <label className="text-xs text-muted-foreground shrink-0">Ngày bắt đầu</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={e => setStartDate(e.target.value)}
+            className="flex-1 h-7 px-2 text-xs rounded border bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
         <div className="flex justify-end gap-2 px-4 py-3 border-t rounded-b-xl">
           <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)}>Hủy</Button>
           <Button size="sm" disabled={isPending || selectedUsers.length === 0} onClick={handleSubmit}>
