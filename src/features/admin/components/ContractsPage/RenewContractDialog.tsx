@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { CurrencyInput } from '@/components/ui/currency-input'
@@ -106,6 +107,28 @@ export function RenewContractDialog({ open, onOpenChange, contract, form, onSubm
           </div>
 
           <div className="flex flex-col gap-1.5">
+            <Label htmlFor="renew-salaryForSocialInsurance">Lương BHXH (VND/tháng)</Label>
+            <Controller
+              name="salaryForSocialInsurance"
+              control={control}
+              render={({ field }) => (
+                <CurrencyInput
+                  id="renew-salaryForSocialInsurance"
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Để trống = dùng lương/giờ"
+                  className="h-9"
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="renew-signedDate">Ngày ký</Label>
+            <Input id="renew-signedDate" type="date" {...register('signedDate')} className="h-9" />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
             <Label htmlFor="renew-file">
               File hợp đồng mới <span className="text-destructive">*</span>
             </Label>
@@ -126,6 +149,7 @@ export function RenewContractDialog({ open, onOpenChange, contract, form, onSubm
               Hủy
             </Button>
             <Button type="submit" disabled={isPending} className="cursor-pointer">
+              {isPending && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
               {isPending ? 'Đang gia hạn...' : 'Gia hạn'}
             </Button>
           </div>

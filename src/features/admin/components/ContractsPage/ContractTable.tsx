@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { fmtDate, fmtVnd } from '@/lib/date'
-import { ExternalLink, RefreshCw, XCircle } from 'lucide-react'
+import { ExternalLink, FileDown, RefreshCw, XCircle } from 'lucide-react'
 import type { EmploymentContractResponse } from '../../types/admin.types'
 
 const CONTRACT_TYPE_LABELS: Record<string, string> = {
@@ -34,9 +34,10 @@ interface ContractTableProps {
   isLoading: boolean
   onRenew: (contract: EmploymentContractResponse) => void
   onTerminate: (contract: EmploymentContractResponse) => void
+  onGenerate?: (contract: EmploymentContractResponse) => void
 }
 
-export function ContractTable({ contracts, isLoading, onRenew, onTerminate }: ContractTableProps) {
+export function ContractTable({ contracts, isLoading, onRenew, onTerminate, onGenerate }: ContractTableProps) {
   return (
     <div className="rounded-lg border bg-card flex flex-col overflow-hidden [&>[data-slot=table-container]]:overflow-y-auto [&>[data-slot=table-container]]:max-h-[calc(100vh-320px)]">
       <div className="contents">
@@ -84,6 +85,18 @@ export function ContractTable({ contracts, isLoading, onRenew, onTerminate }: Co
                   <TableCell className="text-sm tabular-nums text-right">{fmtVnd(contract.salary)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 justify-end">
+                      {contract.templateId && onGenerate && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 cursor-pointer"
+                          title="Tạo file từ mẫu"
+                          aria-label="Tạo file hợp đồng từ mẫu"
+                          onClick={() => onGenerate(contract)}
+                        >
+                          <FileDown className="h-3.5 w-3.5 text-muted-foreground" />
+                        </Button>
+                      )}
                       {contract.fileUrl && (
                         <a
                           href={contract.fileUrl}
@@ -103,6 +116,7 @@ export function ContractTable({ contracts, isLoading, onRenew, onTerminate }: Co
                             size="icon"
                             className="h-7 w-7 cursor-pointer"
                             title="Gia hạn"
+                            aria-label="Gia hạn hợp đồng"
                             onClick={() => onRenew(contract)}
                           >
                             <RefreshCw className="h-3.5 w-3.5" />
@@ -112,6 +126,7 @@ export function ContractTable({ contracts, isLoading, onRenew, onTerminate }: Co
                             size="icon"
                             className="h-7 w-7 cursor-pointer text-destructive hover:text-destructive"
                             title="Chấm dứt"
+                            aria-label="Chấm dứt hợp đồng"
                             onClick={() => onTerminate(contract)}
                           >
                             <XCircle className="h-3.5 w-3.5" />

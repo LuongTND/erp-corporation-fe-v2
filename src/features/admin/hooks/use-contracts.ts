@@ -60,6 +60,31 @@ export function useTerminateContract(userId: string) {
   })
 }
 
+export function useGenerateContract(userId: string) {
+  return useMutation({
+    mutationFn: async ({ contractId, dynamicData }: { contractId: string; dynamicData: Record<string, string> }) => {
+      const blob = await contractsService.generate(userId, contractId, dynamicData)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `hop-dong-${contractId.slice(0, 8)}.docx`
+      a.click()
+      URL.revokeObjectURL(url)
+    },
+    onSuccess: () => toast.success('Tải xuống file hợp đồng thành công'),
+    onError: () => toast.error('Tạo file hợp đồng thất bại'),
+  })
+}
+
+export function useSalaryComparison(userId: string) {
+  return useQuery({
+    queryKey: [KEY, 'salary-comparison', userId],
+    queryFn: () => contractsService.salaryComparison(userId),
+    enabled: !!userId,
+    staleTime: 60_000,
+  })
+}
+
 const TEMPLATE_KEY = 'contract-templates'
 
 export function useContractTemplates() {

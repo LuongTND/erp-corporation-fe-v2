@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { CurrencyInput } from '@/components/ui/currency-input'
@@ -181,6 +182,7 @@ export function CreateContractSheet({ open, onOpenChange, form, onSubmit, isPend
               Hủy
             </Button>
             <Button type="submit" disabled={isPending} className="cursor-pointer">
+              {isPending && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
               {isPending ? 'Đang tạo...' : 'Tạo hợp đồng'}
             </Button>
           </div>

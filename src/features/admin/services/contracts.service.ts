@@ -45,6 +45,12 @@ export const contractsService = {
   salaryComparison: (userId: string) =>
     apiCall.get<ContractSalaryComparisonResponse>(`/api/hrm/users/${userId}/contracts/salary-comparison`),
 
+  generate: async (userId: string, contractId: string, dynamicData: Record<string, string>): Promise<Blob> => {
+    const { api } = await import('@/lib/axios')
+    const res = await api.post(`/api/hrm/users/${userId}/contracts/${contractId}/generate`, { dynamicData }, { responseType: 'blob' })
+    return res.data
+  },
+
   listExpiring: (days = 30) =>
     apiCall.get<EmploymentContractResponse[]>('/api/hrm/contracts/expiring', { params: { days } }),
 }
@@ -61,8 +67,11 @@ export const contractTemplatesService = {
     return apiCall.post<ContractTemplateResponse>('/api/hrm/contract-templates', form)
   },
 
-  download: (id: string) =>
-    apiCall.get<Blob>(`/api/hrm/contract-templates/${id}/download`, { responseType: 'blob' }),
+  download: async (id: string): Promise<Blob> => {
+    const { api } = await import('@/lib/axios')
+    const res = await api.get(`/api/hrm/contract-templates/${id}/download`, { responseType: 'blob' })
+    return res.data
+  },
 
 
   delete: (id: string) =>
