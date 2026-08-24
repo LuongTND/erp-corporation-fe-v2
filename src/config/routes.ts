@@ -69,6 +69,7 @@ export const ROUTES = {
     PERMISSIONS: '/admin/permissions',
     DEPARTMENTS: '/admin/departments',
     JOB_LEVELS: '/admin/job-levels',
+    DEPARTMENT_JOB_LEVELS: '/admin/department-job-levels',
     EMPLOYEES: '/admin/employees',
     EMPLOYEE_DETAIL: '/admin/employees/:id',
     ROLE_HIERARCHY: '/admin/role-hierarchy',
@@ -85,6 +86,8 @@ export const ROUTES = {
     AUDIT_LOGS: '/admin/audit-logs',
     CONTRACTS: '/admin/contracts',
     CONTRACT_TEMPLATES: '/admin/contract-templates',
+    LABELS: '/admin/labels',
+    RECRUITMENT_APPROVER_CONFIGS: '/admin/recruitment-approver-configs',
   },
 
   // ── HR Manager ──

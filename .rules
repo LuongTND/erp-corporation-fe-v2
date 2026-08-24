@@ -71,7 +71,7 @@ Page → owns all API hooks (useQuery / useMutation) + server state
 
 ## Error Handling
 - Never swallow errors silently.
-- Always: `console.error(error)` + `toast.error('...')` via Sonner.
+- Always: `logger.error(error)` (from `@/lib/logger`) + `toast.error('...')` via Sonner. Never use `console.error` or `console.log` directly — use `logger.*` instead. `logger` strips stack traces in prod automatically.
 - All async operations handle 3 states: `loading`, `error`, `success`.
 - Use early returns for loading/error to keep render clean.
 

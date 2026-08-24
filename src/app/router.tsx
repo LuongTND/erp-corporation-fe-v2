@@ -54,6 +54,7 @@ const AIChatbotPage = lazy(() => import('@/features/ai-chatbot/pages/AIChatbotPa
 const AdminRolesPage = lazy(() => import('@/features/admin/pages/RolesPage'))
 const AdminDepartmentsPage = lazy(() => import('@/features/admin/pages/DepartmentsPage'))
 const AdminJobLevelsPage = lazy(() => import('@/features/admin/pages/JobLevelsPage'))
+const AdminDepartmentJobLevelsPage = lazy(() => import('@/features/admin/pages/DepartmentJobLevelsPage'))
 const AdminEmployeesPage = lazy(() => import('@/features/admin/pages/EmployeesPage'))
 const AdminCustomFieldsPage = lazy(() => import('@/features/admin/pages/CustomFieldsPage'))
 const AdminEmployeeTypesPage = lazy(() => import('@/features/admin/pages/EmployeeTypesPage'))
@@ -65,6 +66,8 @@ const AdminPayrollRunDetailPage = lazy(() => import('@/features/admin/pages/Payr
 const AdminAuditLogsPage = lazy(() => import('@/features/admin/pages/AuditLogsPage'))
 const AdminContractsPage = lazy(() => import('@/features/admin/pages/ContractsPage'))
 const AdminContractTemplatesPage = lazy(() => import('@/features/admin/pages/ContractTemplatesPage'))
+const AdminLabelsPage = lazy(() => import('@/features/admin/pages/LabelsPage'))
+const AdminRecruitmentApproverConfigsPage = lazy(() => import('@/features/admin/pages/RecruitmentApproverConfigsPage'))
 const AdminProfileComponentsPage = lazy(() => import('@/features/admin/pages/ProfileComponentsPage'))
 const HRManagerContractsPage = lazy(() => import('@/features/admin/pages/HRManagerContractsPage'))
 const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
@@ -246,6 +249,14 @@ export const router = createBrowserRouter([
                 ),
               },
               {
+                path: ROUTES.ADMIN.DEPARTMENT_JOB_LEVELS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminDepartmentJobLevelsPage />
+                  </Suspense>
+                ),
+              },
+              {
                 path: ROUTES.ADMIN.EMPLOYEE_TYPES,
                 element: (
                   <Suspense fallback={<PageFallback />}>
@@ -298,6 +309,22 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminContractTemplatesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.LABELS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminLabelsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.RECRUITMENT_APPROVER_CONFIGS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminRecruitmentApproverConfigsPage />
                   </Suspense>
                 ),
               },

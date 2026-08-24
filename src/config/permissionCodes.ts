@@ -73,6 +73,7 @@ export const P = {
   REGIONS_SYNC: 'hrm:regions:sync',
   REGIONS_VIEW_HOURS: 'hrm:regions:view-hours',
   REGIONS_UPDATE_HOURS: 'hrm:regions:update-hours',
+  REGIONS_ASSIGN_MANAGER: 'hrm:regions:assign-manager',
 
   // Counters
   COUNTERS_VIEW: 'hrm:counters:view-list',
@@ -142,6 +143,10 @@ export const P = {
   CONTRACT_TERMINATE: 'hrm:contract:terminate',
   CONTRACT_GENERATE_FILE: 'hrm:contract:generate-file',
   CONTRACT_UPLOAD_SCAN: 'hrm:contract:upload-scan',
+
+  // Recruitment Approver Config
+  RECRUITMENT_APPROVER_VIEW: 'hrm:recruitment:approver-config:view',
+  RECRUITMENT_APPROVER_MANAGE: 'hrm:recruitment:approver-config:manage',
 
   // Contract Templates
   CONTRACT_TEMPLATES_VIEW: 'hrm:contract-templates:view',
