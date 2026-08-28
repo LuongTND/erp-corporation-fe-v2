@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth.store'
 import { authService, type LoginRequest } from '@/features/auth/services/auth.service'
-import { ROLE_REDIRECTS } from '@/config/auth.config'
 import { ROUTES } from '@/config/routes'
 
 export const useAuth = () => {
@@ -33,16 +32,13 @@ export const useAuth = () => {
             email: profile.email,
             role: profile.role ?? '',
             permissions: permissions ?? [],
-            avatar: undefined,
+            avatar: profile.avatarUrl,
           },
           accessToken,
           refreshToken,
         )
 
         toast.success('Đăng nhập thành công')
-
-        const redirectPath = ROLE_REDIRECTS[profile.role ?? ''] || ROUTES.DASHBOARD
-        navigate(redirectPath)
       } catch (error: any) {
         localStorage.removeItem('access_token')
         localStorage.removeItem('refresh_token')
