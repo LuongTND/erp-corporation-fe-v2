@@ -30,7 +30,7 @@ export function RoleDialog({ open, isEdit, form, onSubmit, onOpenChange, isPendi
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
           <div className="space-y-1.5">
             <Label htmlFor="roleName">Tên role (code) <span aria-hidden="true" className="text-destructive">*</span></Label>
-            <Input id="roleName" {...register('roleName')} placeholder="vd: hr-manager" disabled={isEdit} />
+            <Input id="roleName" {...register('roleName')} placeholder="vd: hr-manager" disabled={isEdit} className="font-mono" />
             {errors.roleName && <p className="text-xs text-destructive">{errors.roleName.message}</p>}
           </div>
           <div className="space-y-1.5">

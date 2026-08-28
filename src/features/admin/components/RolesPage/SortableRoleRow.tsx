@@ -18,15 +18,12 @@ interface Props {
   onUsers: (role: RoleResponse) => void
 }
 
-const DESC_LIMIT = 40
-
 function DescriptionCell({ text }: { text?: string }) {
   if (!text) return <span className="text-muted-foreground/40">—</span>
-  if (text.length <= DESC_LIMIT) return <span>{text}</span>
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <span className="cursor-default">{text.slice(0, DESC_LIMIT)}…</span>
+        <span className="block truncate cursor-default max-w-[180px]">{text}</span>
       </TooltipTrigger>
       <TooltipContent className="max-w-xs">{text}</TooltipContent>
     </Tooltip>
@@ -63,7 +60,7 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
 
       <TableCell className="font-medium">{role.roleName}</TableCell>
       <TableCell className="hidden md:table-cell text-sm">{role.displayName ?? <span className="text-muted-foreground/40">—</span>}</TableCell>
-      <TableCell className="hidden lg:table-cell text-muted-foreground text-sm max-w-[180px]">
+      <TableCell className="hidden lg:table-cell text-muted-foreground text-sm">
         <DescriptionCell text={role.description} />
       </TableCell>
       <TableCell className="hidden sm:table-cell">
