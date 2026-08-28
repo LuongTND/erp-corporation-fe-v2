@@ -27,6 +27,10 @@ export const ROUTES = {
     KPI: '/hr/kpi',
     LEAVE: '/hr/leave',
     ORG_CHART: '/hr/org-chart',
+    RECRUITMENT: '/hr/recruitment',
+    RECRUITMENT_DETAIL: '/hr/recruitment/:id',
+    CANDIDATES: '/hr/candidates',
+    JOB_POSTINGS: '/hr/job-postings',
   },
 
   // ── LMS ──
@@ -57,6 +61,9 @@ export const ROUTES = {
     PROMOTIONS: '/customer/promotions',
     AI_CHATBOT: '/customer/chatbot',
   },
+
+  // ── My Profile (NV self) ──
+  PROFILE: '/me',
 
   // ── Store Manager Portal ──
   STORE_MANAGER: '/store-manager',

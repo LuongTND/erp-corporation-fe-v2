@@ -39,7 +39,7 @@ export const adminNav: NavSection[] = [
       { icon: Users2, label: 'Chức danh & Vị trí', href: ROUTES.ADMIN.JOB_LEVELS, permission: P.JOB_LEVELS_VIEW },
       { icon: FileText, label: 'Hợp đồng lao động', href: ROUTES.ADMIN.CONTRACTS, permission: P.CONTRACT_VIEW },
       { icon: FilePlus2, label: 'Mẫu hợp đồng', href: ROUTES.ADMIN.CONTRACT_TEMPLATES, permission: P.CONTRACT_TEMPLATES_VIEW },
-      { icon: Tag,       label: 'Nhãn nhân viên',          href: ROUTES.ADMIN.LABELS },
+      { icon: Tag,       label: 'Nhãn nhân viên',          href: ROUTES.ADMIN.LABELS, permission: P.LABELS_MANAGE },
       { icon: UserCheck, label: 'Người duyệt tuyển dụng', href: ROUTES.ADMIN.RECRUITMENT_APPROVER_CONFIGS, permission: P.RECRUITMENT_APPROVER_VIEW },
       { icon: Sliders, label: 'Thành phần hồ sơ', href: ROUTES.ADMIN.PROFILE_COMPONENTS, permission: P.EMPLOYEE_TYPES_VIEW },
     ],
@@ -48,7 +48,7 @@ export const adminNav: NavSection[] = [
     label: 'Hiệu suất & Lương',
     items: [
       { icon: TrendingUp, label: 'Quản lý KPI', href: ROUTES.ADMIN.KPI_ENTRIES, permission: P.KPI_ENTRIES_VIEW },
-      { icon: BarChart3, label: 'Bảng lương & Đãi ngộ', href: ROUTES.ADMIN.PAYROLL_RUNS, permission: P.KPI_ENTRIES_VIEW },
+      { icon: BarChart3, label: 'Bảng lương & Đãi ngộ', href: ROUTES.ADMIN.PAYROLL_RUNS, permission: P.PAYROLL_RUNS_VIEW },
     ],
   },
   {

@@ -35,12 +35,18 @@ export const P = {
   USERS_REMOVE_DEPARTMENT: 'hrm:users:remove-department',
   USERS_TRANSFER_DEPARTMENT: 'hrm:users:transfer-department',
   USERS_ASSIGN_EMPLOYEE_TYPE: 'hrm:users:assign-employee-type',
+  USERS_REMOVE_JOB_LEVEL: 'hrm:users:remove-job-level',
   USERS_UPDATE_CUSTOM_FIELDS: 'hrm:users:update-custom-fields',
 
   // Documents
   DOCUMENTS_VIEW: 'hrm:documents:view',
   DOCUMENTS_UPLOAD: 'hrm:documents:upload',
   DOCUMENTS_DELETE: 'hrm:documents:delete',
+
+  // Labels
+  LABELS_VIEW: 'hrm:labels:view',
+  LABELS_MANAGE: 'hrm:labels:manage',
+  LABELS_ASSIGN: 'hrm:labels:assign',
 
   // Departments
   DEPARTMENTS_VIEW: 'hrm:departments:view-list',
@@ -148,9 +154,36 @@ export const P = {
   RECRUITMENT_APPROVER_VIEW: 'hrm:recruitment:approver-config:view',
   RECRUITMENT_APPROVER_MANAGE: 'hrm:recruitment:approver-config:manage',
 
+  // Recruitment Requests
+  RECRUITMENT_REQUEST_VIEW: 'hrm:recruitment:request:view',
+  RECRUITMENT_REQUEST_CREATE: 'hrm:recruitment:request:create',
+  RECRUITMENT_REQUEST_UPDATE: 'hrm:recruitment:request:update',
+  RECRUITMENT_REQUEST_SUBMIT: 'hrm:recruitment:request:submit',
+  RECRUITMENT_REQUEST_APPROVE: 'hrm:recruitment:request:approve',
+  RECRUITMENT_REQUEST_REJECT: 'hrm:recruitment:request:reject',
+  RECRUITMENT_REQUEST_MORE_INFO: 'hrm:recruitment:request:more-info',
+  RECRUITMENT_REQUEST_HISTORY: 'hrm:recruitment:request:history',
+
+  // Job Postings
+  RECRUITMENT_POSTING_MANAGE: 'hrm:recruitment:posting:manage',
+  RECRUITMENT_POSTING_PAID_CREATE: 'hrm:recruitment:posting:paid-create',
+  RECRUITMENT_POSTING_PAID_APPROVE: 'hrm:recruitment:posting:paid-approve',
+
+  // Candidates
+  RECRUITMENT_CANDIDATE_VIEW: 'hrm:recruitment:candidate:view',
+  RECRUITMENT_CANDIDATE_CREATE: 'hrm:recruitment:candidate:create',
+  RECRUITMENT_CANDIDATE_UPDATE: 'hrm:recruitment:candidate:update',
+  RECRUITMENT_CANDIDATE_UPLOAD_CV: 'hrm:recruitment:candidate:upload-cv',
+  RECRUITMENT_CANDIDATE_SCREEN: 'hrm:recruitment:candidate:screen',
+  RECRUITMENT_CANDIDATE_ASSIGN: 'hrm:recruitment:candidate:assign',
+  RECRUITMENT_CANDIDATE_EVALUATE: 'hrm:recruitment:candidate:evaluate',
+  RECRUITMENT_CANDIDATE_REJECT: 'hrm:recruitment:candidate:reject',
+  RECRUITMENT_CANDIDATE_HIRE: 'hrm:recruitment:candidate:hire',
+
   // Contract Templates
   CONTRACT_TEMPLATES_VIEW: 'hrm:contract-templates:view',
   CONTRACT_TEMPLATES_UPLOAD: 'hrm:contract-templates:upload',
+  CONTRACT_TEMPLATES_DOWNLOAD: 'hrm:contract-templates:download',
   CONTRACT_TEMPLATES_UPDATE_SCHEMA: 'hrm:contract-templates:update-schema',
   CONTRACT_TEMPLATES_DELETE: 'hrm:contract-templates:delete',
 } as const

@@ -71,6 +71,11 @@ const AdminRecruitmentApproverConfigsPage = lazy(() => import('@/features/admin/
 const AdminProfileComponentsPage = lazy(() => import('@/features/admin/pages/ProfileComponentsPage'))
 const HRManagerContractsPage = lazy(() => import('@/features/admin/pages/HRManagerContractsPage'))
 const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
+const MyProfilePage = lazy(() => import('@/features/hr/pages/MyProfilePage'))
+const RecruitmentRequestsPage = lazy(() => import('@/features/hr/pages/RecruitmentRequestsPage'))
+const RecruitmentRequestDetailPage = lazy(() => import('@/features/hr/pages/RecruitmentRequestDetailPage'))
+const CandidatesListPage = lazy(() => import('@/features/hr/pages/CandidatesListPage'))
+const JobPostingsPage = lazy(() => import('@/features/hr/pages/JobPostingsPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -208,6 +213,41 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <OrgChartPage />
+                  </Suspense>
+                ),
+              },
+
+              // ── Recruitment Module ──
+              {
+                path: ROUTES.HR.RECRUITMENT,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <RecruitmentRequestsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.RECRUITMENT_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <RecruitmentRequestDetailPage />
+                  </Suspense>
+                ),
+              },
+
+              {
+                path: ROUTES.HR.CANDIDATES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CandidatesListPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.JOB_POSTINGS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <JobPostingsPage />
                   </Suspense>
                 ),
               },
@@ -394,6 +434,16 @@ export const router = createBrowserRouter([
               //   ),
               // },
               // ponytail: Cơ cấu tổ chức merged into Phòng ban tab
+
+              // ── My Profile (NV self) ──
+              {
+                path: ROUTES.PROFILE,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <MyProfilePage />
+                  </Suspense>
+                ),
+              },
 
               // ── Store Manager Portal ──
               {

@@ -1,0 +1,88 @@
+import { apiCall } from '@/lib/api'
+import type { PaginatedResponse } from '@/types/api'
+import type {
+  RecruitmentRequestSummary,
+  RecruitmentRequestDetail,
+  CreateRecruitmentRequestPayload,
+  RecruitmentRequestListParams,
+  CandidateSummary,
+  CandidateDetail,
+  CreateCandidatePayload,
+  EvaluateCandidatePayload,
+  JobPostingSummary,
+  CreateJobPostingPayload,
+  JobPostingListParams,
+} from '../types/recruitment.types'
+
+const BASE = '/api/recruitment-requests'
+const CANDIDATES = '/api/candidates'
+const JOB_POSTINGS = '/api/job-postings'
+
+export const recruitmentService = {
+  getRequests: (params?: RecruitmentRequestListParams) =>
+    apiCall.get<PaginatedResponse<RecruitmentRequestSummary>>(BASE, { params }),
+
+  getRequest: (id: string) =>
+    apiCall.get<RecruitmentRequestDetail>(`${BASE}/${id}`),
+
+  createRequest: (data: CreateRecruitmentRequestPayload) =>
+    apiCall.post<RecruitmentRequestDetail>(BASE, data),
+
+  updateRequest: (id: string, data: Partial<CreateRecruitmentRequestPayload>) =>
+    apiCall.put<void>(`${BASE}/${id}`, data),
+
+  submitRequest: (id: string) =>
+    apiCall.post<void>(`${BASE}/${id}/submit`),
+
+  approveRequest: (id: string, note?: string) =>
+    apiCall.post<void>(`${BASE}/${id}/approve`, { note }),
+
+  rejectRequest: (id: string, note: string) =>
+    apiCall.post<void>(`${BASE}/${id}/reject`, { note }),
+
+  requestMoreInfo: (id: string, note: string) =>
+    apiCall.post<void>(`${BASE}/${id}/request-more-info`, { note }),
+
+  getCandidates: (params?: { requestId?: string; stage?: string }) =>
+    apiCall.get<PaginatedResponse<CandidateSummary>>(CANDIDATES, { params }),
+
+  getCandidate: (id: string) =>
+    apiCall.get<CandidateDetail>(`${CANDIDATES}/${id}`),
+
+  createCandidate: (data: CreateCandidatePayload) =>
+    apiCall.post<CandidateDetail>(CANDIDATES, data),
+
+  uploadCv: (id: string, file: File) => {
+    const form = new FormData()
+    form.append('file', file)
+    return apiCall.post<void>(`${CANDIDATES}/${id}/upload-cv`, form, {
+      headers: { 'Content-Type': undefined },
+    })
+  },
+
+  screenCandidate: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/screen`),
+
+  assignCandidateToStore: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-to-store`),
+
+  assignToProduction: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-to-production`),
+
+  evaluateCandidate: (id: string, data: EvaluateCandidatePayload) =>
+    apiCall.post<void>(`${CANDIDATES}/${id}/evaluate`, data),
+
+  rejectCandidate: (id: string, note?: string) =>
+    apiCall.post<void>(`${CANDIDATES}/${id}/reject`, { note }),
+
+  hireCandidate: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/hire`),
+
+  getJobPostings: (params?: JobPostingListParams) =>
+    apiCall.get<PaginatedResponse<JobPostingSummary>>(JOB_POSTINGS, { params }),
+
+  createJobPosting: (data: CreateJobPostingPayload) =>
+    apiCall.post<JobPostingSummary>(JOB_POSTINGS, data),
+
+  approvePostingCost: (id: string) =>
+    apiCall.post<void>(`${JOB_POSTINGS}/${id}/approve-cost`),
+
+  rejectPostingCost: (id: string, note?: string) =>
+    apiCall.post<void>(`${JOB_POSTINGS}/${id}/reject-cost`, { note }),
+}
