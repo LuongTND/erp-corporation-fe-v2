@@ -1,4 +1,17 @@
 const API_ROUTES = {
+  AUTH: {
+    LOGIN:        '/api/auth/login',
+    REFRESH:      '/api/auth/refresh',
+    LOGOUT:       '/api/auth/logout',
+    ME:           '/api/auth/me',
+    ME_DETAIL:    '/api/auth/me/detail',   // hồ sơ đầy đủ của nhân viên đang đăng nhập — không cần permission
+    ME_SALARY:    '/api/auth/me/salary',   // lương hiện tại của nhân viên đang đăng nhập — không cần permission
+    ME_PROFILE:   '/api/auth/me/profile',  // nhân viên tự cập nhật cá nhân/giấy tờ/tài chính
+    PERMISSIONS:  '/api/auth/me/permissions',
+    CHANGE_PASSWORD: '/api/auth/change-password',
+  },
+
+
   TASK_PRIORITIES: {
     BASE: '/api/task-priorities',
     GET_ALL: '/api/task-priorities',
@@ -41,6 +54,19 @@ const API_ROUTES = {
     BULK_CREATE: '/api/tasks/bulk',
     DUPLICATE: (id: string) => `/api/tasks/${id}/duplicate`,
   },
+  EMPLOYEE_DOCUMENTS: {
+    LIST:             (userId: string) => `/api/users/${userId}/documents`,
+    UPLOAD:           (userId: string) => `/api/users/${userId}/documents`,
+    DELETE:           (userId: string, documentId: string) => `/api/users/${userId}/documents/${documentId}`,
+    TOGGLE_VISIBILITY: (userId: string, documentId: string) => `/api/users/${userId}/documents/${documentId}/visibility`,
+  },
+
+  MY_DOCUMENTS: {
+    LIST:   '/api/me/documents',
+    UPLOAD: '/api/me/documents',
+    DELETE: (documentId: string) => `/api/me/documents/${documentId}`,
+  },
+
   SALARY: {
     CURRENT:  (userId: string) => `/api/hrm/users/${userId}/salary/current`,
     HISTORY:  (userId: string) => `/api/hrm/users/${userId}/salary/history`,

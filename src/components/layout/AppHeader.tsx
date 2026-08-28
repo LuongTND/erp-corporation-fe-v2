@@ -21,10 +21,13 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import { CurrentTime } from './CurrentTime'
 import { NotificationPopover } from './NotificationPopover'
+import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/config/routes'
 
 export function AppHeader() {
   const { theme, setTheme } = useTheme()
   const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -98,7 +101,7 @@ export function AppHeader() {
           <DropdownMenuSeparator />
 
           <DropdownMenuGroup>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={() => navigate(ROUTES.PROFILE)}>
               <UserIcon className="mr-2 h-4 w-4" />
               <span>Hồ sơ cá nhân</span>
             </DropdownMenuItem>
