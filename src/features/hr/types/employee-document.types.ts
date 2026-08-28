@@ -17,6 +17,11 @@ export const DOCUMENT_CATEGORIES = [
 
 export type DocumentCategoryValue = typeof DOCUMENT_CATEGORIES[number]['value']
 
+export const EMPLOYEE_ALLOWED_CATEGORIES = [
+  'IdentityCard', 'HouseholdBook', 'JudicialRecord', 'HealthCertificate',
+  'Degree', 'Certificate', 'DriversLicense', 'FoodSafetyCertificate', 'Other',
+] as const
+
 export interface EmployeeDocumentResponse {
   id: string
   category: string
@@ -32,6 +37,8 @@ export interface EmployeeDocumentResponse {
   createdAt: string
   isExpired: boolean
   isExpiringSoon: boolean
+  isVisibleToEmployee: boolean
+  uploadedById?: string
 }
 
 export interface UploadDocumentPayload {
@@ -41,4 +48,5 @@ export interface UploadDocumentPayload {
   issuedDate?: string
   expiryDate?: string
   notes?: string
+  isVisibleToEmployee?: boolean
 }

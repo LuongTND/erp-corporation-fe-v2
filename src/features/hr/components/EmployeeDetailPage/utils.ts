@@ -65,6 +65,7 @@ export function mapToEmployeeDetail(dto: UserDetailDto): EmployeeDetail {
       accountNumberMasked: dto.employment?.bankAccountNumber
         ? `**** ${dto.employment.bankAccountNumber.slice(-4)}`
         : '—',
+      bankBranch: dto.employment?.bankBranch,
     },
     socialInsuranceNumber: dto.employment?.socialInsuranceCode ?? '—',
     taxCode: dto.employment?.taxCode ?? '—',

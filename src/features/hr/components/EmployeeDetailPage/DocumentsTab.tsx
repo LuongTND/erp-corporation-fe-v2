@@ -8,12 +8,14 @@ import { DocCard, UploadDialog } from './Documents'
 interface Props {
   docs: EmployeeDocumentResponse[]
   isLoading: boolean
+  employeeId: string
   onUpload: (payload: UploadDocumentPayload, callbacks: { onSuccess: () => void }) => void
   onDelete: (id: string) => void
+  onToggleVisibility: (documentId: string, isVisible: boolean) => void
   isUploading: boolean
 }
 
-export function DocumentsTab({ docs, isLoading, onUpload, onDelete, isUploading }: Props) {
+export function DocumentsTab({ docs, isLoading, employeeId, onUpload, onDelete, onToggleVisibility, isUploading }: Props) {
   const [uploadOpen, setUploadOpen] = useState(false)
 
   return (
@@ -42,12 +44,19 @@ export function DocumentsTab({ docs, isLoading, onUpload, onDelete, isUploading 
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {docs.map(doc => (
-            <DocCard key={doc.id} doc={doc} onDelete={() => onDelete(doc.id)} />
+            <DocCard
+              key={doc.id}
+              doc={doc}
+              onDelete={() => onDelete(doc.id)}
+              onToggleVisibility={doc.uploadedById !== employeeId
+                ? (isVisible) => onToggleVisibility(doc.id, isVisible)
+                : undefined}
+            />
           ))}
         </div>
       )}
 
-      <UploadDialog open={uploadOpen} onClose={() => setUploadOpen(false)} onUpload={onUpload} isUploading={isUploading} />
+      <UploadDialog open={uploadOpen} onClose={() => setUploadOpen(false)} onUpload={onUpload} isUploading={isUploading} showVisibilityToggle />
     </div>
   )
 }

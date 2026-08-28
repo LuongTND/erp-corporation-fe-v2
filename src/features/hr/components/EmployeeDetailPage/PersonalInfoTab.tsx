@@ -108,6 +108,7 @@ export function PersonalInfoTab({ employee, customFields = [], customFieldDefini
   const financeFields: FieldDef[] = [
     { label: 'Ngân hàng',     value: employee.bankAccount.bankName },
     { label: 'Số tài khoản',  value: employee.bankAccount.accountNumberMasked, type: 'mono' },
+    { label: 'Chi nhánh',     value: employee.bankAccount.bankBranch ?? '' },
     { label: 'Mã số thuế',    value: employee.taxCode },
     { label: 'Số BHXH',       value: employee.socialInsuranceNumber },
   ]

@@ -10,6 +10,7 @@ export type ActivityType = 'edit' | 'approved' | 'leave' | 'warning'
 export interface BankAccount {
   bankName: string
   accountNumberMasked: string
+  bankBranch?: string
 }
 
 export interface ITEquipment {

@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ROUTES } from '@/config/routes'
 import { useEmployeeDetail, useUpdateEmployee, useUpsertCustomFields, useUploadAvatar } from '../hooks/use-employee-detail'
 import { useCurrentSalary, useSalaryHistory, useSetSalary } from '../hooks/use-salary'
-import { useEmployeeDocuments, useUploadDocument, useDeleteDocument } from '../hooks/use-employee-documents'
+import { useEmployeeDocuments, useUploadDocument, useDeleteDocument, useToggleDocumentVisibility } from '../hooks/use-employee-documents'
 import { useUserStatusHistory, useUpdateUserStatus } from '../hooks/use-user-status'
 import { useWorkHistory, useLockEmployee } from '../hooks/use-work-history'
 import { useCustomFields } from '@/features/admin/hooks/use-custom-fields'
@@ -62,6 +62,7 @@ export default function EmployeeDetailPage() {
   const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar(id ?? '')
   const { mutate: uploadDocument, isPending: isUploading } = useUploadDocument(id ?? '')
   const { mutate: deleteDocument } = useDeleteDocument(id ?? '')
+  const { mutate: toggleVisibility } = useToggleDocumentVisibility(id ?? '')
   const { mutate: setSalary, isPending: isPendingSalary } = useSetSalary(id ?? '')
   const { mutate: updateStatus, isPending: isPendingStatusUpdate } = useUpdateUserStatus(id ?? '')
   const { mutate: lockEmployee } = useLockEmployee(id ?? '')
@@ -154,7 +155,7 @@ export default function EmployeeDetailPage() {
             <TabsContent value="attendance">{visited.has('attendance') && <AttendanceTab />}</TabsContent>
             <TabsContent value="payroll">{visited.has('payroll') && <PayrollTab current={currentSalary ?? undefined} loadingCurrent={loadingCurrentSalary} history={salaryHistory} onSetSalary={handleSetSalary} isPendingSalary={isPendingSalary} />}</TabsContent>
             <TabsContent value="kpi">{visited.has('kpi') && <KpiTab />}</TabsContent>
-            <TabsContent value="documents">{visited.has('documents') && <DocumentsTab docs={docs} isLoading={isLoadingDocs} onUpload={handleUploadDocument} onDelete={deleteDocument} isUploading={isUploading} />}</TabsContent>
+            <TabsContent value="documents">{visited.has('documents') && <DocumentsTab docs={docs} isLoading={isLoadingDocs} employeeId={id ?? ''} onUpload={handleUploadDocument} onDelete={deleteDocument} onToggleVisibility={(documentId, isVisible) => toggleVisibility({ documentId, isVisibleToEmployee: isVisible })} isUploading={isUploading} />}</TabsContent>
             <TabsContent value="status">
               {visited.has('status') && (
                 // ponytail: dto.status is string from BE enum — safe cast, matches UserStatus values

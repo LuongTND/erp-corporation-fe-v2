@@ -36,3 +36,13 @@ export function useDeleteDocument(userId: string) {
     onError: () => toast.error('Xóa thất bại'),
   })
 }
+
+export function useToggleDocumentVisibility(userId: string) {
+  const client = useQueryClient()
+  return useMutation({
+    mutationFn: ({ documentId, isVisibleToEmployee }: { documentId: string; isVisibleToEmployee: boolean }) =>
+      employeesService.toggleDocumentVisibility(userId, documentId, isVisibleToEmployee),
+    onSuccess: () => client.invalidateQueries({ queryKey: docsKey(userId) }),
+    onError: () => toast.error('Cập nhật hiển thị thất bại'),
+  })
+}

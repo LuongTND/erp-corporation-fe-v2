@@ -65,6 +65,27 @@ export interface UserDetailDto {
   labels?: import('@/features/admin/types/admin.types').LabelResponse[]
 }
 
+export interface UpdateMyProfilePayload {
+  // Profile
+  gender?: string
+  dateOfBirth?: string
+  phoneNumber?: string
+  permanentAddress?: string
+  currentAddress?: string
+  // Identity
+  identityCardNumber?: string
+  identityCardIssuedDate?: string
+  identityCardIssuedPlace?: string
+  passportNumber?: string
+  passportExpiryDate?: string
+  // Financial
+  taxCode?: string
+  socialInsuranceCode?: string
+  bankName?: string
+  bankAccountNumber?: string
+  bankBranch?: string
+}
+
 export interface UpdateEmployeePayload {
   fullName: string
   jobLevelId?: string | null

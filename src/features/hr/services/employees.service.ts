@@ -1,5 +1,6 @@
 import { apiCall } from '@/lib/api'
 import { api } from '@/lib/axios'
+import { API_ROUTES } from '@/config/api-routes'
 import type { UserSummaryResponse } from '@/features/admin/types/admin.types'
 import type { UserDetailDto, UpdateEmployeePayload } from '../types/user-detail.types'
 import type { UserStatusHistoryItem } from '../types/user-status.types'
@@ -33,7 +34,7 @@ export const employeesService = {
     apiCall.get<UserStatusHistoryItem[]>(`/api/users/${userId}/status-history`),
 
   getDocuments: (userId: string) =>
-    apiCall.get<EmployeeDocumentResponse[]>(`/api/users/${userId}/documents`),
+    apiCall.get<EmployeeDocumentResponse[]>(API_ROUTES.EMPLOYEE_DOCUMENTS.LIST(userId)),
 
   uploadDocument: (userId: string, payload: UploadDocumentPayload) => {
     const form = new FormData()
@@ -43,13 +44,38 @@ export const employeesService = {
     if (payload.issuedDate) form.append('issuedDate', payload.issuedDate)
     if (payload.expiryDate) form.append('expiryDate', payload.expiryDate)
     if (payload.notes) form.append('notes', payload.notes)
-    return apiCall.post<EmployeeDocumentResponse>(`/api/users/${userId}/documents`, form, {
+    if (payload.isVisibleToEmployee !== undefined) form.append('isVisibleToEmployee', String(payload.isVisibleToEmployee))
+    return apiCall.post<EmployeeDocumentResponse>(API_ROUTES.EMPLOYEE_DOCUMENTS.UPLOAD(userId), form, {
       headers: { 'Content-Type': undefined },
     })
   },
 
   deleteDocument: (userId: string, documentId: string) =>
-    apiCall.delete<void>(`/api/users/${userId}/documents/${documentId}`),
+    apiCall.delete<void>(API_ROUTES.EMPLOYEE_DOCUMENTS.DELETE(userId, documentId)),
+
+  toggleDocumentVisibility: (userId: string, documentId: string, isVisibleToEmployee: boolean) =>
+    apiCall.patch<void>(API_ROUTES.EMPLOYEE_DOCUMENTS.TOGGLE_VISIBILITY(userId, documentId), JSON.stringify(isVisibleToEmployee), {
+      headers: { 'Content-Type': 'application/json' },
+    }),
+
+  getMyDocuments: () =>
+    apiCall.get<EmployeeDocumentResponse[]>(API_ROUTES.MY_DOCUMENTS.LIST),
+
+  uploadMyDocument: (payload: UploadDocumentPayload) => {
+    const form = new FormData()
+    form.append('file', payload.file)
+    form.append('category', payload.category)
+    if (payload.customName) form.append('customName', payload.customName)
+    if (payload.issuedDate) form.append('issuedDate', payload.issuedDate)
+    if (payload.expiryDate) form.append('expiryDate', payload.expiryDate)
+    if (payload.notes) form.append('notes', payload.notes)
+    return apiCall.post<EmployeeDocumentResponse>(API_ROUTES.MY_DOCUMENTS.UPLOAD, form, {
+      headers: { 'Content-Type': undefined },
+    })
+  },
+
+  deleteMyDocument: (documentId: string) =>
+    apiCall.delete<void>(API_ROUTES.MY_DOCUMENTS.DELETE(documentId)),
 
   uploadAvatar: (userId: string, file: File) => {
     const form = new FormData()

@@ -6,28 +6,38 @@ import {
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import { DatePickerField } from '../DatePickerField'
-import { DOCUMENT_CATEGORIES, type UploadDocumentPayload } from '../../../types/employee-document.types'
+import { DOCUMENT_CATEGORIES, type DocumentCategoryValue, type UploadDocumentPayload } from '../../../types/employee-document.types'
 
 interface Props {
   open: boolean
   onClose: () => void
   onUpload: (payload: UploadDocumentPayload, callbacks: { onSuccess: () => void }) => void
   isUploading: boolean
+  /** Chỉ cho phép upload các category này; undefined = tất cả */
+  allowedCategories?: readonly string[]
+  /** Hiển thị toggle "Nhân viên xem được" (chỉ HR dùng) */
+  showVisibilityToggle?: boolean
 }
 
-export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
+export function UploadDialog({ open, onClose, onUpload, isUploading, allowedCategories, showVisibilityToggle }: Props) {
   const [file, setFile] = useState<File | null>(null)
   const [category, setCategory] = useState('')
   const [customName, setCustomName] = useState('')
   const [issuedDate, setIssuedDate] = useState('')
   const [expiryDate, setExpiryDate] = useState('')
   const [notes, setNotes] = useState('')
+  const [isVisibleToEmployee, setIsVisibleToEmployee] = useState(false)
   const [errors, setErrors] = useState<{ file?: string; category?: string }>({})
   const fileRef = useRef<HTMLInputElement>(null)
+
+  const visibleCategories = allowedCategories
+    ? DOCUMENT_CATEGORIES.filter(c => allowedCategories.includes(c.value as DocumentCategoryValue))
+    : DOCUMENT_CATEGORIES
 
   const reset = () => {
     setFile(null)
@@ -36,6 +46,7 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
     setIssuedDate('')
     setExpiryDate('')
     setNotes('')
+    setIsVisibleToEmployee(false)
     setErrors({})
     if (fileRef.current) fileRef.current.value = ''
   }
@@ -48,7 +59,7 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
     if (!file) errs.file = 'Vui lòng chọn tệp'
     if (errs.category || errs.file || !file) { setErrors(errs); return }
     onUpload(
-      { file, category, customName: customName || undefined, issuedDate: issuedDate || undefined, expiryDate: expiryDate || undefined, notes: notes || undefined },
+      { file, category, customName: customName || undefined, issuedDate: issuedDate || undefined, expiryDate: expiryDate || undefined, notes: notes || undefined, isVisibleToEmployee },
       { onSuccess: handleClose },
     )
   }
@@ -68,7 +79,7 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
             <Select value={category} onValueChange={(v) => { setCategory(v); setErrors((e) => ({ ...e, category: undefined })) }}>
               <SelectTrigger className={errors.category ? 'border-destructive' : ''}><SelectValue placeholder="Chọn loại..." /></SelectTrigger>
               <SelectContent align="start" sideOffset={4}>
-                {DOCUMENT_CATEGORIES.map((c) => (
+                {visibleCategories.map((c) => (
                   <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                 ))}
               </SelectContent>
@@ -116,6 +127,16 @@ export function UploadDialog({ open, onClose, onUpload, isUploading }: Props) {
             {errors.file && <p className="text-xs text-destructive">{errors.file}</p>}
           </div>
         </div>
+
+        {showVisibilityToggle && (
+          <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
+            <div>
+              <p className="text-sm font-medium">Nhân viên xem được</p>
+              <p className="text-xs text-muted-foreground">Nhân viên sẽ thấy tài liệu này trong hồ sơ của họ</p>
+            </div>
+            <Switch checked={isVisibleToEmployee} onCheckedChange={setIsVisibleToEmployee} />
+          </div>
+        )}
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isUploading}>Hủy</Button>
