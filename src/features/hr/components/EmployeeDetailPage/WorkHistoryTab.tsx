@@ -1,4 +1,4 @@
-import { Clock, TrendingUp, Briefcase, DollarSign, FileText, Users, ArrowRight, GitBranch } from 'lucide-react'
+import { Clock, TrendingUp, Briefcase, DollarSign, FileText, Users, ArrowRight, GitBranch, UserCircle } from 'lucide-react'
 import { fmtDateTime } from '@/lib/date'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -86,7 +86,7 @@ export function WorkHistoryTab({ items, isLoading, changeType, onChangeTypeFilte
       {!isLoading && items.length === 0 && (
         <div className="flex flex-col items-center justify-center py-16 gap-3 rounded-xl border border-dashed border-border animate-in fade-in duration-300">
           <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-            <Clock className="w-4.5 h-4.5 text-muted-foreground/50" />
+            <Clock className="w-4 h-4 text-muted-foreground/50" />
           </div>
           <p className="text-sm text-muted-foreground">Chưa có lịch sử thay đổi.</p>
         </div>
@@ -137,11 +137,19 @@ export function WorkHistoryTab({ items, isLoading, changeType, onChangeTypeFilte
                     </div>
                   )}
 
-                  {item.note && (
-                    <p className="mt-1.5 text-[11px] text-muted-foreground italic border-l-2 border-border pl-2">
-                      {item.note}
-                    </p>
-                  )}
+                  <div className="flex items-center justify-between mt-2 gap-2">
+                    {item.changedBy && (
+                      <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <UserCircle className="w-3 h-3 shrink-0" />
+                        {item.changedBy}
+                      </span>
+                    )}
+                    {item.note && (
+                      <p className="text-[11px] text-muted-foreground italic border-l-2 border-border pl-2 flex-1">
+                        {item.note}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </li>
             )

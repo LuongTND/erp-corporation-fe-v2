@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useParams, useLocation, Link } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ROUTES } from '@/config/routes'
 import { useEmployeeDetail, useUpdateEmployee, useUpsertCustomFields, useUploadAvatar } from '../hooks/use-employee-detail'
@@ -16,8 +15,8 @@ import type { SetSalaryPayload } from '../types/salary.types'
 import type { UploadDocumentPayload } from '../types/employee-document.types'
 import type { UpdateUserStatusFormValues } from '../schemas/update-user-status.schema'
 import type { WorkHistoryChangeType } from '../types/work-history.types'
-import { EmployeeProfileCard } from '../components/EmployeeProfileCard'
-import { PersonalInfoTab } from '../components/EmployeeDetailPage/PersonalInfoTab'
+import { EmployeeSidebar } from '../components/EmployeeSidebar'
+import { PersonalInfoTab } from '../components/EmployeeDetailPage/PersonalInfoTab/index'
 import { WorkInfoTab } from '../components/EmployeeDetailPage/WorkInfoTab'
 import { AttendanceTab } from '../components/EmployeeDetailPage/AttendanceTab'
 import { PayrollTab } from '../components/EmployeeDetailPage/PayrollTab'
@@ -33,30 +32,28 @@ import {
   mapToEmployeeDetail,
 } from '../components/EmployeeDetailPage'
 
-const TABS = [
-  { value: 'personal',     label: 'Thông tin cá nhân' },
-  { value: 'work',         label: 'Công việc'          },
-  { value: 'attendance',   label: 'Chấm công'          },
-  { value: 'payroll',      label: 'Lương'              },
-  { value: 'kpi',          label: 'KPI'                },
-  { value: 'documents',    label: 'Tài liệu'           },
-  { value: 'status',       label: 'Trạng thái'         },
-  { value: 'workhistory',  label: 'Lịch sử CV'         },
-  { value: 'activity',     label: 'Nhật ký'            },
+const NAV_ITEMS = [
+  { value: 'personal',    label: 'Thông tin cá nhân', description: 'Thông tin cá nhân, pháp lý và lý lịch' },
+  { value: 'work',        label: 'Thông tin công việc', description: 'Công việc, sự nghiệp, tuyển dụng ...' },
+  { value: 'payroll',     label: 'Lương & phúc lợi',  description: 'Bảng lương và phúc lợi' },
+  { value: 'attendance',  label: 'Chấm công',          description: 'Mã chấm công và lịch sử' },
+  { value: 'kpi',         label: 'KPI',                description: 'Đánh giá hiệu suất' },
+  { value: 'documents',   label: 'Tài liệu',           description: 'Hồ sơ, giấy tờ nhân viên' },
+  { value: 'status',      label: 'Trạng thái',         description: 'Lịch sử trạng thái nhân sự' },
+  { value: 'workhistory', label: 'Lịch sử CV',         description: 'Các vị trí đã đảm nhiệm' },
+  { value: 'activity',   label: 'Nhật ký',            description: 'Hoạt động và thay đổi' },
 ]
 
 export default function EmployeeDetailPage() {
   const { id } = useParams<{ id: string }>()
-
-  // ── tab state first — used as enabled guards below ──
   const [editOpen, setEditOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('personal')
   const [visited, setVisited] = useState<Set<string>>(new Set(['personal']))
-  const handleTabChange = (v: string) => { setActiveTab(v); setVisited(p => new Set(p).add(v)) }
-  const seen = (tab: string) => visited.has(tab)
   const [workHistoryFilter, setWorkHistoryFilter] = useState<WorkHistoryChangeType | undefined>()
 
-  // ── always-needed ──
+  const handleTabChange = (v: string) => { setActiveTab(v); setVisited(p => new Set(p).add(v)) }
+  const seen = (tab: string) => visited.has(tab)
+
   const { data: dto, isLoading, isError } = useEmployeeDetail(id ?? '')
   const { data: customFieldDefinitions = [] } = useCustomFields('Employee')
   const { mutate: uploadAvatar, isPending: isUploadingAvatar } = useUploadAvatar(id ?? '')
@@ -70,7 +67,6 @@ export default function EmployeeDetailPage() {
   const upsertCustomFields = useUpsertCustomFields(id ?? '')
   const assignEmployeeType = useAssignEmployeeType()
 
-  // ── lazy — only fetch when tab first visited ──
   const { data: docs = [], isLoading: isLoadingDocs } = useEmployeeDocuments(id ?? '', seen('documents'))
   const { data: currentSalary, isLoading: loadingCurrentSalary } = useCurrentSalary(id ?? '', seen('payroll'))
   const { data: salaryHistory } = useSalaryHistory(id ?? '', seen('payroll'))
@@ -92,9 +88,7 @@ export default function EmployeeDetailPage() {
   }
 
   const location = useLocation()
-  const backRoute = location.pathname.startsWith('/admin')
-    ? ROUTES.ADMIN.EMPLOYEES
-    : ROUTES.HR.EMPLOYEES
+  const backRoute = location.pathname.startsWith('/admin') ? ROUTES.ADMIN.EMPLOYEES : ROUTES.HR.EMPLOYEES
 
   if (isLoading) {
     return (
@@ -118,58 +112,88 @@ export default function EmployeeDetailPage() {
   const employee = mapToEmployeeDetail(dto)
 
   return (
-    <div className="min-h-full bg-card">
-      <div className="max-w-5xl mx-auto px-6 pt-6 pb-8 space-y-4">
+    <div className="h-full flex flex-col bg-background">
+      {/* Breadcrumb */}
+      <div className="shrink-0 px-6 py-3 border-b border-border bg-card">
         <nav className="flex items-center gap-2 text-xs text-muted-foreground" aria-label="Breadcrumb">
           <Link to={backRoute} className="inline-flex items-center gap-1.5 hover:text-foreground transition-colors">
             <ChevronLeft className="w-3.5 h-3.5" />
-            Nhân viên
+            Danh sách nhân sự
           </Link>
           <ChevronRight className="w-3 h-3" aria-hidden="true" />
           <span className="text-foreground">{dto.fullName}</span>
         </nav>
+      </div>
 
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="flex flex-col">
-          <div className="sticky top-0 z-10 bg-card space-y-4 pb-2">
-            <EmployeeProfileCard employee={employee} isLocked={dto.isLocked} status={dto.status} onEditClick={() => setEditOpen(true)} onUploadAvatar={handleUploadAvatar} isUploadingAvatar={isUploadingAvatar} onLockEmployee={lockEmployee} />
-            <TabsList className="w-full justify-start h-auto p-1 rounded-lg gap-0.5 overflow-x-auto bg-muted/50">
-              {TABS.map(tab => (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  className="text-sm text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none rounded-md px-3 py-2 font-medium whitespace-nowrap transition-colors"
-                >
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+      {/* Main 2-col layout */}
+      <div className="flex flex-1 min-h-0 bg-background">
+        <EmployeeSidebar
+          employee={employee}
+          isLocked={dto.isLocked}
+          status={dto.status}
+          activeTab={activeTab}
+          navItems={NAV_ITEMS}
+          onTabChange={handleTabChange}
+          onEditClick={() => setEditOpen(true)}
+          onUploadAvatar={handleUploadAvatar}
+          isUploadingAvatar={isUploadingAvatar}
+          onLockEmployee={lockEmployee}
+        />
+
+        {/* Right scrollable content */}
+        <main className="flex-1 min-w-0 overflow-y-auto bg-card">
+          {/* Content header */}
+          <div className="sticky top-0 z-10 px-6 pt-6 pb-2 border-b border-border bg-card">
+            <h2 className="text-xl font-semibold text-foreground">
+              {NAV_ITEMS.find(n => n.value === activeTab)?.label ?? ''}
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {NAV_ITEMS.find(n => n.value === activeTab)?.description ?? ''}
+            </p>
           </div>
 
-          <div className="mt-2">
-            <TabsContent value="personal">
+          {/* Tab content */}
+          <div className="py-2">
+            {activeTab === 'personal' && (
               <PersonalInfoTab employee={employee} customFields={dto.customFields} customFieldDefinitions={customFieldDefinitions} />
-            </TabsContent>
-            <TabsContent value="work">
-              <WorkInfoTab employee={employee} employeeTypeName={dto.employeeTypeName} />
-            </TabsContent>
-            <TabsContent value="attendance">{visited.has('attendance') && <AttendanceTab />}</TabsContent>
-            <TabsContent value="payroll">{visited.has('payroll') && <PayrollTab current={currentSalary ?? undefined} loadingCurrent={loadingCurrentSalary} history={salaryHistory} onSetSalary={handleSetSalary} isPendingSalary={isPendingSalary} />}</TabsContent>
-            <TabsContent value="kpi">{visited.has('kpi') && <KpiTab />}</TabsContent>
-            <TabsContent value="documents">{visited.has('documents') && <DocumentsTab docs={docs} isLoading={isLoadingDocs} employeeId={id ?? ''} onUpload={handleUploadDocument} onDelete={deleteDocument} onToggleVisibility={(documentId, isVisible) => toggleVisibility({ documentId, isVisibleToEmployee: isVisible })} isUploading={isUploading} />}</TabsContent>
-            <TabsContent value="status">
-              {visited.has('status') && (
-                // ponytail: dto.status is string from BE enum — safe cast, matches UserStatus values
+            )}
+            {activeTab === 'work' && (
+              <div className="px-6 py-4">
+                <WorkInfoTab employee={employee} employeeTypeName={dto.employeeTypeName} />
+              </div>
+            )}
+            {activeTab === 'attendance' && seen('attendance') && (
+              <div className="px-6 py-4"><AttendanceTab /></div>
+            )}
+            {activeTab === 'payroll' && seen('payroll') && (
+              <div className="px-6 py-4">
+                <PayrollTab current={currentSalary ?? undefined} loadingCurrent={loadingCurrentSalary} history={salaryHistory} onSetSalary={handleSetSalary} isPendingSalary={isPendingSalary} />
+              </div>
+            )}
+            {activeTab === 'kpi' && seen('kpi') && (
+              <div className="px-6 py-4"><KpiTab /></div>
+            )}
+            {activeTab === 'documents' && seen('documents') && (
+              <div className="px-6 py-4">
+                <DocumentsTab docs={docs} isLoading={isLoadingDocs} employeeId={id ?? ''} onUpload={handleUploadDocument} onDelete={deleteDocument} onToggleVisibility={(documentId, isVisible) => toggleVisibility({ documentId, isVisibleToEmployee: isVisible })} isUploading={isUploading} />
+              </div>
+            )}
+            {activeTab === 'status' && seen('status') && (
+              <div className="px-6 py-4">
+                {/* ponytail: dto.status is string from BE enum — safe cast, matches UserStatus values */}
                 <StatusTab currentStatus={dto.status as UserStatus} history={statusHistory} isLoadingHistory={isLoadingStatusHistory} onUpdateStatus={handleUpdateStatus} isPendingUpdate={isPendingStatusUpdate} />
-              )}
-            </TabsContent>
-            <TabsContent value="workhistory">
-              {visited.has('workhistory') && (
+              </div>
+            )}
+            {activeTab === 'workhistory' && seen('workhistory') && (
+              <div className="px-6 py-4">
                 <WorkHistoryTab items={workHistory} isLoading={isLoadingWorkHistory} changeType={workHistoryFilter} onChangeTypeFilter={setWorkHistoryFilter} />
-              )}
-            </TabsContent>
-            <TabsContent value="activity">{visited.has('activity') && <ActivityLogTab />}</TabsContent>
+              </div>
+            )}
+            {activeTab === 'activity' && seen('activity') && (
+              <div className="px-6 py-4"><ActivityLogTab /></div>
+            )}
           </div>
-        </Tabs>
+        </main>
       </div>
 
       <EditEmployeeSheet open={editOpen} employee={dto} onOpenChange={setEditOpen} onSave={handleSaveEmployee} />
