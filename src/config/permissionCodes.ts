@@ -160,6 +160,7 @@ export const P = {
   RECRUITMENT_REQUEST_UPDATE: 'hrm:recruitment:request:update',
   RECRUITMENT_REQUEST_SUBMIT: 'hrm:recruitment:request:submit',
   RECRUITMENT_REQUEST_APPROVE: 'hrm:recruitment:request:approve',
+  RECRUITMENT_REQUEST_APPROVE_LEVEL1: 'hrm:recruitment:request:approve-level1',
   RECRUITMENT_REQUEST_REJECT: 'hrm:recruitment:request:reject',
   RECRUITMENT_REQUEST_MORE_INFO: 'hrm:recruitment:request:more-info',
   RECRUITMENT_REQUEST_HISTORY: 'hrm:recruitment:request:history',
@@ -179,6 +180,10 @@ export const P = {
   RECRUITMENT_CANDIDATE_EVALUATE: 'hrm:recruitment:candidate:evaluate',
   RECRUITMENT_CANDIDATE_REJECT: 'hrm:recruitment:candidate:reject',
   RECRUITMENT_CANDIDATE_HIRE: 'hrm:recruitment:candidate:hire',
+
+  // Interview Rule Configs
+  INTERVIEW_RULE_CONFIGS_VIEW: 'hrm:interview-rule-configs:view',
+  INTERVIEW_RULE_CONFIGS_MANAGE: 'hrm:interview-rule-configs:manage',
 
   // Contract Templates
   CONTRACT_TEMPLATES_VIEW: 'hrm:contract-templates:view',

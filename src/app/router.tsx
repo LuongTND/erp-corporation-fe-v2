@@ -68,6 +68,7 @@ const AdminContractsPage = lazy(() => import('@/features/admin/pages/ContractsPa
 const AdminContractTemplatesPage = lazy(() => import('@/features/admin/pages/ContractTemplatesPage'))
 const AdminLabelsPage = lazy(() => import('@/features/admin/pages/LabelsPage'))
 const AdminRecruitmentApproverConfigsPage = lazy(() => import('@/features/admin/pages/RecruitmentApproverConfigsPage'))
+const AdminInterviewRuleConfigsPage = lazy(() => import('@/features/admin/pages/InterviewRuleConfigsPage'))
 const AdminProfileComponentsPage = lazy(() => import('@/features/admin/pages/ProfileComponentsPage'))
 const HRManagerContractsPage = lazy(() => import('@/features/admin/pages/HRManagerContractsPage'))
 const StoreManagerPortalPage = lazy(() => import('@/features/store-manager/pages/StoreManagerPortalPage'))
@@ -75,6 +76,7 @@ const MyProfilePage = lazy(() => import('@/features/hr/pages/MyProfilePage'))
 const RecruitmentRequestsPage = lazy(() => import('@/features/hr/pages/RecruitmentRequestsPage'))
 const RecruitmentRequestDetailPage = lazy(() => import('@/features/hr/pages/RecruitmentRequestDetailPage'))
 const CandidatesListPage = lazy(() => import('@/features/hr/pages/CandidatesListPage'))
+const CandidateDetailPage = lazy(() => import('@/features/hr/pages/CandidateDetailPage'))
 const JobPostingsPage = lazy(() => import('@/features/hr/pages/JobPostingsPage'))
 
 export const router = createBrowserRouter([
@@ -244,6 +246,14 @@ export const router = createBrowserRouter([
                 ),
               },
               {
+                path: ROUTES.HR.CANDIDATE_DETAIL,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <CandidateDetailPage />
+                  </Suspense>
+                ),
+              },
+              {
                 path: ROUTES.HR.JOB_POSTINGS,
                 element: (
                   <Suspense fallback={<PageFallback />}>
@@ -365,6 +375,14 @@ export const router = createBrowserRouter([
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminRecruitmentApproverConfigsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.ADMIN.INTERVIEW_RULE_CONFIGS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <AdminInterviewRuleConfigsPage />
                   </Suspense>
                 ),
               },

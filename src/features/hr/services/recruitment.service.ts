@@ -12,6 +12,10 @@ import type {
   JobPostingSummary,
   CreateJobPostingPayload,
   JobPostingListParams,
+  InterviewSchedule,
+  CreateInterviewSchedulePayload,
+  CompleteInterviewPayload,
+  ResolvedInterviewRule,
 } from '../types/recruitment.types'
 
 const BASE = '/api/recruitment-requests'
@@ -36,6 +40,12 @@ export const recruitmentService = {
 
   approveRequest: (id: string, note?: string) =>
     apiCall.post<void>(`${BASE}/${id}/approve`, { note }),
+
+  approveLevel1Request: (id: string, note?: string) =>
+    apiCall.post<void>(`${BASE}/${id}/approve-level1`, { note }),
+
+  resolveInterviewRule: (candidateId: string) =>
+    apiCall.get<ResolvedInterviewRule>(`/api/interview-rule-configs/resolve`, { params: { candidateId } }),
 
   rejectRequest: (id: string, note: string) =>
     apiCall.post<void>(`${BASE}/${id}/reject`, { note }),
@@ -85,4 +95,16 @@ export const recruitmentService = {
 
   rejectPostingCost: (id: string, note?: string) =>
     apiCall.post<void>(`${JOB_POSTINGS}/${id}/reject-cost`, { note }),
+
+  getInterviews: (candidateId: string) =>
+    apiCall.get<InterviewSchedule[]>(`${CANDIDATES}/${candidateId}/interviews`),
+
+  createInterview: (candidateId: string, data: CreateInterviewSchedulePayload) =>
+    apiCall.post<InterviewSchedule>(`${CANDIDATES}/${candidateId}/interviews`, data),
+
+  completeInterview: (candidateId: string, scheduleId: string, data: CompleteInterviewPayload) =>
+    apiCall.post<void>(`${CANDIDATES}/${candidateId}/interviews/${scheduleId}/complete`, data),
+
+  cancelInterview: (candidateId: string, scheduleId: string, reason?: string) =>
+    apiCall.post<void>(`${CANDIDATES}/${candidateId}/interviews/${scheduleId}/cancel`, { reason }),
 }

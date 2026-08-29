@@ -30,6 +30,7 @@ export const ROUTES = {
     RECRUITMENT: '/hr/recruitment',
     RECRUITMENT_DETAIL: '/hr/recruitment/:id',
     CANDIDATES: '/hr/candidates',
+    CANDIDATE_DETAIL: '/hr/candidates/:id',
     JOB_POSTINGS: '/hr/job-postings',
   },
 
@@ -95,6 +96,7 @@ export const ROUTES = {
     CONTRACT_TEMPLATES: '/admin/contract-templates',
     LABELS: '/admin/labels',
     RECRUITMENT_APPROVER_CONFIGS: '/admin/recruitment-approver-configs',
+    INTERVIEW_RULE_CONFIGS: '/admin/interview-rule-configs',
   },
 
   // ── HR Manager ──

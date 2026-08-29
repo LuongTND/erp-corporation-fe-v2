@@ -9,6 +9,8 @@ import type {
   EvaluateCandidatePayload,
   JobPostingListParams,
   CreateJobPostingPayload,
+  CreateInterviewSchedulePayload,
+  CompleteInterviewPayload,
 } from '../types/recruitment.types'
 
 const KEYS = {
@@ -17,6 +19,7 @@ const KEYS = {
   candidates: (params?: { requestId?: string; stage?: string }) => ['candidates', params] as const,
   candidate: (id: string) => ['candidate', id] as const,
   jobPostings: (params?: JobPostingListParams) => ['job-postings', params] as const,
+  interviews: (candidateId: string) => ['candidate-interviews', candidateId] as const,
 }
 
 export function useRecruitmentRequests(params?: RecruitmentRequestListParams) {
@@ -83,6 +86,23 @@ export function useApproveRecruitmentRequest() {
     onError: (error) => {
       logger.error(error)
       toast.error('Không thể duyệt phiếu')
+    },
+  })
+}
+
+export function useApproveLevel1RecruitmentRequest() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, note }: { id: string; note?: string }) =>
+      recruitmentService.approveLevel1Request(id, note),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['recruitment-requests'] })
+      queryClient.invalidateQueries({ queryKey: KEYS.request(id) })
+      toast.success('Đã duyệt cấp 1')
+    },
+    onError: (error) => {
+      logger.error(error)
+      toast.error('Không thể duyệt cấp 1')
     },
   })
 }
@@ -303,5 +323,71 @@ export function useRejectPostingCost() {
       logger.error(error)
       toast.error('Không thể từ chối chi phí')
     },
+  })
+}
+
+export function useInterviewSchedules(candidateId: string) {
+  return useQuery({
+    queryKey: KEYS.interviews(candidateId),
+    queryFn: () => recruitmentService.getInterviews(candidateId),
+    staleTime: 30_000,
+    enabled: !!candidateId,
+  })
+}
+
+export function useCreateInterview(candidateId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: CreateInterviewSchedulePayload) =>
+      recruitmentService.createInterview(candidateId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: KEYS.interviews(candidateId) })
+      toast.success('Đã tạo lịch phỏng vấn')
+    },
+    onError: (error) => {
+      logger.error(error)
+      toast.error('Không thể tạo lịch phỏng vấn')
+    },
+  })
+}
+
+export function useCompleteInterview(candidateId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ scheduleId, data }: { scheduleId: string; data: CompleteInterviewPayload }) =>
+      recruitmentService.completeInterview(candidateId, scheduleId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: KEYS.interviews(candidateId) })
+      toast.success('Đã cập nhật kết quả phỏng vấn')
+    },
+    onError: (error) => {
+      logger.error(error)
+      toast.error('Không thể cập nhật kết quả')
+    },
+  })
+}
+
+export function useCancelInterview(candidateId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ scheduleId, reason }: { scheduleId: string; reason?: string }) =>
+      recruitmentService.cancelInterview(candidateId, scheduleId, reason),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: KEYS.interviews(candidateId) })
+      toast.success('Đã hủy lịch phỏng vấn')
+    },
+    onError: (error) => {
+      logger.error(error)
+      toast.error('Không thể hủy lịch')
+    },
+  })
+}
+
+export function useResolveInterviewRule(candidateId: string) {
+  return useQuery({
+    queryKey: ['interview-rule-resolve', candidateId],
+    queryFn: () => recruitmentService.resolveInterviewRule(candidateId),
+    staleTime: 60_000,
+    enabled: !!candidateId,
   })
 }

@@ -6,9 +6,12 @@ import type { RecruitmentRequestStatus } from '../../types/recruitment.types'
 const STATUS_VARIANTS: Record<RecruitmentRequestStatus, string> = {
   Draft: 'bg-muted text-muted-foreground',
   Submitted: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  PendingLevel1Approval: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  PendingLevel2Approval: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
   Approved: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
   Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   NeedMoreInfo: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
+  Cancelled: 'bg-muted text-muted-foreground',
 }
 
 interface RequestStatusBadgeProps {

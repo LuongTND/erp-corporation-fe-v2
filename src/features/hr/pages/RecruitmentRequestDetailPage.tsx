@@ -11,6 +11,7 @@ import { RequestStatusBadge } from '../components/RecruitmentPage'
 import {
   useRecruitmentRequest,
   useApproveRecruitmentRequest,
+  useApproveLevel1RecruitmentRequest,
   useRejectRecruitmentRequest,
   useRequestMoreInfo,
   useSubmitRecruitmentRequest,
@@ -18,10 +19,12 @@ import {
   useHireCandidate,
   useRejectCandidate,
 } from '../hooks/use-recruitment'
+import { useAuthStore } from '@/stores/auth.store'
+import { P } from '@/config/permissionCodes'
 import { ROUTES } from '@/config/routes'
 import type { CandidateSummary } from '../types/recruitment.types'
 
-type ActionType = 'approve' | 'reject' | 'request-more-info'
+type ActionType = 'approve' | 'approve-level1' | 'reject' | 'request-more-info'
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(iso))
@@ -36,19 +39,25 @@ export default function RecruitmentRequestDetailPage() {
   const { data: request, isLoading } = useRecruitmentRequest(id ?? '')
   const { data: candidates = [], isLoading: candidatesLoading } = useCandidates({ requestId: id })
 
+  const { hasPermission } = useAuthStore()
   const approveRequest = useApproveRecruitmentRequest()
+  const approveLevel1Request = useApproveLevel1RecruitmentRequest()
   const rejectRequest = useRejectRecruitmentRequest()
   const requestMoreInfo = useRequestMoreInfo()
   const submitRequest = useSubmitRecruitmentRequest()
   const hireCandidate = useHireCandidate()
   const rejectCandidate = useRejectCandidate()
 
-  const isActingOnRequest = approveRequest.isPending || rejectRequest.isPending || requestMoreInfo.isPending
+  const isActingOnRequest =
+    approveRequest.isPending || approveLevel1Request.isPending ||
+    rejectRequest.isPending || requestMoreInfo.isPending
 
   function handleActionConfirm(note?: string) {
     if (!id || !actionDialog) return
     if (actionDialog === 'approve') {
       approveRequest.mutate({ id, note }, { onSuccess: () => setActionDialog(null) })
+    } else if (actionDialog === 'approve-level1') {
+      approveLevel1Request.mutate({ id, note }, { onSuccess: () => setActionDialog(null) })
     } else if (actionDialog === 'reject') {
       rejectRequest.mutate({ id, note: note! }, { onSuccess: () => setActionDialog(null) })
     } else {
@@ -80,7 +89,8 @@ export default function RecruitmentRequestDetailPage() {
     )
   }
 
-  const canApprove = request.status === 'Submitted'
+  const canApproveLevel1 = request.status === 'PendingLevel1Approval' && hasPermission(P.RECRUITMENT_REQUEST_APPROVE_LEVEL1)
+  const canApproveLevel2 = (request.status === 'Submitted' || request.status === 'PendingLevel2Approval') && hasPermission(P.RECRUITMENT_REQUEST_APPROVE)
 
   return (
     <div className="h-full flex flex-col bg-background text-foreground">
@@ -121,31 +131,33 @@ export default function RecruitmentRequestDetailPage() {
                 Nộp phiếu
               </Button>
             )}
-            {canApprove && (
+            {canApproveLevel1 && (
               <>
-                <Button
-                  variant="outline"
-                  className="cursor-pointer gap-2"
-                  disabled={isActingOnRequest}
-                  onClick={() => setActionDialog('request-more-info')}
-                >
+                <Button variant="outline" className="cursor-pointer gap-2" disabled={isActingOnRequest} onClick={() => setActionDialog('request-more-info')}>
                   <MessageSquare className="h-4 w-4" />
                   Yêu cầu bổ sung
                 </Button>
-                <Button
-                  variant="destructive"
-                  className="cursor-pointer gap-2"
-                  disabled={isActingOnRequest}
-                  onClick={() => setActionDialog('reject')}
-                >
+                <Button variant="destructive" className="cursor-pointer gap-2" disabled={isActingOnRequest} onClick={() => setActionDialog('reject')}>
                   <X className="h-4 w-4" />
                   Từ chối
                 </Button>
-                <Button
-                  className="cursor-pointer gap-2"
-                  disabled={isActingOnRequest}
-                  onClick={() => setActionDialog('approve')}
-                >
+                <Button className="cursor-pointer gap-2" disabled={isActingOnRequest} onClick={() => setActionDialog('approve-level1')}>
+                  <Check className="h-4 w-4" />
+                  Duyệt L1
+                </Button>
+              </>
+            )}
+            {canApproveLevel2 && (
+              <>
+                <Button variant="outline" className="cursor-pointer gap-2" disabled={isActingOnRequest} onClick={() => setActionDialog('request-more-info')}>
+                  <MessageSquare className="h-4 w-4" />
+                  Yêu cầu bổ sung
+                </Button>
+                <Button variant="destructive" className="cursor-pointer gap-2" disabled={isActingOnRequest} onClick={() => setActionDialog('reject')}>
+                  <X className="h-4 w-4" />
+                  Từ chối
+                </Button>
+                <Button className="cursor-pointer gap-2" disabled={isActingOnRequest} onClick={() => setActionDialog('approve')}>
                   <Check className="h-4 w-4" />
                   Duyệt
                 </Button>

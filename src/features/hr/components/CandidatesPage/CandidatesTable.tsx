@@ -1,4 +1,4 @@
-import { CheckCircle, Filter, XCircle, ClipboardList, ArrowRight } from 'lucide-react'
+import { CheckCircle, Filter, XCircle, ClipboardList, ArrowRight, Eye } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -17,6 +17,7 @@ interface CandidatesTableProps {
   candidates: CandidateSummary[]
   isLoading: boolean
   permissions: CandidatePermissions
+  onViewDetail: (id: string) => void
   onScreen: (id: string) => void
   onAssignStore: (id: string) => void
   onAssignProduction: (id: string) => void
@@ -30,6 +31,7 @@ export function CandidatesTable({
   candidates,
   isLoading,
   permissions,
+  onViewDetail,
   onScreen,
   onAssignStore,
   onAssignProduction,
@@ -85,6 +87,13 @@ export function CandidatesTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1 justify-end">
+                    <Button
+                      variant="ghost" size="icon" className="h-7 w-7 cursor-pointer"
+                      title="Xem chi tiết"
+                      onClick={() => onViewDetail(c.id)}
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                    </Button>
                     {c.stage === 'New' && permissions.canScreen && (
                       <Button
                         variant="ghost" size="icon" className="h-7 w-7 cursor-pointer"

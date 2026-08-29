@@ -1,13 +1,16 @@
-export type RecruitmentRequestStatus = 'Draft' | 'Submitted' | 'Approved' | 'Rejected' | 'NeedMoreInfo'
+export type RecruitmentRequestStatus = 'Draft' | 'Submitted' | 'PendingLevel1Approval' | 'PendingLevel2Approval' | 'Approved' | 'Rejected' | 'NeedMoreInfo' | 'Cancelled'
 export type RecruitmentContext = 'Store' | 'Production'
 export type CandidateStage = 'New' | 'Screening' | 'StoreInterview' | 'ProductionInterview' | 'Offer' | 'Hired' | 'Rejected'
 
 export const RECRUITMENT_STATUS_LABELS: Record<RecruitmentRequestStatus, string> = {
   Draft: 'Nháp',
-  Submitted: 'Chờ duyệt',
+  Submitted: 'Đã nộp',
+  PendingLevel1Approval: 'Chờ duyệt L1',
+  PendingLevel2Approval: 'Chờ duyệt L2',
   Approved: 'Đã duyệt',
   Rejected: 'Từ chối',
   NeedMoreInfo: 'Cần bổ sung',
+  Cancelled: 'Đã hủy',
 }
 
 export const CANDIDATE_STAGE_LABELS: Record<CandidateStage, string> = {
@@ -152,4 +155,54 @@ export interface EvaluateCandidatePayload {
   score: number
   recommendation: string
   note?: string
+}
+
+export type InterviewScheduleStatus = 'Scheduled' | 'Completed' | 'Cancelled' | 'NoShow'
+export type InterviewLocation = 'AtStore' | 'AtOffice' | 'AtFactory' | 'Remote'
+
+export const INTERVIEW_LOCATION_LABELS: Record<InterviewLocation, string> = {
+  AtStore: 'Tại cửa hàng',
+  AtOffice: 'Tại văn phòng',
+  AtFactory: 'Tại xưởng',
+  Remote: 'Trực tuyến',
+}
+
+export const INTERVIEW_STATUS_LABELS: Record<InterviewScheduleStatus, string> = {
+  Scheduled: 'Đã hẹn',
+  Completed: 'Hoàn thành',
+  Cancelled: 'Đã hủy',
+  NoShow: 'Không đến',
+}
+
+export interface InterviewSchedule {
+  id: string
+  interviewerId: string
+  interviewerName: string
+  scheduledAt: string
+  location: InterviewLocation
+  locationNote?: string
+  notes?: string
+  status: InterviewScheduleStatus
+  interviewResult?: string
+  createdAt: string
+}
+
+export interface CreateInterviewSchedulePayload {
+  interviewerId: string
+  scheduledAt: string
+  location: InterviewLocation
+  locationNote?: string
+  notes?: string
+}
+
+export interface CompleteInterviewPayload {
+  interviewResult: string
+}
+
+export interface ResolvedInterviewRule {
+  id: string
+  interviewerRoleKey: string
+  location: InterviewLocation
+  schedulerRoleKey?: string
+  notifyRoleKey?: string
 }

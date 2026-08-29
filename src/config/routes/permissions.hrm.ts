@@ -6,5 +6,6 @@ export const hrmPermissions: Record<string, string> = {
   '/hr/recruitment': P.RECRUITMENT_REQUEST_VIEW,
   '/hr/recruitment/:id': P.RECRUITMENT_REQUEST_VIEW,
   '/hr/candidates': P.RECRUITMENT_CANDIDATE_VIEW,
+  '/hr/candidates/:id': P.RECRUITMENT_CANDIDATE_VIEW,
   '/hr/job-postings': P.RECRUITMENT_POSTING_MANAGE,
 }

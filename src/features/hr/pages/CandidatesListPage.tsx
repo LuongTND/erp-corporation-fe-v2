@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { HRPageHeader } from '@/features/hr/components/HRPageHeader'
 import { useAuthStore } from '@/stores/auth.store'
 import { P } from '@/config/permissionCodes'
+import { ROUTES } from '@/config/routes'
 import { CandidatesTable } from '../components/CandidatesPage'
 import {
   useCandidates,
@@ -19,6 +21,7 @@ type StageFilter = CandidateStage | 'all'
 
 export default function CandidatesListPage() {
   const [stageFilter, setStageFilter] = useState<StageFilter>('all')
+  const navigate = useNavigate()
   const hasPermission = useAuthStore((s) => s.hasPermission)
 
   const { data: candidates = [], isLoading } = useCandidates({
@@ -92,6 +95,7 @@ export default function CandidatesListPage() {
             isLoading={isLoading}
             permissions={permissions}
             isActing={isActing}
+            onViewDetail={(id) => navigate(ROUTES.HR.CANDIDATE_DETAIL.replace(':id', id))}
             onScreen={(id) => screen.mutate(id)}
             onAssignStore={(id) => assignStore.mutate(id)}
             onAssignProduction={(id) => assignProd.mutate(id)}

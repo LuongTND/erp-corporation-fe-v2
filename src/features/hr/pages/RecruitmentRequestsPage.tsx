@@ -69,10 +69,13 @@ export default function RecruitmentRequestsPage() {
             >
               <SelectItem value="all">Tất cả</SelectItem>
               <SelectItem value="Draft">Nháp</SelectItem>
-              <SelectItem value="Submitted">Chờ duyệt</SelectItem>
+              <SelectItem value="Submitted">Đã nộp</SelectItem>
+              <SelectItem value="PendingLevel1Approval">Chờ duyệt L1</SelectItem>
+              <SelectItem value="PendingLevel2Approval">Chờ duyệt L2</SelectItem>
               <SelectItem value="Approved">Đã duyệt</SelectItem>
               <SelectItem value="Rejected">Từ chối</SelectItem>
               <SelectItem value="NeedMoreInfo">Cần bổ sung</SelectItem>
+              <SelectItem value="Cancelled">Đã hủy</SelectItem>
             </SelectContent>
           </Select>
 
