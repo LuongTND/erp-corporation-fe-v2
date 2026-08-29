@@ -35,6 +35,75 @@ export interface StoreResponse {
   todayIsClosed: boolean | null // null = chưa cấu hình giờ
 }
 
+export type InterviewRuleContext = 'StoreRetail' | 'Office' | 'Production'
+export type InterviewRuleLocation = 'AtStore' | 'AtOffice' | 'AtFactory' | 'Remote'
+
+export const INTERVIEW_RULE_CONTEXT_LABELS: Record<InterviewRuleContext, string> = {
+  StoreRetail: 'Cửa hàng',
+  Office: 'Văn phòng',
+  Production: 'Sản xuất',
+}
+
+export const INTERVIEW_RULE_LOCATION_LABELS: Record<InterviewRuleLocation, string> = {
+  AtStore: 'Tại cửa hàng',
+  AtOffice: 'Tại văn phòng',
+  AtFactory: 'Tại xưởng',
+  Remote: 'Trực tuyến',
+}
+
+export interface InterviewRuleConfigResponse {
+  id: string
+  name: string
+  context: InterviewRuleContext
+  regionId?: string
+  regionName?: string
+  departmentId?: string
+  departmentName?: string
+  interviewerRoleKey: string
+  location: InterviewRuleLocation
+  schedulerRoleKey?: string
+  notifyRoleKey?: string
+  priority: number
+  isActive: boolean
+  createdAt: string
+}
+
+export interface CreateInterviewRuleConfigPayload {
+  name: string
+  context: InterviewRuleContext
+  regionId?: string
+  departmentId?: string
+  interviewerRoleKey: string
+  location: InterviewRuleLocation
+  schedulerRoleKey?: string
+  notifyRoleKey?: string
+  priority: number
+  isActive: boolean
+}
+
+export interface UpdateInterviewRuleConfigPayload {
+  name?: string
+  interviewerRoleKey?: string
+  location?: InterviewRuleLocation
+  schedulerRoleKey?: string
+  notifyRoleKey?: string
+  priority?: number
+  isActive?: boolean
+}
+
+export interface InterviewRuleConfigListParams {
+  context?: InterviewRuleContext
+  isActive?: boolean
+}
+
+export interface ResolvedInterviewRule {
+  id: string
+  interviewerRoleKey: string
+  location: InterviewRuleLocation
+  schedulerRoleKey?: string
+  notifyRoleKey?: string
+}
+
 export interface StorePortalResponse {
   id: string
   name: string
