@@ -11,6 +11,7 @@ export interface RoleResponse {
   isSystemRole: boolean
   defaultDataScope: ScopeType
   permissions: PermissionResponse[]
+  userCount: number
 }
 
 export interface PermissionResponse {

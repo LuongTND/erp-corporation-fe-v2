@@ -14,8 +14,8 @@ export const rolesService = {
   update: (id: string, data: { displayName: string; description: string; defaultDataScope: string }) =>
     apiCall.put<void>(`/api/roles/${id}`, data),
 
-  delete: (id: string) =>
-    apiCall.delete<void>(`/api/roles/${id}`),
+  delete: ({ id, force }: { id: string; force?: boolean }) =>
+    apiCall.delete<void>(`/api/roles/${id}${force ? '?force=true' : ''}`),
 
   assignPermissions: (id: string, toAdd: string[], toRemove: string[]) =>
     apiCall.put<void>(`/api/roles/${id}/permissions`, { toAdd, toRemove }),

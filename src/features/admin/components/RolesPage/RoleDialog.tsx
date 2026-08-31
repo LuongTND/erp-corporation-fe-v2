@@ -47,7 +47,7 @@ export function RoleDialog({ open, isEdit, form, onSubmit, onOpenChange, isPendi
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent align="start" sideOffset={4}>
                 {(Object.entries(SCOPE_TYPE_LABELS) as [string, string][]).map(([value, label]) => (
                   <SelectItem key={value} value={value}>{label}</SelectItem>
                 ))}

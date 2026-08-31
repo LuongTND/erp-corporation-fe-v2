@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Edit2, GripVertical, Shield, Trash2, Users } from 'lucide-react'
+import { Edit2, GripVertical, Loader2, Shield, Trash2, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 interface Props {
   role: RoleResponse
   isDragDisabled: boolean
+  isDeleting?: boolean
   onEdit: (role: RoleResponse) => void
   onDelete: (role: RoleResponse) => void
   onPermissions: (role: RoleResponse) => void
@@ -30,10 +31,10 @@ function DescriptionCell({ text }: { text?: string }) {
   )
 }
 
-export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPermissions, onUsers }: Props) {
+export function SortableRoleRow({ role, isDragDisabled, isDeleting, onEdit, onDelete, onPermissions, onUsers }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: role.id,
-    disabled: isDragDisabled,
+    disabled: isDragDisabled || !!isDeleting,
   })
 
   const style = { transform: CSS.Transform.toString(transform), transition }
@@ -42,7 +43,12 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
     <TableRow
       ref={setNodeRef}
       style={style}
-      className={cn('group', isDragging && 'opacity-40 ring-2 ring-inset ring-primary/30 bg-muted/50')}
+      aria-busy={isDeleting}
+      className={cn(
+        'group transition-opacity duration-200',
+        isDragging && 'opacity-40 ring-2 ring-inset ring-primary/30 bg-muted/50',
+        isDeleting && 'opacity-50 pointer-events-none',
+      )}
     >
       <TableCell className="w-8 pr-0">
         {!isDragDisabled && (
@@ -138,10 +144,12 @@ export function SortableRoleRow({ role, isDragDisabled, onEdit, onDelete, onPerm
             size="sm"
             className="h-7 w-7 p-0 text-destructive hover:text-destructive"
             onClick={() => onDelete(role)}
-            disabled={role.isSystemRole}
-            aria-label={`Xóa ${role.roleName}`}
+            disabled={role.isSystemRole || isDeleting}
+            aria-label={isDeleting ? `Đang xóa ${role.roleName}` : `Xóa ${role.roleName}`}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            {isDeleting
+              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              : <Trash2 className="h-3.5 w-3.5" />}
           </Button>
         </div>
       </TableCell>

@@ -26,6 +26,7 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
   const [permSheet, setPermSheet] = useState<RoleResponse | undefined>()
   const [usersSheet, setUsersSheet] = useState<RoleResponse | undefined>()
   const [deleteTarget, setDeleteTarget] = useState<RoleResponse | null>(null)
+  const [deletingId, setDeletingId] = useState<string | undefined>()
 
   const createRole = useCreateRole()
   const updateRole = useUpdateRole()
@@ -60,9 +61,15 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
     }
   }
 
-  const onDelete = () => {
+  const onDelete = (force?: boolean) => {
     if (!deleteTarget) return
-    deleteRole.mutate(deleteTarget.id, { onSuccess: () => setDeleteTarget(null) })
+    const id = deleteTarget.id
+    setDeleteTarget(null)
+    setDeletingId(id)
+    deleteRole.mutate({ id, force }, {
+      onSuccess: () => setDeletingId(undefined),
+      onError: () => setDeletingId(undefined),
+    })
   }
 
   const isFiltering = typeFilter !== 'all' || search.trim().length > 0
@@ -95,6 +102,7 @@ export function RolesTab({ roles, isLoading, allPermissions, isPermissionsLoadin
         roles={filtered}
         isLoading={isLoading}
         isFiltering={isFiltering}
+        deletingId={deletingId}
         onEdit={(role) => { setEditRole(role); setDialogOpen(true) }}
         onDelete={setDeleteTarget}
         onPermissions={setPermSheet}

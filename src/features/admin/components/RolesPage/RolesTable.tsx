@@ -22,6 +22,7 @@ interface RolesTableProps {
   roles: RoleResponse[]
   isLoading: boolean
   isFiltering: boolean
+  deletingId?: string
   onEdit: (role: RoleResponse) => void
   onDelete: (role: RoleResponse) => void
   onPermissions: (role: RoleResponse) => void
@@ -35,7 +36,7 @@ function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; s
     : <ChevronDown className="h-3 w-3 ml-1" />
 }
 
-export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, onPermissions, onUsers }: RolesTableProps) {
+export function RolesTable({ roles, isLoading, isFiltering, deletingId, onEdit, onDelete, onPermissions, onUsers }: RolesTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('roleName')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
   const [localRoles, setLocalRoles] = useState<RoleResponse[]>(roles)
@@ -133,6 +134,7 @@ export function RolesTable({ roles, isLoading, isFiltering, onEdit, onDelete, on
                     key={role.id}
                     role={role}
                     isDragDisabled={isFiltering || role.isSystemRole}
+                    isDeleting={deletingId === role.id}
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onPermissions={onPermissions}

@@ -64,7 +64,8 @@ export function useUpdateRole() {
 export function useDeleteRole() {
   const client = useQueryClient()
   return useMutation({
-    mutationFn: rolesService.delete,
+    mutationFn: ({ id, force }: { id: string; force?: boolean }) =>
+      rolesService.delete({ id, force }),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: [KEY] })
       toast.success('Xóa vai trò thành công')
@@ -133,6 +134,7 @@ export function useSyncRoleUsers() {
       rolesService.syncUsers(roleId, toAdd, toRemove),
     onSuccess: (_data, { roleId }) => {
       client.invalidateQueries({ queryKey: [KEY, roleId, 'users'] })
+      client.invalidateQueries({ queryKey: [KEY] })
       toast.success('Cập nhật người dùng thành công')
     },
     onError: (error) => {
