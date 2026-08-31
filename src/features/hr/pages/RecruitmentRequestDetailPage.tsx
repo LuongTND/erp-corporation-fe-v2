@@ -230,7 +230,7 @@ export default function RecruitmentRequestDetailPage() {
               onEvaluate={(_candidate: CandidateSummary) => {
                 // ponytail: evaluate dialog — add when evaluate flow is specified
               }}
-              onHire={(candidateId) => hireCandidate.mutate(candidateId)}
+              onHire={(candidateId) => hireCandidate.mutate({ id: candidateId })}
               onReject={(candidateId) => rejectCandidate.mutate({ id: candidateId })}
               isActing={hireCandidate.isPending || rejectCandidate.isPending}
             />

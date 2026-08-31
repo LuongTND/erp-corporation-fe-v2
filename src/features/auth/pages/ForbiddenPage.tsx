@@ -2,11 +2,12 @@ import { ShieldAlert, ArrowLeft, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/auth.store'
+import { useAuth } from '@/features/auth/hooks/useAuth'
 
 export default function ForbiddenPage() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
-  const logout = useAuthStore((s) => s.logout)
+  const { logout } = useAuth()
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-6">
@@ -46,10 +47,7 @@ export default function ForbiddenPage() {
           </Button>
           <Button
             variant="destructive"
-            onClick={() => {
-              logout()
-              navigate('/login')
-            }}
+            onClick={() => logout()}
             className="gap-2"
           >
             <LogOut className="h-4 w-4" />

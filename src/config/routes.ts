@@ -20,18 +20,18 @@ export const ROUTES = {
   // ── HR & Payroll ──
   HR: {
     DASHBOARD: '/hr',
-    EMPLOYEES: '/hr/employees',
-    EMPLOYEE_DETAIL: '/hr/employees/:id',
-    ATTENDANCE: '/hr/attendance',
-    PAYROLL: '/hr/payroll',
-    KPI: '/hr/kpi',
-    LEAVE: '/hr/leave',
-    ORG_CHART: '/hr/org-chart',
-    RECRUITMENT: '/hr/recruitment',
-    RECRUITMENT_DETAIL: '/hr/recruitment/:id',
-    CANDIDATES: '/hr/candidates',
-    CANDIDATE_DETAIL: '/hr/candidates/:id',
-    JOB_POSTINGS: '/hr/job-postings',
+    EMPLOYEES: '/employees',
+    EMPLOYEE_DETAIL: '/employees/:id',
+    ATTENDANCE: '/attendance',
+    PAYROLL: '/payroll',
+    KPI: '/kpi',
+    LEAVE: '/leave',
+    ORG_CHART: '/org-chart',
+    RECRUITMENT: '/recruitment',
+    RECRUITMENT_DETAIL: '/recruitment/:id',
+    CANDIDATES: '/recruitment/candidates',
+    CANDIDATE_DETAIL: '/recruitment/candidates/:id',
+    JOB_POSTINGS: '/recruitment/job-postings',
   },
 
   // ── LMS ──
@@ -101,7 +101,7 @@ export const ROUTES = {
 
   // ── HR Manager ──
   HR_MANAGER: {
-    CONTRACTS: '/hr-manager/contracts',
+    CONTRACTS: '/contracts',
   },
 } as const
 

@@ -100,7 +100,7 @@ export default function CandidatesListPage() {
             onAssignStore={(id) => assignStore.mutate(id)}
             onAssignProduction={(id) => assignProd.mutate(id)}
             onEvaluate={handleEvaluate}
-            onHire={(id) => hire.mutate(id)}
+            onHire={(id) => hire.mutate({ id })}
             onReject={(id) => reject.mutate({ id })}
           />
         </div>

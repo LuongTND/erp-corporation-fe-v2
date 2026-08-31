@@ -196,7 +196,8 @@ export function useEvaluateCandidate() {
 export function useHireCandidate() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => recruitmentService.hireCandidate(id),
+    mutationFn: ({ id, trialStartDate }: { id: string; trialStartDate?: string }) =>
+      recruitmentService.hireCandidate(id, trialStartDate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['candidates'] })
       toast.success('Đã tuyển dụng ứng viên')

@@ -65,16 +65,16 @@ export const recruitmentService = {
   uploadCv: (id: string, file: File) => {
     const form = new FormData()
     form.append('file', file)
-    return apiCall.post<void>(`${CANDIDATES}/${id}/upload-cv`, form, {
+    return apiCall.post<void>(`${CANDIDATES}/${id}/cv`, form, {
       headers: { 'Content-Type': undefined },
     })
   },
 
   screenCandidate: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/screen`),
 
-  assignCandidateToStore: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-to-store`),
+  assignCandidateToStore: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-store`),
 
-  assignToProduction: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-to-production`),
+  assignToProduction: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-production`),
 
   evaluateCandidate: (id: string, data: EvaluateCandidatePayload) =>
     apiCall.post<void>(`${CANDIDATES}/${id}/evaluate`, data),
@@ -82,7 +82,8 @@ export const recruitmentService = {
   rejectCandidate: (id: string, note?: string) =>
     apiCall.post<void>(`${CANDIDATES}/${id}/reject`, { note }),
 
-  hireCandidate: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/hire`),
+  hireCandidate: (id: string, trialStartDate?: string) =>
+    apiCall.post<void>(`${CANDIDATES}/${id}/hire`, { trialStartDate }),
 
   getJobPostings: (params?: JobPostingListParams) =>
     apiCall.get<PaginatedResponse<JobPostingSummary>>(JOB_POSTINGS, { params }),

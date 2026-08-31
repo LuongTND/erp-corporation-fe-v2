@@ -42,7 +42,7 @@ export const adminNav: NavSection[] = [
       { icon: FilePlus2, label: 'Mẫu hợp đồng', href: ROUTES.ADMIN.CONTRACT_TEMPLATES, permission: P.CONTRACT_TEMPLATES_VIEW },
       { icon: Tag,       label: 'Nhãn nhân viên',          href: ROUTES.ADMIN.LABELS, permission: P.LABELS_MANAGE },
       { icon: UserCheck, label: 'Người duyệt tuyển dụng', href: ROUTES.ADMIN.RECRUITMENT_APPROVER_CONFIGS, permission: P.RECRUITMENT_APPROVER_VIEW },
-      { icon: ClipboardList, label: 'Rule phỏng vấn', href: ROUTES.ADMIN.INTERVIEW_RULE_CONFIGS, permission: P.INTERVIEW_RULE_CONFIGS_VIEW },
+      { icon: ClipboardList, label: 'Rule phỏng vấn', href: ROUTES.ADMIN.INTERVIEW_RULE_CONFIGS, permission: P.INTERVIEW_RULE_CONFIGS_MANAGE },
       { icon: Sliders, label: 'Thành phần hồ sơ', href: ROUTES.ADMIN.PROFILE_COMPONENTS, permission: P.EMPLOYEE_TYPES_VIEW },
     ],
   },

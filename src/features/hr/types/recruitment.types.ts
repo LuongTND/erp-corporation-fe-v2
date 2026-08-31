@@ -80,11 +80,14 @@ export const COST_STATUS_LABELS: Record<JobPostingCostStatus, string> = {
 export interface JobPostingSummary {
   id: string
   recruitmentRequestId: string
-  requestCode: string
+  requestCode?: string
   title: string
   channel: JobPostingChannel
+  postUrl?: string
   estimatedCost?: number
   costStatus: JobPostingCostStatus
+  costApprovedByName?: string
+  costRejectionNote?: string
   createdAt: string
 }
 
@@ -97,7 +100,7 @@ export interface CreateJobPostingPayload {
 
 export interface JobPostingListParams {
   costStatus?: JobPostingCostStatus
-  channel?: JobPostingChannel
+  recruitmentRequestId?: string
 }
 
 export interface CreateRecruitmentRequestPayload {
@@ -124,14 +127,17 @@ export interface CandidateSummary {
   cvUrl?: string
   sourceChannel?: CandidateSourceChannel
   stage: CandidateStage
-  requestId: string
-  requestCode: string
+  recruitmentRequestId?: string
+  requestCode?: string
+  rejectionReason?: string
   createdAt: string
   evaluationScore?: number
   evaluationRecommendation?: string
 }
 
 export interface CandidateDetail extends CandidateSummary {
+  notes?: string
+  convertedEmployeeId?: string
   evaluations: CandidateEvaluation[]
 }
 

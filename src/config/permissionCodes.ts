@@ -182,8 +182,11 @@ export const P = {
   RECRUITMENT_CANDIDATE_HIRE: 'hrm:recruitment:candidate:hire',
 
   // Interview Rule Configs
-  INTERVIEW_RULE_CONFIGS_VIEW: 'hrm:interview-rule-configs:view',
-  INTERVIEW_RULE_CONFIGS_MANAGE: 'hrm:interview-rule-configs:manage',
+  INTERVIEW_RULE_CONFIGS_MANAGE: 'hrm:recruitment:interview-rule:manage',
+
+  // Interview Schedules
+  INTERVIEW_SCHEDULE_MANAGE: 'hrm:recruitment:interview-schedule:manage',
+  INTERVIEW_SCHEDULE_COMPLETE: 'hrm:recruitment:interview-schedule:complete',
 
   // Contract Templates
   CONTRACT_TEMPLATES_VIEW: 'hrm:contract-templates:view',
