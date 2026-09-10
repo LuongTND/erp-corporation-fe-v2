@@ -25,10 +25,7 @@ const KEYS = {
 export function useRecruitmentRequests(params?: RecruitmentRequestListParams) {
   return useQuery({
     queryKey: KEYS.requests(params),
-    queryFn: async () => {
-      const res = await recruitmentService.getRequests(params)
-      return res.data
-    },
+    queryFn: () => recruitmentService.getRequests(params),
     staleTime: 30_000,
   })
 }

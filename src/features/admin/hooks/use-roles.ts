@@ -119,6 +119,14 @@ export function useAllUsers() {
   })
 }
 
+export function useUsersSearch(search: string) {
+  return useQuery({
+    queryKey: [USERS_KEY, 'search', search],
+    queryFn: () => usersService.list(search || undefined),
+    staleTime: 30_000,
+  })
+}
+
 export function useRoleUsers(roleId: string | undefined) {
   return useQuery({
     queryKey: [KEY, roleId, 'users'],

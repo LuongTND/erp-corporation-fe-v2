@@ -1,5 +1,6 @@
 import { apiCall } from '@/lib/api'
-import type { PaginatedResponse } from '@/types/api'
+import { API_ROUTES } from '@/config/api-routes'
+import type { QueryResult } from '@/types/api'
 import type {
   RecruitmentRequestSummary,
   RecruitmentRequestDetail,
@@ -18,94 +19,90 @@ import type {
   ResolvedInterviewRule,
 } from '../types/recruitment.types'
 
-const BASE = '/api/recruitment-requests'
-const CANDIDATES = '/api/candidates'
-const JOB_POSTINGS = '/api/job-postings'
-
 export const recruitmentService = {
   getRequests: (params?: RecruitmentRequestListParams) =>
-    apiCall.get<PaginatedResponse<RecruitmentRequestSummary>>(BASE, { params }),
+    apiCall.get<QueryResult<RecruitmentRequestSummary>>(API_ROUTES.RECRUITMENT_REQUESTS.BASE, { params }),
 
   getRequest: (id: string) =>
-    apiCall.get<RecruitmentRequestDetail>(`${BASE}/${id}`),
+    apiCall.get<RecruitmentRequestDetail>(API_ROUTES.RECRUITMENT_REQUESTS.GET_BY_ID(id)),
 
   createRequest: (data: CreateRecruitmentRequestPayload) =>
-    apiCall.post<RecruitmentRequestDetail>(BASE, data),
+    apiCall.post<RecruitmentRequestDetail>(API_ROUTES.RECRUITMENT_REQUESTS.BASE, data),
 
   updateRequest: (id: string, data: Partial<CreateRecruitmentRequestPayload>) =>
-    apiCall.put<void>(`${BASE}/${id}`, data),
+    apiCall.put<void>(API_ROUTES.RECRUITMENT_REQUESTS.GET_BY_ID(id), data),
 
   submitRequest: (id: string) =>
-    apiCall.post<void>(`${BASE}/${id}/submit`),
+    apiCall.post<void>(API_ROUTES.RECRUITMENT_REQUESTS.SUBMIT(id)),
 
   approveRequest: (id: string, note?: string) =>
-    apiCall.post<void>(`${BASE}/${id}/approve`, { note }),
+    apiCall.post<void>(API_ROUTES.RECRUITMENT_REQUESTS.APPROVE(id), { note }),
 
   approveLevel1Request: (id: string, note?: string) =>
-    apiCall.post<void>(`${BASE}/${id}/approve-level1`, { note }),
+    apiCall.post<void>(API_ROUTES.RECRUITMENT_REQUESTS.APPROVE_LEVEL1(id), { note }),
 
   resolveInterviewRule: (candidateId: string) =>
-    apiCall.get<ResolvedInterviewRule>(`/api/interview-rule-configs/resolve`, { params: { candidateId } }),
+    apiCall.get<ResolvedInterviewRule>(API_ROUTES.INTERVIEW_RULE_CONFIGS.RESOLVE, { params: { candidateId } }),
 
   rejectRequest: (id: string, note: string) =>
-    apiCall.post<void>(`${BASE}/${id}/reject`, { note }),
+    apiCall.post<void>(API_ROUTES.RECRUITMENT_REQUESTS.REJECT(id), { note }),
 
   requestMoreInfo: (id: string, note: string) =>
-    apiCall.post<void>(`${BASE}/${id}/request-more-info`, { note }),
+    apiCall.post<void>(API_ROUTES.RECRUITMENT_REQUESTS.REQUEST_MORE_INFO(id), { note }),
 
   getCandidates: (params?: { requestId?: string; stage?: string }) =>
-    apiCall.get<PaginatedResponse<CandidateSummary>>(CANDIDATES, { params }),
+    apiCall.get<PaginatedResponse<CandidateSummary>>(API_ROUTES.CANDIDATES.BASE, { params }),
 
   getCandidate: (id: string) =>
-    apiCall.get<CandidateDetail>(`${CANDIDATES}/${id}`),
+    apiCall.get<CandidateDetail>(API_ROUTES.CANDIDATES.GET_BY_ID(id)),
 
   createCandidate: (data: CreateCandidatePayload) =>
-    apiCall.post<CandidateDetail>(CANDIDATES, data),
+    apiCall.post<CandidateDetail>(API_ROUTES.CANDIDATES.BASE, data),
 
   uploadCv: (id: string, file: File) => {
     const form = new FormData()
     form.append('file', file)
-    return apiCall.post<void>(`${CANDIDATES}/${id}/cv`, form, {
+    return apiCall.post<void>(API_ROUTES.CANDIDATES.CV(id), form, {
       headers: { 'Content-Type': undefined },
     })
   },
 
-  screenCandidate: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/screen`),
+  screenCandidate: (id: string) => apiCall.post<void>(API_ROUTES.CANDIDATES.SCREEN(id)),
 
-  assignCandidateToStore: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-store`),
+  assignCandidateToStore: (id: string) => apiCall.post<void>(API_ROUTES.CANDIDATES.ASSIGN_STORE(id)),
 
-  assignToProduction: (id: string) => apiCall.post<void>(`${CANDIDATES}/${id}/assign-production`),
+  assignToProduction: (id: string) => apiCall.post<void>(API_ROUTES.CANDIDATES.ASSIGN_PRODUCTION(id)),
 
   evaluateCandidate: (id: string, data: EvaluateCandidatePayload) =>
-    apiCall.post<void>(`${CANDIDATES}/${id}/evaluate`, data),
+    apiCall.post<void>(API_ROUTES.CANDIDATES.EVALUATE(id), data),
 
   rejectCandidate: (id: string, note?: string) =>
-    apiCall.post<void>(`${CANDIDATES}/${id}/reject`, { note }),
+    apiCall.post<void>(API_ROUTES.CANDIDATES.REJECT(id), { note }),
 
   hireCandidate: (id: string, trialStartDate?: string) =>
-    apiCall.post<void>(`${CANDIDATES}/${id}/hire`, { trialStartDate }),
+    apiCall.post<void>(API_ROUTES.CANDIDATES.HIRE(id), { trialStartDate }),
 
   getJobPostings: (params?: JobPostingListParams) =>
-    apiCall.get<PaginatedResponse<JobPostingSummary>>(JOB_POSTINGS, { params }),
+    apiCall.get<PaginatedResponse<JobPostingSummary>>(API_ROUTES.JOB_POSTINGS.BASE, { params }),
 
   createJobPosting: (data: CreateJobPostingPayload) =>
-    apiCall.post<JobPostingSummary>(JOB_POSTINGS, data),
+    apiCall.post<JobPostingSummary>(API_ROUTES.JOB_POSTINGS.BASE, data),
 
   approvePostingCost: (id: string) =>
-    apiCall.post<void>(`${JOB_POSTINGS}/${id}/approve-cost`),
+    apiCall.post<void>(API_ROUTES.JOB_POSTINGS.APPROVE_COST(id)),
 
   rejectPostingCost: (id: string, note?: string) =>
-    apiCall.post<void>(`${JOB_POSTINGS}/${id}/reject-cost`, { note }),
+    apiCall.post<void>(API_ROUTES.JOB_POSTINGS.REJECT_COST(id), { note }),
 
   getInterviews: (candidateId: string) =>
-    apiCall.get<InterviewSchedule[]>(`${CANDIDATES}/${candidateId}/interviews`),
+    apiCall.get<InterviewSchedule[]>(API_ROUTES.CANDIDATES.INTERVIEWS(candidateId)),
 
   createInterview: (candidateId: string, data: CreateInterviewSchedulePayload) =>
-    apiCall.post<InterviewSchedule>(`${CANDIDATES}/${candidateId}/interviews`, data),
+    apiCall.post<InterviewSchedule>(API_ROUTES.CANDIDATES.INTERVIEWS(candidateId), data),
 
   completeInterview: (candidateId: string, scheduleId: string, data: CompleteInterviewPayload) =>
-    apiCall.post<void>(`${CANDIDATES}/${candidateId}/interviews/${scheduleId}/complete`, data),
+    apiCall.post<void>(API_ROUTES.CANDIDATES.INTERVIEW_COMPLETE(candidateId, scheduleId), data),
 
   cancelInterview: (candidateId: string, scheduleId: string, reason?: string) =>
-    apiCall.post<void>(`${CANDIDATES}/${candidateId}/interviews/${scheduleId}/cancel`, { reason }),
+    apiCall.post<void>(API_ROUTES.CANDIDATES.INTERVIEW_CANCEL(candidateId, scheduleId), { reason }),
 }

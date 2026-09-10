@@ -1,12 +1,11 @@
-import { CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
+import { CheckCircle, XCircle, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ApprovalHistoryItem } from '../../types/recruitment.types'
+import type { WorkflowTask, WorkflowTaskStatus } from '../../types/workflow.types'
 
-const ACTION_CONFIG: Record<string, { icon: typeof CheckCircle; color: string; label: string }> = {
-  Submitted: { icon: Clock, color: 'text-yellow-600 dark:text-yellow-400', label: 'Nộp phiếu' },
-  Approved: { icon: CheckCircle, color: 'text-green-600 dark:text-green-400', label: 'Duyệt' },
+const STATUS_CONFIG: Record<WorkflowTaskStatus, { icon: typeof Clock; color: string; label: string }> = {
+  Pending: { icon: Clock, color: 'text-yellow-600 dark:text-yellow-400', label: 'Chờ duyệt' },
+  Approved: { icon: CheckCircle, color: 'text-green-600 dark:text-green-400', label: 'Đã duyệt' },
   Rejected: { icon: XCircle, color: 'text-red-600 dark:text-red-400', label: 'Từ chối' },
-  NeedMoreInfo: { icon: AlertCircle, color: 'text-orange-600 dark:text-orange-400', label: 'Yêu cầu bổ sung' },
 }
 
 function formatDateTime(iso: string) {
@@ -19,41 +18,34 @@ function formatDateTime(iso: string) {
   }).format(new Date(iso))
 }
 
-interface ApprovalHistoryTimelineProps {
-  history: ApprovalHistoryItem[]
-}
-
-export function ApprovalHistoryTimeline({ history }: ApprovalHistoryTimelineProps) {
-  if (history.length === 0) {
+export function ApprovalHistoryTimeline({ tasks }: { tasks: WorkflowTask[] }) {
+  if (tasks.length === 0) {
     return <p className="text-sm text-muted-foreground">Chưa có lịch sử duyệt</p>
   }
 
   return (
     <ol className="space-y-4">
-      {history.map((item, index) => {
-        const config = ACTION_CONFIG[item.action] ?? {
-          icon: Clock,
-          color: 'text-muted-foreground',
-          label: item.action,
-        }
-        const Icon = config.icon
+      {tasks.map((task, index) => {
+        const cfg = STATUS_CONFIG[task.status]
+        const Icon = cfg.icon
+        const dateLabel = task.actedAt ? formatDateTime(task.actedAt) : formatDateTime(task.createdAt)
 
         return (
-          <li key={item.id} className="flex gap-3">
+          <li key={task.id} className="flex gap-3">
             <div className="flex flex-col items-center">
-              <Icon className={cn('h-4 w-4 mt-0.5 shrink-0', config.color)} />
-              {index < history.length - 1 && (
+              <Icon className={cn('h-4 w-4 mt-0.5 shrink-0', cfg.color)} />
+              {index < tasks.length - 1 && (
                 <div className="w-px flex-1 bg-border mt-1.5" />
               )}
             </div>
             <div className="flex flex-col gap-0.5 pb-4 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className={cn('text-sm font-medium', config.color)}>{config.label}</span>
-                <span className="text-xs text-muted-foreground">{formatDateTime(item.occurredAt)}</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-medium text-foreground">{task.stepName}</span>
+                <span className={cn('text-xs font-medium', cfg.color)}>{cfg.label}</span>
+                <span className="text-xs text-muted-foreground">· {dateLabel}</span>
               </div>
-              <span className="text-sm text-foreground">{item.actorName}</span>
-              {item.note && (
-                <p className="text-sm text-muted-foreground mt-0.5 italic">"{item.note}"</p>
+              {task.note && (
+                <p className="text-sm text-muted-foreground mt-0.5 italic">"{task.note}"</p>
               )}
             </div>
           </li>

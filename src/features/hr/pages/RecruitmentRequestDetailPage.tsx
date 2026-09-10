@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Check, X, MessageSquare, Send } from 'lucide-react'
+import { ArrowLeft, Ban, Check, X, MessageSquare, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -19,12 +19,13 @@ import {
   useHireCandidate,
   useRejectCandidate,
 } from '../hooks/use-recruitment'
+import { useWorkflowInstanceTasks, useCancelWorkflowInstance } from '../hooks/use-workflow'
 import { useAuthStore } from '@/stores/auth.store'
 import { P } from '@/config/permissionCodes'
 import { ROUTES } from '@/config/routes'
 import type { CandidateSummary } from '../types/recruitment.types'
 
-type ActionType = 'approve' | 'approve-level1' | 'reject' | 'request-more-info'
+type ActionType = 'approve' | 'approve-level1' | 'reject' | 'request-more-info' | 'cancel'
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(new Date(iso))
@@ -38,19 +39,21 @@ export default function RecruitmentRequestDetailPage() {
 
   const { data: request, isLoading } = useRecruitmentRequest(id ?? '')
   const { data: candidates = [], isLoading: candidatesLoading } = useCandidates({ requestId: id })
+  const { data: workflowTasks = [] } = useWorkflowInstanceTasks(request?.workflowInstanceId)
 
-  const { hasPermission } = useAuthStore()
+  const { hasPermission, user } = useAuthStore()
   const approveRequest = useApproveRecruitmentRequest()
   const approveLevel1Request = useApproveLevel1RecruitmentRequest()
   const rejectRequest = useRejectRecruitmentRequest()
   const requestMoreInfo = useRequestMoreInfo()
   const submitRequest = useSubmitRecruitmentRequest()
+  const cancelWorkflow = useCancelWorkflowInstance()
   const hireCandidate = useHireCandidate()
   const rejectCandidate = useRejectCandidate()
 
   const isActingOnRequest =
     approveRequest.isPending || approveLevel1Request.isPending ||
-    rejectRequest.isPending || requestMoreInfo.isPending
+    rejectRequest.isPending || requestMoreInfo.isPending || cancelWorkflow.isPending
 
   function handleActionConfirm(note?: string) {
     if (!id || !actionDialog) return
@@ -60,6 +63,8 @@ export default function RecruitmentRequestDetailPage() {
       approveLevel1Request.mutate({ id, note }, { onSuccess: () => setActionDialog(null) })
     } else if (actionDialog === 'reject') {
       rejectRequest.mutate({ id, note: note! }, { onSuccess: () => setActionDialog(null) })
+    } else if (actionDialog === 'cancel') {
+      cancelWorkflow.mutate(request!.workflowInstanceId!, { onSuccess: () => setActionDialog(null) })
     } else {
       requestMoreInfo.mutate({ id, note: note! }, { onSuccess: () => setActionDialog(null) })
     }
@@ -89,6 +94,10 @@ export default function RecruitmentRequestDetailPage() {
     )
   }
 
+  const isPendingApproval = request.status === 'PendingLevel1Approval' || request.status === 'PendingLevel2Approval'
+  const isOwner = request.requestedByUserId === user?.id
+  const canCancel = isPendingApproval && isOwner && !!request.workflowInstanceId
+
   const canApproveLevel1 = request.status === 'PendingLevel1Approval' && hasPermission(P.RECRUITMENT_REQUEST_APPROVE_LEVEL1)
   const canApproveLevel2 = (request.status === 'Submitted' || request.status === 'PendingLevel2Approval') && hasPermission(P.RECRUITMENT_REQUEST_APPROVE)
 
@@ -110,16 +119,27 @@ export default function RecruitmentRequestDetailPage() {
             </Button>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-semibold">{request.code}</h1>
+                <h1 className="text-xl font-semibold">{request.requestCode}</h1>
                 <RequestStatusBadge status={request.status} />
               </div>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Tạo bởi {request.createdByName} · {formatDate(request.createdAt)}
+                Tạo bởi {request.requestedByName} · {formatDate(request.createdAt)}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            {canCancel && (
+              <Button
+                variant="outline"
+                className="cursor-pointer gap-2 text-destructive hover:text-destructive"
+                disabled={isActingOnRequest}
+                onClick={() => setActionDialog('cancel')}
+              >
+                <Ban className="h-4 w-4" />
+                Hủy phiếu
+              </Button>
+            )}
             {request.status === 'Draft' && (
               <Button
                 variant="outline"
@@ -174,7 +194,7 @@ export default function RecruitmentRequestDetailPage() {
           <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
             <div>
               <p className="text-muted-foreground">Khối</p>
-              <p className="font-medium">{request.context === 'Store' ? 'Cửa hàng' : 'Sản xuất'}</p>
+              <p className="font-medium">{request.requestContext === 'Store' ? 'Cửa hàng' : 'Phòng ban'}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Đơn vị</p>
@@ -182,34 +202,28 @@ export default function RecruitmentRequestDetailPage() {
             </div>
             <div>
               <p className="text-muted-foreground">Vị trí</p>
-              <p className="font-medium">{request.jobPositionName}</p>
+              <p className="font-medium">{request.positionTitle}</p>
             </div>
             <div>
               <p className="text-muted-foreground">Số lượng</p>
-              <p className="font-medium">{request.quantity}</p>
+              <p className="font-medium">{request.headcount}</p>
             </div>
-            {request.submittedAt && (
-              <div>
-                <p className="text-muted-foreground">Ngày nộp</p>
-                <p className="font-medium">{formatDate(request.submittedAt)}</p>
-              </div>
-            )}
-            {request.approvedAt && (
-              <div>
-                <p className="text-muted-foreground">Ngày duyệt</p>
-                <p className="font-medium">{formatDate(request.approvedAt)}</p>
-              </div>
-            )}
             {request.reason && (
               <div className="col-span-2 md:col-span-3">
                 <p className="text-muted-foreground">Lý do tuyển dụng</p>
                 <p className="font-medium">{request.reason}</p>
               </div>
             )}
-            {request.approverNote && (
+            {request.rejectionNote && (
               <div className="col-span-2 md:col-span-3">
-                <p className="text-muted-foreground">Ghi chú người duyệt</p>
-                <p className="font-medium italic">{request.approverNote}</p>
+                <p className="text-muted-foreground">Lý do từ chối</p>
+                <p className="font-medium italic">{request.rejectionNote}</p>
+              </div>
+            )}
+            {request.needMoreInfoNote && (
+              <div className="col-span-2 md:col-span-3">
+                <p className="text-muted-foreground">Yêu cầu bổ sung</p>
+                <p className="font-medium italic">{request.needMoreInfoNote}</p>
               </div>
             )}
           </CardContent>
@@ -243,7 +257,7 @@ export default function RecruitmentRequestDetailPage() {
             <CardTitle className="text-base">Lịch sử duyệt</CardTitle>
           </CardHeader>
           <CardContent>
-            <ApprovalHistoryTimeline history={request.approvalHistory} />
+            <ApprovalHistoryTimeline tasks={workflowTasks} />
           </CardContent>
         </Card>
       </div>

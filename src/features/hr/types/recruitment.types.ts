@@ -1,5 +1,5 @@
 export type RecruitmentRequestStatus = 'Draft' | 'Submitted' | 'PendingLevel1Approval' | 'PendingLevel2Approval' | 'Approved' | 'Rejected' | 'NeedMoreInfo' | 'Cancelled'
-export type RecruitmentContext = 'Store' | 'Production'
+export type RecruitmentContext = 'Store' | 'Department'
 export type CandidateStage = 'New' | 'Screening' | 'StoreInterview' | 'ProductionInterview' | 'Offer' | 'Hired' | 'Rejected'
 
 export const RECRUITMENT_STATUS_LABELS: Record<RecruitmentRequestStatus, string> = {
@@ -25,28 +25,26 @@ export const CANDIDATE_STAGE_LABELS: Record<CandidateStage, string> = {
 
 export interface RecruitmentRequestSummary {
   id: string
-  code: string
-  context: RecruitmentContext
+  requestCode: string
+  requestContext: RecruitmentContext
   storeId?: string
   storeName?: string
   departmentId?: string
   departmentName?: string
-  jobPositionId: string
-  jobPositionName: string
-  quantity: number
-  reason?: string
+  positionTitle: string
+  headcount: number
+  reason: string
   status: RecruitmentRequestStatus
-  submittedAt?: string
-  approvedAt?: string
+  requestedByUserId: string
+  requestedByName: string
   createdAt: string
-  createdByName: string
-  candidateCount: number
 }
 
 export interface RecruitmentRequestDetail extends RecruitmentRequestSummary {
-  approverNote?: string
-  approvalHistory: ApprovalHistoryItem[]
+  rejectionNote?: string
+  needMoreInfoNote?: string
   jobPostings: JobPostingSummary[]
+  workflowInstanceId?: string
 }
 
 export interface ApprovalHistoryItem {
@@ -104,19 +102,22 @@ export interface JobPostingListParams {
 }
 
 export interface CreateRecruitmentRequestPayload {
-  context: RecruitmentContext
+  requestContext: RecruitmentContext
   storeId?: string
   departmentId?: string
-  jobPositionId: string
-  quantity: number
-  reason?: string
+  positionTitle: string
+  headcount: number
+  reason: string
+  jobDescription?: string
+  requiredByDate?: string
 }
 
 export interface RecruitmentRequestListParams {
   status?: RecruitmentRequestStatus
-  context?: RecruitmentContext
+  requestContext?: RecruitmentContext
   departmentId?: string
   storeId?: string
+  requestedByUserId?: string
 }
 
 export interface CandidateSummary {

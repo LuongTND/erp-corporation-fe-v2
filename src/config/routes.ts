@@ -32,6 +32,9 @@ export const ROUTES = {
     CANDIDATES: '/recruitment/candidates',
     CANDIDATE_DETAIL: '/recruitment/candidates/:id',
     JOB_POSTINGS: '/recruitment/job-postings',
+    RECRUITMENT_APPROVER_CONFIGS: '/recruitment/approver-configs',
+    INTERVIEW_RULE_CONFIGS: '/recruitment/interview-rules',
+    WORKFLOW_MY_TASKS: '/workflow/my-tasks',
   },
 
   // ── LMS ──
@@ -95,8 +98,7 @@ export const ROUTES = {
     CONTRACTS: '/admin/contracts',
     CONTRACT_TEMPLATES: '/admin/contract-templates',
     LABELS: '/admin/labels',
-    RECRUITMENT_APPROVER_CONFIGS: '/admin/recruitment-approver-configs',
-    INTERVIEW_RULE_CONFIGS: '/admin/interview-rule-configs',
+    WORKFLOW_TEMPLATES: '/admin/workflow-templates',
   },
 
   // ── HR Manager ──

@@ -18,6 +18,12 @@ export interface PaginatedResponse<T> {
   }
 }
 
+// BE QueryResult shape
+export interface QueryResult<T> {
+  totalCount: number
+  items: T[]
+}
+
 // Query params chung
 export interface PaginationParams {
   page?: number

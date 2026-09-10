@@ -55,20 +55,20 @@ export function RequestsTable({ requests, isLoading, onSubmit, isSubmitting }: R
                 className="hover:bg-muted/40 transition-colors duration-150 cursor-pointer"
                 onClick={() => navigate(ROUTES.HR.RECRUITMENT_DETAIL.replace(':id', request.id))}
               >
-                <TableCell className="font-mono text-xs text-muted-foreground">{request.code}</TableCell>
-                <TableCell className="font-medium text-sm">{request.jobPositionName}</TableCell>
+                <TableCell className="font-mono text-xs text-muted-foreground">{request.requestCode}</TableCell>
+                <TableCell className="font-medium text-sm">{request.positionTitle}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">
-                  {request.context === 'Store' ? 'Cửa hàng' : 'Sản xuất'}
+                  {request.requestContext === 'Store' ? 'Cửa hàng' : 'Sản xuất'}
                 </TableCell>
-                <TableCell className="text-center text-sm font-semibold">{request.quantity}</TableCell>
+                <TableCell className="text-center text-sm font-semibold">{request.headcount}</TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {request.storeName ?? request.departmentName ?? '—'}
                 </TableCell>
                 <TableCell>
                   <RequestStatusBadge status={request.status} />
                 </TableCell>
-                <TableCell className="text-sm text-muted-foreground">{request.createdByName}</TableCell>
-                <TableCell className="text-center text-sm">{request.candidateCount}</TableCell>
+                <TableCell className="text-sm text-muted-foreground">{request.requestedByName}</TableCell>
+                <TableCell className="text-center text-sm">—</TableCell>
                 <TableCell onClick={(event) => event.stopPropagation()}>
                   <div className="flex items-center gap-1 justify-end">
                     {request.status === 'Draft' && (

@@ -1,4 +1,5 @@
 import { apiCall } from '@/lib/api'
+import { API_ROUTES } from '@/config/api-routes'
 import type { PermissionResponse, QueryResult } from '../types/admin.types'
 
 export interface PermissionsListParams {
@@ -9,11 +10,11 @@ export interface PermissionsListParams {
 
 export const permissionsService = {
   list: (params?: PermissionsListParams) =>
-    apiCall.get<QueryResult<PermissionResponse>>('/api/permissions', { params }),
+    apiCall.get<QueryResult<PermissionResponse>>(API_ROUTES.PERMISSIONS.BASE, { params }),
 
   getByRole: (roleId: string) =>
-    apiCall.get<PermissionResponse[]>(`/api/roles/${roleId}/permissions`),
+    apiCall.get<PermissionResponse[]>(API_ROUTES.ROLES.PERMISSIONS(roleId)),
 
   delete: (id: string) =>
-    apiCall.delete(`/api/permissions/${id}`),
+    apiCall.delete(API_ROUTES.PERMISSIONS.GET_BY_ID(id)),
 }

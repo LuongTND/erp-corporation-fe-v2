@@ -1,4 +1,5 @@
-import { useState, useMemo, type ChangeEvent } from 'react'
+import { useState } from 'react'
+import { ChevronsUpDown, Check } from 'lucide-react'
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog'
@@ -6,12 +7,15 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select'
 import {
-  Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput,
-  ComboboxItem, ComboboxList, useComboboxAnchor,
-} from '@/components/ui/combobox'
+  Popover, PopoverContent, PopoverTrigger,
+} from '@/components/ui/popover'
+import {
+  Command, CommandEmpty, CommandInput, CommandItem, CommandList,
+} from '@/components/ui/command'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import type {
   DepartmentResponse, SetRecruitmentApproverPayload, UserSummaryResponse,
 } from '../../types/admin.types'
@@ -33,25 +37,16 @@ export function AddApproverDialog({
   isPending,
   onSave,
 }: AddApproverDialogProps) {
+  const [popoverOpen, setPopoverOpen] = useState(false)
   const [approverId, setApproverId] = useState('')
-  const [employeeSearch, setEmployeeSearch] = useState('')
   const [departmentId, setDepartmentId] = useState('__global__')
   const [note, setNote] = useState('')
 
-  const anchor = useComboboxAnchor()
-
-  const filteredEmployees = useMemo(() => {
-    const query = employeeSearch.trim().toLowerCase()
-    if (!query) return employees
-    return employees.filter((employee) =>
-      `${employee.fullName} ${employee.employeeCode}`.toLowerCase().includes(query),
-    )
-  }, [employees, employeeSearch])
+  const selectedEmployee = employees.find((e) => e.id === approverId)
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
       setApproverId('')
-      setEmployeeSearch('')
       setDepartmentId('__global__')
       setNote('')
     }
@@ -76,29 +71,45 @@ export function AddApproverDialog({
         <div className="space-y-4 pt-1">
           <div className="space-y-1.5">
             <Label className="text-xs font-medium">Người duyệt *</Label>
-            <Combobox value={approverId} onValueChange={(value) => setApproverId(value ?? '')}>
-              <div ref={anchor}>
-                <ComboboxInput
-                  placeholder="Tìm nhân viên..."
-                  showClear={!!approverId}
-                  className="w-full h-9"
-                  onChange={(event: ChangeEvent<HTMLInputElement>) => setEmployeeSearch(event.target.value)}
-                />
-              </div>
-              <ComboboxContent anchor={anchor}>
-                <ComboboxList className="max-h-60 overflow-y-auto [scrollbar-width:thin]">
-                  {filteredEmployees.map((employee) => (
-                    <ComboboxItem key={employee.id} value={employee.id}>
-                      <span>{employee.fullName}</span>
-                      {employee.employeeCode && (
-                        <span className="ml-1 text-xs text-muted-foreground">({employee.employeeCode})</span>
-                      )}
-                    </ComboboxItem>
-                  ))}
-                  <ComboboxEmpty>Không tìm thấy nhân viên</ComboboxEmpty>
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={popoverOpen}
+                  className="w-full h-9 justify-between font-normal"
+                >
+                  {selectedEmployee
+                    ? `${selectedEmployee.fullName}${selectedEmployee.employeeCode ? ` (${selectedEmployee.employeeCode})` : ''}`
+                    : 'Tìm nhân viên...'}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Tìm nhân viên..." />
+                  <CommandList>
+                    <CommandEmpty>Không tìm thấy nhân viên</CommandEmpty>
+                    {employees.map((employee) => (
+                      <CommandItem
+                        key={employee.id}
+                        value={`${employee.fullName} ${employee.employeeCode}`}
+                        onSelect={() => {
+                          setApproverId(employee.id)
+                          setPopoverOpen(false)
+                        }}
+                      >
+                        <Check className={cn('mr-2 h-4 w-4', approverId === employee.id ? 'opacity-100' : 'opacity-0')} />
+                        <span>{employee.fullName}</span>
+                        {employee.employeeCode && (
+                          <span className="ml-1 text-xs text-muted-foreground">({employee.employeeCode})</span>
+                        )}
+                      </CommandItem>
+                    ))}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-1.5">

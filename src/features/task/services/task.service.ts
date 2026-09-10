@@ -143,44 +143,38 @@ export const taskItemService = {
 
 // ─── Attachment ───────────────────────────────────────────────────────────────
 
-const TASK_ATTACHMENTS = (id: string) => `/api/tasks/${id}/attachments`
-
 export const taskAttachmentService = {
   getByTaskId: (taskId: string) =>
-    apiCall.get<TaskAttachment[]>(TASK_ATTACHMENTS(taskId)),
+    apiCall.get<TaskAttachment[]>(API_ROUTES.TASK_ITEMS.ATTACHMENTS(taskId)),
 
   upload: (taskId: string, file: File) => {
     const form = new FormData()
     form.append('file', file)
-    return apiCall.post<TaskAttachment>(TASK_ATTACHMENTS(taskId), form)
+    return apiCall.post<TaskAttachment>(API_ROUTES.TASK_ITEMS.ATTACHMENTS(taskId), form)
   },
 
   delete: (taskId: string, attachmentId: string) =>
-    apiCall.delete<void>(`${TASK_ATTACHMENTS(taskId)}/${attachmentId}`),
+    apiCall.delete<void>(API_ROUTES.TASK_ITEMS.ATTACHMENT(taskId, attachmentId)),
 }
 
 // ─── Dependency ───────────────────────────────────────────────────────────────
 
-const TASK_DEPS = (id: string) => `/api/tasks/${id}/dependencies`
-
 export const taskDependencyService = {
   getByTaskId: (taskId: string) =>
-    apiCall.get<TaskDependenciesView>(TASK_DEPS(taskId)),
+    apiCall.get<TaskDependenciesView>(API_ROUTES.TASK_ITEMS.DEPENDENCIES(taskId)),
 
   add: (fromTaskId: string, toTaskId: string, type: DependencyType) =>
-    apiCall.post(TASK_DEPS(fromTaskId), { toTaskId, type }),
+    apiCall.post(API_ROUTES.TASK_ITEMS.DEPENDENCIES(fromTaskId), { toTaskId, type }),
 
   removeByTaskIds: (fromTaskId: string, toTaskId: string, type: DependencyType) =>
-    apiCall.delete(`${TASK_DEPS(fromTaskId)}/${toTaskId}`, { params: { type } }),
+    apiCall.delete(API_ROUTES.TASK_ITEMS.DEPENDENCY(fromTaskId, toTaskId), { params: { type } }),
 }
 
 // ─── Activity ─────────────────────────────────────────────────────────────────
 
-const TASK_ACTIVITIES = (id: string) => `/api/tasks/${id}/activities`
-
 export const taskActivityService = {
   getByTaskId: (taskId: string) =>
-    apiCall.get<ActivityEntry[]>(TASK_ACTIVITIES(taskId)),
+    apiCall.get<ActivityEntry[]>(API_ROUTES.TASK_ITEMS.ACTIVITIES(taskId)),
 
   add: (
     taskId: string,
@@ -188,7 +182,7 @@ export const taskActivityService = {
     userId: string,
     userName: string,
     meta?: ActivityEntry['meta'],
-  ) => apiCall.post<ActivityEntry>(TASK_ACTIVITIES(taskId), { action, userId, userName, meta }),
+  ) => apiCall.post<ActivityEntry>(API_ROUTES.TASK_ITEMS.ACTIVITIES(taskId), { action, userId, userName, meta }),
 }
 
 // ─── CSV helpers (re-exported from mock for offline/dev use) ─────────────────
@@ -198,17 +192,17 @@ export { exportTasksToCSV, importTasksFromCSV } from '../mocks/task.mock'
 
 export const customPropertyService = {
   getDefs: () =>
-    apiCall.get<CustomPropDef[]>('/api/tasks/custom-properties'),
+    apiCall.get<CustomPropDef[]>(API_ROUTES.TASK_ITEMS.CUSTOM_PROPS_DEFS),
 
   createDef: (def: Omit<CustomPropDef, 'id'>) =>
-    apiCall.post<CustomPropDef>('/api/tasks/custom-properties', def),
+    apiCall.post<CustomPropDef>(API_ROUTES.TASK_ITEMS.CUSTOM_PROPS_DEFS, def),
 
   deleteDef: (id: string) =>
-    apiCall.delete<void>(`/api/tasks/custom-properties/${id}`),
+    apiCall.delete<void>(API_ROUTES.TASK_ITEMS.CUSTOM_PROP_DEF(id)),
 
   getValues: (taskId: string) =>
-    apiCall.get<CustomPropValue[]>(`/api/tasks/${taskId}/custom-properties`),
+    apiCall.get<CustomPropValue[]>(API_ROUTES.TASK_ITEMS.CUSTOM_PROPS(taskId)),
 
   setValue: (taskId: string, defId: string, value: string | number | boolean) =>
-    apiCall.put<void>(`/api/tasks/${taskId}/custom-properties`, { defId, value }),
+    apiCall.put<void>(API_ROUTES.TASK_ITEMS.CUSTOM_PROPS(taskId), { defId, value }),
 }

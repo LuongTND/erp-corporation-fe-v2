@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { approvalActionSchema, rejectionActionSchema } from '../../schemas/recruitment-request.schema'
 import type { ApprovalActionFormValues, RejectionActionFormValues } from '../../schemas/recruitment-request.schema'
 
-type ActionType = 'approve' | 'approve-level1' | 'reject' | 'request-more-info'
+type ActionType = 'approve' | 'approve-level1' | 'reject' | 'request-more-info' | 'cancel'
 
 interface ApprovalActionDialogProps {
   open: boolean
@@ -45,6 +45,13 @@ const ACTION_CONFIG: Record<ActionType, { title: string; label: string; requireN
     requireNote: true,
     confirmLabel: 'Gửi yêu cầu',
     confirmVariant: 'default',
+  },
+  cancel: {
+    title: 'Hủy phiếu đề xuất',
+    label: 'Ghi chú (tuỳ chọn)',
+    requireNote: false,
+    confirmLabel: 'Hủy phiếu',
+    confirmVariant: 'destructive',
   },
 }
 

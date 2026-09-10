@@ -1,4 +1,5 @@
 import { apiCall } from '@/lib/api'
+import { API_ROUTES } from '@/config/api-routes'
 import type {
   CustomFieldDefinitionResponse,
   CreateCustomFieldPayload,
@@ -7,16 +8,16 @@ import type {
 
 export const customFieldsService = {
   list: (module?: string) =>
-    apiCall.get<CustomFieldDefinitionResponse[]>('/api/custom-field-definitions', {
+    apiCall.get<CustomFieldDefinitionResponse[]>(API_ROUTES.CUSTOM_FIELDS.BASE, {
       params: module ? { module } : undefined,
     }),
 
   create: (data: CreateCustomFieldPayload) =>
-    apiCall.post<string>('/api/custom-field-definitions', data),
+    apiCall.post<string>(API_ROUTES.CUSTOM_FIELDS.BASE, data),
 
   update: (id: string, data: UpdateCustomFieldPayload) =>
-    apiCall.put<void>(`/api/custom-field-definitions/${id}`, data),
+    apiCall.put<void>(API_ROUTES.CUSTOM_FIELDS.GET_BY_ID(id), data),
 
   delete: (id: string) =>
-    apiCall.delete<void>(`/api/custom-field-definitions/${id}`),
+    apiCall.delete<void>(API_ROUTES.CUSTOM_FIELDS.GET_BY_ID(id)),
 }

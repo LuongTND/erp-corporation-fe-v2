@@ -1,4 +1,5 @@
 import { apiCall } from '@/lib/api'
+import { API_ROUTES } from '@/config/api-routes'
 import type {
   ContractTemplateResponse,
   EmploymentContractResponse,
@@ -10,7 +11,7 @@ import type {
 
 export const contractsService = {
   list: (userId: string) =>
-    apiCall.get<EmploymentContractResponse[]>(`/api/hrm/users/${userId}/contracts`),
+    apiCall.get<EmploymentContractResponse[]>(API_ROUTES.CONTRACTS.LIST(userId)),
 
   create: ({ userId, file, ...rest }: CreateContractPayload) => {
     const form = new FormData()
@@ -23,7 +24,7 @@ export const contractsService = {
     if (rest.signedDate) form.append('signedDate', rest.signedDate)
     if (rest.templateId) form.append('templateId', rest.templateId)
     form.append('file', file)
-    return apiCall.post<string>(`/api/hrm/users/${userId}/contracts`, form)
+    return apiCall.post<string>(API_ROUTES.CONTRACTS.CREATE(userId), form)
   },
 
   renew: (userId: string, contractId: string, { file, ...rest }: RenewContractPayload) => {
@@ -36,44 +37,43 @@ export const contractsService = {
     if (rest.positionTitle) form.append('positionTitle', rest.positionTitle)
     if (rest.signedDate) form.append('signedDate', rest.signedDate)
     form.append('file', file)
-    return apiCall.post<string>(`/api/hrm/users/${userId}/contracts/${contractId}/renew`, form)
+    return apiCall.post<string>(API_ROUTES.CONTRACTS.RENEW(userId, contractId), form)
   },
 
   terminate: (userId: string, contractId: string, data: TerminateContractPayload) =>
-    apiCall.post<void>(`/api/hrm/users/${userId}/contracts/${contractId}/terminate`, data),
+    apiCall.post<void>(API_ROUTES.CONTRACTS.TERMINATE(userId, contractId), data),
 
   salaryComparison: (userId: string) =>
-    apiCall.get<ContractSalaryComparisonResponse>(`/api/hrm/users/${userId}/contracts/salary-comparison`),
+    apiCall.get<ContractSalaryComparisonResponse>(API_ROUTES.CONTRACTS.SALARY_COMPARISON(userId)),
 
   generate: async (userId: string, contractId: string, dynamicData: Record<string, string>): Promise<Blob> => {
     const { api } = await import('@/lib/axios')
-    const res = await api.post(`/api/hrm/users/${userId}/contracts/${contractId}/generate`, { dynamicData }, { responseType: 'blob' })
+    const res = await api.post(API_ROUTES.CONTRACTS.GENERATE(userId, contractId), { dynamicData }, { responseType: 'blob' })
     return res.data
   },
 
   listExpiring: (days = 30) =>
-    apiCall.get<EmploymentContractResponse[]>('/api/hrm/contracts/expiring', { params: { days } }),
+    apiCall.get<EmploymentContractResponse[]>(API_ROUTES.CONTRACTS.EXPIRING, { params: { days } }),
 }
 
 export const contractTemplatesService = {
   list: () =>
-    apiCall.get<ContractTemplateResponse[]>('/api/hrm/contract-templates'),
+    apiCall.get<ContractTemplateResponse[]>(API_ROUTES.CONTRACT_TEMPLATES.BASE),
 
   upload: (name: string, description: string | undefined, file: File) => {
     const form = new FormData()
     form.append('name', name)
     if (description) form.append('description', description)
     form.append('file', file)
-    return apiCall.post<ContractTemplateResponse>('/api/hrm/contract-templates', form)
+    return apiCall.post<ContractTemplateResponse>(API_ROUTES.CONTRACT_TEMPLATES.BASE, form)
   },
 
   download: async (id: string): Promise<Blob> => {
     const { api } = await import('@/lib/axios')
-    const res = await api.get(`/api/hrm/contract-templates/${id}/download`, { responseType: 'blob' })
+    const res = await api.get(API_ROUTES.CONTRACT_TEMPLATES.DOWNLOAD(id), { responseType: 'blob' })
     return res.data
   },
 
-
   delete: (id: string) =>
-    apiCall.delete<void>(`/api/hrm/contract-templates/${id}`),
+    apiCall.delete<void>(API_ROUTES.CONTRACT_TEMPLATES.GET_BY_ID(id)),
 }

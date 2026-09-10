@@ -118,10 +118,8 @@ api.interceptors.response.use(
       }
     }
 
-    // 403 Forbidden → redirect
-    if (error.response?.status === 403) {
-      window.location.href = ROUTES.FORBIDDEN
-    }
+    // 403: reject so each component can handle it — blanket redirect broke pages
+    // that make secondary API calls (e.g. /users, /departments) the role lacks.
 
     // Network error hoặc server error
     if (!error.response) {

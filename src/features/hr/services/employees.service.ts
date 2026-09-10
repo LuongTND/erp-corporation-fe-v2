@@ -10,7 +10,7 @@ import type { WorkHistoryItem, WorkHistoryChangeType } from '../types/work-histo
 
 export const employeesService = {
   getList: (search?: string, status?: string, departmentId?: string) =>
-    apiCall.get<UserSummaryResponse[]>('/api/users', {
+    apiCall.get<UserSummaryResponse[]>(API_ROUTES.USERS.BASE, {
       params: {
         ...(search ? { search } : {}),
         ...(status ? { status } : {}),
@@ -19,19 +19,19 @@ export const employeesService = {
     }),
 
   getDetail: (userId: string) =>
-    apiCall.get<UserDetailDto>(`/api/users/${userId}`),
+    apiCall.get<UserDetailDto>(API_ROUTES.USERS.GET_BY_ID(userId)),
 
   update: (userId: string, data: UpdateEmployeePayload) =>
-    apiCall.put<void>(`/api/users/${userId}`, data),
+    apiCall.put<void>(API_ROUTES.USERS.GET_BY_ID(userId), data),
 
   upsertCustomFields: (userId: string, values: { definitionId: string; value: string }[]) =>
-    apiCall.patch<void>(`/api/users/${userId}/custom-fields`, values),
+    apiCall.patch<void>(API_ROUTES.USERS.CUSTOM_FIELDS(userId), values),
 
   updateStatus: (userId: string, data: UpdateUserStatusFormValues) =>
-    apiCall.patch<void>(`/api/users/${userId}/status`, data),
+    apiCall.patch<void>(API_ROUTES.USERS.STATUS(userId), data),
 
   getStatusHistory: (userId: string) =>
-    apiCall.get<UserStatusHistoryItem[]>(`/api/users/${userId}/status-history`),
+    apiCall.get<UserStatusHistoryItem[]>(API_ROUTES.USERS.STATUS_HISTORY(userId)),
 
   getDocuments: (userId: string) =>
     apiCall.get<EmployeeDocumentResponse[]>(API_ROUTES.EMPLOYEE_DOCUMENTS.LIST(userId)),
@@ -80,21 +80,21 @@ export const employeesService = {
   uploadAvatar: (userId: string, file: File) => {
     const form = new FormData()
     form.append('file', file)
-    return apiCall.post<string>(`/api/users/${userId}/avatar`, form, {
+    return apiCall.post<string>(API_ROUTES.USERS.AVATAR(userId), form, {
       headers: { 'Content-Type': undefined },
     })
   },
 
   getWorkHistory: (userId: string, changeType?: WorkHistoryChangeType) =>
-    apiCall.get<WorkHistoryItem[]>(`/api/users/${userId}/work-history`, {
+    apiCall.get<WorkHistoryItem[]>(API_ROUTES.USERS.WORK_HISTORY(userId), {
       params: changeType ? { changeType } : {},
     }),
 
   lockEmployee: (userId: string, lock: boolean) =>
-    apiCall.patch<void>(`/api/users/${userId}/lock`, { userId, lock }),
+    apiCall.patch<void>(API_ROUTES.USERS.LOCK(userId), { userId, lock }),
 
   exportUsers: async (search?: string, status?: string, departmentId?: string, labelId?: string, storeId?: string, regionId?: string): Promise<Blob> => {
-    const res = await api.get('/api/users/export', {
+    const res = await api.get(API_ROUTES.USERS.EXPORT, {
       params: { ...(search ? { search } : {}), ...(status ? { status } : {}), ...(departmentId ? { departmentId } : {}), ...(labelId ? { labelId } : {}), ...(storeId ? { storeId } : {}), ...(regionId && !storeId ? { regionId } : {}) },
       responseType: 'blob',
     })

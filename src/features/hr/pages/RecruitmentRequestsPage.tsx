@@ -12,22 +12,26 @@ import {
   useCreateRecruitmentRequest,
   useSubmitRecruitmentRequest,
 } from '../hooks/use-recruitment'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { useMyStore } from '@/features/admin/hooks/use-stores'
+import { P } from '@/config/permissionCodes'
 import type { RecruitmentRequestStatus, RecruitmentContext, CreateRecruitmentRequestPayload } from '../types/recruitment.types'
 
-// ponytail: mock options until job-positions/stores/departments APIs are wired
-const JOB_POSITIONS: { id: string; name: string }[] = []
-const STORES: { id: string; name: string }[] = []
-const DEPARTMENTS: { id: string; name: string }[] = []
-
 export default function RecruitmentRequestsPage() {
+  const { user, hasPermission } = useAuth()
+  const isStoreManager = hasPermission(P.STORE_MANAGER_VIEW)
+  const { data: myStore } = useMyStore()
+
   const [createOpen, setCreateOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState<RecruitmentRequestStatus | 'all'>('all')
   const [contextFilter, setContextFilter] = useState<RecruitmentContext | 'all'>('all')
 
-  const { data: requests = [], isLoading } = useRecruitmentRequests({
+  const { data, isLoading } = useRecruitmentRequests({
     status: statusFilter === 'all' ? undefined : statusFilter,
-    context: contextFilter === 'all' ? undefined : contextFilter,
+    requestContext: contextFilter === 'all' ? undefined : contextFilter,
+    requestedByUserId: isStoreManager && user ? user.id : undefined,
   })
+  const requests = data?.items ?? []
 
   const createRequest = useCreateRecruitmentRequest()
   const submitRequest = useSubmitRecruitmentRequest()
@@ -93,7 +97,7 @@ export default function RecruitmentRequestsPage() {
             >
               <SelectItem value="all">Tất cả</SelectItem>
               <SelectItem value="Store">Cửa hàng</SelectItem>
-              <SelectItem value="Production">Sản xuất</SelectItem>
+              <SelectItem value="Department">Sản xuất</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -111,9 +115,7 @@ export default function RecruitmentRequestsPage() {
         onOpenChange={setCreateOpen}
         onSubmit={handleCreate}
         isPending={createRequest.isPending}
-        jobPositions={JOB_POSITIONS}
-        stores={STORES}
-        departments={DEPARTMENTS}
+        myStore={myStore ?? null}
       />
     </div>
   )

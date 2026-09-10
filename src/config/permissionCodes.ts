@@ -194,6 +194,11 @@ export const P = {
   CONTRACT_TEMPLATES_DOWNLOAD: 'hrm:contract-templates:download',
   CONTRACT_TEMPLATES_UPDATE_SCHEMA: 'hrm:contract-templates:update-schema',
   CONTRACT_TEMPLATES_DELETE: 'hrm:contract-templates:delete',
+
+  // Workflow
+  WORKFLOW_TASK_VIEW: 'workflow:task:view',
+  WORKFLOW_INSTANCE_VIEW: 'workflow:instance:view',
+  WORKFLOW_TEMPLATE_MANAGE: 'workflow:template:manage',
 } as const
 
 export type PermissionCode = (typeof P)[keyof typeof P]

@@ -1,4 +1,5 @@
 import { apiCall } from '@/lib/api'
+import { API_ROUTES } from '@/config/api-routes'
 
 export interface PosStoreResponse {
   id: string
@@ -10,5 +11,5 @@ export interface PosStoreResponse {
 }
 
 export const posService = {
-  getStores: () => apiCall.get<PosStoreResponse[]>('/api/pos/stores'),
+  getStores: () => apiCall.get<PosStoreResponse[]>(API_ROUTES.POS.STORES),
 }

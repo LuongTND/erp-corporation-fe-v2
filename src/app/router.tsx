@@ -78,6 +78,8 @@ const RecruitmentRequestDetailPage = lazy(() => import('@/features/hr/pages/Recr
 const CandidatesListPage = lazy(() => import('@/features/hr/pages/CandidatesListPage'))
 const CandidateDetailPage = lazy(() => import('@/features/hr/pages/CandidateDetailPage'))
 const JobPostingsPage = lazy(() => import('@/features/hr/pages/JobPostingsPage'))
+const WorkflowMyTasksPage = lazy(() => import('@/features/hr/pages/WorkflowMyTasksPage'))
+const WorkflowTemplatesPage = lazy(() => import('@/features/admin/pages/WorkflowTemplatesPage'))
 
 export const router = createBrowserRouter([
   // ── Landing (public) ──
@@ -371,7 +373,15 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: ROUTES.ADMIN.RECRUITMENT_APPROVER_CONFIGS,
+                path: ROUTES.ADMIN.WORKFLOW_TEMPLATES,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <WorkflowTemplatesPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.RECRUITMENT_APPROVER_CONFIGS,
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminRecruitmentApproverConfigsPage />
@@ -379,10 +389,18 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: ROUTES.ADMIN.INTERVIEW_RULE_CONFIGS,
+                path: ROUTES.HR.INTERVIEW_RULE_CONFIGS,
                 element: (
                   <Suspense fallback={<PageFallback />}>
                     <AdminInterviewRuleConfigsPage />
+                  </Suspense>
+                ),
+              },
+              {
+                path: ROUTES.HR.WORKFLOW_MY_TASKS,
+                element: (
+                  <Suspense fallback={<PageFallback />}>
+                    <WorkflowMyTasksPage />
                   </Suspense>
                 ),
               },
